@@ -3,6 +3,13 @@ import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import userRoute from "./routes/user";
+import adminRoute from "./routes/admin"
+import assistantRoute from "./routes/assistant"
+import dentistRoute from "./routes/dentist"
+import frontDeskRoute from "./routes/frontDesk"
+import managerRoute from "./routes/manager"
+import patientRoute from "./routes/patient"
+import staffRoute from "./routes/staff"
 
 const main = async () => {
   mongoose.set("strictQuery", false);
@@ -16,6 +23,13 @@ const main = async () => {
   app.use(express.urlencoded({ extended: false }));
 
   app.use("/user", userRoute);
+  app.use("/admin", adminRoute);
+  app.use("/assistant", assistantRoute);
+  app.use("/dentist", dentistRoute);
+  app.use("/frontDesk", frontDeskRoute);
+  app.use("/manager", managerRoute);
+  app.use("/patient", patientRoute);
+  app.use("/staff", staffRoute);
 
   app.listen(port, () =>
     console.log(`Server listening to http://localhost:${port}`)
