@@ -1,7 +1,8 @@
 import { Router } from "express";
+import { getAssistants } from "../controllers/assistant";
 
 const router = Router();
 
-router.get("/");
+router.get("/", getAssistants);
 
 export default router;
