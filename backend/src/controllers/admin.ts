@@ -1,8 +1,9 @@
 import { RequestHandler } from "express";
-import Admin from "../models/admin";
 import { z } from "zod";
-import User from "../models/user";
 import { hash } from "bcrypt";
+import { Roles } from "../constants";
+import Admin from "../models/admin";
+import User from "../models/user";
 
 export const getAdmins: RequestHandler = async (_, res) => {
   const admins = await Admin.find();
@@ -93,7 +94,7 @@ export const registerAdmin: RequestHandler = async (req, res) => {
     email,
     password: hashedPassword,
     contactNo,
-    role: "Admin",
+    role: Roles.Admin,
   });
 
   const admin = new Admin({
@@ -104,4 +105,4 @@ export const registerAdmin: RequestHandler = async (req, res) => {
   await admin.save();
 
   res.status(201).json(user);
-}
+};

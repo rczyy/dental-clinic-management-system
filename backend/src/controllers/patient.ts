@@ -1,8 +1,9 @@
 import { RequestHandler } from "express";
-import Patient from "../models/patient";
-import User from "../models/user";
 import { z } from "zod";
 import { hash } from "bcrypt";
+import { Roles } from "../constants";
+import Patient from "../models/patient";
+import User from "../models/user";
 
 export const getPatients: RequestHandler = async (_, res) => {
   const patients = await Patient.find();
@@ -93,7 +94,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
     email,
     password: hashedPassword,
     contactNo,
-    role: "Patient",
+    role: Roles.Patient,
   });
 
   const patient = new Patient({

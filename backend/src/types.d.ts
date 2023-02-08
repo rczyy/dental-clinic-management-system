@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { Roles } from "./constants";
 
 declare module "express-session" {
   interface SessionData {
@@ -43,13 +44,7 @@ declare global {
     email: string;
     password: string;
     contactNo: string;
-    role:
-      | "Admin"
-      | "Manager"
-      | "Dentist"
-      | "Assistant"
-      | "Front Desk"
-      | "Patient";
+    role: Roles;
     createdAt: Date;
     updatedAt: Date;
   }
