@@ -190,3 +190,58 @@ export const registerStaff: RequestHandler = async (req, res) => {
 
   res.status(201).json(user);
 };
+
+export const removeStaff: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    res.status(401).json({ message: token.message });
+    return;
+  }
+
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
+    res.status(401).json({ message: "Unauthorized to do this" });
+    return;
+  }
+
+  const { userId } = req.params;
+
+  if (!isValidObjectId(userId)) {
+    res.status(400).json({ message: "Invalid user ID" });
+    return;
+  }
+
+  const deletedStaff = await Staff.findOneAndDelete({ userId });
+
+  if (!deletedStaff) {
+    res.status(400).json({ message: "Staff doesn't exist" });
+    return;
+  }
+
+  const deletedUser = await User.findByIdAndDelete(userId);
+
+  if (!deletedUser) {
+    res.status(400).json({ message: "User doesn't exist" });
+    return;
+  }
+
+  if (deletedUser.role === Roles.Manager) {
+    await Manager.findOneAndDelete({ staffId: deletedStaff._id });
+  }
+
+  if (deletedUser.role === Roles.Assistant) {
+    await Assistant.findOneAndDelete({ staffId: deletedStaff._id });
+  }
+
+  if (deletedUser.role === Roles.Dentist) {
+    await Dentist.findOneAndDelete({ staffId: deletedStaff._id });
+  }
+
+  if (deletedUser.role === Roles.FrontDesk) {
+    await FrontDesk.findOneAndDelete({ staffId: deletedStaff._id });
+  }
+
+  res
+    .status(200)
+    .json({ _id: deletedUser._id, message: "Succesfully deleted the staff" });
+};

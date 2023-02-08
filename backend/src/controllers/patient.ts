@@ -157,3 +157,47 @@ export const registerPatient: RequestHandler = async (req, res) => {
 
   res.status(201).json(user);
 };
+
+export const removePatient: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    res.status(401).json({ message: token.message });
+    return;
+  }
+
+  if (
+    token.role !== Roles.Admin &&
+    token.role !== Roles.Manager &&
+    token.role !== Roles.Dentist &&
+    token.role !== Roles.Assistant &&
+    token.role !== Roles.FrontDesk
+  ) {
+    res.status(401).json({ message: "Unauthorized to do this" });
+    return;
+  }
+
+  const { userId } = req.params;
+
+  if (!isValidObjectId(userId)) {
+    res.status(400).json({ message: "Invalid user ID" });
+    return;
+  }
+  const deletedPatient = await Patient.findOneAndDelete({ userId });
+
+  if (!deletedPatient) {
+    res.status(400).json({ message: "Patient doesn't exist" });
+    return;
+  }
+
+  const deletedUser = await User.findByIdAndDelete(userId);
+
+  if (!deletedUser) {
+    res.status(400).json({ message: "User doesn't exist" });
+    return;
+  }
+
+  res
+    .status(200)
+    .json({ _id: deletedUser._id, message: "Succesfully deleted the patient" });
+};
