@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import { isValidObjectId } from "mongoose";
 import { z } from "zod";
 import { hash } from "bcrypt";
 import { Roles } from "../constants";
@@ -26,6 +27,31 @@ export const getStaffs: RequestHandler = async (req, res) => {
   const staffs = await Staff.find();
 
   res.status(200).json(staffs);
+};
+
+export const getStaff: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    res.status(401).json({ message: token.message });
+    return;
+  }
+
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
+    res.status(401).json({ message: "Unauthorized to do this" });
+    return;
+  }
+
+  const { userId } = req.params;
+
+  if (!isValidObjectId(userId)) {
+    res.status(400).json({ message: "Invalid user ID" });
+    return;
+  }
+
+  const staff = await Staff.findOne({ userId });
+
+  res.status(200).json(staff);
 };
 
 export const registerStaff: RequestHandler = async (req, res) => {

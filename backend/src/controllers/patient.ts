@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import { isValidObjectId } from "mongoose";
 import { z } from "zod";
 import { hash } from "bcrypt";
 import { Roles } from "../constants";
@@ -28,6 +29,37 @@ export const getPatients: RequestHandler = async (req, res) => {
   const patients = await Patient.find();
 
   res.status(200).json(patients);
+};
+
+export const getPatient: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    res.status(401).json({ message: token.message });
+    return;
+  }
+
+  if (
+    token.role !== Roles.Admin &&
+    token.role !== Roles.Manager &&
+    token.role !== Roles.Dentist &&
+    token.role !== Roles.Assistant &&
+    token.role !== Roles.FrontDesk
+  ) {
+    res.status(401).json({ message: "Unauthorized to do this" });
+    return;
+  }
+
+  const { userId } = req.params;
+
+  if (!isValidObjectId(userId)) {
+    res.status(400).json({ message: "Invalid user ID" });
+    return;
+  }
+
+  const patient = await Patient.findOne({ userId });
+
+  res.status(200).json(patient);
 };
 
 export const registerPatient: RequestHandler = async (req, res) => {
