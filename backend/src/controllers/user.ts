@@ -84,3 +84,9 @@ export const loginUser: RequestHandler = async (req, res) => {
 
   res.status(200).json({ user: existingUser, token });
 };
+
+export const logoutUser: RequestHandler = (req, res) => {
+  req.session.destroy(() =>
+    res.status(200).json({ message: "Successfully logged out" })
+  );
+};
