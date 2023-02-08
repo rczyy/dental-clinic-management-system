@@ -7,11 +7,18 @@ declare module "express-session" {
   }
 }
 
+declare module "jsonwebtoken" {
+  export interface RoleJwtPayload extends jwt.JwtPayload {
+    role: string;
+  }
+}
+
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
       MONGO_URI: string;
       SESSION_SECRET: string;
+      JWT_SECRET: string;
       NODE_ENV: "development" | "production";
     }
   }
