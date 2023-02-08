@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { getPatients } from "../controllers/patient";
+import { getPatients, registerPatient } from "../controllers/patient";
 
 const router = Router();
 
 router.get("/", getPatients);
+router.post("/register", registerPatient);
 
 export default router;

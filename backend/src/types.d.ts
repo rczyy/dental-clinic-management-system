@@ -1,6 +1,20 @@
 import { Types } from "mongoose";
 
+declare module "express-session" {
+  interface SessionData {
+    uid: Types.ObjectId;
+  }
+}
+
 declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      MONGO_URI: string;
+      SESSION_SECRET: string;
+      NODE_ENV: "development" | "production";
+    }
+  }
+
   interface Name {
     firstName: string;
     middleName: string;
@@ -13,6 +27,13 @@ declare global {
     city: string;
     barangay: string;
     street: string;
+  }
+
+  interface ErrorBody {
+    formErrors?: string[];
+    fieldErrors?: {
+      [key: string]: string[];
+    };
   }
 
   interface User {
