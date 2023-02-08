@@ -7,22 +7,14 @@ import jwt from "jsonwebtoken";
 import User from "../models/user";
 
 export const getUsers: RequestHandler = async (req, res) => {
-  const decoded = verifyToken(req.headers.authorization);
+  const token = verifyToken(req.headers.authorization);
 
-  if ("message" in decoded) {
-    res.status(401).json({ message: decoded.message });
+  if ("message" in token) {
+    res.status(401).json({ message: token.message });
     return;
   }
 
-  const { role } = decoded;
-
-  if (
-    role !== Roles.Admin &&
-    role !== Roles.Manager &&
-    role !== Roles.Dentist &&
-    role !== Roles.Assistant &&
-    role !== Roles.FrontDesk
-  ) {
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
     res.status(401).json({ message: "Unauthorized to do this" });
     return;
   }

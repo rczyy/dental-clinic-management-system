@@ -2,10 +2,23 @@ import { RequestHandler } from "express";
 import { z } from "zod";
 import { hash } from "bcrypt";
 import { Roles } from "../constants";
+import { verifyToken } from "../utilities/verifyToken";
 import Admin from "../models/admin";
 import User from "../models/user";
 
-export const getAdmins: RequestHandler = async (_, res) => {
+export const getAdmins: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    res.status(401).json({ message: token.message });
+    return;
+  }
+
+  if (token.role !== Roles.Admin) {
+    res.status(401).json({ message: "Unauthorized to do this" });
+    return;
+  }
+
   const admins = await Admin.find();
 
   res.status(200).json(admins);

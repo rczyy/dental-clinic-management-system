@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { z } from "zod";
 import { hash } from "bcrypt";
 import { Roles } from "../constants";
+import { verifyToken } from "../utilities/verifyToken";
 import User from "../models/user";
 import Staff from "../models/staff";
 import Manager from "../models/manager";
@@ -9,13 +10,37 @@ import Assistant from "../models/assistant";
 import Dentist from "../models/dentist";
 import FrontDesk from "../models/frontDesk";
 
-export const getStaffs: RequestHandler = async (_, res) => {
+export const getStaffs: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    res.status(401).json({ message: token.message });
+    return;
+  }
+
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
+    res.status(401).json({ message: "Unauthorized to do this" });
+    return;
+  }
+
   const staffs = await Staff.find();
 
   res.status(200).json(staffs);
 };
 
 export const registerStaff: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    res.status(401).json({ message: token.message });
+    return;
+  }
+
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
+    res.status(401).json({ message: "Unauthorized to do this" });
+    return;
+  }
+
   const userSchema = z
     .object({
       firstName: z.string({ required_error: "First name is required" }),
@@ -136,5 +161,6 @@ export const registerStaff: RequestHandler = async (req, res) => {
     });
     await frontDesk.save();
   }
+
   res.status(201).json(user);
 };

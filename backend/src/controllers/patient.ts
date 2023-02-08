@@ -2,10 +2,29 @@ import { RequestHandler } from "express";
 import { z } from "zod";
 import { hash } from "bcrypt";
 import { Roles } from "../constants";
+import { verifyToken } from "../utilities/verifyToken";
 import Patient from "../models/patient";
 import User from "../models/user";
 
-export const getPatients: RequestHandler = async (_, res) => {
+export const getPatients: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    res.status(401).json({ message: token.message });
+    return;
+  }
+
+  if (
+    token.role !== Roles.Admin &&
+    token.role !== Roles.Manager &&
+    token.role !== Roles.Dentist &&
+    token.role !== Roles.Assistant &&
+    token.role !== Roles.FrontDesk
+  ) {
+    res.status(401).json({ message: "Unauthorized to do this" });
+    return;
+  }
+
   const patients = await Patient.find();
 
   res.status(200).json(patients);
