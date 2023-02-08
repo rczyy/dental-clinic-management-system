@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
+import Patient from "../models/patient";
+import User from "../models/user";
 import { z } from "zod";
 import { hash } from "bcrypt";
-import User from "../models/user";
-import Patient from "../models/patient";
 
 export const getPatients: RequestHandler = async (_, res) => {
   const patients = await Patient.find();
