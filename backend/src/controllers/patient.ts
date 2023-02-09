@@ -166,13 +166,7 @@ export const removePatient: RequestHandler = async (req, res) => {
     return;
   }
 
-  if (
-    token.role !== Roles.Admin &&
-    token.role !== Roles.Manager &&
-    token.role !== Roles.Dentist &&
-    token.role !== Roles.Assistant &&
-    token.role !== Roles.FrontDesk
-  ) {
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
     res.status(401).json({ message: "Unauthorized to do this" });
     return;
   }
