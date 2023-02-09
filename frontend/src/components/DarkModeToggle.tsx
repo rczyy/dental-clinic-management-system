@@ -8,7 +8,7 @@ type Props = {
 
 const DarkModeToggle = ({ className }: Props) => {
   const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("theme") === "dark"
+    localStorage.getItem("theme") === "darkTheme"
   );
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const DarkModeToggle = ({ className }: Props) => {
     <div className={className}>
       {darkMode ? (
         <button
-          data-set-theme="acid"
+          data-set-theme="lightTheme"
           data-act-class="ACTIVECLASS"
           onClick={() => setDarkMode(false)}
         >
@@ -27,7 +27,7 @@ const DarkModeToggle = ({ className }: Props) => {
         </button>
       ) : (
         <button
-          data-set-theme="dracula"
+          data-set-theme="darkTheme"
           data-act-class="ACTIVECLASS"
           onClick={() => setDarkMode(true)}
         >

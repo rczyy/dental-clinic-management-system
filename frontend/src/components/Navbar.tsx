@@ -11,7 +11,7 @@ const Navbar = (props: Props) => {
     <div className="navbar bg-base-100 shadow relative gap-8 px-4 md:px-8">
       <div className="max-w-screen-xl w-full m-auto">
         <div className="flex-1">
-          <a className="font-work font-extrabold text-3xl cursor-pointer">
+          <a className="font-work font-extrabold text-3xl cursor-pointer text-primary">
             Logo
           </a>
         </div>
