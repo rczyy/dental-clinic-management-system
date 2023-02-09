@@ -1,16 +1,22 @@
 import { useState } from "react";
 import { IoMenuOutline } from "react-icons/io5";
+import DarkModeToggle from "./DarkModeToggle";
+
 type Props = {};
 
 const Navbar = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <div className="navbar bg-base-100 shadow relative">
+    <div className="navbar bg-base-100 shadow relative gap-8 px-4 md:px-8">
       <div className="max-w-screen-xl w-full m-auto">
         <div className="flex-1">
-          <a className="normal-case text-xl cursor-pointer">daisyUI</a>
+          <a className="font-work font-extrabold text-3xl cursor-pointer">
+            Logo
+          </a>
         </div>
-        <div className="flex-none sm:hidden">
+        <div className="flex flex-none items-center gap-6 sm:hidden">
+          <DarkModeToggle className="flex items-center" />
           <IoMenuOutline
             onClick={() => {
               setIsOpen(!isOpen);
@@ -29,14 +35,15 @@ const Navbar = (props: Props) => {
           )}
         </div>
         <div className="flex-none hidden sm:flex gap-8">
-          <a className="border-b border-transparent hover:border-black py-1 cursor-pointer">
+          <a className="font-work font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer">
             Log In
           </a>
-          <a className="border-b border-transparent hover:border-black py-1 cursor-pointer">
+          <a className="font-work font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer">
             Sign Up
           </a>
         </div>
       </div>
+      <DarkModeToggle className="hidden sm:flex" />
     </div>
   );
 };

@@ -4,9 +4,12 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        work: ['Work Sans', 'sans-serif']
-      }
+        work: ["Work Sans", "sans-serif"],
+      },
     },
   },
   plugins: [require("daisyui")],
-}
+  daisyui: {
+    themes: ["acid", "dracula"],
+  },
+};
