@@ -1,36 +1,85 @@
+import { useForm, SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { FiAtSign } from "react-icons/fi";
+import * as yup from "yup";
 import FormInput from "../components/FormInput";
 
 type Props = {};
 
+const schema = yup
+  .object({
+    email: yup.string().email("Invalid email").required("Email is required"),
+    password: yup.string().required("Password is required"),
+  })
+  .required();
+
 const Login = (props: Props) => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit: SubmitHandler<LoginFormValues> = (data) => console.log(data);
+
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="bg-white flex justify-center text-zinc-800 w-96 p-16 rounded-box shadow relative">
-        <div className="flex flex-col gap-8">
-          <header className="flex flex-col gap-4 text-center">
-            <h1 className="text-4xl font-bold">Login</h1>
-            <p className="text-sm text-zinc-400">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem,
-              sapiente.
+    <main className="flex items-center justify-center">
+      <div className="flex bg-base-300 max-w-screen-lg w-full min-h-[40rem] rounded-box border border-base-200 shadow">
+        <section className="bg-base-300 w-1/2 rounded-box overflow-hidden hidden sm:block">
+          <img
+            src="https://picsum.photos/2000"
+            alt="Random"
+            className="w-full h-full object-cover"
+          />
+        </section>
+        <section className="bg-base-300 flex w-full sm:w-1/2 justify-center items-center rounded-box px-8 py-16 lg:px-20 relative">
+          <div className="flex flex-col gap-8">
+            <header className="flex flex-col gap-4 text-center">
+              <h1 className="text-4xl font-bold">Login</h1>
+              <p className="text-sm text-neutral">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem,
+                sapiente.
+              </p>
+            </header>
+            <form
+              className="flex flex-col gap-4"
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <FormInput
+                type="text"
+                label="email"
+                placeholder="Email"
+                register={register}
+                value={watch("email")}
+                error={errors.email?.message}
+                Logo={FiAtSign}
+              />
+              <FormInput
+                type="password"
+                label="password"
+                placeholder="Password"
+                register={register}
+                value={watch("password")}
+                error={errors.password?.message}
+              />
+              <a className="text-xs text-neutral ml-auto">Forgot Password</a>
+              <button
+                type="submit"
+                className="btn bg-primary border-primary text-zinc-50 my-8"
+              >
+                Log In
+              </button>
+            </form>
+          </div>
+          <footer className="text-center text-sm absolute bottom-0 p-4">
+            <p>
+              Don't have an account yet? <a className="text-primary">Sign Up</a>
             </p>
-          </header>
-          <form action="" className="flex flex-col gap-4">
-            <FormInput />
-            <FormInput />
-            <FormInput />
-            <FormInput />
-            <FormInput />
-            <FormInput />
-            <button type="submit" className="btn mt-8">
-              Log In
-            </button>
-          </form>
-        </div>
-        <footer className="text-center text-sm text-zinc-800 absolute bottom-0 p-4">
-          <p>
-            Don't have an account yet? <a>Sign Up</a>
-          </p>
-        </footer>
+          </footer>
+        </section>
       </div>
     </main>
   );
