@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FiAtSign } from "react-icons/fi";
+import { Link } from "react-router-dom";
+import { useRegisterPatient } from "../hooks/patient";
 import {
   getCities,
   getProvinces,
@@ -11,7 +13,6 @@ import {
 import * as yup from "yup";
 import Select from "react-select";
 import FormInput from "../components/FormInput";
-import { Link } from "react-router-dom";
 
 type Props = {};
 
@@ -37,8 +38,8 @@ const schema = yup
     contactNo: yup
       .string()
       .required("Contact Number is required")
-      .min(10, "Invalid phone number")
-      .max(10, "Invalid phone number"),
+      .min(11, "Invalid phone number")
+      .max(11, "Invalid phone number"),
   })
   .required();
 
@@ -55,6 +56,8 @@ const Signup = (props: Props) => {
   const oldProvinceValue = useRef<string>();
   const oldCityValue = useRef<string>();
 
+  const signupMutation = useRegisterPatient();
+
   const {
     control,
     register,
@@ -62,11 +65,11 @@ const Signup = (props: Props) => {
     watch,
     reset,
     formState: { errors },
-  } = useForm<SignupValues>({
+  } = useForm<FormValues>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<SignupValues> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<FormValues> = (data) => signupMutation.mutate(data);
 
   useEffect(() => {
     const getOptions = async () => {
@@ -385,14 +388,14 @@ const Signup = (props: Props) => {
                 type="submit"
                 className="btn bg-primary border-primary text-zinc-50 my-8"
               >
-                Log In
+                Sign up
               </button>
             </form>
           </div>
           <footer className="text-center text-sm absolute bottom-0 p-4">
             <p>
               Already have an account?{" "}
-              <Link to="login" className="text-primary">
+              <Link to="/login" className="text-primary">
                 Log in
               </Link>
             </p>

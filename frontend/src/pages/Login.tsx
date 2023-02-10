@@ -4,6 +4,7 @@ import { FiAtSign } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
 import FormInput from "../components/FormInput";
+import { useLogin } from "../hooks/user";
 
 type Props = {};
 
@@ -20,11 +21,13 @@ const Login = (props: Props) => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<LoginValues>({
+  } = useForm<FormValues>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<LoginValues> = (data) => console.log(data);
+  const loginMutation = useLogin();
+
+  const onSubmit: SubmitHandler<FormValues> = (data) => loginMutation.mutate(data);
 
   return (
     <main className="flex items-center justify-center">
@@ -77,7 +80,7 @@ const Login = (props: Props) => {
           </div>
           <footer className="text-center text-sm absolute bottom-0 p-4">
             <p>
-              Don't have an account yet? <Link to="signup" className="text-primary">Sign Up</Link>
+              Don't have an account yet? <Link to="/signup" className="text-primary">Sign Up</Link>
             </p>
           </footer>
         </section>
