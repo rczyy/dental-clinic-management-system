@@ -1,11 +1,6 @@
 /// <reference types="vite/client" />
 
-interface LoginFormValues {
-  email: string;
-  password: string;
-}
-
-interface RegisterFormValues {
+interface FormValues {
   firstName: string;
   middleName: string;
   lastName: string;
