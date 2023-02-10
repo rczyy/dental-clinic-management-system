@@ -27,19 +27,19 @@ const Navbar = (props: Props) => {
           {isOpen && (
             <ul className="menu bg-base-100 w-screen absolute top-12 -right-4 border border-base-200 shadow">
               <li>
-                <Link to="signup">Log in</Link>
+                <Link to="/login">Log in</Link>
               </li>
               <li>
-                <Link to="signup">Sign Up</Link>
+                <Link to="/signup">Sign Up</Link>
               </li>
             </ul>
           )}
         </div>
         <div className="flex-none hidden sm:flex gap-8">
-          <Link to="login" className="font-work font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer">
+          <Link to="/login" className="font-work font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer">
             Log In
           </Link>
-          <Link to="signup" className="font-work font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer">
+          <Link to="/signup" className="font-work font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer">
             Sign Up
           </Link>
         </div>
