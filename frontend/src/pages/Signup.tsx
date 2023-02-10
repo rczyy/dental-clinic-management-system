@@ -21,10 +21,7 @@ const schema = yup
     password: yup
       .string()
       .required("Password is required")
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})/,
-        "Password not strong enough"
-      ),
+      .min(6, "Password must be at least 6 characters"),
     confirmPassword: yup
       .string()
       .required("Confirm your Password")
@@ -43,11 +40,11 @@ const Signup = (props: Props) => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<SignupValues>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<SignupValues> = (data) => console.log(data);
 
   return (
     <main className="flex items-center justify-center">
