@@ -4,8 +4,8 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { IconType } from "react-icons/lib";
 
 type Props = {
-  label: Path<LoginFormValues>;
-  register: UseFormRegister<LoginFormValues>;
+  label: Path<FormValues>;
+  register: UseFormRegister<FormValues>;
   error: string | undefined;
   type: string;
   placeholder: string;
