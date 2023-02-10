@@ -3,6 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { FiAtSign } from "react-icons/fi";
 import * as yup from "yup";
 import FormInput from "../components/FormInput";
+import { Link } from "react-router-dom";
 
 type Props = {};
 
@@ -189,7 +190,10 @@ const Signup = (props: Props) => {
           </div>
           <footer className="text-center text-sm absolute bottom-0 p-4">
             <p>
-              Don't have an account yet? <a className="text-primary">Sign Up</a>
+              Already have an account?{" "}
+              <Link to="login" className="text-primary">
+                Log in
+              </Link>
             </p>
           </footer>
         </section>
