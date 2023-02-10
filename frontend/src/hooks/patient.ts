@@ -11,23 +11,28 @@ export const useGetPatients = () => {
 };
 
 export const useGetPatient = (id: string) => {
-  return useQuery({ queryKey: ["patients", id], queryFn: () => getPatient(id) });
+  return useQuery({
+    queryKey: ["patients", id],
+    queryFn: () => getPatient(id),
+  });
 };
 
 export const useRegisterPatient = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: registerPatient,
     onSuccess: () => {
-      useQueryClient().invalidateQueries(["patients"]);
+      queryClient.invalidateQueries(["patients"]);
     },
   });
 };
 
 export const useRemovePatient = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: removePatient,
     onSuccess: () => {
-      useQueryClient().invalidateQueries(["patients"]);
+      queryClient.invalidateQueries(["patients"]);
     },
   });
 };

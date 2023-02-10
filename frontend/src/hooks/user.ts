@@ -10,19 +10,21 @@ export const useGetUser = () => {
 };
 
 export const useLogin = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: login,
     onSuccess: () => {
-      useQueryClient().invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
 };
 
 export const useLogout = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      useQueryClient().invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
 };

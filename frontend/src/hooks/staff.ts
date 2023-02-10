@@ -15,19 +15,21 @@ export const useGetStaff = (id: string) => {
 };
 
 export const useRegisterStaff = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: registerStaff,
     onSuccess: () => {
-      useQueryClient().invalidateQueries(["staffs"]);
+      queryClient.invalidateQueries(["staffs"]);
     },
   });
 };
 
 export const useRemoveStaff = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: removeStaff,
     onSuccess: () => {
-      useQueryClient().invalidateQueries(["staffs"]);
+      queryClient.invalidateQueries(["staffs"]);
     },
   });
 };
