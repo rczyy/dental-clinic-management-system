@@ -1,7 +1,15 @@
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useState, useEffect, useRef } from "react";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FiAtSign } from "react-icons/fi";
+import {
+  getCities,
+  getProvinces,
+  getRegions,
+  getBarangays,
+} from "../api/philippineAddress";
 import * as yup from "yup";
+import Select from "react-select";
 import FormInput from "../components/FormInput";
 
 type Props = {};
@@ -37,16 +45,133 @@ const schema = yup
   .required();
 
 const Signup = (props: Props) => {
+  const [regions, setRegions] = useState<Region[]>();
+  const [regionOptions, setRegionOptions] = useState<SelectOption[]>();
+  const [provinces, setProvinces] = useState<Province[]>();
+  const [provinceOptions, setProvinceOptions] = useState<SelectOption[]>();
+  const [cities, setCities] = useState<City[]>();
+  const [cityOptions, setCityOptions] = useState<SelectOption[]>();
+  const [barangays, setBarangays] = useState<Barangay[]>();
+  const [barangayOptions, setBarangayOptions] = useState<SelectOption[]>();
+  // const regionInput = useRef<Select>();
+  // const provinceInput = useRef(null);
+  // const cityInput = useRef(null);
+  // const barangayInput = useRef(null);
+  const oldRegionValue = useRef<string>();
+  const oldProvinceValue = useRef<string>();
+  const oldCityValue = useRef<string>();
+
   const {
+    control,
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data);
+
+  useEffect(() => {
+    const getOptions = async () => {
+      if (!regions) {
+        const res = await getRegions();
+
+        setRegions(res);
+      } else {
+        if (!regionOptions) {
+          setRegionOptions(
+            regions.map((region) => ({
+              value: region.name,
+              label: region.name,
+            }))
+          );
+        }
+      }
+
+      if (watch("region") !== oldRegionValue.current) {
+        oldRegionValue.current = watch("region");
+        reset((formValues) => ({
+          ...formValues,
+          province: "",
+          city: "",
+          barangay: "",
+        }));
+
+        if (regions) {
+          const selectedRegion = regions.find(
+            (region) => region.name === watch("region")
+          );
+          const regionCode = selectedRegion ? selectedRegion.code : "";
+          const res = await getProvinces(regionCode);
+
+          setProvinces(res);
+          setProvinceOptions(
+            res.map((province) => ({
+              value: province.name,
+              label: province.name,
+            }))
+          );
+          setCityOptions(undefined);
+          setBarangayOptions(undefined);
+        }
+      }
+
+      if (watch("province") !== oldProvinceValue.current) {
+        oldProvinceValue.current = watch("province");
+        reset((formValues) => ({
+          ...formValues,
+          city: "",
+          barangay: "",
+        }));
+
+        if (provinces) {
+          const selectedProvince = provinces.find(
+            (province) => province.name === watch("province")
+          );
+          const provinceCode = selectedProvince ? selectedProvince.code : "";
+          const res = await getCities(provinceCode);
+
+          setCities(res);
+          setCityOptions(
+            res.map((city) => ({
+              value: city.name,
+              label: city.name,
+            }))
+          );
+          setBarangayOptions(undefined);
+        }
+      }
+
+      if (watch("city") !== oldCityValue.current) {
+        oldCityValue.current = watch("city");
+        reset((formValues) => ({
+          ...formValues,
+          barangay: "",
+        }));
+
+        if (cities) {
+          const selectedCity = cities.find(
+            (city) => city.name === watch("city")
+          );
+          const cityCode = selectedCity ? selectedCity.code : "";
+          const res = await getBarangays(cityCode);
+
+          setBarangays(res);
+          setBarangayOptions(
+            res.map((barangay) => ({
+              value: barangay.name,
+              label: barangay.name,
+            }))
+          );
+        }
+      }
+    };
+
+    getOptions();
+  }, [regions, watch("region"), watch("province"), watch("city")]);
 
   return (
     <main className="flex items-center justify-center">
@@ -98,41 +223,86 @@ const Signup = (props: Props) => {
                 error={errors.lastName?.message}
                 Logo={FiAtSign}
               />
-              <FormInput
-                type="text"
-                label="region"
-                placeholder="Region"
-                register={register}
-                value={watch("region")}
-                error={errors.region?.message}
-                Logo={FiAtSign}
+              <Controller
+                name="region"
+                control={control}
+                render={({ field: { onChange, value, ...field } }) => (
+                  <Select
+                    {...field}
+                    value={
+                      regionOptions &&
+                      regionOptions.find((c) => c.value === value)
+                    }
+                    placeholder="Region"
+                    onChange={(val) => onChange(val?.value)}
+                    options={regionOptions}
+                    isLoading={!regionOptions}
+                  />
+                )}
               />
-              <FormInput
-                type="text"
-                label="province"
-                placeholder="Province"
-                register={register}
-                value={watch("province")}
-                error={errors.province?.message}
-                Logo={FiAtSign}
+              <Controller
+                name="province"
+                control={control}
+                render={({ field: { onChange, value, ...field } }) => (
+                  <Select
+                    {...field}
+                    value={
+                      value
+                        ? provinceOptions &&
+                          provinceOptions.find(
+                            (province) => province.value === value
+                          )
+                        : null
+                    }
+                    placeholder="Province"
+                    onChange={(newValue) => onChange(newValue?.value)}
+                    options={provinceOptions}
+                    isLoading={!provinceOptions && !!watch("region")}
+                    isDisabled={!watch("region")}
+                  />
+                )}
               />
-              <FormInput
-                type="text"
-                label="city"
-                placeholder="City"
-                register={register}
-                value={watch("city")}
-                error={errors.city?.message}
-                Logo={FiAtSign}
+              <Controller
+                name="city"
+                control={control}
+                render={({ field: { onChange, value, ...field } }) => (
+                  <Select
+                    {...field}
+                    value={
+                      value
+                        ? cityOptions &&
+                          cityOptions.find((city) => city.value === value)
+                        : null
+                    }
+                    placeholder="City"
+                    onChange={(newValue) => onChange(newValue?.value)}
+                    options={cityOptions}
+                    isLoading={!cityOptions && !!watch("province")}
+                    isDisabled={!watch("province")}
+                  />
+                )}
               />
-              <FormInput
-                type="text"
-                label="barangay"
-                placeholder="Barangay"
-                register={register}
-                value={watch("barangay")}
-                error={errors.barangay?.message}
-                Logo={FiAtSign}
+              <Controller
+                name="barangay"
+                control={control}
+                render={({ field: { onChange, value, ...field } }) => (
+                  <Select
+                    {...field}
+                    value={
+                      value
+                        ? barangayOptions &&
+                          barangayOptions.find(
+                            (barangay) => barangay.value === value
+                          )
+                        : null
+                    }
+                    placeholder="Barangay"
+                    onChange={(newValue) => onChange(newValue?.value)}
+                    options={barangayOptions}
+                    isLoading={!barangayOptions && !!watch("city")}
+                    isDisabled={!watch("city")}
+                  />
+                )}
               />
               <FormInput
                 type="text"
