@@ -11,6 +11,7 @@ import {
 import * as yup from "yup";
 import Select from "react-select";
 import FormInput from "../components/FormInput";
+import { Link } from "react-router-dom";
 
 type Props = {};
 
@@ -28,10 +29,7 @@ const schema = yup
     password: yup
       .string()
       .required("Password is required")
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})/,
-        "Password not strong enough"
-      ),
+      .min(6, "Password must be at least 6 characters"),
     confirmPassword: yup
       .string()
       .required("Confirm your Password")
@@ -53,10 +51,6 @@ const Signup = (props: Props) => {
   const [cityOptions, setCityOptions] = useState<SelectOption[]>();
   const [barangays, setBarangays] = useState<Barangay[]>();
   const [barangayOptions, setBarangayOptions] = useState<SelectOption[]>();
-  // const regionInput = useRef<Select>();
-  // const provinceInput = useRef(null);
-  // const cityInput = useRef(null);
-  // const barangayInput = useRef(null);
   const oldRegionValue = useRef<string>();
   const oldProvinceValue = useRef<string>();
   const oldCityValue = useRef<string>();
@@ -68,11 +62,11 @@ const Signup = (props: Props) => {
     watch,
     reset,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<SignupValues>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<SignupValues> = (data) => console.log(data);
 
   useEffect(() => {
     const getOptions = async () => {
@@ -397,7 +391,10 @@ const Signup = (props: Props) => {
           </div>
           <footer className="text-center text-sm absolute bottom-0 p-4">
             <p>
-              Don't have an account yet? <a className="text-primary">Sign Up</a>
+              Already have an account?{" "}
+              <Link to="login" className="text-primary">
+                Log in
+              </Link>
             </p>
           </footer>
         </section>

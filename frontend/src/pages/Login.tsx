@@ -20,11 +20,11 @@ const Login = (props: Props) => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<LoginValues>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<LoginValues> = (data) => console.log(data);
 
   return (
     <main className="flex items-center justify-center">
