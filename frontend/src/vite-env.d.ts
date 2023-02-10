@@ -1,10 +1,8 @@
 /// <reference types="vite/client" />
 
-interface LoginValues {
+interface FormValues {
   email: string;
   password: string;
-}
-interface SignupValues {
   firstName: string;
   middleName: string;
   lastName: string;
@@ -13,8 +11,6 @@ interface SignupValues {
   city: string;
   barangay: string;
   street: string;
-  email: string;
-  password: string;
   confirmPassword: string;
   contactNo: string;
 }

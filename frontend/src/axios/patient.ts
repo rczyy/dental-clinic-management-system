@@ -3,21 +3,21 @@ import axios from "axios";
 const URL = import.meta.env.VITE_AXIOS_BASE_URL;
 
 export const getPatients = async () => {
-  const res = await axios.get(`${URL}/patient`);
+  const res = await axios.get(`${URL}/patient`, {withCredentials: true});
   return res.data;
 };
 
 export const getPatient = async (id: string) => {
-  const res = await axios.get(`${URL}/patient/${id}`);
+  const res = await axios.get(`${URL}/patient/${id}`, {withCredentials: true});
   return res.data;
 };
 
-export const registerPatient = async (form: SignupValues) => {
-  const res = await axios.post(`${URL}/patient/register`, form);
+export const registerPatient = async (form: FormValues) => {
+  const res = await axios.post(`${URL}/patient/register`, form, {withCredentials: true});
   return res.data;
 };
 
 export const removePatient = async (id: string) => {
-  const res = await axios.delete(`${URL}/patient/remove/${id}`);
+  const res = await axios.delete(`${URL}/patient/remove/${id}`, {withCredentials: true});
   return res.data;
 };

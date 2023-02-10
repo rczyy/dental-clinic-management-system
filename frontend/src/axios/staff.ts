@@ -3,21 +3,21 @@ import axios from "axios";
 const URL = import.meta.env.VITE_AXIOS_BASE_URL;
 
 export const getStaffs = async () => {
-  const res = await axios.get(`${URL}/staff`);
+  const res = await axios.get(`${URL}/staff`, {withCredentials: true});
   return res.data;
 };
 
 export const getStaff = async (id: string) => {
-  const res = await axios.get(`${URL}/staff/${id}`);
+  const res = await axios.get(`${URL}/staff/${id}`, {withCredentials: true});
   return res.data;
 };
 
-export const registerStaff = async (form: SignupValues) => {
-  const res = await axios.post(`${URL}/staff/register`, form);
+export const registerStaff = async (form: FormValues) => {
+  const res = await axios.post(`${URL}/staff/register`, form, {withCredentials: true});
   return res.data;
 };
 
 export const removeStaff = async (id: string) => {
-  const res = await axios.delete(`${URL}/staff/remove/${id}`);
+  const res = await axios.delete(`${URL}/staff/remove/${id}`, {withCredentials: true});
   return res.data;
 };
