@@ -91,7 +91,10 @@ const Signup = (props: Props) => {
         }
       }
 
-      if (watch("region") !== oldRegionValue.current) {
+      if (
+        watch("region") !== oldRegionValue.current &&
+        watch("region") !== ""
+      ) {
         oldRegionValue.current = watch("region");
         reset((formValues) => ({
           ...formValues,
@@ -119,7 +122,10 @@ const Signup = (props: Props) => {
         }
       }
 
-      if (watch("province") !== oldProvinceValue.current) {
+      if (
+        watch("province") !== oldProvinceValue.current &&
+        watch("province") !== ""
+      ) {
         oldProvinceValue.current = watch("province");
         reset((formValues) => ({
           ...formValues,
@@ -145,7 +151,7 @@ const Signup = (props: Props) => {
         }
       }
 
-      if (watch("city") !== oldCityValue.current) {
+      if (watch("city") !== oldCityValue.current && watch("city") !== "") {
         oldCityValue.current = watch("city");
         reset((formValues) => ({
           ...formValues,
@@ -233,6 +239,14 @@ const Signup = (props: Props) => {
                       regionOptions &&
                       regionOptions.find((c) => c.value === value)
                     }
+                    classNames={{
+                      control: ({ hasValue }) =>
+                        "pl-1.5 py-2 " + (hasValue && "!border-primary"),
+                      dropdownIndicator: ({ hasValue }) =>
+                        hasValue ? "!text-primary" : "",
+                      indicatorSeparator: ({ hasValue }) =>
+                        hasValue ? "!bg-primary" : "",
+                    }}
                     placeholder="Region"
                     onChange={(val) => onChange(val?.value)}
                     options={regionOptions}
@@ -254,6 +268,14 @@ const Signup = (props: Props) => {
                           )
                         : null
                     }
+                    classNames={{
+                      control: ({ hasValue }) =>
+                        "pl-1.5 py-2 " + (hasValue && "!border-primary"),
+                      dropdownIndicator: ({ hasValue }) =>
+                        hasValue ? "!text-primary" : "",
+                      indicatorSeparator: ({ hasValue }) =>
+                        hasValue ? "!bg-primary" : "",
+                    }}
                     placeholder="Province"
                     onChange={(newValue) => onChange(newValue?.value)}
                     options={provinceOptions}
@@ -274,6 +296,14 @@ const Signup = (props: Props) => {
                           cityOptions.find((city) => city.value === value)
                         : null
                     }
+                    classNames={{
+                      control: ({ hasValue }) =>
+                        "pl-1.5 py-2 " + (hasValue && "!border-primary"),
+                      dropdownIndicator: ({ hasValue }) =>
+                        hasValue ? "!text-primary" : "",
+                      indicatorSeparator: ({ hasValue }) =>
+                        hasValue ? "!bg-primary" : "",
+                    }}
                     placeholder="City"
                     onChange={(newValue) => onChange(newValue?.value)}
                     options={cityOptions}
@@ -296,6 +326,14 @@ const Signup = (props: Props) => {
                           )
                         : null
                     }
+                    classNames={{
+                      control: ({ hasValue }) =>
+                        "pl-1.5 py-2 " + (hasValue && "!border-primary"),
+                      dropdownIndicator: ({ hasValue }) =>
+                        hasValue ? "!text-primary" : "",
+                      indicatorSeparator: ({ hasValue }) =>
+                        hasValue ? "!bg-primary" : "",
+                    }}
                     placeholder="Barangay"
                     onChange={(newValue) => onChange(newValue?.value)}
                     options={barangayOptions}
