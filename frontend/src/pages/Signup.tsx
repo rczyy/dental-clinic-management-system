@@ -44,6 +44,7 @@ const schema = yup
   .required();
 
 const Signup = (props: Props) => {
+  const [step, setStep] = useState<number>(1);
   const [regions, setRegions] = useState<Region[]>();
   const [regionOptions, setRegionOptions] = useState<SelectOption[]>();
   const [provinces, setProvinces] = useState<Province[]>();
@@ -64,14 +65,46 @@ const Signup = (props: Props) => {
     handleSubmit,
     watch,
     reset,
+    trigger,
     formState: { errors },
   } = useForm<FormValues>({
+    defaultValues: {
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      contactNo: "",
+      region: "",
+      province: "",
+      city: "",
+      barangay: "",
+      street: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
     resolver: yupResolver(schema),
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    data.contactNo = "+63" + watch("contactNo");
-    signupMutation.mutate(data);
+    signupMutation.mutate(
+      { ...data, contactNo: "+63" + watch("contactNo") },
+      {
+        onSuccess: () =>
+          reset({
+            firstName: "",
+            middleName: "",
+            lastName: "",
+            region: "",
+            province: "",
+            city: "",
+            barangay: "",
+            street: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+          }),
+      }
+    );
   };
 
   useEffect(() => {
@@ -96,12 +129,15 @@ const Signup = (props: Props) => {
         watch("region") !== ""
       ) {
         oldRegionValue.current = watch("region");
-        reset((formValues) => ({
-          ...formValues,
-          province: "",
-          city: "",
-          barangay: "",
-        }));
+        reset(
+          (formValues) => ({
+            ...formValues,
+            province: "",
+            city: "",
+            barangay: "",
+          }),
+          { keepErrors: true }
+        );
 
         if (regions) {
           const selectedRegion = regions.find(
@@ -127,11 +163,14 @@ const Signup = (props: Props) => {
         watch("province") !== ""
       ) {
         oldProvinceValue.current = watch("province");
-        reset((formValues) => ({
-          ...formValues,
-          city: "",
-          barangay: "",
-        }));
+        reset(
+          (formValues) => ({
+            ...formValues,
+            city: "",
+            barangay: "",
+          }),
+          { keepErrors: true }
+        );
 
         if (provinces) {
           const selectedProvince = provinces.find(
@@ -153,10 +192,13 @@ const Signup = (props: Props) => {
 
       if (watch("city") !== oldCityValue.current && watch("city") !== "") {
         oldCityValue.current = watch("city");
-        reset((formValues) => ({
-          ...formValues,
-          barangay: "",
-        }));
+        reset(
+          (formValues) => ({
+            ...formValues,
+            barangay: "",
+          }),
+          { keepErrors: true }
+        );
 
         if (cities) {
           const selectedCity = cities.find(
@@ -192,242 +234,365 @@ const Signup = (props: Props) => {
         <section className="bg-base-300 flex w-full sm:w-1/2 justify-center items-center rounded-box px-8 py-16 lg:px-20 relative">
           <div className="flex flex-col gap-8">
             <header className="flex flex-col gap-4 text-center">
-              <h1 className="text-4xl font-bold">Sign Up</h1>
+              <ul className="steps mb-8">
+                <li
+                  className={"step step-primary text-xs after:!text-zinc-100"}
+                >
+                  Personal details
+                </li>
+                <li
+                  className={
+                    "step text-xs after:!text-zinc-100 " +
+                    (step >= 2
+                      ? "step-primary"
+                      : "before:!bg-neutral after:!bg-neutral")
+                  }
+                >
+                  Address details
+                </li>
+                <li
+                  className={
+                    "step text-xs after:!text-zinc-100 " +
+                    (step >= 3
+                      ? "step-primary"
+                      : "before:!bg-neutral after:!bg-neutral")
+                  }
+                >
+                  Account details
+                </li>
+              </ul>
+              <h1 className="text-4xl font-bold">
+                {step === 1
+                  ? "Personal details"
+                  : step === 2
+                  ? "Address details"
+                  : "Account details"}
+              </h1>
               <p className="text-sm text-neutral">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem,
                 sapiente.
               </p>
             </header>
-            <form
-              className="flex flex-col gap-4"
-              onSubmit={handleSubmit(onSubmit)}
-            >
-              <FormInput
-                type="text"
-                label="firstName"
-                placeholder="First Name"
-                register={register}
-                value={watch("firstName")}
-                error={errors.firstName?.message}
-                Logo={FiAtSign}
-              />
-              <FormInput
-                type="text"
-                label="middleName"
-                placeholder="Middle Name"
-                register={register}
-                value={watch("middleName")}
-                error={errors.middleName?.message}
-                Logo={FiAtSign}
-              />
-              <FormInput
-                type="text"
-                label="lastName"
-                placeholder="Last Name"
-                register={register}
-                value={watch("lastName")}
-                error={errors.lastName?.message}
-                Logo={FiAtSign}
-              />
-              <Controller
-                name="region"
-                control={control}
-                render={({ field: { onChange, value, ...field } }) => (
-                  <Select
-                    {...field}
-                    value={
-                      regionOptions &&
-                      regionOptions.find((region) => region.value === value)
-                    }
-                    classNames={{
-                      control: ({ hasValue }) =>
-                        "pl-1.5 py-2 !bg-base-300 " +
-                        (hasValue && "!border-primary"),
-                      placeholder: () => "!text-zinc-400 ",
-                      singleValue: () => "!text-base-content",
-                      input: () => "!text-base-content",
-                      option: ({ isSelected, isFocused }) =>
-                        isSelected || isFocused
-                          ? "!bg-primary !text-zinc-100"
-                          : "",
-                      menu: () => "!bg-base-300",
-                      dropdownIndicator: ({ hasValue }) =>
-                        hasValue ? "!text-primary" : "",
-                      indicatorSeparator: ({ hasValue }) =>
-                        hasValue ? "!bg-primary" : "",
-                    }}
-                    placeholder="Region"
-                    onChange={(val) => onChange(val?.value)}
-                    options={regionOptions}
-                    isLoading={!regionOptions}
+            <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+              {step === 1 && (
+                <div className="flex flex-col gap-4">
+                  <FormInput
+                    type="text"
+                    label="firstName"
+                    placeholder="First Name"
+                    register={register}
+                    value={watch("firstName")}
+                    error={errors.firstName?.message}
+                    Logo={FiAtSign}
                   />
-                )}
-              />
-              <Controller
-                name="province"
-                control={control}
-                render={({ field: { onChange, value, ...field } }) => (
-                  <Select
-                    {...field}
-                    value={
-                      value
-                        ? provinceOptions &&
-                          provinceOptions.find(
-                            (province) => province.value === value
-                          )
-                        : null
-                    }
-                    classNames={{
-                      control: ({ hasValue }) =>
-                        "pl-1.5 py-2 !bg-base-300 " +
-                        (hasValue && "!border-primary"),
-                      placeholder: () => "!text-zinc-400 ",
-                      singleValue: () => "!text-base-content",
-                      input: () => "!text-base-content",
-                      option: ({ isSelected, isFocused }) =>
-                        isSelected || isFocused
-                          ? "!bg-primary !text-zinc-100"
-                          : "",
-                      menu: () => "!bg-base-300",
-                      dropdownIndicator: ({ hasValue }) =>
-                        hasValue ? "!text-primary" : "",
-                      indicatorSeparator: ({ hasValue }) =>
-                        hasValue ? "!bg-primary" : "",
-                    }}
-                    placeholder="Province"
-                    onChange={(newValue) => onChange(newValue?.value)}
-                    options={provinceOptions}
-                    isLoading={!provinceOptions && !!watch("region")}
-                    isDisabled={!watch("region")}
+                  <FormInput
+                    type="text"
+                    label="middleName"
+                    placeholder="Middle Name"
+                    register={register}
+                    value={watch("middleName")}
+                    error={errors.middleName?.message}
+                    Logo={FiAtSign}
                   />
-                )}
-              />
-              <Controller
-                name="city"
-                control={control}
-                render={({ field: { onChange, value, ...field } }) => (
-                  <Select
-                    {...field}
-                    value={
-                      value
-                        ? cityOptions &&
-                          cityOptions.find((city) => city.value === value)
-                        : null
-                    }
-                    classNames={{
-                      control: ({ hasValue }) =>
-                        "pl-1.5 py-2 !bg-base-300 " +
-                        (hasValue && "!border-primary"),
-                      placeholder: () => "!text-zinc-400 ",
-                      singleValue: () => "!text-base-content",
-                      input: () => "!text-base-content",
-                      option: ({ isSelected, isFocused }) =>
-                        isSelected || isFocused
-                          ? "!bg-primary !text-zinc-100"
-                          : "",
-                      menu: () => "!bg-base-300",
-                      dropdownIndicator: ({ hasValue }) =>
-                        hasValue ? "!text-primary" : "",
-                      indicatorSeparator: ({ hasValue }) =>
-                        hasValue ? "!bg-primary" : "",
-                    }}
-                    placeholder="City"
-                    onChange={(newValue) => onChange(newValue?.value)}
-                    options={cityOptions}
-                    isLoading={!cityOptions && !!watch("province")}
-                    isDisabled={!watch("province")}
+                  <FormInput
+                    type="text"
+                    label="lastName"
+                    placeholder="Last Name"
+                    register={register}
+                    value={watch("lastName")}
+                    error={errors.lastName?.message}
+                    Logo={FiAtSign}
                   />
-                )}
-              />
-              <Controller
-                name="barangay"
-                control={control}
-                render={({ field: { onChange, value, ...field } }) => (
-                  <Select
-                    {...field}
-                    value={
-                      value
-                        ? barangayOptions &&
-                          barangayOptions.find(
-                            (barangay) => barangay.value === value
-                          )
-                        : null
-                    }
-                    classNames={{
-                      control: ({ hasValue }) =>
-                        "pl-1.5 py-2 !bg-base-300 " +
-                        (hasValue && "!border-primary"),
-                      placeholder: () => "!text-zinc-400 ",
-                      singleValue: () => "!text-base-content",
-                      input: () => "!text-base-content",
-                      option: ({ isSelected, isFocused }) =>
-                        isSelected || isFocused
-                          ? "!bg-primary !text-zinc-100"
-                          : "",
-                      menu: () => "!bg-base-300",
-                      dropdownIndicator: ({ hasValue }) =>
-                        hasValue ? "!text-primary" : "",
-                      indicatorSeparator: ({ hasValue }) =>
-                        hasValue ? "!bg-primary" : "",
-                    }}
-                    placeholder="Barangay"
-                    onChange={(newValue) => onChange(newValue?.value)}
-                    options={barangayOptions}
-                    isLoading={!barangayOptions && !!watch("city")}
-                    isDisabled={!watch("city")}
+                  <FormInput
+                    type="text"
+                    label="contactNo"
+                    placeholder="Contact Number"
+                    register={register}
+                    value={watch("contactNo")}
+                    error={errors.contactNo?.message}
+                    Logo={FiAtSign}
                   />
-                )}
-              />
-              <FormInput
-                type="text"
-                label="street"
-                placeholder="Street"
-                register={register}
-                value={watch("street")}
-                error={errors.street?.message}
-                Logo={FiAtSign}
-              />
-              <FormInput
-                type="text"
-                label="email"
-                placeholder="Email"
-                register={register}
-                value={watch("email")}
-                error={errors.email?.message}
-                Logo={FiAtSign}
-              />
-              <FormInput
-                type="password"
-                label="password"
-                placeholder="Password"
-                register={register}
-                value={watch("password")}
-                error={errors.password?.message}
-              />
-              <FormInput
-                type="password"
-                label="confirmPassword"
-                placeholder="Confirm Password"
-                register={register}
-                value={watch("confirmPassword")}
-                error={errors.confirmPassword?.message}
-              />
-              <FormInput
-                type="text"
-                label="contactNo"
-                placeholder="Contact Number"
-                register={register}
-                value={watch("contactNo")}
-                error={errors.contactNo?.message}
-                Logo={FiAtSign}
-              />
-              <a className="text-xs text-neutral ml-auto">Forgot Password</a>
-              <button
-                type="submit"
-                className="btn bg-primary border-primary text-zinc-50 my-8"
-              >
-                Sign up
-              </button>
+                  <button
+                    type="button"
+                    className="btn bg-primary border-primary text-zinc-50 my-8"
+                    onClick={async () => {
+                      if (
+                        await trigger([
+                          "firstName",
+                          "middleName",
+                          "lastName",
+                          "contactNo",
+                        ])
+                      ) {
+                        setStep(2);
+                      }
+                    }}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+
+              {step === 2 && (
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-1">
+                    <Controller
+                      name="region"
+                      control={control}
+                      render={({ field: { onChange, value, ...field } }) => (
+                        <Select
+                          {...field}
+                          value={
+                            regionOptions &&
+                            regionOptions.find(
+                              (region) => region.value === value
+                            )
+                          }
+                          classNames={{
+                            control: ({ hasValue }) =>
+                              "pl-1.5 py-2 !bg-base-300 " +
+                              (hasValue && "!border-primary"),
+                            placeholder: () => "!text-zinc-400 ",
+                            singleValue: () => "!text-base-content",
+                            input: () => "!text-base-content",
+                            option: ({ isSelected, isFocused }) =>
+                              isSelected || isFocused
+                                ? "!bg-primary !text-zinc-100"
+                                : "",
+                            menu: () => "!bg-base-300",
+                            dropdownIndicator: ({ hasValue }) =>
+                              hasValue ? "!text-primary" : "",
+                            indicatorSeparator: ({ hasValue }) =>
+                              hasValue ? "!bg-primary" : "",
+                          }}
+                          placeholder="Region"
+                          onChange={(val) => onChange(val?.value)}
+                          options={regionOptions}
+                          isLoading={!regionOptions}
+                        />
+                      )}
+                    />
+                    <span className="text-xs text-error pl-1">
+                      {errors.region?.message}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Controller
+                      name="province"
+                      control={control}
+                      render={({ field: { onChange, value, ...field } }) => (
+                        <Select
+                          {...field}
+                          value={
+                            value
+                              ? provinceOptions &&
+                                provinceOptions.find(
+                                  (province) => province.value === value
+                                )
+                              : null
+                          }
+                          classNames={{
+                            control: ({ hasValue }) =>
+                              "pl-1.5 py-2 !bg-base-300 " +
+                              (hasValue && "!border-primary"),
+                            placeholder: () => "!text-zinc-400 ",
+                            singleValue: () => "!text-base-content",
+                            input: () => "!text-base-content",
+                            option: ({ isSelected, isFocused }) =>
+                              isSelected || isFocused
+                                ? "!bg-primary !text-zinc-100"
+                                : "",
+                            menu: () => "!bg-base-300",
+                            dropdownIndicator: ({ hasValue }) =>
+                              hasValue ? "!text-primary" : "",
+                            indicatorSeparator: ({ hasValue }) =>
+                              hasValue ? "!bg-primary" : "",
+                          }}
+                          placeholder="Province"
+                          onChange={(newValue) => onChange(newValue?.value)}
+                          options={provinceOptions}
+                          isLoading={!provinceOptions && !!watch("region")}
+                          isDisabled={!watch("region")}
+                        />
+                      )}
+                    />
+                    <span className="text-xs text-error pl-1">
+                      {errors.province?.message}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Controller
+                      name="city"
+                      control={control}
+                      render={({ field: { onChange, value, ...field } }) => (
+                        <Select
+                          {...field}
+                          value={
+                            value
+                              ? cityOptions &&
+                                cityOptions.find((city) => city.value === value)
+                              : null
+                          }
+                          classNames={{
+                            control: ({ hasValue }) =>
+                              "pl-1.5 py-2 !bg-base-300 " +
+                              (hasValue && "!border-primary"),
+                            placeholder: () => "!text-zinc-400 ",
+                            singleValue: () => "!text-base-content",
+                            input: () => "!text-base-content",
+                            option: ({ isSelected, isFocused }) =>
+                              isSelected || isFocused
+                                ? "!bg-primary !text-zinc-100"
+                                : "",
+                            menu: () => "!bg-base-300",
+                            dropdownIndicator: ({ hasValue }) =>
+                              hasValue ? "!text-primary" : "",
+                            indicatorSeparator: ({ hasValue }) =>
+                              hasValue ? "!bg-primary" : "",
+                          }}
+                          placeholder="City"
+                          onChange={(newValue) => onChange(newValue?.value)}
+                          options={cityOptions}
+                          isLoading={!cityOptions && !!watch("province")}
+                          isDisabled={!watch("province")}
+                        />
+                      )}
+                    />
+                    <span className="text-xs text-error pl-1">
+                      {errors.city?.message}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Controller
+                      name="barangay"
+                      control={control}
+                      render={({ field: { onChange, value, ...field } }) => (
+                        <Select
+                          {...field}
+                          value={
+                            value
+                              ? barangayOptions &&
+                                barangayOptions.find(
+                                  (barangay) => barangay.value === value
+                                )
+                              : null
+                          }
+                          classNames={{
+                            control: ({ hasValue }) =>
+                              "pl-1.5 py-2 !bg-base-300 " +
+                              (hasValue && "!border-primary"),
+                            placeholder: () => "!text-zinc-400 ",
+                            singleValue: () => "!text-base-content",
+                            input: () => "!text-base-content",
+                            option: ({ isSelected, isFocused }) =>
+                              isSelected || isFocused
+                                ? "!bg-primary !text-zinc-100"
+                                : "",
+                            menu: () => "!bg-base-300",
+                            dropdownIndicator: ({ hasValue }) =>
+                              hasValue ? "!text-primary" : "",
+                            indicatorSeparator: ({ hasValue }) =>
+                              hasValue ? "!bg-primary" : "",
+                          }}
+                          placeholder="Barangay"
+                          onChange={(newValue) => onChange(newValue?.value)}
+                          options={barangayOptions}
+                          isLoading={!barangayOptions && !!watch("city")}
+                          isDisabled={!watch("city")}
+                        />
+                      )}
+                    />
+                    <span className="text-xs text-error pl-1">
+                      {errors.barangay?.message}
+                    </span>
+                  </div>
+                  <FormInput
+                    type="text"
+                    label="street"
+                    placeholder="Street"
+                    register={register}
+                    value={watch("street")}
+                    error={errors.street?.message}
+                    Logo={FiAtSign}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      className="btn bg-primary flex-1 border-primary text-zinc-50 my-8"
+                      onClick={() => setStep(1)}
+                    >
+                      Previous
+                    </button>
+                    <button
+                      type="button"
+                      className="btn bg-primary flex-1 border-primary text-zinc-50 my-8"
+                      onClick={async () => {
+                        if (
+                          await trigger([
+                            "region",
+                            "province",
+                            "city",
+                            "barangay",
+                            "street",
+                          ])
+                        ) {
+                          setStep(3);
+                        }
+                      }}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {step === 3 && (
+                <div className="flex flex-col gap-4">
+                  <FormInput
+                    type="text"
+                    label="email"
+                    placeholder="Email"
+                    register={register}
+                    value={watch("email")}
+                    error={errors.email?.message}
+                    Logo={FiAtSign}
+                  />
+                  <FormInput
+                    type="password"
+                    label="password"
+                    placeholder="Password"
+                    register={register}
+                    value={watch("password")}
+                    error={errors.password?.message}
+                  />
+                  <FormInput
+                    type="password"
+                    label="confirmPassword"
+                    placeholder="Confirm Password"
+                    register={register}
+                    value={watch("confirmPassword")}
+                    error={errors.confirmPassword?.message}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      className="btn bg-primary flex-1 border-primary text-zinc-50 mt-8 mb-4"
+                      onClick={() => setStep(2)}
+                    >
+                      Previous
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn bg-primary flex-1 border-primary text-zinc-50 mt-8 mb-4"
+                    >
+                      Sign up
+                    </button>
+                  </div>
+                  <span className="text-xs text-error text-center pl-1">
+                    {signupMutation.error &&
+                      (signupMutation.error as any).response.data.formErrors}
+                  </span>
+                </div>
+              )}
             </form>
           </div>
           <footer className="text-center text-sm absolute bottom-0 p-4">
