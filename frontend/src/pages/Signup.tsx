@@ -65,11 +65,15 @@ const Signup = (props: Props) => {
     watch,
     reset,
     formState: { errors },
+    setValue,
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => signupMutation.mutate(data);
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+        setValue("contactNo", "+63" + watch("contactNo"))
+        console.log(data);
+  };
 
   useEffect(() => {
     const getOptions = async () => {
@@ -366,13 +370,12 @@ const Signup = (props: Props) => {
                 error={errors.password?.message}
               />
               <FormInput
-                type="text"
+                type="password"
                 label="confirmPassword"
                 placeholder="Confirm Password"
                 register={register}
                 value={watch("confirmPassword")}
                 error={errors.confirmPassword?.message}
-                Logo={FiAtSign}
               />
               <FormInput
                 type="text"
