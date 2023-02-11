@@ -7,3 +7,30 @@
 main {
   @apply min-h-screen pt-20 pb-4 px-4;
 }
+
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-base-300; 
+}
+ 
+::-webkit-scrollbar-thumb {
+  @apply bg-primary rounded-md; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-black; 
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

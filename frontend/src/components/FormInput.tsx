@@ -32,7 +32,12 @@ const FormInput = ({
           (value && "border-primary")
         }
       >
-        {label === "contactNo" && <span className="px-2 border-r">+63</span>}
+        {label === "contactNo" && (
+          <>
+            <span className="px-2">+63</span>
+            <div className={"w-[1px] h-[20px] " + (value ? "bg-primary" : "bg-zinc-300")}></div>
+          </>
+        )}
         <div className="flex items-center relative w-full">
           <label
             htmlFor={label}

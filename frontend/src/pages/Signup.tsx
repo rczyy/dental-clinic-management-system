@@ -65,14 +65,13 @@ const Signup = (props: Props) => {
     watch,
     reset,
     formState: { errors },
-    setValue,
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    data.contactNo = "+63" + watch("contactNo")
-    signupMutation.mutate(data)
+    data.contactNo = "+63" + watch("contactNo");
+    signupMutation.mutate(data);
   };
 
   useEffect(() => {
@@ -242,7 +241,16 @@ const Signup = (props: Props) => {
                     }
                     classNames={{
                       control: ({ hasValue }) =>
-                        "pl-1.5 py-2 " + (hasValue && "!border-primary"),
+                        "pl-1.5 py-2 !bg-base-300 " +
+                        (hasValue && "!border-primary"),
+                      placeholder: () => "!text-zinc-400 ",
+                      singleValue: () => "!text-base-content",
+                      input: () => "!text-base-content",
+                      option: ({ isSelected, isFocused }) =>
+                        isSelected || isFocused
+                          ? "!bg-primary !text-zinc-100"
+                          : "",
+                      menu: () => "!bg-base-300",
                       dropdownIndicator: ({ hasValue }) =>
                         hasValue ? "!text-primary" : "",
                       indicatorSeparator: ({ hasValue }) =>
@@ -271,7 +279,16 @@ const Signup = (props: Props) => {
                     }
                     classNames={{
                       control: ({ hasValue }) =>
-                        "pl-1.5 py-2 " + (hasValue && "!border-primary"),
+                        "pl-1.5 py-2 !bg-base-300 " +
+                        (hasValue && "!border-primary"),
+                      placeholder: () => "!text-zinc-400 ",
+                      singleValue: () => "!text-base-content",
+                      input: () => "!text-base-content",
+                      option: ({ isSelected, isFocused }) =>
+                        isSelected || isFocused
+                          ? "!bg-primary !text-zinc-100"
+                          : "",
+                      menu: () => "!bg-base-300",
                       dropdownIndicator: ({ hasValue }) =>
                         hasValue ? "!text-primary" : "",
                       indicatorSeparator: ({ hasValue }) =>
@@ -294,14 +311,21 @@ const Signup = (props: Props) => {
                     value={
                       value
                         ? cityOptions &&
-                          cityOptions.find(
-                            (city) => city.value === value
-                          )
+                          cityOptions.find((city) => city.value === value)
                         : null
                     }
                     classNames={{
                       control: ({ hasValue }) =>
-                        "pl-1.5 py-2 " + (hasValue && "!border-primary"),
+                        "pl-1.5 py-2 !bg-base-300 " +
+                        (hasValue && "!border-primary"),
+                      placeholder: () => "!text-zinc-400 ",
+                      singleValue: () => "!text-base-content",
+                      input: () => "!text-base-content",
+                      option: ({ isSelected, isFocused }) =>
+                        isSelected || isFocused
+                          ? "!bg-primary !text-zinc-100"
+                          : "",
+                      menu: () => "!bg-base-300",
                       dropdownIndicator: ({ hasValue }) =>
                         hasValue ? "!text-primary" : "",
                       indicatorSeparator: ({ hasValue }) =>
@@ -331,7 +355,16 @@ const Signup = (props: Props) => {
                     }
                     classNames={{
                       control: ({ hasValue }) =>
-                        "pl-1.5 py-2 " + (hasValue && "!border-primary"),
+                        "pl-1.5 py-2 !bg-base-300 " +
+                        (hasValue && "!border-primary"),
+                      placeholder: () => "!text-zinc-400 ",
+                      singleValue: () => "!text-base-content",
+                      input: () => "!text-base-content",
+                      option: ({ isSelected, isFocused }) =>
+                        isSelected || isFocused
+                          ? "!bg-primary !text-zinc-100"
+                          : "",
+                      menu: () => "!bg-base-300",
                       dropdownIndicator: ({ hasValue }) =>
                         hasValue ? "!text-primary" : "",
                       indicatorSeparator: ({ hasValue }) =>
