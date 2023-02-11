@@ -38,8 +38,8 @@ const schema = yup
     contactNo: yup
       .string()
       .required("Contact Number is required")
-      .min(11, "Invalid phone number")
-      .max(11, "Invalid phone number"),
+      .min(10, "Invalid phone number")
+      .max(10, "Invalid phone number"),
   })
   .required();
 
@@ -71,8 +71,8 @@ const Signup = (props: Props) => {
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-        setValue("contactNo", "+63" + watch("contactNo"))
-        console.log(data);
+    data.contactNo = "+63" + watch("contactNo")
+    signupMutation.mutate(data)
   };
 
   useEffect(() => {
@@ -238,7 +238,7 @@ const Signup = (props: Props) => {
                     {...field}
                     value={
                       regionOptions &&
-                      regionOptions.find((c) => c.value === value)
+                      regionOptions.find((region) => region.value === value)
                     }
                     classNames={{
                       control: ({ hasValue }) =>
@@ -294,7 +294,9 @@ const Signup = (props: Props) => {
                     value={
                       value
                         ? cityOptions &&
-                          cityOptions.find((city) => city.value === value)
+                          cityOptions.find(
+                            (city) => city.value === value
+                          )
                         : null
                     }
                     classNames={{
