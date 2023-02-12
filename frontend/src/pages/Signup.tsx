@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FiAtSign } from "react-icons/fi";
+import { BsPerson, BsHouseDoor } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { useRegisterPatient } from "../hooks/patient";
 import {
@@ -34,12 +35,12 @@ const schema = yup
     confirmPassword: yup
       .string()
       .required("Confirm your Password")
-      .oneOf([yup.ref("password")], "Passwords must match"),
+      .oneOf([yup.ref("password")], "Passwords doesn't match"),
     contactNo: yup
       .string()
-      .required("Contact Number is required")
-      .min(10, "Invalid phone number")
-      .max(10, "Invalid phone number"),
+      .required("Invalid contact number")
+      .min(10, "Invalid contact number")
+      .max(10, "Invalid contact number"),
   })
   .required();
 
@@ -283,7 +284,7 @@ const Signup = (props: Props) => {
                     register={register}
                     value={watch("firstName")}
                     error={errors.firstName?.message}
-                    Logo={FiAtSign}
+                    Logo={BsPerson}
                   />
                   <FormInput
                     type="text"
@@ -292,7 +293,7 @@ const Signup = (props: Props) => {
                     register={register}
                     value={watch("middleName")}
                     error={errors.middleName?.message}
-                    Logo={FiAtSign}
+                    Logo={BsPerson}
                   />
                   <FormInput
                     type="text"
@@ -301,16 +302,17 @@ const Signup = (props: Props) => {
                     register={register}
                     value={watch("lastName")}
                     error={errors.lastName?.message}
-                    Logo={FiAtSign}
+                    Logo={BsPerson}
                   />
                   <FormInput
-                    type="text"
+                    type="number"
+                    inputMode="numeric"
                     label="contactNo"
                     placeholder="Contact Number"
                     register={register}
                     value={watch("contactNo")}
                     error={errors.contactNo?.message}
-                    Logo={FiAtSign}
+                    Logo={BsPerson}
                   />
                   <button
                     type="button"
@@ -369,9 +371,9 @@ const Signup = (props: Props) => {
                           onChange={(val) => onChange(val?.value)}
                           options={regionOptions}
                           isLoading={!regionOptions}
-                        />
-                      )}
-                    />
+                          />
+                          )}
+                          />
                     <span className="text-xs text-error pl-1">
                       {errors.region?.message}
                     </span>
@@ -513,7 +515,7 @@ const Signup = (props: Props) => {
                     register={register}
                     value={watch("street")}
                     error={errors.street?.message}
-                    Logo={FiAtSign}
+                    Logo={BsHouseDoor}
                   />
                   <div className="flex gap-2">
                     <button
