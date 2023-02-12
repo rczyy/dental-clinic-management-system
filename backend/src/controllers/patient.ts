@@ -76,18 +76,12 @@ export const registerPatient: RequestHandler = async (req, res) => {
       email: z.string({ required_error: "Email is required" }).email(),
       password: z
         .string({ required_error: "Password is required" })
-        .min(6, "Password must be atleast 6 characters"),
+        .min(6, "Password must be at least 6 characters"),
       confirmPassword: z.string({ required_error: "Confirm your password" }),
-      contactNo: z.union([
-        z
-          .string({ required_error: "Invalid contact number" })
-          .startsWith("+63", "Invalid contact number")
-          .length(13, "Invalid contact number"),
-        z
-          .string({ required_error: "Invalid contact number" })
-          .startsWith("09", "Invalid contact number")
-          .length(11, "Invalid contact number"),
-      ]),
+      contactNo: z
+        .string({ required_error: "Invalid contact number" })
+        .startsWith("+63", "Invalid contact number")
+        .length(13, "Invalid contact number"),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords doesn't match",
