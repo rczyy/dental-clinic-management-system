@@ -6,7 +6,7 @@ export const useGetUsers = () => {
 };
 
 export const useGetUser = () => {
-  return useQuery({ queryKey: ["me"], queryFn: getUser });
+  return useQuery({ queryKey: ["user"], queryFn: getUser });
 };
 
 export const useLogin = () => {
