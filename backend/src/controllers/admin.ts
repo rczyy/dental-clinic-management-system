@@ -10,12 +10,14 @@ export const getAdmins: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
   if ("message" in token) {
-    res.status(401).json({ message: token.message });
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
     return;
   }
 
   if (token.role !== Roles.Admin) {
-    res.status(401).json({ message: "Unauthorized to do this" });
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
     return;
   }
 
@@ -81,7 +83,7 @@ export const registerAdmin: RequestHandler = async (req, res) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    const error: ErrorBody = {
+    const error: FormError = {
       formErrors: ["User already exists"],
     };
 

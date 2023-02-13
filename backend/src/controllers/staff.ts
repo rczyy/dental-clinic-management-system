@@ -15,12 +15,14 @@ export const getStaffs: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
   if ("message" in token) {
-    res.status(401).json({ message: token.message });
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
     return;
   }
 
   if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
-    res.status(401).json({ message: "Unauthorized to do this" });
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
     return;
   }
 
@@ -33,19 +35,22 @@ export const getStaff: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
   if ("message" in token) {
-    res.status(401).json({ message: token.message });
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
     return;
   }
 
   if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
-    res.status(401).json({ message: "Unauthorized to do this" });
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
     return;
   }
 
   const { userId } = req.params;
 
   if (!isValidObjectId(userId)) {
-    res.status(400).json({ message: "Invalid user ID" });
+    const error: ErrorMessage = { message: "Invalid user ID" };
+    res.status(400).json(error);
     return;
   }
 
@@ -58,12 +63,14 @@ export const registerStaff: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
   if ("message" in token) {
-    res.status(401).json({ message: token.message });
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
     return;
   }
 
   if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
-    res.status(401).json({ message: "Unauthorized to do this" });
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
     return;
   }
 
@@ -127,7 +134,7 @@ export const registerStaff: RequestHandler = async (req, res) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    const error: ErrorBody = {
+    const error: FormError = {
       formErrors: ["User already exists"],
     };
 
@@ -195,26 +202,30 @@ export const removeStaff: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
   if ("message" in token) {
-    res.status(401).json({ message: token.message });
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
     return;
   }
 
   if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
-    res.status(401).json({ message: "Unauthorized to do this" });
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
     return;
   }
 
   const { userId } = req.params;
 
   if (!isValidObjectId(userId)) {
-    res.status(400).json({ message: "Invalid user ID" });
+    const error: ErrorMessage = { message: "Invalid user ID" };
+    res.status(400).json(error);
     return;
   }
 
   const deletedStaff = await Staff.findOneAndDelete({ userId });
 
   if (!deletedStaff) {
-    res.status(400).json({ message: "Staff doesn't exist" });
+    const error: ErrorMessage = { message: "Staff doesn't exist" };
+    res.status(400).json(error);
     return;
   }
 

@@ -37,11 +37,15 @@ declare global {
     street: string;
   }
 
-  interface ErrorBody {
+  interface FormError {
     formErrors?: string[];
     fieldErrors?: {
       [key: string]: string[];
     };
+  }
+
+  interface ErrorMessage {
+    message: string;
   }
 
   interface User {

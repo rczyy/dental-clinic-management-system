@@ -11,7 +11,8 @@ export const getPatients: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
   if ("message" in token) {
-    res.status(401).json({ message: token.message });
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
     return;
   }
 
@@ -22,7 +23,8 @@ export const getPatients: RequestHandler = async (req, res) => {
     token.role !== Roles.Assistant &&
     token.role !== Roles.FrontDesk
   ) {
-    res.status(401).json({ message: "Unauthorized to do this" });
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
     return;
   }
 
@@ -35,7 +37,8 @@ export const getPatient: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
   if ("message" in token) {
-    res.status(401).json({ message: token.message });
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
     return;
   }
 
@@ -46,14 +49,16 @@ export const getPatient: RequestHandler = async (req, res) => {
     token.role !== Roles.Assistant &&
     token.role !== Roles.FrontDesk
   ) {
-    res.status(401).json({ message: "Unauthorized to do this" });
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
     return;
   }
 
   const { userId } = req.params;
 
   if (!isValidObjectId(userId)) {
-    res.status(400).json({ message: "Invalid user ID" });
+    const error: ErrorMessage = { message: "Invalid user ID" };
+    res.status(400).json(error);
     return;
   }
 
@@ -113,7 +118,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    const error: ErrorBody = {
+    const error: FormError = {
       formErrors: ["User already exists"],
     };
 
@@ -156,32 +161,37 @@ export const removePatient: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
   if ("message" in token) {
-    res.status(401).json({ message: token.message });
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
     return;
   }
 
   if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
-    res.status(401).json({ message: "Unauthorized to do this" });
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
     return;
   }
 
   const { userId } = req.params;
 
   if (!isValidObjectId(userId)) {
-    res.status(400).json({ message: "Invalid user ID" });
+    const error: ErrorMessage = { message: "Invalid user ID" };
+    res.status(400).json(error);
     return;
   }
   const deletedPatient = await Patient.findOneAndDelete({ userId });
 
   if (!deletedPatient) {
-    res.status(400).json({ message: "Patient doesn't exist" });
+    const error: ErrorMessage = { message: "Patient doesn't exist" };
+    res.status(400).json(error);
     return;
   }
 
   const deletedUser = await User.findByIdAndDelete(userId);
 
   if (!deletedUser) {
-    res.status(400).json({ message: "User doesn't exist" });
+    const error: ErrorMessage = { message: "User doesn't exist" };
+    res.status(400).json(error);
     return;
   }
 
