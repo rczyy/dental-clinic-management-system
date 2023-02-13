@@ -8,6 +8,10 @@ main {
   @apply min-h-screen pt-20 pb-4 px-4;
 }
 
+.adminMain {
+  @apply pt-[5rem] pl-20 sm:pl-56;
+}
+
 ::-webkit-scrollbar {
   @apply w-2;
 }
