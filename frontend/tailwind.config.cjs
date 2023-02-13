@@ -36,7 +36,7 @@ module.exports = {
           info: "#2d9cdb",
           success: "#9ae6b4",
           warning: "#ffedb3",
-          error: "#dc2626",
+          error: "#ff6868",
         },
       },
     ],
