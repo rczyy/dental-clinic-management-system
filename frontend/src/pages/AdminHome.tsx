@@ -1,11 +1,15 @@
+import { Outlet } from "react-router-dom";
 import AdminSideBar from "../components/AdminSideBar";
-import Navbar from "../components/Navbar";
-import Login from "./Login";
 
 type Props = {};
 
 const AdminHome = (props: Props) => {
-  return <AdminSideBar />;
+  return (
+    <div>
+      <AdminSideBar />
+      <Outlet/>
+    </div>
+  );
 };
 
 export default AdminHome;
