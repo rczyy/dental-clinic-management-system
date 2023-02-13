@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { IoMenuOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { useGetUser } from "../hooks/user";
 import DarkModeToggle from "./DarkModeToggle";
 
 type Props = {};
 
 const Navbar = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const {data} = useGetUser()
 
   return (
-    <div className="navbar bg-base-100 shadow gap-8 2xl:gap-0 px-4 z-10 md:px-8 fixed">
+    <div className="navbar bg-base-100 shadow gap-8 2xl:gap-0 px-4 z-30 md:px-8 fixed">
       <div className="max-w-screen-xl w-full m-auto">
         <div className="flex-1">
           <Link to="/" className="font-work font-extrabold text-3xl cursor-pointer text-primary">
