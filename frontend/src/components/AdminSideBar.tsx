@@ -7,25 +7,26 @@ import { Link } from "react-router-dom";
 type SideBarItemProps = {
   name: string;
   Icon: IconType;
+  route: string;
 };
 
 const AdminSideBar = () => {
   return (
     <div className="flex flex-col justify-between h-screen fixed w-fit pt-[5rem] pb-4 border-base-200 border font-work">
       <div className="flex flex-col">
-        <SideBarItem name="Add a staff" Icon={CgUserAdd} />
-        <SideBarItem name="Attendance" Icon={BiUserCheck} />
-        <SideBarItem name="Staff list" Icon={CgUserList} />
-        <SideBarItem name="Logs" Icon={VscNote} />
+        <SideBarItem name="Add a staff" Icon={CgUserAdd} route="/admin/register-staff"/>
+        <SideBarItem name="Attendance" Icon={BiUserCheck} route="/"/>
+        <SideBarItem name="Staff list" Icon={CgUserList} route="/"/>
+        <SideBarItem name="Logs" Icon={VscNote} route="/"/>
       </div>
       <div>
-        <SideBarItem name="Profile" Icon={CgProfile} />
+        <SideBarItem name="Profile" Icon={CgProfile} route="/"/>
       </div>
     </div>
   );
 };
 
-const SideBarItem = ({ name, Icon }: SideBarItemProps) => {
+const SideBarItem = ({ name, Icon, route }: SideBarItemProps) => {
   return (
     <div
       className="flex flex-col sm:flex-row gap-2 items-center 
@@ -35,7 +36,7 @@ const SideBarItem = ({ name, Icon }: SideBarItemProps) => {
     >
       <Icon className="w-5 h-5" />
       <Link
-        to="/admin/register-staff"
+        to={route}
         className="text-[0.6rem] sm:text-sm lg:text-base text-center"
       >
         {name}
