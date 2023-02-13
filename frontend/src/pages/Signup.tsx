@@ -1,9 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import {
+  useForm,
+  Controller,
+  SubmitHandler,
+  UseFormRegister,
+} from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FiAtSign } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useRegisterPatient } from "../hooks/patient";
 import {
   getCities,
@@ -45,6 +50,7 @@ const schema = yup
   .required();
 
 const Signup = (props: Props) => {
+  const navigate = useNavigate();
   const [step, setStep] = useState<number>(1);
   const [regions, setRegions] = useState<Region[]>();
   const [regionOptions, setRegionOptions] = useState<SelectOption[]>();
@@ -68,7 +74,7 @@ const Signup = (props: Props) => {
     reset,
     trigger,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<SignupFormValues>({
     defaultValues: {
       firstName: "",
       middleName: "",
@@ -86,24 +92,11 @@ const Signup = (props: Props) => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<SignupFormValues> = (data) => {
     signupMutation.mutate(
       { ...data, contactNo: "+63" + watch("contactNo") },
       {
-        onSuccess: () =>
-          reset({
-            firstName: "",
-            middleName: "",
-            lastName: "",
-            region: "",
-            province: "",
-            city: "",
-            barangay: "",
-            street: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-          }),
+        onSuccess: () => navigate("/login"),
       }
     );
   };
@@ -281,7 +274,11 @@ const Signup = (props: Props) => {
                     type="text"
                     label="firstName"
                     placeholder="First Name"
-                    register={register}
+                    register={
+                      register as UseFormRegister<
+                        SignupFormValues | LoginFormValues
+                      >
+                    }
                     value={watch("firstName")}
                     error={errors.firstName?.message}
                     Logo={BsPerson}
@@ -290,7 +287,11 @@ const Signup = (props: Props) => {
                     type="text"
                     label="middleName"
                     placeholder="Middle Name"
-                    register={register}
+                    register={
+                      register as UseFormRegister<
+                        SignupFormValues | LoginFormValues
+                      >
+                    }
                     value={watch("middleName")}
                     error={errors.middleName?.message}
                     Logo={BsPerson}
@@ -299,7 +300,11 @@ const Signup = (props: Props) => {
                     type="text"
                     label="lastName"
                     placeholder="Last Name"
-                    register={register}
+                    register={
+                      register as UseFormRegister<
+                        SignupFormValues | LoginFormValues
+                      >
+                    }
                     value={watch("lastName")}
                     error={errors.lastName?.message}
                     Logo={BsPerson}
@@ -309,7 +314,11 @@ const Signup = (props: Props) => {
                     inputMode="numeric"
                     label="contactNo"
                     placeholder="Contact Number"
-                    register={register}
+                    register={
+                      register as UseFormRegister<
+                        SignupFormValues | LoginFormValues
+                      >
+                    }
                     value={watch("contactNo")}
                     error={errors.contactNo?.message}
                     Logo={BsPerson}
@@ -371,9 +380,9 @@ const Signup = (props: Props) => {
                           onChange={(val) => onChange(val?.value)}
                           options={regionOptions}
                           isLoading={!regionOptions}
-                          />
-                          )}
-                          />
+                        />
+                      )}
+                    />
                     <span className="text-xs text-error pl-1">
                       {errors.region?.message}
                     </span>
@@ -512,7 +521,11 @@ const Signup = (props: Props) => {
                     type="text"
                     label="street"
                     placeholder="Street"
-                    register={register}
+                    register={
+                      register as UseFormRegister<
+                        SignupFormValues | LoginFormValues
+                      >
+                    }
                     value={watch("street")}
                     error={errors.street?.message}
                     Logo={BsHouseDoor}
@@ -554,7 +567,11 @@ const Signup = (props: Props) => {
                     type="text"
                     label="email"
                     placeholder="Email"
-                    register={register}
+                    register={
+                      register as UseFormRegister<
+                        SignupFormValues | LoginFormValues
+                      >
+                    }
                     value={watch("email")}
                     error={errors.email?.message}
                     Logo={FiAtSign}
@@ -563,7 +580,11 @@ const Signup = (props: Props) => {
                     type="password"
                     label="password"
                     placeholder="Password"
-                    register={register}
+                    register={
+                      register as UseFormRegister<
+                        SignupFormValues | LoginFormValues
+                      >
+                    }
                     value={watch("password")}
                     error={errors.password?.message}
                   />
@@ -571,7 +592,11 @@ const Signup = (props: Props) => {
                     type="password"
                     label="confirmPassword"
                     placeholder="Confirm Password"
-                    register={register}
+                    register={
+                      register as UseFormRegister<
+                        SignupFormValues | LoginFormValues
+                      >
+                    }
                     value={watch("confirmPassword")}
                     error={errors.confirmPassword?.message}
                   />
@@ -591,7 +616,7 @@ const Signup = (props: Props) => {
                   </div>
                   <span className="text-xs text-error text-center pl-1">
                     {signupMutation.error &&
-                      (signupMutation.error as any).response.data.formErrors}
+                      signupMutation.error.response.data.formErrors}
                   </span>
                 </div>
               )}

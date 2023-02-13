@@ -21,13 +21,14 @@ const Login = (props: Props) => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<LoginFormValues>({
     resolver: yupResolver(schema),
   });
 
   const loginMutation = useLogin();
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => loginMutation.mutate(data);
+  const onSubmit: SubmitHandler<LoginFormValues> = (data) =>
+    loginMutation.mutate(data);
 
   return (
     <main className="flex items-center justify-center">
@@ -80,7 +81,10 @@ const Login = (props: Props) => {
           </div>
           <footer className="text-center text-sm absolute bottom-0 p-4">
             <p>
-              Don't have an account yet? <Link to="/signup" className="text-primary">Sign Up</Link>
+              Don't have an account yet?{" "}
+              <Link to="/signup" className="text-primary">
+                Sign Up
+              </Link>
             </p>
           </footer>
         </section>
