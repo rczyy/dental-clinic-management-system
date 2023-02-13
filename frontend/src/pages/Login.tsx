@@ -1,10 +1,10 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FiAtSign } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import * as yup from "yup";
 import FormInput from "../components/FormInput";
-import { useLogin } from "../hooks/user";
+import { useGetUser, useLogin } from "../hooks/user";
 
 type Props = {};
 
@@ -25,9 +25,14 @@ const Login = (props: Props) => {
     resolver: yupResolver(schema),
   });
 
-  const loginMutation = useLogin();
+  const { data, isLoading } = useGetUser();
+  const {mutate, error} = useLogin();
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => loginMutation.mutate(data);
+  const onSubmit: SubmitHandler<FormValues> = (data) =>
+    mutate(data);
+
+  if (isLoading) return <h2>Loading...</h2>;
+  if (data) return <Navigate to="/" />;
 
   return (
     <main className="flex items-center justify-center">
@@ -71,16 +76,23 @@ const Login = (props: Props) => {
               />
               <a className="text-xs text-neutral ml-auto">Forgot Password</a>
               <button
-                type="submit"
+                type="submit" 
                 className="btn bg-primary border-primary text-zinc-50 my-8"
               >
                 Log In
               </button>
+              <span className="text-xs text-error text-center pl-1">
+                {error &&
+                  (error as any).response.data.formErrors}
+              </span>
             </form>
           </div>
           <footer className="text-center text-sm absolute bottom-0 p-4">
             <p>
-              Don't have an account yet? <Link to="/signup" className="text-primary">Sign Up</Link>
+              Don't have an account yet?{" "}
+              <Link to="/signup" className="text-primary">
+                Sign Up
+              </Link>
             </p>
           </footer>
         </section>

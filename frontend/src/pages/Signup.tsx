@@ -3,7 +3,7 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FiAtSign } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useRegisterPatient } from "../hooks/patient";
 import {
   getCities,
@@ -14,6 +14,7 @@ import {
 import * as yup from "yup";
 import Select from "react-select";
 import FormInput from "../components/FormInput";
+import { useGetUser } from "../hooks/user";
 
 type Props = {};
 
@@ -58,7 +59,8 @@ const Signup = (props: Props) => {
   const oldProvinceValue = useRef<string>();
   const oldCityValue = useRef<string>();
 
-  const signupMutation = useRegisterPatient();
+  const { data, isLoading } = useGetUser();
+  const { mutate, error } = useRegisterPatient();
 
   const {
     control,
@@ -87,7 +89,7 @@ const Signup = (props: Props) => {
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    signupMutation.mutate(
+    mutate(
       { ...data, contactNo: "+63" + watch("contactNo") },
       {
         onSuccess: () =>
@@ -221,6 +223,9 @@ const Signup = (props: Props) => {
 
     getOptions();
   }, [regions, watch("region"), watch("province"), watch("city")]);
+
+  if (isLoading) return <h2>Loading...</h2>;
+  if (data) return <Navigate to="/" />;
 
   return (
     <main className="flex items-center justify-center">
@@ -371,9 +376,9 @@ const Signup = (props: Props) => {
                           onChange={(val) => onChange(val?.value)}
                           options={regionOptions}
                           isLoading={!regionOptions}
-                          />
-                          )}
-                          />
+                        />
+                      )}
+                    />
                     <span className="text-xs text-error pl-1">
                       {errors.region?.message}
                     </span>
@@ -590,8 +595,7 @@ const Signup = (props: Props) => {
                     </button>
                   </div>
                   <span className="text-xs text-error text-center pl-1">
-                    {signupMutation.error &&
-                      (signupMutation.error as any).response.data.formErrors}
+                    {error && (error as any).response.data.formErrors}
                   </span>
                 </div>
               )}

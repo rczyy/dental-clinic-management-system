@@ -65,7 +65,7 @@ const RegisterStaff = (props: Props) => {
   const oldProvinceValue = useRef<string>();
   const oldCityValue = useRef<string>();
 
-  const signupMutation = useRegisterStaff();
+  const {mutate, error} = useRegisterStaff();
 
   const {
     control,
@@ -94,7 +94,7 @@ const RegisterStaff = (props: Props) => {
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    signupMutation.mutate(
+    mutate(
       { ...data, contactNo: "+63" + watch("contactNo") },
       {
         onSuccess: () =>
@@ -103,6 +103,7 @@ const RegisterStaff = (props: Props) => {
             middleName: "",
             lastName: "",
             contactNo: "",
+            role: "",
             region: "",
             province: "",
             city: "",
@@ -111,7 +112,6 @@ const RegisterStaff = (props: Props) => {
             email: "",
             password: "",
             confirmPassword: "",
-            role: "",
           }),
       }
     );
@@ -233,7 +233,7 @@ const RegisterStaff = (props: Props) => {
 
   return (
     <div className="adminMain font-work w-full flex flex-col items-center">
-      <section className="bg-base-300 px-2 rounded-2xl max-w-4xl w-full shadow-md sm:px-10 pt-4">
+      <section className="bg-base-300 px-2 rounded-2xl max-w-4xl w-full shadow-md sm:px-10 py-4">
         <header className="flex justify-start">
           <h1 className="py-3 text-xl font-semibold mx-2">Add a new staff</h1>
         </header>
@@ -534,18 +534,18 @@ const RegisterStaff = (props: Props) => {
               />
             </div>
           </section>
-          <div className="flex gap-2 sm:justify-start px-2">
+          <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-start px-2">
             <button
               type="submit"
-              className="btn bg-primary border-primary text-zinc-50 mt-4 w-full sm:w-fit"
+              className="btn bg-primary border-primary text-zinc-50 w-full sm:w-fit"
             >
               Register staff
             </button>
-          </div>
-          <span className="text-xs text-error text-center pl-1">
-            {signupMutation.error &&
-              (signupMutation.error as any).response.data.formErrors}
+            <span className="text-xs text-error text-center">
+            {error &&
+              (error as any).response.data.formErrors}
           </span>
+          </div>
         </form>
       </section>
     </div>
