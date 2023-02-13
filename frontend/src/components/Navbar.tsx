@@ -25,7 +25,7 @@ const Navbar = (props: Props) => {
             className="w-8 h-8 cursor-pointer"
           />
           {isOpen && (
-            <ul className="menu bg-base-100 w-screen absolute top-12 -right-4 border border-base-200 shadow">
+            <ul className="menu bg-base-100 w-screen absolute top-12 -right-4 border-base-200 border shadow">
               <li>
                 <Link to="/login">Log in</Link>
               </li>
@@ -36,10 +36,10 @@ const Navbar = (props: Props) => {
           )}
         </div>
         <div className="flex-none hidden sm:flex gap-8">
-          <Link to="/login" className="font-work font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer">
+          <Link to="/login" className="font-work font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer transition-all ease-in-out duration-100">
             Log In
           </Link>
-          <Link to="/signup" className="font-work font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer">
+          <Link to="/signup" className="font-work font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer transition-all ease-in-out duration-100">
             Sign Up
           </Link>
         </div>
