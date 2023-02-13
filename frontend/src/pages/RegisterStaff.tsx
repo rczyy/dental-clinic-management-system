@@ -229,15 +229,15 @@ const RegisterStaff = (props: Props) => {
   }, [regions, watch("region"), watch("province"), watch("city")]);
 
   return (
-    <div className="adminMain font-work w-full">
-      <header>
-        <h1 className="py-3 text-xl font-semibold">Add a new staff</h1>
-      </header>
-      <section className="bg-base-300 w-fit">
+    <div className="adminMain font-work w-full flex flex-col items-center">
+      <section className="bg-base-300 px-2 rounded-2xl max-w-4xl w-full shadow-md sm:px-10 pt-4">
+        <header className="flex justify-start">
+          <h1 className="py-3 text-xl font-semibold mx-2">Add a new staff</h1>
+        </header>
         <form onSubmit={handleSubmit(onSubmit)}>
           <section className="flex flex-col gap-1">
-            <div className="border border-base-200 p-2 rounded">
-              <h2 className="font-semibold my-2 mx-1">Personal Details</h2>
+            <div className="p-2 rounded flex-1">
+              <h2 className="font-semibold mx-1 ">Personal Details</h2>
               <div>
                 <FormInput
                   type="text"
@@ -249,7 +249,7 @@ const RegisterStaff = (props: Props) => {
                   Logo={FiAtSign}
                 />
               </div>
-              <div className="flex flex-col sm:flex-row gap-1">
+              <div className="flex flex-col sm:flex-row w-full justify-evenly sm:gap-1">
                 <FormInput
                   type="text"
                   label="middleName"
@@ -327,12 +327,12 @@ const RegisterStaff = (props: Props) => {
                   )}
                 />
                 <span className="text-xs text-error pl-1">
-                  {errors.region?.message}
+                  {errors.role?.message}
                 </span>
               </div>
             </div>
-            <div className="border border-base-200 p-2 rounded">
-              <h2 className="font-semibold my-2 mx-1">Address</h2>
+            <div className="p-2 rounded flex-1">
+              <h2 className="font-semibold mx-1">Address</h2>
               <div className="flex flex-col gap-1">
                 <Controller
                   name="region"
@@ -513,10 +513,10 @@ const RegisterStaff = (props: Props) => {
               />
             </div>
           </section>
-          <div className="flex gap-2">
+          <div className="flex gap-2 sm:justify-start px-2">
             <button
               type="submit"
-              className="btn bg-primary flex-1 border-primary text-zinc-50 mt-8 mb-4"
+              className="btn bg-primary border-primary text-zinc-50 mt-4 w-full sm:w-fit"
             >
               Register staff
             </button>
