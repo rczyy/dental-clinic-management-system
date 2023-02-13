@@ -9,6 +9,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./styles.css";
+import RegisterStaff from "./pages/RegisterStaff";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,8 +40,14 @@ const router = createBrowserRouter([
         element: <Signup />,
       },
       {
-        path: "test",
+        path: "admin",
         element: <AdminHome />,
+        children: [
+          {
+            path: "register-staff",
+            element: <RegisterStaff/>
+          }
+        ]
       },
     ],
   },
