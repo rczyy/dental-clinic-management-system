@@ -74,7 +74,6 @@ const RegisterStaff = (props: Props) => {
     handleSubmit,
     watch,
     reset,
-    trigger,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
@@ -82,7 +81,6 @@ const RegisterStaff = (props: Props) => {
       middleName: "",
       lastName: "",
       contactNo: "",
-      role: "",
       region: "",
       province: "",
       city: "",
@@ -91,27 +89,33 @@ const RegisterStaff = (props: Props) => {
       email: "",
       password: "",
       confirmPassword: "",
+      role: "",
     },
     resolver: yupResolver(schema),
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    signupMutation.mutate(data, {
-      onSuccess: () =>
-        reset({
-          firstName: "",
-          middleName: "",
-          lastName: "",
-          email: "",
-          contactNo: "",
-          role: "",
-          region: "",
-          province: "",
-          city: "",
-          barangay: "",
-          street: "",
-        }),
-    });
+    signupMutation.mutate(
+      { ...data, contactNo: "+63" + watch("contactNo") },
+      {
+        onSuccess: () =>
+          reset({
+            firstName: "",
+            middleName: "",
+            lastName: "",
+            contactNo: "",
+            region: "",
+            province: "",
+            city: "",
+            barangay: "",
+            street: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            role: "",
+          }),
+      }
+    );
   };
 
   useEffect(() => {
@@ -235,6 +239,24 @@ const RegisterStaff = (props: Props) => {
           <h1 className="py-3 text-xl font-semibold mx-2">Add a new staff</h1>
         </header>
         <form onSubmit={handleSubmit(onSubmit)}>
+          <FormInput
+            type="text"
+            label="password"
+            placeholder="password"
+            register={register}
+            value={watch("password")}
+            error={errors.password?.message}
+            Logo={FiAtSign}
+          />
+          <FormInput
+            type="text"
+            label="confirmPassword"
+            placeholder="confirmPassword"
+            register={register}
+            value={watch("confirmPassword")}
+            error={errors.confirmPassword?.message}
+            Logo={FiAtSign}
+          />
           <section className="flex flex-col gap-1">
             <div className="p-2 rounded flex-1">
               <h2 className="font-semibold mx-1 ">Personal Details</h2>
