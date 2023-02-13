@@ -84,16 +84,10 @@ export const registerStaff: RequestHandler = async (req, res) => {
       confirmPassword: z.string({
         required_error: "Confirm your password",
       }),
-      contactNo: z.union([
-        z
-          .string({ required_error: "Invalid contact number" })
-          .startsWith("+63", "Invalid contact number")
-          .length(13, "Invalid contact number"),
-        z
-          .string({ required_error: "Invalid contact number" })
-          .startsWith("09", "Invalid contact number")
-          .length(11, "Invalid contact number"),
-      ]),
+      contactNo: z
+        .string({ required_error: "Invalid contact number" })
+        .startsWith("+63", "Invalid contact number")
+        .length(13, "Invalid contact number"),
       role: z.nativeEnum(Roles),
     })
     .refine((data) => data.password === data.confirmPassword, {
@@ -129,6 +123,20 @@ export const registerStaff: RequestHandler = async (req, res) => {
   if (existingUser) {
     const error: ErrorBody = {
       formErrors: ["User already exists"],
+    };
+
+    res.status(400).json(error);
+    return;
+  }
+
+  if (
+    role !== Roles.Assistant &&
+    role !== Roles.Dentist &&
+    role !== Roles.FrontDesk &&
+    role !== Roles.Manager
+  ) {
+    const error: ErrorBody = {
+      formErrors: ["Invalid role"],
     };
 
     res.status(400).json(error);
