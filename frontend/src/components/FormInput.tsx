@@ -27,7 +27,7 @@ const FormInput = ({
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 flex-1">
       <div
         className={
           "flex items-center border rounded-md bg-base-300 " +
@@ -70,7 +70,7 @@ const FormInput = ({
           {Logo && (
             <Logo
               className={
-                "w-10 h-10 p-2.5 cursor-pointer " +
+                "w-10 h-10 p-2.5 cursor-pointer bg-base-300 z-20 " +
                 (value ? "text-primary" : "text-zinc-400")
               }
             />
