@@ -14,6 +14,7 @@ import {
 import * as yup from "yup";
 import Select from "react-select";
 import FormInput from "../components/FormInput";
+import { useRegisterStaff } from "../hooks/staff";
 
 type Props = {};
 
@@ -22,6 +23,7 @@ const schema = yup
     firstName: yup.string().required("First Name is required"),
     middleName: yup.string().required("Middle Name is required"),
     lastName: yup.string().required("Last Name is required"),
+    role: yup.string().required("Role is required"),
     region: yup.string().required("Region is required"),
     province: yup.string().required("Province is required"),
     city: yup.string().required("City is required"),
@@ -45,6 +47,13 @@ const schema = yup
   .required();
 
 const RegisterStaff = (props: Props) => {
+  const roles = [
+    { value: "Admin", label: "Admin" },
+    { value: "Manager", label: "Manager" },
+    { value: "Dentist", label: "Dentist" },
+    { value: "Assistant", label: "Assistant Dentist" },
+    { value: "Front Desk", label: "Front Desk Staff" },
+  ];
   const [regions, setRegions] = useState<Region[]>();
   const [regionOptions, setRegionOptions] = useState<SelectOption[]>();
   const [provinces, setProvinces] = useState<Province[]>();
@@ -56,6 +65,8 @@ const RegisterStaff = (props: Props) => {
   const oldRegionValue = useRef<string>();
   const oldProvinceValue = useRef<string>();
   const oldCityValue = useRef<string>();
+
+  const signupMutation = useRegisterStaff();
 
   const {
     control,
@@ -71,6 +82,7 @@ const RegisterStaff = (props: Props) => {
       middleName: "",
       lastName: "",
       contactNo: "",
+      role: "",
       region: "",
       province: "",
       city: "",
@@ -82,6 +94,25 @@ const RegisterStaff = (props: Props) => {
     },
     resolver: yupResolver(schema),
   });
+
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    signupMutation.mutate(data, {
+      onSuccess: () =>
+        reset({
+          firstName: "",
+          middleName: "",
+          lastName: "",
+          email: "",
+          contactNo: "",
+          role: "",
+          region: "",
+          province: "",
+          city: "",
+          barangay: "",
+          street: "",
+        }),
+    });
+  };
 
   useEffect(() => {
     const getOptions = async () => {
@@ -203,7 +234,7 @@ const RegisterStaff = (props: Props) => {
         <h1 className="py-3 text-xl font-semibold">Add a new staff</h1>
       </header>
       <section className="bg-base-300 w-fit">
-        <form className="max-w-lg">
+        <form onSubmit={handleSubmit(onSubmit)}>
           <section className="flex flex-col gap-1">
             <div className="border border-base-200 p-2 rounded">
               <h2 className="font-semibold my-2 mx-1">Personal Details</h2>
@@ -261,191 +292,239 @@ const RegisterStaff = (props: Props) => {
                   Logo={BsPerson}
                 />
               </div>
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="border border-base-200 p-2 rounded">
-                <h2 className="font-semibold my-2 mx-1">Address</h2>
-                <div className="flex flex-col gap-1">
-                  <Controller
-                    name="region"
-                    control={control}
-                    render={({ field: { onChange, value, ...field } }) => (
-                      <Select
-                        {...field}
-                        value={
-                          regionOptions &&
-                          regionOptions.find((region) => region.value === value)
-                        }
-                        classNames={{
-                          control: ({ hasValue }) =>
-                            "pl-1.5 py-2 !bg-base-300 " +
-                            (hasValue && "!border-primary"),
-                          placeholder: () => "!text-zinc-400 ",
-                          singleValue: () => "!text-base-content",
-                          input: () => "!text-base-content",
-                          option: ({ isSelected, isFocused }) =>
-                            isSelected || isFocused
-                              ? "!bg-primary !text-zinc-100"
-                              : "",
-                          menu: () => "!bg-base-300",
-                          dropdownIndicator: ({ hasValue }) =>
-                            hasValue ? "!text-primary" : "",
-                          indicatorSeparator: ({ hasValue }) =>
-                            hasValue ? "!bg-primary" : "",
-                        }}
-                        placeholder="Region"
-                        onChange={(val) => onChange(val?.value)}
-                        options={regionOptions}
-                        isLoading={!regionOptions}
-                      />
-                    )}
-                  />
-                  <span className="text-xs text-error pl-1">
-                    {errors.region?.message}
-                  </span>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <Controller
-                    name="province"
-                    control={control}
-                    render={({ field: { onChange, value, ...field } }) => (
-                      <Select
-                        {...field}
-                        value={
-                          value
-                            ? provinceOptions &&
-                              provinceOptions.find(
-                                (province) => province.value === value
-                              )
-                            : null
-                        }
-                        classNames={{
-                          control: ({ hasValue }) =>
-                            "pl-1.5 py-2 !bg-base-300 " +
-                            (hasValue && "!border-primary"),
-                          placeholder: () => "!text-zinc-400 ",
-                          singleValue: () => "!text-base-content",
-                          input: () => "!text-base-content",
-                          option: ({ isSelected, isFocused }) =>
-                            isSelected || isFocused
-                              ? "!bg-primary !text-zinc-100"
-                              : "",
-                          menu: () => "!bg-base-300",
-                          dropdownIndicator: ({ hasValue }) =>
-                            hasValue ? "!text-primary" : "",
-                          indicatorSeparator: ({ hasValue }) =>
-                            hasValue ? "!bg-primary" : "",
-                        }}
-                        placeholder="Province"
-                        onChange={(newValue) => onChange(newValue?.value)}
-                        options={provinceOptions}
-                        isLoading={!provinceOptions && !!watch("region")}
-                        isDisabled={!watch("region")}
-                      />
-                    )}
-                  />
-                  <span className="text-xs text-error pl-1">
-                    {errors.province?.message}
-                  </span>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <Controller
-                    name="city"
-                    control={control}
-                    render={({ field: { onChange, value, ...field } }) => (
-                      <Select
-                        {...field}
-                        value={
-                          value
-                            ? cityOptions &&
-                              cityOptions.find((city) => city.value === value)
-                            : null
-                        }
-                        classNames={{
-                          control: ({ hasValue }) =>
-                            "pl-1.5 py-2 !bg-base-300 " +
-                            (hasValue && "!border-primary"),
-                          placeholder: () => "!text-zinc-400 ",
-                          singleValue: () => "!text-base-content",
-                          input: () => "!text-base-content",
-                          option: ({ isSelected, isFocused }) =>
-                            isSelected || isFocused
-                              ? "!bg-primary !text-zinc-100"
-                              : "",
-                          menu: () => "!bg-base-300",
-                          dropdownIndicator: ({ hasValue }) =>
-                            hasValue ? "!text-primary" : "",
-                          indicatorSeparator: ({ hasValue }) =>
-                            hasValue ? "!bg-primary" : "",
-                        }}
-                        placeholder="City"
-                        onChange={(newValue) => onChange(newValue?.value)}
-                        options={cityOptions}
-                        isLoading={!cityOptions && !!watch("province")}
-                        isDisabled={!watch("province")}
-                      />
-                    )}
-                  />
-                  <span className="text-xs text-error pl-1">
-                    {errors.city?.message}
-                  </span>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <Controller
-                    name="barangay"
-                    control={control}
-                    render={({ field: { onChange, value, ...field } }) => (
-                      <Select
-                        {...field}
-                        value={
-                          value
-                            ? barangayOptions &&
-                              barangayOptions.find(
-                                (barangay) => barangay.value === value
-                              )
-                            : null
-                        }
-                        classNames={{
-                          control: ({ hasValue }) =>
-                            "pl-1.5 py-2 !bg-base-300 " +
-                            (hasValue && "!border-primary"),
-                          placeholder: () => "!text-zinc-400 ",
-                          singleValue: () => "!text-base-content",
-                          input: () => "!text-base-content",
-                          option: ({ isSelected, isFocused }) =>
-                            isSelected || isFocused
-                              ? "!bg-primary !text-zinc-100"
-                              : "",
-                          menu: () => "!bg-base-300",
-                          dropdownIndicator: ({ hasValue }) =>
-                            hasValue ? "!text-primary" : "",
-                          indicatorSeparator: ({ hasValue }) =>
-                            hasValue ? "!bg-primary" : "",
-                        }}
-                        placeholder="Barangay"
-                        onChange={(newValue) => onChange(newValue?.value)}
-                        options={barangayOptions}
-                        isLoading={!barangayOptions && !!watch("city")}
-                        isDisabled={!watch("city")}
-                      />
-                    )}
-                  />
-                  <span className="text-xs text-error pl-1">
-                    {errors.barangay?.message}
-                  </span>
-                </div>
-                <FormInput
-                  type="text"
-                  label="street"
-                  placeholder="Street"
-                  register={register}
-                  value={watch("street")}
-                  error={errors.street?.message}
-                  Logo={BsHouseDoor}
+              <div className="flex flex-col gap-1">
+                <Controller
+                  name="role"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <Select
+                      {...field}
+                      value={
+                        roles && roles.find((role) => role.value === value)
+                      }
+                      classNames={{
+                        control: ({ hasValue }) =>
+                          "pl-1.5 py-2 !bg-base-300 " +
+                          (hasValue && "!border-primary"),
+                        placeholder: () => "!text-zinc-400 ",
+                        singleValue: () => "!text-base-content",
+                        input: () => "!text-base-content",
+                        option: ({ isSelected, isFocused }) =>
+                          isSelected || isFocused
+                            ? "!bg-primary !text-zinc-100"
+                            : "",
+                        menu: () => "!bg-base-300",
+                        dropdownIndicator: ({ hasValue }) =>
+                          hasValue ? "!text-primary" : "",
+                        indicatorSeparator: ({ hasValue }) =>
+                          hasValue ? "!bg-primary" : "",
+                      }}
+                      placeholder="Role"
+                      onChange={(val) => onChange(val?.value)}
+                      options={roles}
+                      isLoading={!roles}
+                    />
+                  )}
                 />
+                <span className="text-xs text-error pl-1">
+                  {errors.region?.message}
+                </span>
               </div>
             </div>
+            <div className="border border-base-200 p-2 rounded">
+              <h2 className="font-semibold my-2 mx-1">Address</h2>
+              <div className="flex flex-col gap-1">
+                <Controller
+                  name="region"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <Select
+                      {...field}
+                      value={
+                        regionOptions &&
+                        regionOptions.find((region) => region.value === value)
+                      }
+                      classNames={{
+                        control: ({ hasValue }) =>
+                          "pl-1.5 py-2 !bg-base-300 " +
+                          (hasValue && "!border-primary"),
+                        placeholder: () => "!text-zinc-400 ",
+                        singleValue: () => "!text-base-content",
+                        input: () => "!text-base-content",
+                        option: ({ isSelected, isFocused }) =>
+                          isSelected || isFocused
+                            ? "!bg-primary !text-zinc-100"
+                            : "",
+                        menu: () => "!bg-base-300",
+                        dropdownIndicator: ({ hasValue }) =>
+                          hasValue ? "!text-primary" : "",
+                        indicatorSeparator: ({ hasValue }) =>
+                          hasValue ? "!bg-primary" : "",
+                      }}
+                      placeholder="Region"
+                      onChange={(val) => onChange(val?.value)}
+                      options={regionOptions}
+                      isLoading={!regionOptions}
+                    />
+                  )}
+                />
+                <span className="text-xs text-error pl-1">
+                  {errors.region?.message}
+                </span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <Controller
+                  name="province"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <Select
+                      {...field}
+                      value={
+                        value
+                          ? provinceOptions &&
+                            provinceOptions.find(
+                              (province) => province.value === value
+                            )
+                          : null
+                      }
+                      classNames={{
+                        control: ({ hasValue }) =>
+                          "pl-1.5 py-2 !bg-base-300 " +
+                          (hasValue && "!border-primary"),
+                        placeholder: () => "!text-zinc-400 ",
+                        singleValue: () => "!text-base-content",
+                        input: () => "!text-base-content",
+                        option: ({ isSelected, isFocused }) =>
+                          isSelected || isFocused
+                            ? "!bg-primary !text-zinc-100"
+                            : "",
+                        menu: () => "!bg-base-300",
+                        dropdownIndicator: ({ hasValue }) =>
+                          hasValue ? "!text-primary" : "",
+                        indicatorSeparator: ({ hasValue }) =>
+                          hasValue ? "!bg-primary" : "",
+                      }}
+                      placeholder="Province"
+                      onChange={(newValue) => onChange(newValue?.value)}
+                      options={provinceOptions}
+                      isLoading={!provinceOptions && !!watch("region")}
+                      isDisabled={!watch("region")}
+                    />
+                  )}
+                />
+                <span className="text-xs text-error pl-1">
+                  {errors.province?.message}
+                </span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <Controller
+                  name="city"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <Select
+                      {...field}
+                      value={
+                        value
+                          ? cityOptions &&
+                            cityOptions.find((city) => city.value === value)
+                          : null
+                      }
+                      classNames={{
+                        control: ({ hasValue }) =>
+                          "pl-1.5 py-2 !bg-base-300 " +
+                          (hasValue && "!border-primary"),
+                        placeholder: () => "!text-zinc-400 ",
+                        singleValue: () => "!text-base-content",
+                        input: () => "!text-base-content",
+                        option: ({ isSelected, isFocused }) =>
+                          isSelected || isFocused
+                            ? "!bg-primary !text-zinc-100"
+                            : "",
+                        menu: () => "!bg-base-300",
+                        dropdownIndicator: ({ hasValue }) =>
+                          hasValue ? "!text-primary" : "",
+                        indicatorSeparator: ({ hasValue }) =>
+                          hasValue ? "!bg-primary" : "",
+                      }}
+                      placeholder="City"
+                      onChange={(newValue) => onChange(newValue?.value)}
+                      options={cityOptions}
+                      isLoading={!cityOptions && !!watch("province")}
+                      isDisabled={!watch("province")}
+                    />
+                  )}
+                />
+                <span className="text-xs text-error pl-1">
+                  {errors.city?.message}
+                </span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <Controller
+                  name="barangay"
+                  control={control}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <Select
+                      {...field}
+                      value={
+                        value
+                          ? barangayOptions &&
+                            barangayOptions.find(
+                              (barangay) => barangay.value === value
+                            )
+                          : null
+                      }
+                      classNames={{
+                        control: ({ hasValue }) =>
+                          "pl-1.5 py-2 !bg-base-300 " +
+                          (hasValue && "!border-primary"),
+                        placeholder: () => "!text-zinc-400 ",
+                        singleValue: () => "!text-base-content",
+                        input: () => "!text-base-content",
+                        option: ({ isSelected, isFocused }) =>
+                          isSelected || isFocused
+                            ? "!bg-primary !text-zinc-100"
+                            : "",
+                        menu: () => "!bg-base-300",
+                        dropdownIndicator: ({ hasValue }) =>
+                          hasValue ? "!text-primary" : "",
+                        indicatorSeparator: ({ hasValue }) =>
+                          hasValue ? "!bg-primary" : "",
+                      }}
+                      placeholder="Barangay"
+                      onChange={(newValue) => onChange(newValue?.value)}
+                      options={barangayOptions}
+                      isLoading={!barangayOptions && !!watch("city")}
+                      isDisabled={!watch("city")}
+                    />
+                  )}
+                />
+                <span className="text-xs text-error pl-1">
+                  {errors.barangay?.message}
+                </span>
+              </div>
+              <FormInput
+                type="text"
+                label="street"
+                placeholder="Street"
+                register={register}
+                value={watch("street")}
+                error={errors.street?.message}
+                Logo={BsHouseDoor}
+              />
+            </div>
           </section>
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              className="btn bg-primary flex-1 border-primary text-zinc-50 mt-8 mb-4"
+            >
+              Register staff
+            </button>
+          </div>
+          <span className="text-xs text-error text-center pl-1">
+            {signupMutation.error &&
+              (signupMutation.error as any).response.data.formErrors}
+          </span>
         </form>
       </section>
     </div>
