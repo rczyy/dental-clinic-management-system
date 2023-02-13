@@ -5,7 +5,7 @@ type Props = {};
 
 const AdminHome = (props: Props) => {
   return (
-    <div>
+    <div className="flex">
       <AdminSideBar />
       <Outlet/>
     </div>
