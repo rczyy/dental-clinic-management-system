@@ -5,11 +5,7 @@ import Login from "./Login";
 type Props = {};
 
 const AdminHome = (props: Props) => {
-  return (
-    <>
-      <AdminSideBar />
-    </>
-  );
+  return <AdminSideBar />;
 };
 
 export default AdminHome;
