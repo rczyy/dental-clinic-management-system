@@ -48,11 +48,10 @@ const schema = yup
 
 const RegisterStaff = (props: Props) => {
   const roles = [
-    { value: "Admin", label: "Admin" },
     { value: "Manager", label: "Manager" },
     { value: "Dentist", label: "Dentist" },
     { value: "Assistant", label: "Assistant Dentist" },
-    { value: "Front Desk", label: "Front Desk Staff" },
+    { value: "Front Desk", label: "Front Desk" },
   ];
   const [regions, setRegions] = useState<Region[]>();
   const [regionOptions, setRegionOptions] = useState<SelectOption[]>();
@@ -258,7 +257,7 @@ const RegisterStaff = (props: Props) => {
             Logo={FiAtSign}
           />
           <section className="flex flex-col gap-1">
-            <div className="p-2 rounded flex-1">
+            <div className="flex flex-col p-2 rounded flex-1 gap-1">
               <h2 className="font-semibold mx-1 ">Personal Details</h2>
               <div>
                 <FormInput
@@ -271,7 +270,7 @@ const RegisterStaff = (props: Props) => {
                   Logo={FiAtSign}
                 />
               </div>
-              <div className="flex flex-col sm:flex-row w-full justify-evenly sm:gap-1">
+              <div className="flex flex-col sm:flex-row w-full justify-evenly sm:gap-1 gap-1">
                 <FormInput
                   type="text"
                   label="middleName"
@@ -353,7 +352,7 @@ const RegisterStaff = (props: Props) => {
                 </span>
               </div>
             </div>
-            <div className="p-2 rounded flex-1">
+            <div className="flex flex-col p-2 rounded flex-1 gap-1">
               <h2 className="font-semibold mx-1">Address</h2>
               <div className="flex flex-col gap-1">
                 <Controller
