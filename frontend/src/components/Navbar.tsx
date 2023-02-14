@@ -13,7 +13,10 @@ const Navbar = (props: Props) => {
   const { data, isLoading: userLoading } = useGetUser();
   const { mutate, isLoading: logoutLoading } = useLogout();
 
-  const handleLogout: React.MouseEventHandler<HTMLSpanElement> = () => mutate();
+  const handleLogout: React.MouseEventHandler<HTMLSpanElement> = () => {
+    mutate();
+    setIsOpen(!isOpen);
+  };
 
   return (
     <div className="navbar bg-base-100 shadow gap-8 2xl:gap-0 px-4 z-30 md:px-8 fixed">
