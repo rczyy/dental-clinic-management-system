@@ -1,6 +1,6 @@
 import { BiUserCheck } from "react-icons/bi";
 import { VscNote } from "react-icons/vsc";
-import { CgProfile, CgUserList, CgUserAdd } from "react-icons/cg";
+import { CgUserList, CgUserAdd } from "react-icons/cg";
 import { IconType } from "react-icons/lib";
 import { Link } from "react-router-dom";
 
@@ -12,15 +12,16 @@ type SideBarItemProps = {
 
 const AdminSideBar = () => {
   return (
-    <div className="flex flex-col justify-between h-screen fixed w-fit pt-[5rem] pb-4 border-base-200 border font-work">
+    <div className="flex flex-col justify-between h-screen fixed w-fit sm:min-w-[13rem] pt-[5rem] pb-4 px-1 border-base-200 border font-work">
       <div className="flex flex-col">
-        <SideBarItem name="Add a staff" Icon={CgUserAdd} route="/admin/register-staff"/>
-        <SideBarItem name="Attendance" Icon={BiUserCheck} route="/"/>
-        <SideBarItem name="Staff list" Icon={CgUserList} route="/"/>
-        <SideBarItem name="Logs" Icon={VscNote} route="/"/>
-      </div>
-      <div>
-        <SideBarItem name="Profile" Icon={CgProfile} route="/"/>
+        <SideBarItem
+          name="Add a staff"
+          Icon={CgUserAdd}
+          route="/admin/register-staff"
+        />
+        <SideBarItem name="Attendance" Icon={BiUserCheck} route="/" />
+        <SideBarItem name="Staff list" Icon={CgUserList} route="/" />
+        <SideBarItem name="Logs" Icon={VscNote} route="/" />
       </div>
     </div>
   );
@@ -28,20 +29,17 @@ const AdminSideBar = () => {
 
 const SideBarItem = ({ name, Icon, route }: SideBarItemProps) => {
   return (
-    <div
-      className="flex flex-col sm:flex-row gap-2 items-center 
-    w-full sm:min-w-[13rem] sm:px-3 px-1 py-3 cursor-pointer 
-    hover:bg-base-200 border-l-[6px] hover:border-l-primary border-l-base-100 
-    transition-all ease-in-out duration-100"
+    <Link
+      to={route}
+      className="flex flex-col sm:flex-row gap-1 sm:gap-3 items-center 
+      sm:px-3 px-1 py-3 cursor-pointer hover:bg-base-200 sm:border-l-[6px] 
+      hover:border-l-primary border-l-base-100 transition-all ease-in-out duration-100"
     >
-      <Icon className="w-5 h-5" />
-      <Link
-        to={route}
-        className="text-[0.6rem] sm:text-sm lg:text-base text-center"
-      >
+      <Icon className="w-6 h-6" />
+      <span className="text-[0.6rem] sm:text-sm font-semibold text-center">
         {name}
-      </Link>
-    </div>
+      </span>
+    </Link>
   );
 };
 

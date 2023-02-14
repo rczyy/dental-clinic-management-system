@@ -238,7 +238,7 @@ const RegisterStaff = (props: Props) => {
           <h1 className="py-3 text-xl font-semibold mx-2">Add a new staff</h1>
         </header>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <FormInput
+          {/* <FormInput
             type="text"
             label="password"
             placeholder="password"
@@ -255,7 +255,7 @@ const RegisterStaff = (props: Props) => {
             value={watch("confirmPassword")}
             error={errors.confirmPassword?.message}
             Logo={FiAtSign}
-          />
+          /> */}
           <section className="flex flex-col gap-1">
             <div className="flex flex-col p-2 rounded flex-1 gap-1">
               <h2 className="font-semibold mx-1 ">Personal Details</h2>
