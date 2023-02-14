@@ -24,7 +24,7 @@ export const useLogout = () => {
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.setQueriesData({ queryKey: ["user"] }, null);
     },
   });
 };
