@@ -10,7 +10,7 @@ export const useGetUsers = () => {
 
 export const useGetUser = () => {
   return useQuery<UserResponse, ErrorMessageResponse>({
-    queryKey: ["me"],
+    queryKey: ["user"],
     queryFn: getUser,
   });
 };
@@ -29,8 +29,8 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
   return useMutation<MessageResponse, ErrorMessageResponse>({
     mutationFn: logout,
-    onSuccess: () => {
-      queryClient.setQueriesData({ queryKey: ["user"] }, null);
+    onMutate: () => {
+      queryClient.setQueryData(["user"], null);
     },
   });
 };

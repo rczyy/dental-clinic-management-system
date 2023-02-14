@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { IoMenuOutline } from "react-icons/io5";
-import { AiOutlineLoading } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useGetUser, useLogout } from "../hooks/user";
 import { IoMdPerson } from "react-icons/io";
@@ -11,8 +10,8 @@ type Props = {};
 
 const Navbar = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { data, isLoading: userLoading } = useGetUser();
-  const { mutate, isLoading: logoutLoading } = useLogout();
+  const { data } = useGetUser();
+  const { mutate } = useLogout();
 
   const handleLogout: React.MouseEventHandler<HTMLSpanElement> = () => {
     mutate();
@@ -33,9 +32,7 @@ const Navbar = (props: Props) => {
             Logo
           </Link>
         </div>
-        {userLoading || logoutLoading ? (
-          <AiOutlineLoading className="animate-spin" />
-        ) : data ? (
+        {data ? (
           <>
             <DarkModeToggle className="flex items-center mx-4 sm:hidden" />
             <div
