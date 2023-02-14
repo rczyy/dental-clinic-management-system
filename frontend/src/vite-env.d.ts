@@ -1,6 +1,13 @@
 /// <reference types="vite/client" />
 
-interface FormValues {
+interface LoginFormValues {
+  email: string;
+  password: string;
+}
+
+interface SignupFormValues {
+  email: string;
+  password: string;
   firstName: string;
   middleName: string;
   lastName: string;
@@ -63,4 +70,102 @@ interface Barangay {
   regionCode: string;
   islandGroupCode: string;
   psgc10DigitCode: string;
+}
+
+interface Name {
+  firstName: string;
+  middleName: string;
+  lastName: string;
+}
+
+interface Address {
+  region: string;
+  province: string;
+  city: string;
+  barangay: string;
+  street: string;
+}
+
+interface UserResponse {
+  _id?: string;
+  name: Name;
+  address: Address;
+  email: string;
+  password: string;
+  contactNo: string;
+  role: Roles;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface AdminResponse {
+  _id?: string;
+  userId: string;
+}
+
+interface StaffResponse {
+  _id?: string;
+  userId: string;
+}
+
+interface PatientResponse {
+  _id?: string;
+  userId: string;
+}
+
+interface ManagerResponse {
+  _id?: string;
+  staffId: string;
+}
+
+interface DentistResponse {
+  _id?: string;
+  staffId: string;
+}
+
+interface FrontDeskResponse {
+  _id?: string;
+  staffId: string;
+}
+
+interface AssistantResponse {
+  _id?: string;
+  staffId: string;
+}
+
+interface MessageResponse {
+  message: string;
+}
+
+interface LoginResponse {
+  user: UserResponse;
+  token: string;
+}
+
+interface DeleteResponse {
+  _id: string;
+  message: string;
+}
+
+interface FormError {
+  formErrors: string[];
+  fieldErrors: {
+    [key: string]: string[];
+  };
+}
+
+interface ErrorMessage {
+  message: string;
+}
+
+interface FormErrorResponse {
+  response: {
+    data: FormError;
+  };
+}
+
+interface ErrorMessageResponse {
+  response: {
+    data: ErrorMessage;
+  };
 }

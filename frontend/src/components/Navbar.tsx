@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useGetUser, useLogout } from "../hooks/user";
 import { IoMdPerson } from "react-icons/io";
 import DarkModeToggle from "./DarkModeToggle";
+import { useDetectClickOutside } from "react-detect-click-outside";
 
 type Props = {};
 
@@ -17,6 +18,9 @@ const Navbar = (props: Props) => {
     mutate();
     setIsOpen(!isOpen);
   };
+  const menuRef = useDetectClickOutside({
+    onTriggered: (e) => setIsOpen(false),
+  });
 
   return (
     <div className="navbar bg-base-100 shadow gap-8 2xl:gap-0 px-4 z-30 md:px-8 fixed">
@@ -67,22 +71,38 @@ const Navbar = (props: Props) => {
           <>
             <div className="flex flex-none items-center gap-6 relative sm:hidden">
               <DarkModeToggle className="flex items-center" />
-              <IoMenuOutline
-                onClick={() => {
-                  setIsOpen(!isOpen);
-                }}
-                className="w-8 h-8 cursor-pointer"
-              />
-              {isOpen && (
-                <ul className="menu bg-base-100 w-screen absolute top-12 -right-4 border-base-200 border shadow">
-                  <li>
-                    <Link to="/login">Log in</Link>
-                  </li>
-                  <li>
-                    <Link to="/signup">Sign Up</Link>
-                  </li>
-                </ul>
-              )}
+              <div ref={menuRef}>
+                <IoMenuOutline
+                  onClick={() => {
+                    setIsOpen(!isOpen);
+                  }}
+                  className="w-8 h-8 cursor-pointer"
+                />
+                {isOpen && (
+                  <ul className="menu bg-base-100 w-screen absolute top-12 -right-4 border border-base-200 shadow">
+                    <li>
+                      <Link
+                        to="/login"
+                        onClick={(e) => {
+                          setIsOpen(false);
+                        }}
+                      >
+                        Log in
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/signup"
+                        onClick={() => {
+                          setIsOpen(false);
+                        }}
+                      >
+                        Sign Up
+                      </Link>
+                    </li>
+                  </ul>
+                )}
+              </div>
             </div>
             <div className="flex-none hidden sm:flex gap-8">
               <Link

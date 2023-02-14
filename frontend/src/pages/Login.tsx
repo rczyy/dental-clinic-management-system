@@ -21,16 +21,15 @@ const Login = (props: Props) => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<LoginFormValues>({
     resolver: yupResolver(schema),
   });
 
   const { data, isLoading } = useGetUser();
-  const {mutate, error} = useLogin();
+  const { mutate, error } = useLogin();
 
-  const onSubmit: SubmitHandler<FormValues> = (data) =>
-    mutate(data);
-
+  const onSubmit: SubmitHandler<LoginFormValues> = (data) => mutate(data);
+  
   if (isLoading) return <h2>Loading...</h2>;
   if (data) return <Navigate to="/" />;
 
@@ -76,14 +75,13 @@ const Login = (props: Props) => {
               />
               <a className="text-xs text-neutral ml-auto">Forgot Password</a>
               <button
-                type="submit" 
+                type="submit"
                 className="btn bg-primary border-primary text-zinc-50 my-8"
               >
                 Log In
               </button>
               <span className="text-xs text-error text-center pl-1">
-                {error &&
-                  (error as any).response.data.formErrors}
+                {error && (error as any).response.data.formErrors}
               </span>
             </form>
           </div>

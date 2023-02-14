@@ -3,7 +3,7 @@ import axios from "axios";
 const URL = import.meta.env.VITE_AXIOS_BASE_URL;
 
 export const getStaffs = async () => {
-  const res = await axios.get(`${URL}/staff`, {
+  const res = await axios.get<StaffResponse[]>(`${URL}/staff`, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
@@ -13,7 +13,7 @@ export const getStaffs = async () => {
 };
 
 export const getStaff = async (id: string) => {
-  const res = await axios.get(`${URL}/staff/${id}`, {
+  const res = await axios.get<StaffResponse>(`${URL}/staff/${id}`, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
@@ -22,8 +22,8 @@ export const getStaff = async (id: string) => {
   return res.data;
 };
 
-export const registerStaff = async (form: FormValues) => {
-  const res = await axios.post(`${URL}/staff/register`, form, {
+export const registerStaff = async (form: SignupFormValues) => {
+  const res = await axios.post<UserResponse>(`${URL}/staff/register`, form, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
@@ -33,7 +33,7 @@ export const registerStaff = async (form: FormValues) => {
 };
 
 export const removeStaff = async (id: string) => {
-  const res = await axios.delete(`${URL}/staff/remove/${id}`, {
+  const res = await axios.delete<DeleteResponse>(`${URL}/staff/remove/${id}`, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,

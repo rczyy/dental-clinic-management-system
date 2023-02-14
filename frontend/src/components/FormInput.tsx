@@ -4,8 +4,8 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { IconType } from "react-icons/lib";
 
 type Props = {
-  label: Path<FormValues>;
-  register: UseFormRegister<FormValues>;
+  label: Path<LoginFormValues | SignupFormValues>;
+  register: UseFormRegister<LoginFormValues | SignupFormValues>;
   error: string | undefined;
   type: string;
   inputMode?: "email" | "search" | "text" | "numeric" | "none" | "tel" | "url" | "decimal" | undefined;
@@ -37,7 +37,11 @@ const FormInput = ({
         {label === "contactNo" && (
           <>
             <span className="px-2">+63</span>
-            <div className={"w-[1px] h-[20px] " + (value ? "bg-primary" : "bg-zinc-300")}></div>
+            <div
+              className={
+                "w-[1px] h-[20px] " + (value ? "bg-primary" : "bg-zinc-300")
+              }
+            ></div>
           </>
         )}
         <div className="flex items-center relative w-full">
