@@ -6,10 +6,14 @@ type Props = {};
 
 const App = (props: Props) => {
   return (
-    <div>
-      <Navbar />
-      <Outlet />
-      <Footer />
+    <div className="flex flex-col h-screen justify-between">
+      <div>
+        <Navbar />
+        <Outlet />
+      </div>
+      <div>
+        <Footer />
+      </div>
     </div>
   );
 };
