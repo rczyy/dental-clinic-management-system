@@ -12,7 +12,7 @@ type SideBarItemProps = {
 
 const AdminSideBar = () => {
   return (
-    <div className="flex flex-col justify-between h-screen fixed w-fit sm:min-w-[13rem] pt-[5rem] pb-4 px-1 border-base-200 border font-work">
+    <div className="flex flex-col sticky justify-between h-screen w-fit sm:min-w-[13rem] pt-[5rem] pb-4 px-1 border-base-200 border-r font-work bg-base-100">
       <div className="flex flex-col">
         <SideBarItem
           name="Add a staff"

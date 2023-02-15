@@ -2,7 +2,7 @@ type Props = {};
 
 const Footer = (props: Props) => {
   return (
-    <footer className="footer p-10 shadow-md border-zinc-200 border-t text-base-content">
+    <footer className="footer p-10 shadow-md border-neutral border-t text-base-content bg-base-100">
       <div>
         <svg
           width="50"

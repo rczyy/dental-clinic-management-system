@@ -46,7 +46,7 @@ const Navbar = (props: Props) => {
                 <span className="hidden sm:block text-sm leading-tight font-semibold">
                   {data.name.firstName}
                 </span>
-                <span className="hidden sm:block text-xs text-neutral leading-tight">
+                <span className="hidden sm:block text-xs text-zinc-400 leading-tight">
                   {data.email}
                 </span>
               </div>
