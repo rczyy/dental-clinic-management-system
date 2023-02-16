@@ -25,7 +25,7 @@ export const useRegisterStaff = () => {
   return useMutation<
     UserResponse,
     FormErrorResponse | ErrorMessageResponse,
-    SignupFormValues
+    StaffSignupFormValues
   >({
     mutationFn: registerStaff,
     onSuccess: () => {

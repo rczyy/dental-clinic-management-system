@@ -1,10 +1,15 @@
 import { useState, useEffect, useRef } from "react";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import {
+  useForm,
+  Controller,
+  SubmitHandler,
+  UseFormRegister,
+} from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FiAtSign } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { useRegisterPatient } from "../hooks/patient";
+import { useRegisterStaff } from "../hooks/staff";
 import {
   getCities,
   getProvinces,
@@ -14,7 +19,6 @@ import {
 import * as yup from "yup";
 import Select from "react-select";
 import FormInput from "../components/FormInput";
-import { useRegisterStaff } from "../hooks/staff";
 
 type Props = {};
 
@@ -30,14 +34,6 @@ const schema = yup
     barangay: yup.string().required("Barangay is required"),
     street: yup.string().required("Street is required"),
     email: yup.string().email("Invalid email").required("Email is required"),
-    password: yup
-      .string()
-      .required("Password is required")
-      .min(6, "Password must be at least 6 characters"),
-    confirmPassword: yup
-      .string()
-      .required("Confirm your Password")
-      .oneOf([yup.ref("password")], "Passwords doesn't match"),
     contactNo: yup
       .string()
       .required("Invalid contact number")
@@ -65,7 +61,7 @@ const RegisterStaff = (props: Props) => {
   const oldProvinceValue = useRef<string>();
   const oldCityValue = useRef<string>();
 
-  const {mutate, error} = useRegisterStaff();
+  const { mutate, error } = useRegisterStaff();
 
   const {
     control,
@@ -74,7 +70,7 @@ const RegisterStaff = (props: Props) => {
     watch,
     reset,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<StaffSignupFormValues>({
     defaultValues: {
       firstName: "",
       middleName: "",
@@ -86,14 +82,12 @@ const RegisterStaff = (props: Props) => {
       barangay: "",
       street: "",
       email: "",
-      password: "",
-      confirmPassword: "",
       role: "",
     },
     resolver: yupResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<StaffSignupFormValues> = (data) => {
     mutate(
       { ...data, contactNo: "+63" + watch("contactNo") },
       {
@@ -110,8 +104,6 @@ const RegisterStaff = (props: Props) => {
             barangay: "",
             street: "",
             email: "",
-            password: "",
-            confirmPassword: "",
           }),
       }
     );
@@ -238,24 +230,6 @@ const RegisterStaff = (props: Props) => {
           <h1 className="py-3 text-xl font-semibold mx-2">Add a new staff</h1>
         </header>
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* <FormInput
-            type="text"
-            label="password"
-            placeholder="password"
-            register={register}
-            value={watch("password")}
-            error={errors.password?.message}
-            Logo={FiAtSign}
-          />
-          <FormInput
-            type="text"
-            label="confirmPassword"
-            placeholder="confirmPassword"
-            register={register}
-            value={watch("confirmPassword")}
-            error={errors.confirmPassword?.message}
-            Logo={FiAtSign}
-          /> */}
           <section className="flex flex-col gap-1">
             <div className="flex flex-col p-2 rounded flex-1 gap-1">
               <h2 className="font-semibold mx-1 ">Personal Details</h2>
@@ -264,7 +238,11 @@ const RegisterStaff = (props: Props) => {
                   type="text"
                   label="firstName"
                   placeholder="First name"
-                  register={register}
+                  register={
+                    register as UseFormRegister<
+                      SignupFormValues | LoginFormValues | StaffSignupFormValues
+                    >
+                  }
                   value={watch("firstName")}
                   error={errors.firstName?.message}
                   Logo={FiAtSign}
@@ -275,7 +253,11 @@ const RegisterStaff = (props: Props) => {
                   type="text"
                   label="middleName"
                   placeholder="Middle name"
-                  register={register}
+                  register={
+                    register as UseFormRegister<
+                      SignupFormValues | LoginFormValues | StaffSignupFormValues
+                    >
+                  }
                   value={watch("middleName")}
                   error={errors.middleName?.message}
                   Logo={FiAtSign}
@@ -284,7 +266,11 @@ const RegisterStaff = (props: Props) => {
                   type="text"
                   label="lastName"
                   placeholder="Last name"
-                  register={register}
+                  register={
+                    register as UseFormRegister<
+                      SignupFormValues | LoginFormValues | StaffSignupFormValues
+                    >
+                  }
                   value={watch("lastName")}
                   error={errors.lastName?.message}
                   Logo={FiAtSign}
@@ -295,7 +281,11 @@ const RegisterStaff = (props: Props) => {
                   type="text"
                   label="email"
                   placeholder="Email"
-                  register={register}
+                  register={
+                    register as UseFormRegister<
+                      SignupFormValues | LoginFormValues | StaffSignupFormValues
+                    >
+                  }
                   value={watch("email")}
                   error={errors.email?.message}
                   Logo={FiAtSign}
@@ -307,7 +297,11 @@ const RegisterStaff = (props: Props) => {
                   inputMode="numeric"
                   label="contactNo"
                   placeholder="Contact Number"
-                  register={register}
+                  register={
+                    register as UseFormRegister<
+                      SignupFormValues | LoginFormValues | StaffSignupFormValues
+                    >
+                  }
                   value={watch("contactNo")}
                   error={errors.contactNo?.message}
                   Logo={BsPerson}
@@ -527,7 +521,11 @@ const RegisterStaff = (props: Props) => {
                 type="text"
                 label="street"
                 placeholder="Street"
-                register={register}
+                register={
+                  register as UseFormRegister<
+                    SignupFormValues | LoginFormValues | StaffSignupFormValues
+                  >
+                }
                 value={watch("street")}
                 error={errors.street?.message}
                 Logo={BsHouseDoor}
@@ -542,9 +540,8 @@ const RegisterStaff = (props: Props) => {
               Register staff
             </button>
             <span className="text-xs text-error text-center">
-            {error &&
-              (error as any).response.data.formErrors}
-          </span>
+              {error && (error as any).response.data.formErrors}
+            </span>
           </div>
         </form>
       </section>

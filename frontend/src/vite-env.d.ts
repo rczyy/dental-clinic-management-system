@@ -7,7 +7,6 @@ interface LoginFormValues {
 
 interface SignupFormValues {
   email: string;
-  password: string;
   firstName: string;
   middleName: string;
   lastName: string;
@@ -17,9 +16,22 @@ interface SignupFormValues {
   city: string;
   barangay: string;
   street: string;
-  email: string;
   password: string;
   confirmPassword: string;
+  contactNo: string;
+}
+
+interface StaffSignupFormValues {
+  email: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  role: string;
+  region: string;
+  province: string;
+  city: string;
+  barangay: string;
+  street: string;
   contactNo: string;
 }
 
