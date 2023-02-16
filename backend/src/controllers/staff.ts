@@ -4,6 +4,7 @@ import { z } from "zod";
 import { hash } from "bcrypt";
 import { Roles } from "../constants";
 import { verifyToken } from "../utilities/verifyToken";
+import { generateRandomPass } from "../utilities/generatePassword";
 import User from "../models/user";
 import Staff from "../models/staff";
 import Manager from "../models/manager";
@@ -85,21 +86,12 @@ export const registerStaff: RequestHandler = async (req, res) => {
       barangay: z.string({ required_error: "Barangay is required" }),
       street: z.string({ required_error: "Street is required" }),
       email: z.string({ required_error: "Email is required" }).email(),
-      password: z
-        .string({ required_error: "Password is required" })
-        .min(6, "Password must be atleast 6 characters"),
-      confirmPassword: z.string({
-        required_error: "Confirm your password",
-      }),
       contactNo: z
         .string({ required_error: "Invalid contact number" })
         .startsWith("+63", "Invalid contact number")
         .length(13, "Invalid contact number"),
       role: z.nativeEnum(Roles),
     })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords doesn't match",
-    });
 
   type body = z.infer<typeof userSchema>;
 
@@ -120,7 +112,6 @@ export const registerStaff: RequestHandler = async (req, res) => {
     barangay,
     street,
     email,
-    password,
     contactNo,
     role,
   }: body = req.body;
@@ -142,7 +133,7 @@ export const registerStaff: RequestHandler = async (req, res) => {
     role !== Roles.FrontDesk &&
     role !== Roles.Manager
   ) {
-    const error: ErrorBody = {
+    const error: FormError = {
       formErrors: ["Invalid role"],
     };
 
@@ -150,6 +141,7 @@ export const registerStaff: RequestHandler = async (req, res) => {
     return;
   }
 
+  const password = generateRandomPass();
   const hashedPassword = await hash(password, 10);
 
   const user = new User({

@@ -16,6 +16,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
+    "generate-password": "^1.7.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.1",
     "zod": "^3.20.2"

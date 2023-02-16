@@ -22,7 +22,7 @@ export const getStaff = async (id: string) => {
   return res.data;
 };
 
-export const registerStaff = async (form: SignupFormValues) => {
+export const registerStaff = async (form: StaffSignupFormValues) => {
   const res = await axios.post<UserResponse>(`${URL}/staff/register`, form, {
     withCredentials: true,
     headers: {

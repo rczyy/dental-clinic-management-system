@@ -21,32 +21,39 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {};
 
-const schema = z
-  .object({
-    firstName: z.string({ required_error: "First name is required" }),
-    middleName: z.string({ required_error: "Middle name is required" }),
-    lastName: z.string({ required_error: "Last name is required" }),
-    region: z.string({ required_error: "Region is required" }),
-    province: z.string({ required_error: "Province is required" }),
-    city: z.string({ required_error: "City is required" }),
-    barangay: z.string({ required_error: "Barangay is required" }),
-    street: z.string({ required_error: "Street is required" }),
-    email: z.string({ required_error: "Email is required" }).email(),
-    password: z
-      .string({ required_error: "Password is required" })
-      .min(6, "Password must be atleast 6 characters"),
-    confirmPassword: z.string({
-      required_error: "Confirm your password",
-    }),
-    contactNo: z
-      .string({ required_error: "Invalid contact number" })
-      .startsWith("+63", "Invalid contact number")
-      .length(13, "Invalid contact number"),
-    role: z.enum(["Manager", "Assistant", "Dentist", "Front Desk", "Patient"]),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords doesn't match",
-  });
+const schema = z.object({
+  firstName: z
+    .string({ required_error: "First name is required" })
+    .min(1, "First name is required"),
+  middleName: z
+    .string({ required_error: "Middle name is required" })
+    .min(1, "Middle name is required"),
+  lastName: z
+    .string({ required_error: "Last name is required" })
+    .min(1, "Last name is required"),
+  region: z
+    .string({ required_error: "Region is required" })
+    .min(1, "Region is required"),
+  province: z
+    .string({ required_error: "Province is required" })
+    .min(1, "Province is required"),
+  city: z
+    .string({ required_error: "City is required" })
+    .min(1, "City is required"),
+  barangay: z
+    .string({ required_error: "Barangay is required" })
+    .min(1, "Barangay is required"),
+  street: z
+    .string({ required_error: "Street is required" })
+    .min(1, "Street is required"),
+  email: z
+    .string({ required_error: "Email is required" })
+    .min(1, "Email is required")
+    .email("Invalid email"),
+  contactNo: z
+    .string({ required_error: "Invalid contact number" })
+    .length(10, "Invalid contact number"),
+});
 
 const RegisterStaff = (props: Props) => {
   const roles = [
@@ -76,7 +83,7 @@ const RegisterStaff = (props: Props) => {
     watch,
     reset,
     formState: { errors },
-  } = useForm<SignupFormValues>({
+  } = useForm<StaffSignupFormValues>({
     defaultValues: {
       firstName: "",
       middleName: "",
@@ -88,14 +95,12 @@ const RegisterStaff = (props: Props) => {
       barangay: "",
       street: "",
       email: "",
-      password: "",
-      confirmPassword: "",
       role: "",
     },
     resolver: zodResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<SignupFormValues> = (data) => {
+  const onSubmit: SubmitHandler<StaffSignupFormValues> = (data) => {
     mutate(
       { ...data, contactNo: "+63" + watch("contactNo") },
       {
@@ -112,8 +117,6 @@ const RegisterStaff = (props: Props) => {
             barangay: "",
             street: "",
             email: "",
-            password: "",
-            confirmPassword: "",
           }),
       }
     );
@@ -240,24 +243,6 @@ const RegisterStaff = (props: Props) => {
           <h1 className="py-3 text-xl font-semibold mx-2">Add a new staff</h1>
         </header>
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* <FormInput
-            type="text"
-            label="password"
-            placeholder="password"
-            register={register}
-            value={watch("password")}
-            error={errors.password?.message}
-            Logo={FiAtSign}
-          />
-          <FormInput
-            type="text"
-            label="confirmPassword"
-            placeholder="confirmPassword"
-            register={register}
-            value={watch("confirmPassword")}
-            error={errors.confirmPassword?.message}
-            Logo={FiAtSign}
-          /> */}
           <section className="flex flex-col gap-1">
             <div className="flex flex-col p-2 rounded flex-1 gap-1">
               <h2 className="font-semibold mx-1 ">Personal Details</h2>
@@ -268,7 +253,7 @@ const RegisterStaff = (props: Props) => {
                   placeholder="First name"
                   register={
                     register as UseFormRegister<
-                      SignupFormValues | LoginFormValues
+                      SignupFormValues | LoginFormValues | StaffSignupFormValues
                     >
                   }
                   value={watch("firstName")}
@@ -283,7 +268,7 @@ const RegisterStaff = (props: Props) => {
                   placeholder="Middle name"
                   register={
                     register as UseFormRegister<
-                      SignupFormValues | LoginFormValues
+                      SignupFormValues | LoginFormValues | StaffSignupFormValues
                     >
                   }
                   value={watch("middleName")}
@@ -296,7 +281,7 @@ const RegisterStaff = (props: Props) => {
                   placeholder="Last name"
                   register={
                     register as UseFormRegister<
-                      SignupFormValues | LoginFormValues
+                      SignupFormValues | LoginFormValues | StaffSignupFormValues
                     >
                   }
                   value={watch("lastName")}
@@ -311,7 +296,7 @@ const RegisterStaff = (props: Props) => {
                   placeholder="Email"
                   register={
                     register as UseFormRegister<
-                      SignupFormValues | LoginFormValues
+                      SignupFormValues | LoginFormValues | StaffSignupFormValues
                     >
                   }
                   value={watch("email")}
@@ -326,7 +311,7 @@ const RegisterStaff = (props: Props) => {
                   placeholder="Contact Number"
                   register={
                     register as UseFormRegister<
-                      SignupFormValues | LoginFormValues
+                      SignupFormValues | LoginFormValues | StaffSignupFormValues
                     >
                   }
                   value={watch("contactNo")}
@@ -550,7 +535,7 @@ const RegisterStaff = (props: Props) => {
                 placeholder="Street"
                 register={
                   register as UseFormRegister<
-                    SignupFormValues | LoginFormValues
+                    SignupFormValues | LoginFormValues | StaffSignupFormValues
                   >
                 }
                 value={watch("street")}

@@ -301,7 +301,7 @@ const Signup = (props: Props) => {
                     placeholder="First Name"
                     register={
                       register as UseFormRegister<
-                        SignupFormValues | LoginFormValues
+                        SignupFormValues | LoginFormValues | StaffSignupFormValues
                       >
                     }
                     value={watch("firstName")}
@@ -314,7 +314,7 @@ const Signup = (props: Props) => {
                     placeholder="Middle Name"
                     register={
                       register as UseFormRegister<
-                        SignupFormValues | LoginFormValues
+                        SignupFormValues | LoginFormValues | StaffSignupFormValues
                       >
                     }
                     value={watch("middleName")}
@@ -327,7 +327,7 @@ const Signup = (props: Props) => {
                     placeholder="Last Name"
                     register={
                       register as UseFormRegister<
-                        SignupFormValues | LoginFormValues
+                        SignupFormValues | LoginFormValues | StaffSignupFormValues
                       >
                     }
                     value={watch("lastName")}
@@ -340,7 +340,7 @@ const Signup = (props: Props) => {
                     placeholder="Contact Number"
                     register={
                       register as UseFormRegister<
-                        SignupFormValues | LoginFormValues
+                        SignupFormValues | LoginFormValues | StaffSignupFormValues
                       >
                     }
                     value={watch("contactNo")}
@@ -545,7 +545,7 @@ const Signup = (props: Props) => {
                     placeholder="Street"
                     register={
                       register as UseFormRegister<
-                        SignupFormValues | LoginFormValues
+                        SignupFormValues | LoginFormValues | StaffSignupFormValues
                       >
                     }
                     value={watch("street")}
@@ -591,7 +591,7 @@ const Signup = (props: Props) => {
                     placeholder="Email"
                     register={
                       register as UseFormRegister<
-                        SignupFormValues | LoginFormValues
+                        SignupFormValues | LoginFormValues | StaffSignupFormValues
                       >
                     }
                     value={watch("email")}
@@ -604,7 +604,7 @@ const Signup = (props: Props) => {
                     placeholder="Password"
                     register={
                       register as UseFormRegister<
-                        SignupFormValues | LoginFormValues
+                        SignupFormValues | LoginFormValues | StaffSignupFormValues
                       >
                     }
                     value={watch("password")}
@@ -616,7 +616,7 @@ const Signup = (props: Props) => {
                     placeholder="Confirm Password"
                     register={
                       register as UseFormRegister<
-                        SignupFormValues | LoginFormValues
+                        SignupFormValues | LoginFormValues | StaffSignupFormValues
                       >
                     }
                     value={watch("confirmPassword")}
