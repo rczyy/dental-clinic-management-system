@@ -8,7 +8,6 @@ type Props = {
   register: UseFormRegister<LoginFormValues | SignupFormValues>;
   error: string | undefined;
   type: string;
-  inputMode?: "email" | "search" | "text" | "numeric" | "none" | "tel" | "url" | "decimal" | undefined;
   placeholder: string;
   value: string;
   Logo?: IconType;
@@ -17,7 +16,6 @@ type Props = {
 const FormInput = ({
   register,
   type,
-  inputMode,
   label,
   placeholder,
   value,
@@ -68,13 +66,12 @@ const FormInput = ({
             type={
               type === "password" ? (showPassword ? "text" : "password") : type
             }
-            inputMode={inputMode}
             {...register(label)}
           />
           {Logo && (
             <Logo
               className={
-                "w-10 h-10 p-2.5 cursor-pointer bg-base-300 z-20 " +
+                "w-10 h-10 p-2.5 bg-base-300 " +
                 (value ? "text-primary" : "text-zinc-400")
               }
             />

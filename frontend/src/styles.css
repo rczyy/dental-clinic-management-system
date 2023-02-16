@@ -9,7 +9,7 @@ main {
 }
 
 .adminMain {
-  @apply pt-[5rem] pb-3 pl-20 sm:pl-56 pr-3 sm:pr-4;
+  @apply pt-[5rem] pb-3 px-3 sm:px-4;
 }
 
 ::-webkit-scrollbar {
@@ -17,15 +17,15 @@ main {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-base-300; 
+  @apply bg-base-300;
 }
- 
+
 ::-webkit-scrollbar-thumb {
-  @apply bg-primary rounded-md; 
+  @apply bg-primary rounded-md;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-black; 
+  @apply bg-black;
 }
 
 input::-webkit-outer-spin-button,
@@ -35,6 +35,6 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }

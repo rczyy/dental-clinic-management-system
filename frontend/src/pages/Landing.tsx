@@ -9,7 +9,7 @@ type Props = {};
 const Landing = (props: Props) => {
   return (
     <div className="font-work min-h-screen flex flex-col gap-2 pt-16 pb-4 bg-base-300">
-      <section className="flex flex-col items-center justify-center gap-2 min-h-[85vh] relative">
+      <section className="flex flex-col items-center justify-center gap-2 min-h-[85vh] bg-base-200 relative">
         <div className="text-center z-10">
           <h1 className="font-light text-3xl">AT Dental Home's</h1>
           <h1 className="font-bold text-primary text-2xl">
@@ -50,22 +50,21 @@ type BlobProps = {
 
 const Blob = ({ className }: BlobProps) => {
   return (
-    <div className="absolute bottom-0 w-screen bg-base-100 z-0">
-      <svg
-        id="visual"
-        viewBox="0 0 900 600"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        version="1.1"
-      >
-        <path
-          d="M0 546L37.5 541C75 536 150 526 225 521.3C300 516.7 375 517.3 450 523.7C525 530 600 542 675 548.8C750 555.7 825 557.3 862.5 558.2L900 559L900 601L862.5 601C825 601 750 601 675 601C600 601 525 601 450 601C375 601 300 601 225 601C150 601 75 601 37.5 601L0 601Z"
-          className={className}
-          strokeLinecap="round"
-          strokeLinejoin="miter"
-        ></path>
-      </svg>
-    </div>
+    <svg
+      id="visual"
+      className="absolute bottom-0 w-screen z-0"
+      viewBox="0 0 900 600"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      version="1.1"
+    >
+      <path
+        d="M0 546L37.5 541C75 536 150 526 225 521.3C300 516.7 375 517.3 450 523.7C525 530 600 542 675 548.8C750 555.7 825 557.3 862.5 558.2L900 559L900 601L862.5 601C825 601 750 601 675 601C600 601 525 601 450 601C375 601 300 601 225 601C150 601 75 601 37.5 601L0 601Z"
+        className={className}
+        strokeLinecap="round"
+        strokeLinejoin="miter"
+      ></path>
+    </svg>
   );
 };
 
