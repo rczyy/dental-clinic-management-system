@@ -238,7 +238,7 @@ const RegisterStaff = (props: Props) => {
 
   return (
     <div className="adminMain font-work w-full flex flex-col items-center">
-      <section className="bg-base-300 px-2 rounded-2xl max-w-4xl w-full shadow-md sm:px-10 py-4">
+      <section className="bg-base-300 px-2 rounded-2xl max-w-4xl w-full shadow-md py-4 sm:px-4 md:px-10">
         <header className="flex justify-start">
           <h1 className="py-3 text-xl font-semibold mx-2">Add a new staff</h1>
         </header>
@@ -333,7 +333,8 @@ const RegisterStaff = (props: Props) => {
                         control: ({ hasValue }) =>
                           "pl-1.5 py-2 !bg-base-300 " +
                           (hasValue && "!border-primary"),
-                        placeholder: () => "!text-zinc-400 ",
+                        placeholder: () =>
+                          "!text-zinc-400 !text-sm sm:!text-base ",
                         singleValue: () => "!text-base-content",
                         input: () => "!text-base-content",
                         option: ({ isSelected, isFocused }) =>
@@ -375,7 +376,8 @@ const RegisterStaff = (props: Props) => {
                         control: ({ hasValue }) =>
                           "pl-1.5 py-2 !bg-base-300 " +
                           (hasValue && "!border-primary"),
-                        placeholder: () => "!text-zinc-400 ",
+                        placeholder: () =>
+                          "!text-zinc-400 !text-sm sm:!text-base ",
                         singleValue: () => "!text-base-content",
                         input: () => "!text-base-content",
                         option: ({ isSelected, isFocused }) =>
@@ -418,7 +420,8 @@ const RegisterStaff = (props: Props) => {
                         control: ({ hasValue }) =>
                           "pl-1.5 py-2 !bg-base-300 " +
                           (hasValue && "!border-primary"),
-                        placeholder: () => "!text-zinc-400 ",
+                        placeholder: () =>
+                          "!text-zinc-400 !text-sm sm:!text-base ",
                         singleValue: () => "!text-base-content",
                         input: () => "!text-base-content",
                         option: ({ isSelected, isFocused }) =>
@@ -460,7 +463,8 @@ const RegisterStaff = (props: Props) => {
                         control: ({ hasValue }) =>
                           "pl-1.5 py-2 !bg-base-300 " +
                           (hasValue && "!border-primary"),
-                        placeholder: () => "!text-zinc-400 ",
+                        placeholder: () =>
+                          "!text-zinc-400 !text-sm sm:!text-base ",
                         singleValue: () => "!text-base-content",
                         input: () => "!text-base-content",
                         option: ({ isSelected, isFocused }) =>
@@ -504,7 +508,8 @@ const RegisterStaff = (props: Props) => {
                         control: ({ hasValue }) =>
                           "pl-1.5 py-2 !bg-base-300 " +
                           (hasValue && "!border-primary"),
-                        placeholder: () => "!text-zinc-400 ",
+                        placeholder: () =>
+                          "!text-zinc-400 !text-sm sm:!text-base ",
                         singleValue: () => "!text-base-content",
                         input: () => "!text-base-content",
                         option: ({ isSelected, isFocused }) =>

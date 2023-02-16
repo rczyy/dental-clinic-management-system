@@ -5,7 +5,9 @@ import { IconType } from "react-icons/lib";
 
 type Props = {
   label: Path<LoginFormValues | SignupFormValues | StaffSignupFormValues>;
-  register: UseFormRegister<LoginFormValues | SignupFormValues | StaffSignupFormValues>;
+  register: UseFormRegister<
+    LoginFormValues | SignupFormValues | StaffSignupFormValues
+  >;
   error: string | undefined;
   type: string;
   placeholder: string;
@@ -34,7 +36,7 @@ const FormInput = ({
       >
         {label === "contactNo" && (
           <>
-            <span className="px-2">+63</span>
+            <span className="px-1.5 text-sm sm:text-base sm:px-2">+63</span>
             <div
               className={
                 "w-[1px] h-[20px] " + (value ? "bg-primary" : "bg-zinc-300")
@@ -46,10 +48,10 @@ const FormInput = ({
           <label
             htmlFor={label}
             className={
-              "absolute transition-all cursor-text select-none " +
+              "absolute transition-all cursor-text select-none text-sm sm::text-base " +
               (!value
                 ? "top-1/2 -translate-y-1/2 text-zinc-400 " +
-                  (label !== "contactNo" ? "left-4" : "left-2")
+                  (label !== "contactNo" ? "left-4" : "left-1.5 sm:left-2")
                 : "bg-base-300 text-primary text-sm leading-none rounded top-0 -translate-y-1/2 " +
                   (label !== "contactNo" ? "left-3.5" : "-left-8"))
             }
@@ -71,8 +73,7 @@ const FormInput = ({
           {Logo && (
             <Logo
               className={
-                "w-10 h-10 p-2.5 bg-base-300 " +
-                (value ? "text-primary" : "text-zinc-400")
+                "w-10 h-10 p-2.5 " + (value ? "text-primary" : "text-zinc-400")
               }
             />
           )}
