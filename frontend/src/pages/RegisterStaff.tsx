@@ -1,50 +1,52 @@
 import { useState, useEffect, useRef } from "react";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import {
+  useForm,
+  Controller,
+  SubmitHandler,
+  UseFormRegister,
+} from "react-hook-form";
 import { FiAtSign } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
-import { Link } from "react-router-dom";
-import { useRegisterPatient } from "../hooks/patient";
 import {
   getCities,
   getProvinces,
   getRegions,
   getBarangays,
 } from "../api/philippineAddress";
-import * as yup from "yup";
+import * as z from "zod";
 import Select from "react-select";
 import FormInput from "../components/FormInput";
 import { useRegisterStaff } from "../hooks/staff";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {};
 
-const schema = yup
+const schema = z
   .object({
-    firstName: yup.string().required("First Name is required"),
-    middleName: yup.string().required("Middle Name is required"),
-    lastName: yup.string().required("Last Name is required"),
-    role: yup.string().required("Role is required"),
-    region: yup.string().required("Region is required"),
-    province: yup.string().required("Province is required"),
-    city: yup.string().required("City is required"),
-    barangay: yup.string().required("Barangay is required"),
-    street: yup.string().required("Street is required"),
-    email: yup.string().email("Invalid email").required("Email is required"),
-    password: yup
-      .string()
-      .required("Password is required")
-      .min(6, "Password must be at least 6 characters"),
-    confirmPassword: yup
-      .string()
-      .required("Confirm your Password")
-      .oneOf([yup.ref("password")], "Passwords doesn't match"),
-    contactNo: yup
-      .string()
-      .required("Invalid contact number")
-      .min(10, "Invalid contact number")
-      .max(10, "Invalid contact number"),
+    firstName: z.string({ required_error: "First name is required" }),
+    middleName: z.string({ required_error: "Middle name is required" }),
+    lastName: z.string({ required_error: "Last name is required" }),
+    region: z.string({ required_error: "Region is required" }),
+    province: z.string({ required_error: "Province is required" }),
+    city: z.string({ required_error: "City is required" }),
+    barangay: z.string({ required_error: "Barangay is required" }),
+    street: z.string({ required_error: "Street is required" }),
+    email: z.string({ required_error: "Email is required" }).email(),
+    password: z
+      .string({ required_error: "Password is required" })
+      .min(6, "Password must be atleast 6 characters"),
+    confirmPassword: z.string({
+      required_error: "Confirm your password",
+    }),
+    contactNo: z
+      .string({ required_error: "Invalid contact number" })
+      .startsWith("+63", "Invalid contact number")
+      .length(13, "Invalid contact number"),
+    role: z.enum(["Manager", "Assistant", "Dentist", "Front Desk", "Patient"]),
   })
-  .required();
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords doesn't match",
+  });
 
 const RegisterStaff = (props: Props) => {
   const roles = [
@@ -65,7 +67,7 @@ const RegisterStaff = (props: Props) => {
   const oldProvinceValue = useRef<string>();
   const oldCityValue = useRef<string>();
 
-  const {mutate, error} = useRegisterStaff();
+  const { mutate, error } = useRegisterStaff();
 
   const {
     control,
@@ -74,7 +76,7 @@ const RegisterStaff = (props: Props) => {
     watch,
     reset,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<SignupFormValues>({
     defaultValues: {
       firstName: "",
       middleName: "",
@@ -90,10 +92,10 @@ const RegisterStaff = (props: Props) => {
       confirmPassword: "",
       role: "",
     },
-    resolver: yupResolver(schema),
+    resolver: zodResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<SignupFormValues> = (data) => {
     mutate(
       { ...data, contactNo: "+63" + watch("contactNo") },
       {
@@ -264,7 +266,11 @@ const RegisterStaff = (props: Props) => {
                   type="text"
                   label="firstName"
                   placeholder="First name"
-                  register={register}
+                  register={
+                    register as UseFormRegister<
+                      SignupFormValues | LoginFormValues
+                    >
+                  }
                   value={watch("firstName")}
                   error={errors.firstName?.message}
                   Logo={FiAtSign}
@@ -275,7 +281,11 @@ const RegisterStaff = (props: Props) => {
                   type="text"
                   label="middleName"
                   placeholder="Middle name"
-                  register={register}
+                  register={
+                    register as UseFormRegister<
+                      SignupFormValues | LoginFormValues
+                    >
+                  }
                   value={watch("middleName")}
                   error={errors.middleName?.message}
                   Logo={FiAtSign}
@@ -284,7 +294,11 @@ const RegisterStaff = (props: Props) => {
                   type="text"
                   label="lastName"
                   placeholder="Last name"
-                  register={register}
+                  register={
+                    register as UseFormRegister<
+                      SignupFormValues | LoginFormValues
+                    >
+                  }
                   value={watch("lastName")}
                   error={errors.lastName?.message}
                   Logo={FiAtSign}
@@ -295,7 +309,11 @@ const RegisterStaff = (props: Props) => {
                   type="text"
                   label="email"
                   placeholder="Email"
-                  register={register}
+                  register={
+                    register as UseFormRegister<
+                      SignupFormValues | LoginFormValues
+                    >
+                  }
                   value={watch("email")}
                   error={errors.email?.message}
                   Logo={FiAtSign}
@@ -304,10 +322,13 @@ const RegisterStaff = (props: Props) => {
               <div>
                 <FormInput
                   type="number"
-                  inputMode="numeric"
                   label="contactNo"
                   placeholder="Contact Number"
-                  register={register}
+                  register={
+                    register as UseFormRegister<
+                      SignupFormValues | LoginFormValues
+                    >
+                  }
                   value={watch("contactNo")}
                   error={errors.contactNo?.message}
                   Logo={BsPerson}
@@ -527,7 +548,11 @@ const RegisterStaff = (props: Props) => {
                 type="text"
                 label="street"
                 placeholder="Street"
-                register={register}
+                register={
+                  register as UseFormRegister<
+                    SignupFormValues | LoginFormValues
+                  >
+                }
                 value={watch("street")}
                 error={errors.street?.message}
                 Logo={BsHouseDoor}
@@ -542,9 +567,8 @@ const RegisterStaff = (props: Props) => {
               Register staff
             </button>
             <span className="text-xs text-error text-center">
-            {error &&
-              (error as any).response.data.formErrors}
-          </span>
+              {error && (error as any).response.data.formErrors}
+            </span>
           </div>
         </form>
       </section>

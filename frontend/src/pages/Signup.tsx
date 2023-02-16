@@ -5,7 +5,7 @@ import {
   SubmitHandler,
   UseFormRegister,
 } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { FiAtSign } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
 import { Link, Navigate, useNavigate } from "react-router-dom";
@@ -16,39 +16,57 @@ import {
   getRegions,
   getBarangays,
 } from "../api/philippineAddress";
-import * as yup from "yup";
+import * as z from "zod";
 import Select from "react-select";
 import FormInput from "../components/FormInput";
 import { useGetUser } from "../hooks/user";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 type Props = {};
 
-const schema = yup
+const schema = z
   .object({
-    firstName: yup.string().required("First Name is required"),
-    middleName: yup.string().required("Middle Name is required"),
-    lastName: yup.string().required("Last Name is required"),
-    region: yup.string().required("Region is required"),
-    province: yup.string().required("Province is required"),
-    city: yup.string().required("City is required"),
-    barangay: yup.string().required("Barangay is required"),
-    street: yup.string().required("Street is required"),
-    email: yup.string().email("Invalid email").required("Email is required"),
-    password: yup
-      .string()
-      .required("Password is required")
+    firstName: z
+      .string({ required_error: "First name is required" })
+      .min(1, "First name is required"),
+    middleName: z
+      .string({ required_error: "Middle name is required" })
+      .min(1, "Middle name is required"),
+    lastName: z
+      .string({ required_error: "Last name is required" })
+      .min(1, "Last name is required"),
+    region: z
+      .string({ required_error: "Region is required" })
+      .min(1, "Region is required"),
+    province: z
+      .string({ required_error: "Province is required" })
+      .min(1, "Province is required"),
+    city: z
+      .string({ required_error: "City is required" })
+      .min(1, "City is required"),
+    barangay: z
+      .string({ required_error: "Barangay is required" })
+      .min(1, "Barangay is required"),
+    street: z
+      .string({ required_error: "Street is required" })
+      .min(1, "Street is required"),
+    email: z
+      .string({ required_error: "Email is required" })
+      .min(1, "Email is required")
+      .email("Invalid email"),
+    password: z
+      .string({ required_error: "Password is required" })
       .min(6, "Password must be at least 6 characters"),
-    confirmPassword: yup
-      .string()
-      .required("Confirm your Password")
-      .oneOf([yup.ref("password")], "Passwords doesn't match"),
-    contactNo: yup
-      .string()
-      .required("Invalid contact number")
-      .min(10, "Invalid contact number")
-      .max(10, "Invalid contact number"),
+    confirmPassword: z
+      .string({ required_error: "Confirm your password" })
+      .min(1, "Confirm your password"),
+    contactNo: z
+      .string({ required_error: "Invalid contact number" })
+      .length(10, "Invalid contact number"),
   })
-  .required();
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords doesn't match",
+  });
 
 const Signup = (props: Props) => {
   const navigate = useNavigate();
@@ -65,8 +83,8 @@ const Signup = (props: Props) => {
   const oldProvinceValue = useRef<string>();
   const oldCityValue = useRef<string>();
 
-  const { data, isLoading } = useGetUser();
-  const { mutate, error } = useRegisterPatient();
+  const { data } = useGetUser();
+  const { mutate, isLoading, error } = useRegisterPatient();
 
   const {
     control,
@@ -91,7 +109,7 @@ const Signup = (props: Props) => {
       password: "",
       confirmPassword: "",
     },
-    resolver: yupResolver(schema),
+    resolver: zodResolver(schema),
   });
 
   const onSubmit: SubmitHandler<SignupFormValues> = (data) => {
@@ -102,6 +120,8 @@ const Signup = (props: Props) => {
       }
     );
   };
+
+  if (data) return <Navigate to="/" />;
 
   useEffect(() => {
     const getOptions = async () => {
@@ -125,6 +145,7 @@ const Signup = (props: Props) => {
         watch("region") !== ""
       ) {
         oldRegionValue.current = watch("region");
+        setProvinceOptions(undefined);
         reset(
           (formValues) => ({
             ...formValues,
@@ -159,6 +180,7 @@ const Signup = (props: Props) => {
         watch("province") !== ""
       ) {
         oldProvinceValue.current = watch("province");
+        setCityOptions(undefined);
         reset(
           (formValues) => ({
             ...formValues,
@@ -188,6 +210,7 @@ const Signup = (props: Props) => {
 
       if (watch("city") !== oldCityValue.current && watch("city") !== "") {
         oldCityValue.current = watch("city");
+        setBarangayOptions(undefined);
         reset(
           (formValues) => ({
             ...formValues,
@@ -216,9 +239,6 @@ const Signup = (props: Props) => {
 
     getOptions();
   }, [regions, watch("region"), watch("province"), watch("city")]);
-
-  if (isLoading) return <h2>Loading...</h2>;
-  if (data) return <Navigate to="/" />;
 
   return (
     <main className="flex items-center justify-center">
@@ -316,7 +336,6 @@ const Signup = (props: Props) => {
                   />
                   <FormInput
                     type="number"
-                    inputMode="numeric"
                     label="contactNo"
                     placeholder="Contact Number"
                     register={
@@ -333,12 +352,10 @@ const Signup = (props: Props) => {
                     className="btn bg-primary border-primary text-zinc-50 my-8"
                     onClick={async () => {
                       if (
-                        await trigger([
-                          "firstName",
-                          "middleName",
-                          "lastName",
-                          "contactNo",
-                        ])
+                        await trigger(
+                          ["firstName", "middleName", "lastName", "contactNo"],
+                          { shouldFocus: true }
+                        )
                       ) {
                         setStep(2);
                       }
@@ -615,13 +632,17 @@ const Signup = (props: Props) => {
                     <button
                       type="submit"
                       className="btn bg-primary flex-1 border-primary text-zinc-50 mt-8 mb-4"
+                      disabled={isLoading}
                     >
-                      Sign up
+                      {isLoading ? (
+                        <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin" />
+                      ) : (
+                        "Sign Up"
+                      )}
                     </button>
                   </div>
                   <span className="text-xs text-error text-center pl-1">
-                    {error &&
-                      error.response.data.formErrors}
+                    {error && error.response.data.formErrors}
                   </span>
                 </div>
               )}

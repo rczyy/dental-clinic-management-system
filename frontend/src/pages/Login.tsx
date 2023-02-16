@@ -1,36 +1,45 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { useQueryClient } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiAtSign } from "react-icons/fi";
-import { Link, Navigate } from "react-router-dom";
-import * as yup from "yup";
-import FormInput from "../components/FormInput";
 import { useGetUser, useLogin } from "../hooks/user";
+import * as z from "zod";
+import FormInput from "../components/FormInput";
 
 type Props = {};
 
-const schema = yup
-  .object({
-    email: yup.string().email("Invalid email").required("Email is required"),
-    password: yup.string().required("Password is required"),
-  })
-  .required();
+const schema = z.object({
+  email: z
+    .string({ required_error: "Email is required" })
+    .min(1, "Email is required")
+    .email("Invalid email"),
+  password: z
+    .string({ required_error: "Password is required" })
+    .min(1, "Password is required"),
+});
 
 const Login = (props: Props) => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { data } = useGetUser();
+  const { mutate, error, isLoading: loginLoading } = useLogin();
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<LoginFormValues>({
-    resolver: yupResolver(schema),
-  });
+  } = useForm<LoginFormValues>({ resolver: zodResolver(schema) });
 
-  const { data, isLoading } = useGetUser();
-  const { mutate, error } = useLogin();
+  const onSubmit: SubmitHandler<LoginFormValues> = (data) =>
+    mutate(data, {
+      onSuccess: (data) => {
+        queryClient.setQueryData(["user"], data.user);
+        navigate("/");
+      },
+    });
 
-  const onSubmit: SubmitHandler<LoginFormValues> = (data) => mutate(data);
-  
-  if (isLoading) return <h2>Loading...</h2>;
   if (data) return <Navigate to="/" />;
 
   return (
@@ -77,8 +86,13 @@ const Login = (props: Props) => {
               <button
                 type="submit"
                 className="btn bg-primary border-primary text-zinc-50 my-8"
+                disabled={loginLoading}
               >
-                Log In
+                {loginLoading ? (
+                  <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin" />
+                ) : (
+                  "Log In"
+                )}
               </button>
               <span className="text-xs text-error text-center pl-1">
                 {error && (error as any).response.data.formErrors}
