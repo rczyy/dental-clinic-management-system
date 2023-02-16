@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import App, { loader as appLoader } from "./App";
 import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
@@ -26,9 +26,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <App />,
     errorElement: <Error />,
+    loader: appLoader(queryClient),
     children: [
       {
-        path: "/",
+        index: true,
         element: <Landing />,
       },
       {
@@ -45,9 +46,9 @@ const router = createBrowserRouter([
         children: [
           {
             path: "register-staff",
-            element: <RegisterStaff/>
-          }
-        ]
+            element: <RegisterStaff />,
+          },
+        ],
       },
     ],
   },
