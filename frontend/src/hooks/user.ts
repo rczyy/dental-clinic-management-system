@@ -1,4 +1,5 @@
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { getUser, getUsers, login, logout } from "../axios/user";
 
 export const useGetUsers = () => {
@@ -27,10 +28,12 @@ export const useLogin = () => {
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   return useMutation<MessageResponse, ErrorMessageResponse>({
     mutationFn: logout,
     onMutate: () => {
       queryClient.setQueryData(["user"], null);
+      navigate("/login");
     },
   });
 };
