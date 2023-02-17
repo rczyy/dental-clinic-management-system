@@ -5,7 +5,7 @@ import {
   SubmitHandler,
   UseFormRegister,
 } from "react-hook-form";
-import { FiAtSign } from "react-icons/fi";
+import { FiAtSign, FiPhone } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
 import {
   getCities,
@@ -237,15 +237,15 @@ const RegisterStaff = (props: Props) => {
   }, [regions, watch("region"), watch("province"), watch("city")]);
 
   return (
-    <div className="adminMain font-work w-full flex flex-col items-center">
-      <section className="bg-base-300 px-2 rounded-2xl max-w-4xl w-full shadow-md py-4 sm:px-4 md:px-10">
+    <div className="w-full h-full flex font-work transition-all">
+      <section className="bg-base-300 max-w-4xl w-full m-auto rounded-2xl shadow-md px-8 py-10 md:px-10 lg:px-16">
         <header className="flex justify-start">
-          <h1 className="py-3 text-xl font-semibold mx-2">Add a new staff</h1>
+          <h1 className="text-2xl font-bold mx-2 py-3">Add a new staff</h1>
         </header>
         <form onSubmit={handleSubmit(onSubmit)}>
           <section className="flex flex-col gap-1">
-            <div className="flex flex-col p-2 rounded flex-1 gap-1">
-              <h2 className="font-semibold mx-1 ">Personal Details</h2>
+            <div className="flex flex-col p-2 rounded flex-1 gap-2">
+              <h2 className="font-semibold m-1 ">Personal Details</h2>
               <div>
                 <FormInput
                   type="text"
@@ -258,10 +258,10 @@ const RegisterStaff = (props: Props) => {
                   }
                   value={watch("firstName")}
                   error={errors.firstName?.message}
-                  Logo={FiAtSign}
+                  Logo={BsPerson}
                 />
               </div>
-              <div className="flex flex-col sm:flex-row w-full justify-evenly sm:gap-1 gap-1">
+              <div className="flex flex-col sm:flex-row w-full justify-evenly gap-1">
                 <FormInput
                   type="text"
                   label="middleName"
@@ -273,7 +273,7 @@ const RegisterStaff = (props: Props) => {
                   }
                   value={watch("middleName")}
                   error={errors.middleName?.message}
-                  Logo={FiAtSign}
+                  Logo={BsPerson}
                 />
                 <FormInput
                   type="text"
@@ -286,7 +286,7 @@ const RegisterStaff = (props: Props) => {
                   }
                   value={watch("lastName")}
                   error={errors.lastName?.message}
-                  Logo={FiAtSign}
+                  Logo={BsPerson}
                 />
               </div>
               <div>
@@ -316,7 +316,7 @@ const RegisterStaff = (props: Props) => {
                   }
                   value={watch("contactNo")}
                   error={errors.contactNo?.message}
-                  Logo={BsPerson}
+                  Logo={FiPhone}
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -359,8 +359,8 @@ const RegisterStaff = (props: Props) => {
                 </span>
               </div>
             </div>
-            <div className="flex flex-col p-2 rounded flex-1 gap-1">
-              <h2 className="font-semibold mx-1">Address</h2>
+            <div className="flex flex-col p-2 rounded flex-1 gap-2">
+              <h2 className="font-semibold m-1">Address</h2>
               <div className="flex flex-col gap-1">
                 <Controller
                   name="region"
@@ -552,7 +552,7 @@ const RegisterStaff = (props: Props) => {
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-start px-2">
             <button
               type="submit"
-              className="btn bg-primary border-primary text-zinc-50 w-full sm:w-fit"
+              className="btn bg-primary border-primary text-zinc-50 w-full sm:w-fit px-8 mt-8"
             >
               Register staff
             </button>

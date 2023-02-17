@@ -6,7 +6,7 @@ import {
   UseFormRegister,
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FiAtSign } from "react-icons/fi";
+import { FiAtSign, FiPhone } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useRegisterPatient } from "../hooks/patient";
@@ -354,7 +354,7 @@ const Signup = (props: Props) => {
                     }
                     value={watch("contactNo")}
                     error={errors.contactNo?.message}
-                    Logo={BsPerson}
+                    Logo={FiPhone}
                   />
                   <button
                     type="button"

@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { Outlet, useLoaderData } from "react-router";
+import { Outlet } from "react-router";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { getUser } from "./axios/user";
@@ -11,14 +11,10 @@ export const loader = (queryClient: QueryClient) => async () =>
 
 const App = (props: Props) => {
   return (
-    <div className="flex flex-col h-screen justify-between">
-      <div>
-        <Navbar />
-        <Outlet />
-      </div>
-      <div>
-        <Footer />
-      </div>
+    <div className="flex flex-col min-h-screen justify-between">
+      <Navbar />
+      <Outlet />
+      <Footer />
     </div>
   );
 };

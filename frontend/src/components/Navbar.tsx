@@ -5,10 +5,12 @@ import { useGetUser, useLogout } from "../hooks/user";
 import { IoMdPerson } from "react-icons/io";
 import DarkModeToggle from "./DarkModeToggle";
 import { useDetectClickOutside } from "react-detect-click-outside";
+import { useAdminStore } from "../store/admin";
 
 type Props = {};
 
 const Navbar = (props: Props) => {
+  const toggleSidebar = useAdminStore((state) => state.toggleSidebar);
   const [isOpen, setIsOpen] = useState(false);
   const { data } = useGetUser();
   const { mutate } = useLogout();
@@ -23,15 +25,23 @@ const Navbar = (props: Props) => {
   });
 
   return (
-    <div className="navbar bg-base-100 max-h-16 h-full shadow gap-8 2xl:gap-0 px-4 py-0 z-30 md:px-8 fixed">
-      <div className="max-w-screen-xl w-full h-full m-auto relative">
+    <div className="navbar bg-base-100 min-h-16 shadow gap-8 2xl:gap-0 px-4 py-0 z-30 md:px-8 fixed">
+      {data && data.role === "Admin" && (
+        <IoMenuOutline
+          className="w-8 h-8 cursor-pointer"
+          onClick={toggleSidebar}
+        />
+      )}
+      <div className="max-w-screen-xl w-full min-h-[inherit] m-auto relative">
         <div className="flex-1">
-          <Link
-            to="/"
-            className="font-work font-extrabold text-3xl cursor-pointer text-primary"
-          >
-            Logo
-          </Link>
+          {(!data || (data && data.role !== "Admin")) && (
+            <Link
+              to="/"
+              className="font-work font-extrabold text-3xl cursor-pointer text-primary"
+            >
+              Logo
+            </Link>
+          )}
         </div>
         {data ? (
           <>

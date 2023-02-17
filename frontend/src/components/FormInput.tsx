@@ -48,12 +48,12 @@ const FormInput = ({
           <label
             htmlFor={label}
             className={
-              "absolute transition-all cursor-text select-none text-sm sm::text-base " +
+              "absolute transition-all cursor-text select-none text-sm sm:text-base " +
               (!value
                 ? "top-1/2 -translate-y-1/2 text-zinc-400 " +
-                  (label !== "contactNo" ? "left-4" : "left-1.5 sm:left-2")
+                  (label !== "contactNo" ? "left-4" : "left-2")
                 : "bg-base-300 text-primary text-sm leading-none rounded top-0 -translate-y-1/2 " +
-                  (label !== "contactNo" ? "left-3.5" : "-left-8"))
+                  (label !== "contactNo" ? "left-3.5" : "-left-6 sm:-left-8"))
             }
           >
             {placeholder}
