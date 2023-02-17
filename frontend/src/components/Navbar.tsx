@@ -17,13 +17,14 @@ const Navbar = (props: Props) => {
     mutate();
     setIsOpen(!isOpen);
   };
+
   const menuRef = useDetectClickOutside({
     onTriggered: (e) => setIsOpen(false),
   });
 
   return (
-    <div className="navbar bg-base-100 shadow gap-8 2xl:gap-0 px-4 z-30 md:px-8 fixed">
-      <div className="max-w-screen-xl w-full m-auto">
+    <div className="navbar bg-base-100 max-h-16 h-full shadow gap-8 2xl:gap-0 px-4 py-0 z-30 md:px-8 fixed">
+      <div className="max-w-screen-xl w-full h-full m-auto relative">
         <div className="flex-1">
           <Link
             to="/"
@@ -36,21 +37,22 @@ const Navbar = (props: Props) => {
           <>
             <DarkModeToggle className="flex items-center mx-4 sm:hidden" />
             <div
-              className="flex items-center sm:gap-5 cursor-pointer relative"
+              className="flex items-center sm:gap-5 cursor-pointer"
               onClick={() => {
                 setIsOpen(!isOpen);
               }}
+              ref={menuRef}
             >
               <IoMdPerson className="w-7 h-7 sm:w-8 sm:h-8" />
-              <div>
-                <span className="hidden sm:block text-sm leading-tight font-semibold">
+              <div className="hidden sm:block">
+                <p className="text-sm leading-tight font-semibold">
                   {data.name.firstName}
-                </span>
-                <span className="hidden sm:block text-xs text-zinc-400 leading-tight">
+                </p>
+                <p className="text-xs text-zinc-400 leading-tight">
                   {data.email}
-                </span>
+                </p>
               </div>
-              <div className="absolute w-screen -right-4 sm:-right-[3rem] sm:w-60 top-12">
+              <div className="absolute w-screen sm:w-60 top-16 -right-4">
                 {isOpen && (
                   <ul className="menu bg-base-100 border-base-200 border shadow">
                     <li>
