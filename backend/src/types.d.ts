@@ -94,4 +94,10 @@ declare global {
     _id?: Types.ObjectId;
     staffId: Types.ObjectId;
   }
+
+  interface Service {
+    _id?: Types.ObjectId;
+    name: string;
+    estimatedTime: string;
+  }
 }
