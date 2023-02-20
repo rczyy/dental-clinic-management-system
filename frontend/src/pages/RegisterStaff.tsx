@@ -5,6 +5,7 @@ import {
   SubmitHandler,
   UseFormRegister,
 } from "react-hook-form";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiAtSign, FiPhone } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
 import {
@@ -13,11 +14,11 @@ import {
   getRegions,
   getBarangays,
 } from "../api/philippineAddress";
+import { useRegisterStaff } from "../hooks/staff";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Select from "react-select";
 import FormInput from "../components/FormInput";
-import { useRegisterStaff } from "../hooks/staff";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {};
 
@@ -53,6 +54,9 @@ const schema = z.object({
   contactNo: z
     .string({ required_error: "Invalid contact number" })
     .length(10, "Invalid contact number"),
+  role: z
+    .string({ required_error: "Role is required" })
+    .min(1, "Role is required"),
 });
 
 const RegisterStaff = (props: Props) => {
@@ -74,7 +78,7 @@ const RegisterStaff = (props: Props) => {
   const oldProvinceValue = useRef<string>();
   const oldCityValue = useRef<string>();
 
-  const { mutate, error } = useRegisterStaff();
+  const { mutate, isLoading, error } = useRegisterStaff();
 
   const {
     control,
@@ -143,6 +147,7 @@ const RegisterStaff = (props: Props) => {
         watch("region") !== oldRegionValue.current &&
         watch("region") !== ""
       ) {
+        setProvinceOptions(undefined);
         oldRegionValue.current = watch("region");
         reset(
           (formValues) => ({
@@ -177,6 +182,7 @@ const RegisterStaff = (props: Props) => {
         watch("province") !== oldProvinceValue.current &&
         watch("province") !== ""
       ) {
+        setCityOptions(undefined);
         oldProvinceValue.current = watch("province");
         reset(
           (formValues) => ({
@@ -206,6 +212,7 @@ const RegisterStaff = (props: Props) => {
       }
 
       if (watch("city") !== oldCityValue.current && watch("city") !== "") {
+        setBarangayOptions(undefined);
         oldCityValue.current = watch("city");
         reset(
           (formValues) => ({
@@ -237,7 +244,7 @@ const RegisterStaff = (props: Props) => {
   }, [regions, watch("region"), watch("province"), watch("city")]);
 
   return (
-    <div className="w-full h-full flex font-work transition-all">
+    <div className="w-full h-full flex transition-all">
       <section className="bg-base-300 max-w-4xl w-full m-auto rounded-2xl shadow-md px-8 py-10 md:px-10 lg:px-16">
         <header className="flex justify-start">
           <h1 className="text-2xl font-bold mx-2 py-3">Add a new staff</h1>
@@ -327,7 +334,9 @@ const RegisterStaff = (props: Props) => {
                     <Select
                       {...field}
                       value={
-                        roles && roles.find((role) => role.value === value)
+                        value
+                          ? roles && roles.find((role) => role.value === value)
+                          : null
                       }
                       classNames={{
                         control: ({ hasValue }) =>
@@ -369,8 +378,12 @@ const RegisterStaff = (props: Props) => {
                     <Select
                       {...field}
                       value={
-                        regionOptions &&
-                        regionOptions.find((region) => region.value === value)
+                        value
+                          ? regionOptions &&
+                            regionOptions.find(
+                              (region) => region.value === value
+                            )
+                          : null
                       }
                       classNames={{
                         control: ({ hasValue }) =>
@@ -552,9 +565,14 @@ const RegisterStaff = (props: Props) => {
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-start px-2">
             <button
               type="submit"
-              className="btn bg-primary border-primary text-zinc-50 w-full sm:w-fit px-8 mt-8"
+              className="btn bg-primary border-primary text-zinc-50 w-full sm:w-48 px-8 mt-8"
+              disabled={isLoading}
             >
-              Register staff
+              {isLoading ? (
+                <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin" />
+              ) : (
+                "Register Staff"
+              )}
             </button>
             <span className="text-xs text-error text-center">
               {error && (error as any).response.data.formErrors}
