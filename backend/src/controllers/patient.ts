@@ -54,15 +54,15 @@ export const getPatient: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { userId } = req.params;
+  const { user } = req.params;
 
-  if (!isValidObjectId(userId)) {
+  if (!isValidObjectId(user)) {
     const error: ErrorMessage = { message: "Invalid user ID" };
     res.status(400).json(error);
     return;
   }
 
-  const patient = await Patient.findOne({ userId });
+  const patient = await Patient.findOne({ user });
 
   res.status(200).json(patient);
 };
@@ -148,7 +148,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
   });
 
   const patient = new Patient({
-    userId: user._id,
+    user: user._id,
   });
 
   await user.save();
@@ -172,14 +172,14 @@ export const removePatient: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { userId } = req.params;
+  const { user } = req.params;
 
-  if (!isValidObjectId(userId)) {
+  if (!isValidObjectId(user)) {
     const error: ErrorMessage = { message: "Invalid user ID" };
     res.status(400).json(error);
     return;
   }
-  const deletedPatient = await Patient.findOneAndDelete({ userId });
+  const deletedPatient = await Patient.findOneAndDelete({ user });
 
   if (!deletedPatient) {
     const error: ErrorMessage = { message: "Patient doesn't exist" };
@@ -187,7 +187,7 @@ export const removePatient: RequestHandler = async (req, res) => {
     return;
   }
 
-  const deletedUser = await User.findByIdAndDelete(userId);
+  const deletedUser = await User.findByIdAndDelete(user);
 
   if (!deletedUser) {
     const error: ErrorMessage = { message: "User doesn't exist" };

@@ -27,7 +27,7 @@ export const getStaffs: RequestHandler = async (req, res) => {
     return;
   }
 
-  const staffs = await Staff.find();
+  const staffs = await Staff.find().populate("user");
 
   res.status(200).json(staffs);
 };
@@ -47,15 +47,15 @@ export const getStaff: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { userId } = req.params;
+  const { user } = req.params;
 
-  if (!isValidObjectId(userId)) {
+  if (!isValidObjectId(user)) {
     const error: ErrorMessage = { message: "Invalid user ID" };
     res.status(400).json(error);
     return;
   }
 
-  const staff = await Staff.findOne({ userId });
+  const staff = await Staff.findOne({ user });
 
   res.status(200).json(staff);
 };
@@ -75,23 +75,22 @@ export const registerStaff: RequestHandler = async (req, res) => {
     return;
   }
 
-  const userSchema = z
-    .object({
-      firstName: z.string({ required_error: "First name is required" }),
-      middleName: z.string({ required_error: "Middle name is required" }),
-      lastName: z.string({ required_error: "Last name is required" }),
-      region: z.string({ required_error: "Region is required" }),
-      province: z.string({ required_error: "Province is required" }),
-      city: z.string({ required_error: "City is required" }),
-      barangay: z.string({ required_error: "Barangay is required" }),
-      street: z.string({ required_error: "Street is required" }),
-      email: z.string({ required_error: "Email is required" }).email(),
-      contactNo: z
-        .string({ required_error: "Invalid contact number" })
-        .startsWith("+63", "Invalid contact number")
-        .length(13, "Invalid contact number"),
-      role: z.nativeEnum(Roles),
-    })
+  const userSchema = z.object({
+    firstName: z.string({ required_error: "First name is required" }),
+    middleName: z.string({ required_error: "Middle name is required" }),
+    lastName: z.string({ required_error: "Last name is required" }),
+    region: z.string({ required_error: "Region is required" }),
+    province: z.string({ required_error: "Province is required" }),
+    city: z.string({ required_error: "City is required" }),
+    barangay: z.string({ required_error: "Barangay is required" }),
+    street: z.string({ required_error: "Street is required" }),
+    email: z.string({ required_error: "Email is required" }).email(),
+    contactNo: z
+      .string({ required_error: "Invalid contact number" })
+      .startsWith("+63", "Invalid contact number")
+      .length(13, "Invalid contact number"),
+    role: z.nativeEnum(Roles),
+  });
 
   type body = z.infer<typeof userSchema>;
 
@@ -164,7 +163,7 @@ export const registerStaff: RequestHandler = async (req, res) => {
   });
 
   const staff = new Staff({
-    userId: user._id,
+    user: user._id,
   });
 
   await user.save();
@@ -172,25 +171,25 @@ export const registerStaff: RequestHandler = async (req, res) => {
 
   if (role === Roles.Manager) {
     const manager = new Manager({
-      staffId: staff._id,
+      staff: staff._id,
     });
     await manager.save();
   }
   if (role === Roles.Assistant) {
     const assistant = new Assistant({
-      staffId: staff._id,
+      staff: staff._id,
     });
     await assistant.save();
   }
   if (role === Roles.Dentist) {
     const dentist = new Dentist({
-      staffId: staff._id,
+      staff: staff._id,
     });
     await dentist.save();
   }
   if (role === Roles.FrontDesk) {
     const frontDesk = new FrontDesk({
-      staffId: staff._id,
+      staff: staff._id,
     });
     await frontDesk.save();
   }
@@ -213,15 +212,15 @@ export const removeStaff: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { userId } = req.params;
+  const { user } = req.params;
 
-  if (!isValidObjectId(userId)) {
+  if (!isValidObjectId(user)) {
     const error: ErrorMessage = { message: "Invalid user ID" };
     res.status(400).json(error);
     return;
   }
 
-  const deletedStaff = await Staff.findOneAndDelete({ userId });
+  const deletedStaff = await Staff.findOneAndDelete({ user });
 
   if (!deletedStaff) {
     const error: ErrorMessage = { message: "Staff doesn't exist" };
@@ -229,7 +228,7 @@ export const removeStaff: RequestHandler = async (req, res) => {
     return;
   }
 
-  const deletedUser = await User.findByIdAndDelete(userId);
+  const deletedUser = await User.findByIdAndDelete(user);
 
   if (!deletedUser) {
     res.status(400).json({ message: "User doesn't exist" });
@@ -237,19 +236,19 @@ export const removeStaff: RequestHandler = async (req, res) => {
   }
 
   if (deletedUser.role === Roles.Manager) {
-    await Manager.findOneAndDelete({ staffId: deletedStaff._id });
+    await Manager.findOneAndDelete({ staff: deletedStaff._id });
   }
 
   if (deletedUser.role === Roles.Assistant) {
-    await Assistant.findOneAndDelete({ staffId: deletedStaff._id });
+    await Assistant.findOneAndDelete({ staff: deletedStaff._id });
   }
 
   if (deletedUser.role === Roles.Dentist) {
-    await Dentist.findOneAndDelete({ staffId: deletedStaff._id });
+    await Dentist.findOneAndDelete({ staff: deletedStaff._id });
   }
 
   if (deletedUser.role === Roles.FrontDesk) {
-    await FrontDesk.findOneAndDelete({ staffId: deletedStaff._id });
+    await FrontDesk.findOneAndDelete({ staff: deletedStaff._id });
   }
 
   res

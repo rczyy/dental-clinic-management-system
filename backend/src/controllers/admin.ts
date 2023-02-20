@@ -113,7 +113,7 @@ export const registerAdmin: RequestHandler = async (req, res) => {
   });
 
   const admin = new Admin({
-    userId: user._id,
+    user: user._id,
   });
 
   await user.save();

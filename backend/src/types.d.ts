@@ -62,36 +62,36 @@ declare global {
 
   interface Admin {
     _id?: Types.ObjectId;
-    userId: Types.ObjectId;
+    user: Types.ObjectId;
   }
 
   interface Staff {
     _id?: Types.ObjectId;
-    userId: Types.ObjectId;
+    user: Types.ObjectId;
   }
 
   interface Patient {
     _id?: Types.ObjectId;
-    userId: Types.ObjectId;
+    user: Types.ObjectId;
   }
 
   interface Manager {
     _id?: Types.ObjectId;
-    staffId: Types.ObjectId;
+    staff: Types.ObjectId;
   }
 
   interface Dentist {
     _id?: Types.ObjectId;
-    staffId: Types.ObjectId;
+    staff: Types.ObjectId;
   }
 
   interface FrontDesk {
     _id?: Types.ObjectId;
-    staffId: Types.ObjectId;
+    staff: Types.ObjectId;
   }
 
   interface Assistant {
     _id?: Types.ObjectId;
-    staffId: Types.ObjectId;
+    staff: Types.ObjectId;
   }
 }
