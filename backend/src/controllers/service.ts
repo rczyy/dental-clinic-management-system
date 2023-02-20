@@ -41,8 +41,12 @@ export const addService: RequestHandler = async (req, res) => {
   }
 
   const userSchema = z.object({
-    name: z.string({ required_error: "Name is required" }),
-    estimatedTime: z.string({ required_error: "Estimated time is required" }),
+    name: z
+      .string({ required_error: "Name is required" })
+      .regex(/^[A-Za-z]+$/, "Service name may only contain letters"),
+    estimatedTime: z
+      .string({ required_error: "Estimated time is required" })
+      .regex(/^[0-9]*$/, "Estimated time may only contain numbers"),
   });
 
   type body = z.infer<typeof userSchema>;
@@ -97,8 +101,28 @@ export const editService: RequestHandler = async (req, res) => {
     return;
   }
 
+  const userSchema = z.object({
+    name: z
+      .string()
+      .regex(/^[A-Za-z]+$/, "Service name may only contain letters")
+      .optional(),
+    estimatedTime: z
+      .string()
+      .regex(/^[0-9]*$/, "Estimated time may only contain numbers")
+      .optional(),
+  });
+
+  type body = z.infer<typeof userSchema>;
+
+  const parse = userSchema.safeParse(req.body);
+
+  if (!parse.success) {
+    res.status(400).json(parse.error.flatten());
+    return;
+  }
+
+  const { name, estimatedTime }: body = req.body;
   const { serviceId } = req.params;
-  const { name, estimatedTime } = req.body;
 
   if (!isValidObjectId(serviceId)) {
     const error: ErrorMessage = { message: "Invalid service ID" };
