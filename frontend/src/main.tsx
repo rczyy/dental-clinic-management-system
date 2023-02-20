@@ -4,12 +4,13 @@ import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
 import AdminHome from "./pages/AdminHome";
+import Staff, { loader as staffLoader } from "./pages/Staff";
+import RegisterStaff from "./pages/RegisterStaff";
 import Error from "./pages/Error";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./styles.css";
-import RegisterStaff from "./pages/RegisterStaff";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,6 +45,11 @@ const router = createBrowserRouter([
         path: "admin",
         element: <AdminHome />,
         children: [
+          {
+            path: "staff",
+            element: <Staff />,
+            loader: staffLoader(queryClient),
+          },
           {
             path: "register-staff",
             element: <RegisterStaff />,
