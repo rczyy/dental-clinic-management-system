@@ -28,7 +28,7 @@ export const getPatients: RequestHandler = async (req, res) => {
     return;
   }
 
-  const patients = await Patient.find();
+  const patients = await Patient.find().populate("user", "-password");
 
   res.status(200).json(patients);
 };

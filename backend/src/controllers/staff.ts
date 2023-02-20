@@ -27,7 +27,7 @@ export const getStaffs: RequestHandler = async (req, res) => {
     return;
   }
 
-  const staffs = await Staff.find().populate("user");
+  const staffs = await Staff.find().populate("user", "-password");
 
   res.status(200).json(staffs);
 };
