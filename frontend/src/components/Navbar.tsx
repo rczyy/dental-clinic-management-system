@@ -37,7 +37,7 @@ const Navbar = (props: Props) => {
           {(!data || (data && data.role !== "Admin")) && (
             <Link
               to="/"
-              className="font-work font-extrabold text-3xl cursor-pointer text-primary"
+              className="font-extrabold text-3xl cursor-pointer text-primary"
             >
               Logo
             </Link>
@@ -116,13 +116,13 @@ const Navbar = (props: Props) => {
             <div className="flex-none hidden sm:flex gap-8">
               <Link
                 to="/login"
-                className="font-work font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer transition-all ease-in-out duration-100"
+                className="font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer transition-all ease-in-out duration-100"
               >
                 Log In
               </Link>
               <Link
                 to="/signup"
-                className="font-work font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer transition-all ease-in-out duration-100"
+                className="font-semibold border-b border-transparent hover:border-base-content py-1 cursor-pointer transition-all ease-in-out duration-100"
               >
                 Sign Up
               </Link>

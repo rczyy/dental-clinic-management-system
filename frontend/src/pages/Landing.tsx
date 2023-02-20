@@ -14,7 +14,7 @@ const Landing = (props: Props) => {
   if (data && data.role === "Admin") return <Navigate to="/admin" />;
 
   return (
-    <div className="font-work min-h-screen flex flex-col gap-2 pt-16 pb-4 bg-base-300">
+    <div className="min-h-screen flex flex-col gap-2 pt-16 pb-4 bg-base-300">
       <section
         className={`flex flex-col items-center justify-center gap-2 min-h-[85vh] bg-[url(assets/at.png)] bg-center bg-cover relative`}
       >
