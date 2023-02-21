@@ -1,6 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
+import { FiSearch } from "react-icons/fi";
 import Select from "react-select";
 import { getStaffs } from "../axios/staff";
 import StaffDataRow from "../components/StaffDataRow";
@@ -85,6 +86,15 @@ const Staff = (props: Props) => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-end items-center gap-2">
+        <div className="flex flex-1 items-center bg-base-300 border rounded-md">
+          <FiSearch className="w-9 h-9 md:w-10 md:h-10 px-2.5" />
+          <input
+            type="text"
+            placeholder="Search..."
+            className="input bg-base-300 w-full h-9 md:h-11 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm md:placeholder:text-base"
+            onChange={(e) => setSearchFilter(e.target.value)}
+          />
+        </div>
         <Select
           placeholder="Role"
           options={roles}
@@ -107,50 +117,45 @@ const Staff = (props: Props) => {
           }}
           onChange={(newValue) => setRoleFilter(newValue ? newValue.value : "")}
         />
-        <input
-          type="search"
-          placeholder="Search..."
-          className="input input-bordered flex-1 h-10 md:h-12 w-full max-w-xs focus:outline-none"
-          onChange={(e) => setSearchFilter(e.target.value)}
-        />
       </div>
       <table className="table table-fixed w-full text-sm sm:text-base">
         <thead>
-          <tr>
+          <tr className="border-b border-base-200">
             <th
-              className="bg-primary text-white cursor-pointer"
-              onClick={() =>
-                setRoleSort((val) => (val === "asc" ? "desc" : "asc"))
-              }
-            >
-              <div className="flex items-center gap-4">
-                <span>Role</span>
-                {roleSort === "asc" ? (
-                  <FiChevronDown className="w-3.5 h-3.5" />
-                ) : roleSort === "desc" ? (
-                  <FiChevronUp className="w-3.5 h-3.5" />
-                ) : null}
-              </div>
-            </th>
-            <th
-              className="bg-primary text-white cursor-pointer"
+              className="bg-base-100 text-primary normal-case cursor-pointer"
               onClick={() =>
                 setNameSort((val) => (val === "asc" ? "desc" : "asc"))
               }
             >
-              <div className="flex gap-4">
+              <div className="flex items-center gap-1">
                 <span>Name</span>
                 {nameSort === "asc" ? (
-                  <FiChevronDown className="w-3.5 h-3.5" />
+                  <AiFillCaretDown className="w-2.5 h-2.5" />
                 ) : nameSort === "desc" ? (
-                  <FiChevronUp className="w-3.5 h-3.5" />
+                  <AiFillCaretUp className="w-2.5 h-2.5" />
                 ) : null}
               </div>
             </th>
-            <th className="bg-primary text-white cursor-pointer hidden lg:table-cell">
+            <th
+              className="bg-base-100 text-primary normal-case cursor-pointer"
+              onClick={() =>
+                setRoleSort((val) => (val === "asc" ? "desc" : "asc"))
+              }
+            >
+              <div className="flex items-center gap-1">
+                <span>Role</span>
+                {roleSort === "asc" ? (
+                  <AiFillCaretDown className="w-2.5 h-2.5" />
+                ) : roleSort === "desc" ? (
+                  <AiFillCaretUp className="w-2.5 h-2.5" />
+                ) : null}
+              </div>
+            </th>
+
+            <th className="bg-base-100 text-primary normal-case hidden lg:table-cell">
               Email
             </th>
-            <th className="bg-primary text-white cursor-pointer hidden md:table-cell">
+            <th className="bg-base-100 text-primary normal-case hidden md:table-cell">
               Contact No.
             </th>
           </tr>
