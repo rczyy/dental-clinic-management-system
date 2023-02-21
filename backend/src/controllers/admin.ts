@@ -29,12 +29,24 @@ export const getAdmins: RequestHandler = async (req, res) => {
 export const registerAdmin: RequestHandler = async (req, res) => {
   const userSchema = z
     .object({
-      firstName: z.string({ required_error: "First name is required" }),
-      middleName: z.string({ required_error: "Middle name is required" }),
-      lastName: z.string({ required_error: "Last name is required" }),
-      region: z.string({ required_error: "Region is required" }),
-      province: z.string({ required_error: "Province is required" }),
-      city: z.string({ required_error: "City is required" }),
+      firstName: z
+        .string({ required_error: "First name is required" })
+        .regex(/^[A-Za-z]+$/, "First name may only contain letters"),
+      middleName: z
+        .string({ required_error: "Middle name is required" })
+        .regex(/^[A-Za-z]+$/, "Middle name may only contain letters"),
+      lastName: z
+        .string({ required_error: "Last name is required" })
+        .regex(/^[A-Za-z]+$/, "Last name may only contain letters"),
+      region: z
+        .string({ required_error: "Region is required" })
+        .regex(/^[A-Za-z]+$/, "Region may only contain letters"),
+      province: z
+        .string({ required_error: "Province is required" })
+        .regex(/^[A-Za-z]+$/, "Province may only contain letters"),
+      city: z
+        .string({ required_error: "City is required" })
+        .regex(/^[A-Za-z]+$/, "City may only contain letters"),
       barangay: z.string({ required_error: "Barangay is required" }),
       street: z.string({ required_error: "Street is required" }),
       email: z.string({ required_error: "Email is required" }).email(),
@@ -42,16 +54,9 @@ export const registerAdmin: RequestHandler = async (req, res) => {
         .string({ required_error: "Password is required" })
         .min(6, "Password must be atleast 6 characters"),
       confirmPassword: z.string({ required_error: "Confirm your password" }),
-      contactNo: z.union([
-        z
-          .string({ required_error: "Invalid contact number" })
-          .startsWith("+63", "Invalid contact number")
-          .length(13, "Invalid contact number"),
-        z
-          .string({ required_error: "Invalid contact number" })
-          .startsWith("09", "Invalid contact number")
-          .length(11, "Invalid contact number"),
-      ]),
+      contactNo: z
+          .string({ required_error: "Contact number is required" })
+          .regex(/(^\+63)\d{10}$/, "Invalid contact number"),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords doesn't match",
