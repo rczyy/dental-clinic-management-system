@@ -28,6 +28,11 @@ const AdminSideBar = () => {
           route="/admin/register-staff"
         />
         <SideBarItem name="Staff list" Icon={CgUserList} route="/admin/staff" />
+        <SideBarItem
+          name="Patient list"
+          Icon={CgUserList}
+          route="/admin/patient"
+        />
         <SideBarItem name="Attendance" Icon={BiUserCheck} route="/" />
         <SideBarItem name="Logs" Icon={VscNote} route="/" />
       </div>

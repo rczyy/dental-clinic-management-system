@@ -10,7 +10,7 @@ type Props = {};
 
 export const loader = (queryClient: QueryClient) => async () =>
   await queryClient.ensureQueryData({
-    queryKey: ["staff"],
+    queryKey: ["staffs"],
     queryFn: getStaffs,
   });
 
@@ -27,58 +27,60 @@ const Staff = (props: Props) => {
   const [roleSort, setRoleSort] = useState<"asc" | "desc">();
   const [nameSort, setNameSort] = useState<"asc" | "desc">();
 
-  const filteredStaffs = data
-    ?.sort((a, b) => {
-      const roleA = a.user.role.toUpperCase();
-      const roleB = b.user.role.toUpperCase();
-      const nameA = a.user.name.firstName.toUpperCase();
-      const nameB = b.user.name.firstName.toUpperCase();
+  const filteredStaffs =
+    data &&
+    data
+      .sort((a, b) => {
+        const roleA = a.user.role.toUpperCase();
+        const roleB = b.user.role.toUpperCase();
+        const nameA = a.user.name.firstName.toUpperCase();
+        const nameB = b.user.name.firstName.toUpperCase();
 
-      if (roleSort && nameSort) {
-        if (roleA === roleB) {
-          return nameSort === "asc"
-            ? nameA < nameB
-              ? -1
-              : 1
-            : nameA < nameB
-            ? 1
-            : -1;
-        } else {
-          return roleSort === "asc"
-            ? roleA < roleB
-              ? -1
-              : 1
-            : roleA < roleB
-            ? 1
-            : -1;
+        if (roleSort && nameSort) {
+          if (roleA === roleB) {
+            return nameSort === "asc"
+              ? nameA < nameB
+                ? -1
+                : 1
+              : nameA < nameB
+              ? 1
+              : -1;
+          } else {
+            return roleSort === "asc"
+              ? roleA < roleB
+                ? -1
+                : 1
+              : roleA < roleB
+              ? 1
+              : -1;
+          }
         }
-      }
 
-      return roleSort === "asc"
-        ? roleA < roleB
-          ? -1
-          : 1
-        : roleSort === "desc"
-        ? roleA < roleB
-          ? 1
-          : -1
-        : nameSort === "asc"
-        ? nameA < nameB
-          ? -1
-          : 1
-        : nameSort === "desc"
-        ? nameA < nameB
-          ? 1
-          : -1
-        : 0;
-    })
-    .filter(
-      (staff) =>
-        (staff.user.name.firstName + staff.user.name.lastName)
-          .toLowerCase()
-          .includes(searchFilter.toLowerCase()) &&
-        staff.user.role.includes(roleFilter)
-    );
+        return roleSort === "asc"
+          ? roleA < roleB
+            ? -1
+            : 1
+          : roleSort === "desc"
+          ? roleA < roleB
+            ? 1
+            : -1
+          : nameSort === "asc"
+          ? nameA < nameB
+            ? -1
+            : 1
+          : nameSort === "desc"
+          ? nameA < nameB
+            ? 1
+            : -1
+          : 0;
+      })
+      .filter(
+        (staff) =>
+          (staff.user.name.firstName + staff.user.name.lastName)
+            .toLowerCase()
+            .includes(searchFilter.toLowerCase()) &&
+          staff.user.role.includes(roleFilter)
+      );
 
   return (
     <div className="flex flex-col gap-4">
@@ -124,9 +126,9 @@ const Staff = (props: Props) => {
               <div className="flex items-center gap-4">
                 <span>Role</span>
                 {roleSort === "asc" ? (
-                  <FiChevronDown className="w-3.5 h-3.5w-3.5" />
+                  <FiChevronDown className="w-3.5 h-3.5" />
                 ) : roleSort === "desc" ? (
-                  <FiChevronUp className="w-3.5 h-3.5w-3.5" />
+                  <FiChevronUp className="w-3.5 h-3.5" />
                 ) : null}
               </div>
             </th>
@@ -139,9 +141,9 @@ const Staff = (props: Props) => {
               <div className="flex gap-4">
                 <span>Name</span>
                 {nameSort === "asc" ? (
-                  <FiChevronDown className="w-3.5 h-3.5w-3.5" />
+                  <FiChevronDown className="w-3.5 h-3.5" />
                 ) : nameSort === "desc" ? (
-                  <FiChevronUp className="w-3.5 h-3.5w-3.5" />
+                  <FiChevronUp className="w-3.5 h-3.5" />
                 ) : null}
               </div>
             </th>

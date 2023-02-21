@@ -5,6 +5,7 @@ import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
 import AdminHome from "./pages/AdminHome";
 import Staff, { loader as staffLoader } from "./pages/Staff";
+import Patient, { loader as patientLoader } from "./pages/Patient";
 import RegisterStaff from "./pages/RegisterStaff";
 import Error from "./pages/Error";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -49,6 +50,11 @@ const router = createBrowserRouter([
             path: "staff",
             element: <Staff />,
             loader: staffLoader(queryClient),
+          },
+          {
+            path: "patient",
+            element: <Patient />,
+            loader: patientLoader(queryClient),
           },
           {
             path: "register-staff",
