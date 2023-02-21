@@ -103,46 +103,45 @@ interface UserResponse {
   name: Name;
   address: Address;
   email: string;
-  password: string;
   contactNo: string;
-  role: Roles;
+  role: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 interface AdminResponse {
   _id?: string;
-  userId: string;
+  user: UserResponse;
 }
 
 interface StaffResponse {
   _id?: string;
-  userId: string;
+  user: UserResponse;
 }
 
 interface PatientResponse {
   _id?: string;
-  userId: string;
+  user: UserResponse;
 }
 
 interface ManagerResponse {
   _id?: string;
-  staffId: string;
+  staff: string;
 }
 
 interface DentistResponse {
   _id?: string;
-  staffId: string;
+  staff: string;
 }
 
 interface FrontDeskResponse {
   _id?: string;
-  staffId: string;
+  staff: string;
 }
 
 interface AssistantResponse {
   _id?: string;
-  staffId: string;
+  staff: string;
 }
 
 interface MessageResponse {

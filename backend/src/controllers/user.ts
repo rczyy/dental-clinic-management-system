@@ -21,7 +21,7 @@ export const getUsers: RequestHandler = async (req, res) => {
     return;
   }
 
-  const users = await User.find();
+  const users = await User.find().select("-password");
 
   res.status(200).json(users);
 };

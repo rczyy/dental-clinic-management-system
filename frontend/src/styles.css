@@ -5,11 +5,11 @@
 @tailwind utilities;
 
 main {
-  @apply min-h-screen pt-20 pb-4 px-4;
+  @apply w-full min-h-screen pt-20 pb-4 px-4;
 }
 
 .adminMain {
-  @apply pt-[5rem] pb-3 px-3 sm:px-4;
+  @apply pt-20 pb-3 px-3 sm:px-4;
 }
 
 ::-webkit-scrollbar {

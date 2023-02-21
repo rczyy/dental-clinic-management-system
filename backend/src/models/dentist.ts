@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 const dentistSchema = new Schema<Dentist>({
-  staffId: {
+  staff: {
     type: Schema.Types.ObjectId,
     ref: "Staff",
   },
