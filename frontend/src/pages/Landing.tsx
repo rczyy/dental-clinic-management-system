@@ -3,15 +3,23 @@ import { RiHealthBookLine } from "react-icons/ri";
 import { FaTooth, FaTeethOpen, FaTeeth } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
 import { GiTooth } from "react-icons/gi";
+import { useGetUser } from "../hooks/user";
+import { Navigate } from "react-router-dom";
 
 type Props = {};
 
 const Landing = (props: Props) => {
+  const { data } = useGetUser();
+
+  if (data && data.role === "Admin") return <Navigate to="/admin" />;
+
   return (
-    <div className="font-work min-h-screen flex flex-col gap-2 pt-16 pb-4 bg-base-300">
-      <section className="flex flex-col items-center justify-center gap-2 min-h-[85vh] bg-base-200 relative">
+    <div className="min-h-screen flex flex-col gap-2 pt-16 pb-4 bg-base-300">
+      <section
+        className={`flex flex-col items-center justify-center gap-2 min-h-[85vh] bg-[url(assets/at.png)] bg-center bg-cover relative`}
+      >
         <div className="text-center z-10">
-          <h1 className="font-light text-3xl">AT Dental Home's</h1>
+          <h1 className="font-light text-white text-3xl">AT Dental Home's</h1>
           <h1 className="font-bold text-primary text-2xl">
             Online Appointment System
           </h1>
@@ -21,6 +29,7 @@ const Landing = (props: Props) => {
             Book an appointment
           </button>
         </div>
+        <div className="absolute w-full h-full bg-black bg-opacity-60 backdrop-blur-[2px]"></div>
         <Blob className="text-base-300 fill-current" />
       </section>
       <section className="flex flex-col items-center justify-center py-12">
@@ -52,7 +61,7 @@ const Blob = ({ className }: BlobProps) => {
   return (
     <svg
       id="visual"
-      className="absolute bottom-0 w-screen z-0"
+      className="absolute bottom-0  z-0"
       viewBox="0 0 900 600"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"

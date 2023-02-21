@@ -27,7 +27,7 @@ export const getStaffs: RequestHandler = async (req, res) => {
     return;
   }
 
-  const staffs = await Staff.find();
+  const staffs = await Staff.find().populate("user", "-password");
 
   res.status(200).json(staffs);
 };
@@ -47,15 +47,15 @@ export const getStaff: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { userId } = req.params;
+  const { user } = req.params;
 
-  if (!isValidObjectId(userId)) {
+  if (!isValidObjectId(user)) {
     const error: ErrorMessage = { message: "Invalid user ID" };
     res.status(400).json(error);
     return;
   }
 
-  const staff = await Staff.findOne({ userId });
+  const staff = await Staff.findOne({ user });
 
   res.status(200).json(staff);
 };
@@ -174,7 +174,7 @@ export const registerStaff: RequestHandler = async (req, res) => {
   });
 
   const staff = new Staff({
-    userId: user._id,
+    user: user._id,
   });
 
   await user.save();
@@ -182,25 +182,25 @@ export const registerStaff: RequestHandler = async (req, res) => {
 
   if (role === Roles.Manager) {
     const manager = new Manager({
-      staffId: staff._id,
+      staff: staff._id,
     });
     await manager.save();
   }
   if (role === Roles.Assistant) {
     const assistant = new Assistant({
-      staffId: staff._id,
+      staff: staff._id,
     });
     await assistant.save();
   }
   if (role === Roles.Dentist) {
     const dentist = new Dentist({
-      staffId: staff._id,
+      staff: staff._id,
     });
     await dentist.save();
   }
   if (role === Roles.FrontDesk) {
     const frontDesk = new FrontDesk({
-      staffId: staff._id,
+      staff: staff._id,
     });
     await frontDesk.save();
   }
@@ -223,15 +223,15 @@ export const removeStaff: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { userId } = req.params;
+  const { user } = req.params;
 
-  if (!isValidObjectId(userId)) {
+  if (!isValidObjectId(user)) {
     const error: ErrorMessage = { message: "Invalid user ID" };
     res.status(400).json(error);
     return;
   }
 
-  const deletedStaff = await Staff.findOneAndDelete({ userId });
+  const deletedStaff = await Staff.findOneAndDelete({ user });
 
   if (!deletedStaff) {
     const error: ErrorMessage = { message: "Staff doesn't exist" };
@@ -239,7 +239,7 @@ export const removeStaff: RequestHandler = async (req, res) => {
     return;
   }
 
-  const deletedUser = await User.findByIdAndDelete(userId);
+  const deletedUser = await User.findByIdAndDelete(user);
 
   if (!deletedUser) {
     res.status(400).json({ message: "User doesn't exist" });
@@ -247,19 +247,19 @@ export const removeStaff: RequestHandler = async (req, res) => {
   }
 
   if (deletedUser.role === Roles.Manager) {
-    await Manager.findOneAndDelete({ staffId: deletedStaff._id });
+    await Manager.findOneAndDelete({ staff: deletedStaff._id });
   }
 
   if (deletedUser.role === Roles.Assistant) {
-    await Assistant.findOneAndDelete({ staffId: deletedStaff._id });
+    await Assistant.findOneAndDelete({ staff: deletedStaff._id });
   }
 
   if (deletedUser.role === Roles.Dentist) {
-    await Dentist.findOneAndDelete({ staffId: deletedStaff._id });
+    await Dentist.findOneAndDelete({ staff: deletedStaff._id });
   }
 
   if (deletedUser.role === Roles.FrontDesk) {
-    await FrontDesk.findOneAndDelete({ staffId: deletedStaff._id });
+    await FrontDesk.findOneAndDelete({ staff: deletedStaff._id });
   }
 
   res

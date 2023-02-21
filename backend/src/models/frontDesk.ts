@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 const frontDeskSchema = new Schema<FrontDesk>({
-  staffId: {
+  staff: {
     type: Schema.Types.ObjectId,
     ref: "Staff",
   },
