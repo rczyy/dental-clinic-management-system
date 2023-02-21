@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigation } from "react-router-dom";
 import { useAdminStore } from "../store/admin";
 import { useGetUser } from "../hooks/user";
 import AdminSideBar from "../components/AdminSideBar";
@@ -7,6 +7,7 @@ type Props = {};
 
 const AdminHome = (props: Props) => {
   const sidebar = useAdminStore((state) => state.sidebar);
+  const navigation = useNavigation();
   const { data } = useGetUser();
 
   if (!data) return <Navigate to="/login" />;
@@ -21,7 +22,7 @@ const AdminHome = (props: Props) => {
         }
       ></div>
       <AdminSideBar />
-      <main>
+      <main className={navigation.state === "loading" ? "opacity-50" : ""}>
         <Outlet />
       </main>
     </div>
