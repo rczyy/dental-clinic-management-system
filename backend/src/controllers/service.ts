@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { verifyToken } from "../utilities/verifyToken";
 import Service from "../models/service";
-import { Roles } from "../constants";
+import { Roles, ServiceCategory } from "../constants";
 import { z } from "zod";
 import { isValidObjectId } from "mongoose";
 
@@ -18,7 +18,40 @@ export const getServices: RequestHandler = async (req, res) => {
 
   res.status(200).json(services);
 };
+export const getService: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
 
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  const { serviceId } = req.params;
+
+  if (!isValidObjectId(serviceId)) {
+    const error: ErrorMessage = { message: "Invalid user ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const service = await Service.findOne({ _id: serviceId });
+
+  res.status(200).json(service);
+};
+export const getServiceCategory: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+  const { category } = req.body;
+  const serviceCategory = await Service.find({ category });
+
+  res.status(200).json(serviceCategory);
+};
 export const addService: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
@@ -47,6 +80,7 @@ export const addService: RequestHandler = async (req, res) => {
     estimatedTime: z
       .string({ required_error: "Estimated time is required" })
       .regex(/^[0-9]*$/, "Estimated time may only contain numbers"),
+    category: z.nativeEnum(ServiceCategory),
   });
 
   type body = z.infer<typeof userSchema>;
@@ -58,7 +92,7 @@ export const addService: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { name, estimatedTime }: body = req.body;
+  const { name, estimatedTime, category }: body = req.body;
 
   const existingService = await Service.findOne({ name });
 
@@ -74,12 +108,12 @@ export const addService: RequestHandler = async (req, res) => {
   const service = new Service({
     name,
     estimatedTime,
+    category,
   });
 
   await service.save();
   res.status(201).json(service);
 };
-
 export const editService: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
@@ -110,6 +144,7 @@ export const editService: RequestHandler = async (req, res) => {
       .string()
       .regex(/^[0-9]*$/, "Estimated time may only contain numbers")
       .optional(),
+    category: z.nativeEnum(ServiceCategory).optional(),
   });
 
   type body = z.infer<typeof userSchema>;
@@ -121,7 +156,7 @@ export const editService: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { name, estimatedTime }: body = req.body;
+  const { name, estimatedTime, category }: body = req.body;
   const { serviceId } = req.params;
 
   if (!isValidObjectId(serviceId)) {
@@ -134,6 +169,7 @@ export const editService: RequestHandler = async (req, res) => {
     _id: serviceId,
     name,
     estimatedTime,
+    category,
   });
 
   if (!editedService) {
@@ -147,7 +183,6 @@ export const editService: RequestHandler = async (req, res) => {
     message: "Succesfully edited the service",
   });
 };
-
 export const removeService: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 

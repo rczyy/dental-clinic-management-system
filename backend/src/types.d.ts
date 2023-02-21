@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { Roles } from "./constants";
+import { Roles, ServiceCategory } from "./constants";
 
 declare module "express-session" {
   interface SessionData {
@@ -97,6 +97,7 @@ declare global {
 
   interface Service {
     _id?: Types.ObjectId;
+    category: ServiceCategory;
     name: string;
     estimatedTime: string;
   }
