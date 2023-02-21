@@ -1,5 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import Select from "react-select";
 import { getStaffs } from "../axios/staff";
 import StaffDataRow from "../components/StaffDataRow";
@@ -87,8 +88,9 @@ const Staff = (props: Props) => {
           options={roles}
           isClearable={true}
           classNames={{
+            container: () => "flex-1 max-w-[12rem]",
             control: ({ hasValue }) =>
-              "pl-1.5 py-1 w-44 md:w-56 !bg-base-300 " +
+              "pl-1.5 md:py-1 w-full !bg-base-300 " +
               (hasValue && "!border-primary"),
             placeholder: () => "!text-zinc-400 !text-sm sm:!text-base ",
             singleValue: () => "!text-base-content",
@@ -106,7 +108,7 @@ const Staff = (props: Props) => {
         <input
           type="search"
           placeholder="Search..."
-          className="input input-bordered w-full max-w-xs focus:outline-none"
+          className="input input-bordered flex-1 h-10 md:h-12 w-full max-w-xs focus:outline-none"
           onChange={(e) => setSearchFilter(e.target.value)}
         />
       </div>
@@ -119,7 +121,14 @@ const Staff = (props: Props) => {
                 setRoleSort((val) => (val === "asc" ? "desc" : "asc"))
               }
             >
-              Role {roleSort}
+              <div className="flex items-center gap-4">
+                <span>Role</span>
+                {roleSort === "asc" ? (
+                  <FiChevronDown className="w-3.5 h-3.5w-3.5" />
+                ) : roleSort === "desc" ? (
+                  <FiChevronUp className="w-3.5 h-3.5w-3.5" />
+                ) : null}
+              </div>
             </th>
             <th
               className="bg-primary text-white cursor-pointer"
@@ -127,7 +136,14 @@ const Staff = (props: Props) => {
                 setNameSort((val) => (val === "asc" ? "desc" : "asc"))
               }
             >
-              Name {nameSort}
+              <div className="flex gap-4">
+                <span>Name</span>
+                {nameSort === "asc" ? (
+                  <FiChevronDown className="w-3.5 h-3.5w-3.5" />
+                ) : nameSort === "desc" ? (
+                  <FiChevronUp className="w-3.5 h-3.5w-3.5" />
+                ) : null}
+              </div>
             </th>
             <th className="bg-primary text-white cursor-pointer hidden lg:table-cell">
               Email
