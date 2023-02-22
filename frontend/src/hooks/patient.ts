@@ -13,7 +13,9 @@ export const useGetPatients = () => {
 export const useGetPatient = (id: string) => {
   return useQuery({
     queryKey: ["patients", id],
-    queryFn: () => getPatient(id),
+    queryFn: () => {
+      getPatient(id);
+    },
   });
 };
 

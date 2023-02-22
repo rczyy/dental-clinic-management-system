@@ -28,9 +28,7 @@ export const useRegisterStaff = () => {
     StaffSignupFormValues
   >({
     mutationFn: registerStaff,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["staffs"]);
-    },
+    onSuccess: () => queryClient.invalidateQueries(["staffs"]),
   });
 };
 
@@ -38,8 +36,6 @@ export const useRemoveStaff = () => {
   const queryClient = useQueryClient();
   return useMutation<DeleteResponse, ErrorMessageResponse, string>({
     mutationFn: removeStaff,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["staffs"]);
-    },
+    onSuccess: () => queryClient.invalidateQueries(["staffs"]),
   });
 };
