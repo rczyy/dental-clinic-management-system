@@ -22,11 +22,6 @@ const AdminSideBar = () => {
       }
     >
       <div className="flex flex-col w-full gap-1">
-        <SideBarItem
-          name="Add a staff"
-          Icon={CgUserAdd}
-          route="/admin/register-staff"
-        />
         <SideBarItem name="Staff list" Icon={CgUserList} route="/admin/staff" />
         <SideBarItem
           name="Patient list"

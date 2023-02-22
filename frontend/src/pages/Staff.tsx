@@ -1,7 +1,8 @@
 import { QueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
-import { FiSearch } from "react-icons/fi";
+import { FiPlus, FiSearch } from "react-icons/fi";
+import { Link } from "react-router-dom";
 import Select from "react-select";
 import { getStaffs } from "../axios/staff";
 import StaffDataRow from "../components/StaffDataRow";
@@ -32,10 +33,10 @@ const Staff = (props: Props) => {
     data &&
     data
       .sort((a, b) => {
-        const roleA = a.user.role.toUpperCase();
-        const roleB = b.user.role.toUpperCase();
-        const nameA = a.user.name.firstName.toUpperCase();
-        const nameB = b.user.name.firstName.toUpperCase();
+        const roleA: string = a.user.role.toUpperCase();
+        const roleB: string = b.user.role.toUpperCase();
+        const nameA: string = a.user.name.firstName.toUpperCase();
+        const nameB: string = b.user.name.firstName.toUpperCase();
 
         if (roleSort && nameSort) {
           if (roleA === roleB) {
@@ -85,6 +86,17 @@ const Staff = (props: Props) => {
 
   return (
     <div className="flex flex-col gap-4">
+      <header className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-4 gap-8">
+        <h1 className="font-bold text-3xl">Staff List</h1>
+        <Link
+          to="/admin/register-staff"
+          role="button"
+          className="btn btn-primary w-full sm:max-w-[16rem] text-white normal-case gap-2"
+        >
+          <FiPlus className="w-4 h-4" />
+          Add a Staff
+        </Link>
+      </header>
       <div className="flex justify-end items-center gap-2">
         <div className="flex flex-1 items-center bg-base-300 border rounded-md">
           <FiSearch className="w-9 h-9 md:w-10 md:h-10 px-2.5" />
