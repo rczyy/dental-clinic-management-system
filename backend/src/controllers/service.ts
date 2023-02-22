@@ -39,19 +39,6 @@ export const getService: RequestHandler = async (req, res) => {
 
   res.status(200).json(service);
 };
-export const getServiceCategory: RequestHandler = async (req, res) => {
-  const token = verifyToken(req.headers.authorization);
-
-  if ("message" in token) {
-    const error: ErrorMessage = { message: token.message };
-    res.status(401).json(error);
-    return;
-  }
-  const { category } = req.body;
-  const serviceCategory = await Service.find({ category });
-
-  res.status(200).json(serviceCategory);
-};
 export const addService: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
@@ -75,8 +62,7 @@ export const addService: RequestHandler = async (req, res) => {
 
   const userSchema = z.object({
     name: z
-      .string({ required_error: "Name is required" })
-      .regex(/^[A-Za-z]+$/, "Service name may only contain letters"),
+      .string({ required_error: "Name is required" }),
     estimatedTime: z
       .string({ required_error: "Estimated time is required" })
       .regex(/^[0-9]*$/, "Estimated time may only contain numbers"),
@@ -138,7 +124,6 @@ export const editService: RequestHandler = async (req, res) => {
   const userSchema = z.object({
     name: z
       .string()
-      .regex(/^[A-Za-z]+$/, "Service name may only contain letters")
       .optional(),
     estimatedTime: z
       .string()
