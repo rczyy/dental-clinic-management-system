@@ -86,12 +86,12 @@ const Staff = (props: Props) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <header className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-4 gap-8">
-        <h1 className="font-bold text-3xl">Staff List</h1>
+      <header className="flex justify-between items-end mb-4 gap-8">
+        <h1 className="font-bold text-2xl md:text-3xl">Staff List</h1>
         <Link
           to="/admin/register-staff"
           role="button"
-          className="btn btn-primary w-full sm:max-w-[16rem] text-white normal-case gap-2"
+          className="btn btn-primary w-full max-w-[10rem] min-h-[2.5rem] h-10 px-2 text-white normal-case gap-2"
         >
           <FiPlus className="w-4 h-4" />
           Add a Staff
@@ -103,7 +103,7 @@ const Staff = (props: Props) => {
           <input
             type="text"
             placeholder="Search..."
-            className="input bg-base-300 w-full h-9 md:h-11 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm md:placeholder:text-base"
+            className="input bg-base-300 w-full h-9 md:h-11 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm"
             onChange={(e) => setSearchFilter(e.target.value)}
           />
         </div>
@@ -116,11 +116,13 @@ const Staff = (props: Props) => {
             control: ({ hasValue }) =>
               "pl-1.5 md:py-1 w-full !bg-base-300 " +
               (hasValue && "!border-primary"),
-            placeholder: () => "!text-zinc-400 !text-sm sm:!text-base ",
-            singleValue: () => "!text-base-content",
+            placeholder: () => "!text-zinc-400 !text-sm",
+            singleValue: () => "!text-base-content !text-sm",
             input: () => "!text-base-content",
             option: ({ isSelected, isFocused }) =>
-              isSelected || isFocused ? "!bg-primary !text-zinc-100" : "",
+              "!text-sm " +
+              (isSelected ? "!bg-primary !text-zinc-100 " : "") +
+              (isFocused ? "!bg-neutral" : ""),
             menu: () => "!bg-base-300 !z-20",
             dropdownIndicator: ({ hasValue }) =>
               hasValue ? "!text-primary" : "",
@@ -136,21 +138,6 @@ const Staff = (props: Props) => {
             <th
               className="bg-base-100 text-primary normal-case cursor-pointer"
               onClick={() =>
-                setNameSort((val) => (val === "asc" ? "desc" : "asc"))
-              }
-            >
-              <div className="flex items-center gap-1">
-                <span>Name</span>
-                {nameSort === "asc" ? (
-                  <AiFillCaretDown className="w-2.5 h-2.5" />
-                ) : nameSort === "desc" ? (
-                  <AiFillCaretUp className="w-2.5 h-2.5" />
-                ) : null}
-              </div>
-            </th>
-            <th
-              className="bg-base-100 text-primary normal-case cursor-pointer"
-              onClick={() =>
                 setRoleSort((val) => (val === "asc" ? "desc" : "asc"))
               }
             >
@@ -163,7 +150,21 @@ const Staff = (props: Props) => {
                 ) : null}
               </div>
             </th>
-
+            <th
+              className="bg-base-100 text-primary normal-case cursor-pointer"
+              onClick={() =>
+                setNameSort((val) => (val === "asc" ? "desc" : "asc"))
+              }
+            >
+              <div className="flex items-center gap-1">
+                <span>Name</span>
+                {nameSort === "asc" ? (
+                  <AiFillCaretDown className="w-2.5 h-2.5" />
+                ) : nameSort === "desc" ? (
+                  <AiFillCaretUp className="w-2.5 h-2.5" />
+                ) : null}
+              </div>
+            </th>
             <th className="bg-base-100 text-primary normal-case hidden lg:table-cell">
               Email
             </th>

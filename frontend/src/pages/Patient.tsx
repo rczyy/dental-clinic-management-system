@@ -2,9 +2,10 @@ import { useState } from "react";
 import { QueryClient } from "@tanstack/react-query";
 import { getPatients } from "../axios/patient";
 import { useGetPatients } from "../hooks/patient";
-import { FiSearch } from "react-icons/fi";
+import { FiPlus, FiSearch } from "react-icons/fi";
 import PatientDataRow from "../components/PatientDataRow";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
+import { Link } from "react-router-dom";
 
 type Props = {};
 
@@ -44,13 +45,24 @@ const Patient = (props: Props) => {
 
   return (
     <div className="flex flex-col gap-4">
+      <header className="flex justify-between items-end mb-4 gap-8">
+        <h1 className="font-bold text-2xl md:text-3xl">Patient List</h1>
+        <Link
+          to="/admin/register-staff"
+          role="button"
+          className="btn btn-primary w-full max-w-[10rem] min-h-[2.5rem] h-10 px-2 text-white normal-case gap-2"
+        >
+          <FiPlus className="w-4 h-4" />
+          Add a Patient
+        </Link>
+      </header>
       <div className="flex justify-end items-center">
         <div className="flex flex-1 items-center bg-base-300 border rounded-md">
-          <FiSearch className="w-9 h-9 md:w-10 md:h-10 px-2.5" />
+          <FiSearch className="w-9 h-9 px-2.5" />
           <input
             type="text"
             placeholder="Search..."
-            className="input bg-base-300 w-full h-9 md:h-11 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm md:placeholder:text-base"
+            className="input bg-base-300 w-full h-8 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm"
             onChange={(e) => setSearchFilter(e.target.value)}
           />
         </div>
