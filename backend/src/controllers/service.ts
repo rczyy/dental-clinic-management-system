@@ -5,28 +5,12 @@ import { Roles, ServiceCategory } from "../constants";
 import { z } from "zod";
 import { isValidObjectId } from "mongoose";
 
-export const getServices: RequestHandler = async (req, res) => {
-  const token = verifyToken(req.headers.authorization);
-
-  if ("message" in token) {
-    const error: ErrorMessage = { message: token.message };
-    res.status(401).json(error);
-    return;
-  }
-
+export const getServices: RequestHandler = async (_, res) => {
   const services = await Service.find();
 
   res.status(200).json(services);
 };
 export const getService: RequestHandler = async (req, res) => {
-  const token = verifyToken(req.headers.authorization);
-
-  if ("message" in token) {
-    const error: ErrorMessage = { message: token.message };
-    res.status(401).json(error);
-    return;
-  }
-
   const { serviceId } = req.params;
 
   if (!isValidObjectId(serviceId)) {

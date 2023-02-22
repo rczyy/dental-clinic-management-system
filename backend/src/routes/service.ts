@@ -11,8 +11,8 @@ import {
 const router = Router();
 
 router
-  .get("/", checkAuth, getServices)
-  .get("/:serviceId", checkAuth, getService);
+  .get("/", getServices)
+  .get("/:serviceId", getService);
 router.post("/add", checkAuth, addService);
 router.patch("/edit/:serviceId", checkAuth, editService);
 router.delete("/remove/:serviceId", checkAuth, removeService);
