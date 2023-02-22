@@ -17,7 +17,7 @@ const AdminHome = (props: Props) => {
     <div className="flex min-h-[inherit] relative">
       <div
         className={
-          "w-full min-h-[inherit] fixed bg-black bg-opacity-50 z-10 " +
+          "w-full min-h-[inherit] fixed bg-black bg-opacity-50 z-20 " +
           (sidebar ? "md:hidden" : "hidden")
         }
       ></div>
