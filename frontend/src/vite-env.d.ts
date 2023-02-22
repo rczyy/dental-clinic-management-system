@@ -180,3 +180,10 @@ interface ErrorMessageResponse {
     data: ErrorMessage;
   };
 }
+
+interface ServiceResponse {
+  _id?: string;
+  category: string;
+  name: string;
+  estimatedTime: string;
+}
