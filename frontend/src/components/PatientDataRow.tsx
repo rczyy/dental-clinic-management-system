@@ -4,7 +4,7 @@ type Props = {
 
 const PatientDataRow = ({ patient }: Props) => {
   return (
-    <tr>
+    <tr className="cursor-pointer [&>*]:bg-transparent transition hover:bg-base-100">
       <td className="font-medium text-sm">
         <div className="flex flex-col">
           <span className="truncate">{`${patient.user.name.firstName} ${patient.user.name.lastName}`}</span>

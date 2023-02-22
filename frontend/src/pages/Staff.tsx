@@ -132,54 +132,56 @@ const Staff = (props: Props) => {
           onChange={(newValue) => setRoleFilter(newValue ? newValue.value : "")}
         />
       </div>
-      <table className="table table-fixed w-full text-sm sm:text-base">
-        <thead>
-          <tr className="border-b border-base-200">
-            <th
-              className="bg-base-100 text-primary normal-case cursor-pointer"
-              onClick={() =>
-                setRoleSort((val) => (val === "asc" ? "desc" : "asc"))
-              }
-            >
-              <div className="flex items-center gap-1">
-                <span>Role</span>
-                {roleSort === "asc" ? (
-                  <AiFillCaretDown className="w-2.5 h-2.5" />
-                ) : roleSort === "desc" ? (
-                  <AiFillCaretUp className="w-2.5 h-2.5" />
-                ) : null}
-              </div>
-            </th>
-            <th
-              className="bg-base-100 text-primary normal-case cursor-pointer"
-              onClick={() =>
-                setNameSort((val) => (val === "asc" ? "desc" : "asc"))
-              }
-            >
-              <div className="flex items-center gap-1">
-                <span>Name</span>
-                {nameSort === "asc" ? (
-                  <AiFillCaretDown className="w-2.5 h-2.5" />
-                ) : nameSort === "desc" ? (
-                  <AiFillCaretUp className="w-2.5 h-2.5" />
-                ) : null}
-              </div>
-            </th>
-            <th className="bg-base-100 text-primary normal-case hidden lg:table-cell">
-              Email
-            </th>
-            <th className="bg-base-100 text-primary normal-case hidden md:table-cell">
-              Contact No.
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredStaffs &&
-            filteredStaffs.map((staff) => (
-              <StaffDataRow key={staff._id} staff={staff} />
-            ))}
-        </tbody>
-      </table>
+      <div className="bg-base-300 p-4 rounded-box">
+        <table className="table table-fixed [&>*]:bg-base-300 w-full text-sm sm:text-base">
+          <thead>
+            <tr className="[&>*]:bg-base-300 border-b border-base-200">
+              <th
+                className="text-primary normal-case cursor-pointer"
+                onClick={() =>
+                  setRoleSort((val) => (val === "asc" ? "desc" : "asc"))
+                }
+              >
+                <div className="flex items-center gap-1">
+                  <span>Role</span>
+                  {roleSort === "asc" ? (
+                    <AiFillCaretDown className="w-2.5 h-2.5" />
+                  ) : roleSort === "desc" ? (
+                    <AiFillCaretUp className="w-2.5 h-2.5" />
+                  ) : null}
+                </div>
+              </th>
+              <th
+                className="text-primary normal-case cursor-pointer"
+                onClick={() =>
+                  setNameSort((val) => (val === "asc" ? "desc" : "asc"))
+                }
+              >
+                <div className="flex items-center gap-1">
+                  <span>Name</span>
+                  {nameSort === "asc" ? (
+                    <AiFillCaretDown className="w-2.5 h-2.5" />
+                  ) : nameSort === "desc" ? (
+                    <AiFillCaretUp className="w-2.5 h-2.5" />
+                  ) : null}
+                </div>
+              </th>
+              <th className="text-primary normal-case hidden lg:table-cell">
+                Email
+              </th>
+              <th className="text-primary normal-case hidden md:table-cell">
+                Contact No.
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredStaffs &&
+              filteredStaffs.map((staff) => (
+                <StaffDataRow key={staff._id} staff={staff} />
+              ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

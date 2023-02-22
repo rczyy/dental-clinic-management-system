@@ -4,7 +4,7 @@ type Props = {
 
 const StaffDataRow = ({ staff }: Props) => {
   return (
-    <tr>
+    <tr className="cursor-pointer [&>*]:bg-transparent transition hover:bg-base-100">
       <td className="truncate font-medium text-sm">{staff.user.role}</td>
       <td className="font-medium text-sm">
         <div className="flex flex-col">
