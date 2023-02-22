@@ -31,22 +31,22 @@ export const registerAdmin: RequestHandler = async (req, res) => {
     .object({
       firstName: z
         .string({ required_error: "First name is required" })
-        .regex(/^[A-Za-z]+$/, "First name may only contain letters"),
+        .regex(/^[A-Za-z ]+$/, "First name may only contain letters"),
       middleName: z
         .string({ required_error: "Middle name is required" })
-        .regex(/^[A-Za-z]+$/, "Middle name may only contain letters"),
+        .regex(/^[A-Za-z ]+$/, "Middle name may only contain letters"),
       lastName: z
         .string({ required_error: "Last name is required" })
-        .regex(/^[A-Za-z]+$/, "Last name may only contain letters"),
+        .regex(/^[A-Za-z ]+$/, "Last name may only contain letters"),
       region: z
         .string({ required_error: "Region is required" })
-        .regex(/^[A-Za-z]+$/, "Region may only contain letters"),
+        .regex(/^[A-Za-z ]+$/, "Region may only contain letters"),
       province: z
         .string({ required_error: "Province is required" })
-        .regex(/^[A-Za-z]+$/, "Province may only contain letters"),
+        .regex(/^[A-Za-z ]+$/, "Province may only contain letters"),
       city: z
         .string({ required_error: "City is required" })
-        .regex(/^[A-Za-z]+$/, "City may only contain letters"),
+        .regex(/^[A-Za-z ]+$/, "City may only contain letters"),
       barangay: z.string({ required_error: "Barangay is required" }),
       street: z.string({ required_error: "Street is required" }),
       email: z.string({ required_error: "Email is required" }).email(),
