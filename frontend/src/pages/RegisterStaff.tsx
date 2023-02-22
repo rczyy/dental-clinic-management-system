@@ -340,16 +340,15 @@ const RegisterStaff = (props: Props) => {
                       }
                       classNames={{
                         control: ({ hasValue }) =>
-                          "pl-1.5 py-2 !bg-base-300 " +
+                          "pl-1.5 py-[1px] !bg-base-300 " +
                           (hasValue && "!border-primary"),
-                        placeholder: () =>
-                          "!text-zinc-400 !text-sm sm:!text-base ",
-                        singleValue: () => "!text-base-content",
+                        placeholder: () => "!text-zinc-400 !text-sm",
+                        singleValue: () => "!text-base-content !text-sm",
                         input: () => "!text-base-content",
                         option: ({ isSelected, isFocused }) =>
-                          isSelected || isFocused
-                            ? "!bg-primary !text-zinc-100"
-                            : "",
+                          "!text-sm " +
+                          (isSelected ? "!bg-primary !text-zinc-100 " : "") +
+                          (isFocused && !isSelected ? "!bg-neutral" : ""),
                         menu: () => "!bg-base-300",
                         dropdownIndicator: ({ hasValue }) =>
                           hasValue ? "!text-primary" : "",
@@ -387,16 +386,15 @@ const RegisterStaff = (props: Props) => {
                       }
                       classNames={{
                         control: ({ hasValue }) =>
-                          "pl-1.5 py-2 !bg-base-300 " +
+                          "pl-1.5 py-[1px] !bg-base-300 " +
                           (hasValue && "!border-primary"),
-                        placeholder: () =>
-                          "!text-zinc-400 !text-sm sm:!text-base ",
-                        singleValue: () => "!text-base-content",
+                        placeholder: () => "!text-zinc-400 !text-sm",
+                        singleValue: () => "!text-base-content !text-sm",
                         input: () => "!text-base-content",
                         option: ({ isSelected, isFocused }) =>
-                          isSelected || isFocused
-                            ? "!bg-primary !text-zinc-100"
-                            : "",
+                          "!text-sm " +
+                          (isSelected ? "!bg-primary !text-zinc-100 " : "") +
+                          (isFocused && !isSelected ? "!bg-neutral" : ""),
                         menu: () => "!bg-base-300",
                         dropdownIndicator: ({ hasValue }) =>
                           hasValue ? "!text-primary" : "",
@@ -431,16 +429,15 @@ const RegisterStaff = (props: Props) => {
                       }
                       classNames={{
                         control: ({ hasValue }) =>
-                          "pl-1.5 py-2 !bg-base-300 " +
+                          "pl-1.5 py-[1px] !bg-base-300 " +
                           (hasValue && "!border-primary"),
-                        placeholder: () =>
-                          "!text-zinc-400 !text-sm sm:!text-base ",
-                        singleValue: () => "!text-base-content",
+                        placeholder: () => "!text-zinc-400 !text-sm",
+                        singleValue: () => "!text-base-content !text-sm",
                         input: () => "!text-base-content",
                         option: ({ isSelected, isFocused }) =>
-                          isSelected || isFocused
-                            ? "!bg-primary !text-zinc-100"
-                            : "",
+                          "!text-sm " +
+                          (isSelected ? "!bg-primary !text-zinc-100 " : "") +
+                          (isFocused && !isSelected ? "!bg-neutral" : ""),
                         menu: () => "!bg-base-300",
                         dropdownIndicator: ({ hasValue }) =>
                           hasValue ? "!text-primary" : "",
@@ -474,16 +471,15 @@ const RegisterStaff = (props: Props) => {
                       }
                       classNames={{
                         control: ({ hasValue }) =>
-                          "pl-1.5 py-2 !bg-base-300 " +
+                          "pl-1.5 py-[1px] !bg-base-300 " +
                           (hasValue && "!border-primary"),
-                        placeholder: () =>
-                          "!text-zinc-400 !text-sm sm:!text-base ",
-                        singleValue: () => "!text-base-content",
+                        placeholder: () => "!text-zinc-400 !text-sm",
+                        singleValue: () => "!text-base-content !text-sm",
                         input: () => "!text-base-content",
                         option: ({ isSelected, isFocused }) =>
-                          isSelected || isFocused
-                            ? "!bg-primary !text-zinc-100"
-                            : "",
+                          "!text-sm " +
+                          (isSelected ? "!bg-primary !text-zinc-100 " : "") +
+                          (isFocused && !isSelected ? "!bg-neutral" : ""),
                         menu: () => "!bg-base-300",
                         dropdownIndicator: ({ hasValue }) =>
                           hasValue ? "!text-primary" : "",
@@ -519,16 +515,15 @@ const RegisterStaff = (props: Props) => {
                       }
                       classNames={{
                         control: ({ hasValue }) =>
-                          "pl-1.5 py-2 !bg-base-300 " +
+                          "pl-1.5 py-[1px] !bg-base-300 " +
                           (hasValue && "!border-primary"),
-                        placeholder: () =>
-                          "!text-zinc-400 !text-sm sm:!text-base ",
-                        singleValue: () => "!text-base-content",
+                        placeholder: () => "!text-zinc-400 !text-sm",
+                        singleValue: () => "!text-base-content !text-sm",
                         input: () => "!text-base-content",
                         option: ({ isSelected, isFocused }) =>
-                          isSelected || isFocused
-                            ? "!bg-primary !text-zinc-100"
-                            : "",
+                          "!text-sm " +
+                          (isSelected ? "!bg-primary !text-zinc-100 " : "") +
+                          (isFocused && !isSelected ? "!bg-neutral" : ""),
                         menu: () => "!bg-base-300",
                         dropdownIndicator: ({ hasValue }) =>
                           hasValue ? "!text-primary" : "",
@@ -565,13 +560,13 @@ const RegisterStaff = (props: Props) => {
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-start px-2">
             <button
               type="submit"
-              className="btn bg-primary border-primary text-zinc-50 w-full sm:w-48 px-8 mt-8"
+              className="btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 w-full sm:w-48 px-8 mt-8"
               disabled={isLoading}
             >
               {isLoading ? (
                 <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin" />
               ) : (
-                "Register Staff"
+                "Add Staff"
               )}
             </button>
             <span className="text-xs text-error text-center">

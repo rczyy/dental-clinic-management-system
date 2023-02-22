@@ -122,7 +122,7 @@ const Staff = (props: Props) => {
             option: ({ isSelected, isFocused }) =>
               "!text-sm " +
               (isSelected ? "!bg-primary !text-zinc-100 " : "") +
-              (isFocused ? "!bg-neutral" : ""),
+              (isFocused && !isSelected ? "!bg-neutral" : ""),
             menu: () => "!bg-base-300 !z-20",
             dropdownIndicator: ({ hasValue }) =>
               hasValue ? "!text-primary" : "",

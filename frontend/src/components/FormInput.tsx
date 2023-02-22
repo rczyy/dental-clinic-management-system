@@ -36,7 +36,7 @@ const FormInput = ({
       >
         {label === "contactNo" && (
           <>
-            <span className="px-1.5 text-sm sm:text-base sm:px-2">+63</span>
+            <span className="px-1.5 text-sm sm:px-2">+63</span>
             <div
               className={
                 "w-[1px] h-[20px] " + (value ? "bg-primary" : "bg-zinc-300")
@@ -48,7 +48,7 @@ const FormInput = ({
           <label
             htmlFor={label}
             className={
-              "absolute transition-all cursor-text select-none text-sm sm:text-base " +
+              "absolute transition-all cursor-text select-none text-sm " +
               (!value
                 ? "top-1/2 -translate-y-1/2 text-zinc-400 " +
                   (label !== "contactNo" ? "left-4" : "left-2")
@@ -60,7 +60,7 @@ const FormInput = ({
           </label>
           <input
             className={
-              "bg-base-300 w-full py-3 outline-none rounded-md " +
+              "bg-base-300 w-full text-sm py-2 outline-none rounded-md " +
               (label !== "contactNo" ? "pl-4" : "pl-2")
             }
             autoComplete="off"

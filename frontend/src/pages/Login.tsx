@@ -55,8 +55,8 @@ const Login = (props: Props) => {
         <section className="bg-base-300 flex w-full sm:w-1/2 justify-center items-center rounded-box px-8 py-16 lg:px-20 relative">
           <div className="flex flex-col gap-8">
             <header className="flex flex-col gap-4 text-center">
-              <h1 className="text-4xl font-bold">Login</h1>
-              <p className="text-sm text-neutral">
+              <h1 className="text-3xl font-bold">Login</h1>
+              <p className="text-xs text-zinc-400">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem,
                 sapiente.
               </p>
@@ -90,10 +90,10 @@ const Login = (props: Props) => {
                 value={watch("password")}
                 error={errors.password?.message}
               />
-              <a className="text-xs text-neutral ml-auto">Forgot Password</a>
+              <a className="text-xs text-zinc-400 ml-auto">Forgot Password</a>
               <button
                 type="submit"
-                className="btn bg-primary border-primary text-zinc-50 my-8"
+                className="btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 my-8"
                 disabled={loginLoading}
               >
                 {loginLoading ? (

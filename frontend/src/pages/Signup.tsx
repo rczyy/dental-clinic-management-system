@@ -281,14 +281,14 @@ const Signup = (props: Props) => {
                   Account details
                 </li>
               </ul>
-              <h1 className="text-4xl font-bold">
+              <h1 className="text-3xl font-bold">
                 {step === 1
                   ? "Personal details"
                   : step === 2
                   ? "Address details"
                   : "Account details"}
               </h1>
-              <p className="text-sm text-neutral">
+              <p className="text-xs text-zinc-400">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem,
                 sapiente.
               </p>
@@ -358,7 +358,7 @@ const Signup = (props: Props) => {
                   />
                   <button
                     type="button"
-                    className="btn bg-primary border-primary text-zinc-50 my-8"
+                    className="btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 my-8"
                     onClick={async () => {
                       if (
                         await trigger(
@@ -392,15 +392,17 @@ const Signup = (props: Props) => {
                           }
                           classNames={{
                             control: ({ hasValue }) =>
-                              "pl-1.5 py-2 !bg-base-300 " +
+                              "pl-1.5 py-[1px] !bg-base-300 " +
                               (hasValue && "!border-primary"),
-                            placeholder: () => "!text-zinc-400 ",
-                            singleValue: () => "!text-base-content",
+                            placeholder: () => "!text-zinc-400 !text-sm",
+                            singleValue: () => "!text-base-content !text-sm",
                             input: () => "!text-base-content",
                             option: ({ isSelected, isFocused }) =>
-                              isSelected || isFocused
-                                ? "!bg-primary !text-zinc-100"
-                                : "",
+                              "!text-sm " +
+                              (isSelected
+                                ? "!bg-primary !text-zinc-100 "
+                                : "") +
+                              (isFocused && !isSelected ? "!bg-neutral" : ""),
                             menu: () => "!bg-base-300",
                             dropdownIndicator: ({ hasValue }) =>
                               hasValue ? "!text-primary" : "",
@@ -435,15 +437,17 @@ const Signup = (props: Props) => {
                           }
                           classNames={{
                             control: ({ hasValue }) =>
-                              "pl-1.5 py-2 !bg-base-300 " +
+                              "pl-1.5 py-[1px] !bg-base-300 " +
                               (hasValue && "!border-primary"),
-                            placeholder: () => "!text-zinc-400 ",
-                            singleValue: () => "!text-base-content",
+                            placeholder: () => "!text-zinc-400 !text-sm",
+                            singleValue: () => "!text-base-content !text-sm",
                             input: () => "!text-base-content",
                             option: ({ isSelected, isFocused }) =>
-                              isSelected || isFocused
-                                ? "!bg-primary !text-zinc-100"
-                                : "",
+                              "!text-sm " +
+                              (isSelected
+                                ? "!bg-primary !text-zinc-100 "
+                                : "") +
+                              (isFocused && !isSelected ? "!bg-neutral" : ""),
                             menu: () => "!bg-base-300",
                             dropdownIndicator: ({ hasValue }) =>
                               hasValue ? "!text-primary" : "",
@@ -477,15 +481,17 @@ const Signup = (props: Props) => {
                           }
                           classNames={{
                             control: ({ hasValue }) =>
-                              "pl-1.5 py-2 !bg-base-300 " +
+                              "pl-1.5 py-[1px] !bg-base-300 " +
                               (hasValue && "!border-primary"),
-                            placeholder: () => "!text-zinc-400 ",
-                            singleValue: () => "!text-base-content",
+                            placeholder: () => "!text-zinc-400 !text-sm",
+                            singleValue: () => "!text-base-content !text-sm",
                             input: () => "!text-base-content",
                             option: ({ isSelected, isFocused }) =>
-                              isSelected || isFocused
-                                ? "!bg-primary !text-zinc-100"
-                                : "",
+                              "!text-sm " +
+                              (isSelected
+                                ? "!bg-primary !text-zinc-100 "
+                                : "") +
+                              (isFocused && !isSelected ? "!bg-neutral" : ""),
                             menu: () => "!bg-base-300",
                             dropdownIndicator: ({ hasValue }) =>
                               hasValue ? "!text-primary" : "",
@@ -521,15 +527,17 @@ const Signup = (props: Props) => {
                           }
                           classNames={{
                             control: ({ hasValue }) =>
-                              "pl-1.5 py-2 !bg-base-300 " +
+                              "pl-1.5 py-[1px] !bg-base-300 " +
                               (hasValue && "!border-primary"),
-                            placeholder: () => "!text-zinc-400 ",
-                            singleValue: () => "!text-base-content",
+                            placeholder: () => "!text-zinc-400 !text-sm",
+                            singleValue: () => "!text-base-content !text-sm",
                             input: () => "!text-base-content",
                             option: ({ isSelected, isFocused }) =>
-                              isSelected || isFocused
-                                ? "!bg-primary !text-zinc-100"
-                                : "",
+                              "!text-sm " +
+                              (isSelected
+                                ? "!bg-primary !text-zinc-100 "
+                                : "") +
+                              (isFocused && !isSelected ? "!bg-neutral" : ""),
                             menu: () => "!bg-base-300",
                             dropdownIndicator: ({ hasValue }) =>
                               hasValue ? "!text-primary" : "",
@@ -566,14 +574,14 @@ const Signup = (props: Props) => {
                   <div className="flex gap-2">
                     <button
                       type="button"
-                      className="btn bg-primary flex-1 border-primary text-zinc-50 my-8"
+                      className="btn btn-primary min-h-[2.5rem] h-10 flex-1 border-primary text-zinc-50 my-8"
                       onClick={() => setStep(1)}
                     >
                       Previous
                     </button>
                     <button
                       type="button"
-                      className="btn bg-primary flex-1 border-primary text-zinc-50 my-8"
+                      className="btn btn-primary min-h-[2.5rem] h-10 flex-1 border-primary text-zinc-50 my-8"
                       onClick={async () => {
                         if (
                           await trigger([
@@ -641,14 +649,14 @@ const Signup = (props: Props) => {
                   />
                   <div className="flex gap-2">
                     <button
-                      className="btn bg-primary flex-1 border-primary text-zinc-50 mt-8 mb-4"
+                      className="btn btn-primary min-h-[2.5rem] h-10 flex-1 border-primary text-zinc-50 mt-8 mb-4"
                       onClick={() => setStep(2)}
                     >
                       Previous
                     </button>
                     <button
                       type="submit"
-                      className="btn bg-primary flex-1 border-primary text-zinc-50 mt-8 mb-4"
+                      className="btn btn-primary min-h-[2.5rem] h-10 flex-1 border-primary text-zinc-50 mt-8 mb-4"
                       disabled={isLoading}
                     >
                       {isLoading ? (
