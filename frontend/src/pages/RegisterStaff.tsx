@@ -17,8 +17,8 @@ import {
 import { useRegisterStaff } from "../hooks/staff";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import Select from "react-select";
 import FormInput from "../components/FormInput";
+import SelectDropdown from "../components/SelectDropdown";
 
 type Props = {};
 
@@ -60,7 +60,7 @@ const schema = z.object({
 });
 
 const RegisterStaff = (props: Props) => {
-  const roles = [
+  const roles: SelectOption[] = [
     { value: "Manager", label: "Manager" },
     { value: "Dentist", label: "Dentist" },
     { value: "Assistant", label: "Assistant Dentist" },
@@ -331,31 +331,9 @@ const RegisterStaff = (props: Props) => {
                   name="role"
                   control={control}
                   render={({ field: { onChange, value, ...field } }) => (
-                    <Select
+                    <SelectDropdown
                       {...field}
-                      value={
-                        value
-                          ? roles && roles.find((role) => role.value === value)
-                          : null
-                      }
-                      classNames={{
-                        control: ({ hasValue }) =>
-                          "pl-1.5 py-2 !bg-base-300 " +
-                          (hasValue && "!border-primary"),
-                        placeholder: () =>
-                          "!text-zinc-400 !text-sm sm:!text-base ",
-                        singleValue: () => "!text-base-content",
-                        input: () => "!text-base-content",
-                        option: ({ isSelected, isFocused }) =>
-                          isSelected || isFocused
-                            ? "!bg-primary !text-zinc-100"
-                            : "",
-                        menu: () => "!bg-base-300",
-                        dropdownIndicator: ({ hasValue }) =>
-                          hasValue ? "!text-primary" : "",
-                        indicatorSeparator: ({ hasValue }) =>
-                          hasValue ? "!bg-primary" : "",
-                      }}
+                      value={value}
                       placeholder="Role"
                       onChange={(val) => onChange(val?.value)}
                       options={roles}
@@ -375,34 +353,9 @@ const RegisterStaff = (props: Props) => {
                   name="region"
                   control={control}
                   render={({ field: { onChange, value, ...field } }) => (
-                    <Select
+                    <SelectDropdown
                       {...field}
-                      value={
-                        value
-                          ? regionOptions &&
-                            regionOptions.find(
-                              (region) => region.value === value
-                            )
-                          : null
-                      }
-                      classNames={{
-                        control: ({ hasValue }) =>
-                          "pl-1.5 py-2 !bg-base-300 " +
-                          (hasValue && "!border-primary"),
-                        placeholder: () =>
-                          "!text-zinc-400 !text-sm sm:!text-base ",
-                        singleValue: () => "!text-base-content",
-                        input: () => "!text-base-content",
-                        option: ({ isSelected, isFocused }) =>
-                          isSelected || isFocused
-                            ? "!bg-primary !text-zinc-100"
-                            : "",
-                        menu: () => "!bg-base-300",
-                        dropdownIndicator: ({ hasValue }) =>
-                          hasValue ? "!text-primary" : "",
-                        indicatorSeparator: ({ hasValue }) =>
-                          hasValue ? "!bg-primary" : "",
-                      }}
+                      value={value}
                       placeholder="Region"
                       onChange={(val) => onChange(val?.value)}
                       options={regionOptions}
@@ -419,34 +372,9 @@ const RegisterStaff = (props: Props) => {
                   name="province"
                   control={control}
                   render={({ field: { onChange, value, ...field } }) => (
-                    <Select
+                    <SelectDropdown
                       {...field}
-                      value={
-                        value
-                          ? provinceOptions &&
-                            provinceOptions.find(
-                              (province) => province.value === value
-                            )
-                          : null
-                      }
-                      classNames={{
-                        control: ({ hasValue }) =>
-                          "pl-1.5 py-2 !bg-base-300 " +
-                          (hasValue && "!border-primary"),
-                        placeholder: () =>
-                          "!text-zinc-400 !text-sm sm:!text-base ",
-                        singleValue: () => "!text-base-content",
-                        input: () => "!text-base-content",
-                        option: ({ isSelected, isFocused }) =>
-                          isSelected || isFocused
-                            ? "!bg-primary !text-zinc-100"
-                            : "",
-                        menu: () => "!bg-base-300",
-                        dropdownIndicator: ({ hasValue }) =>
-                          hasValue ? "!text-primary" : "",
-                        indicatorSeparator: ({ hasValue }) =>
-                          hasValue ? "!bg-primary" : "",
-                      }}
+                      value={value}
                       placeholder="Province"
                       onChange={(newValue) => onChange(newValue?.value)}
                       options={provinceOptions}
@@ -464,32 +392,9 @@ const RegisterStaff = (props: Props) => {
                   name="city"
                   control={control}
                   render={({ field: { onChange, value, ...field } }) => (
-                    <Select
+                    <SelectDropdown
                       {...field}
-                      value={
-                        value
-                          ? cityOptions &&
-                            cityOptions.find((city) => city.value === value)
-                          : null
-                      }
-                      classNames={{
-                        control: ({ hasValue }) =>
-                          "pl-1.5 py-2 !bg-base-300 " +
-                          (hasValue && "!border-primary"),
-                        placeholder: () =>
-                          "!text-zinc-400 !text-sm sm:!text-base ",
-                        singleValue: () => "!text-base-content",
-                        input: () => "!text-base-content",
-                        option: ({ isSelected, isFocused }) =>
-                          isSelected || isFocused
-                            ? "!bg-primary !text-zinc-100"
-                            : "",
-                        menu: () => "!bg-base-300",
-                        dropdownIndicator: ({ hasValue }) =>
-                          hasValue ? "!text-primary" : "",
-                        indicatorSeparator: ({ hasValue }) =>
-                          hasValue ? "!bg-primary" : "",
-                      }}
+                      value={value}
                       placeholder="City"
                       onChange={(newValue) => onChange(newValue?.value)}
                       options={cityOptions}
@@ -507,34 +412,9 @@ const RegisterStaff = (props: Props) => {
                   name="barangay"
                   control={control}
                   render={({ field: { onChange, value, ...field } }) => (
-                    <Select
+                    <SelectDropdown
                       {...field}
-                      value={
-                        value
-                          ? barangayOptions &&
-                            barangayOptions.find(
-                              (barangay) => barangay.value === value
-                            )
-                          : null
-                      }
-                      classNames={{
-                        control: ({ hasValue }) =>
-                          "pl-1.5 py-2 !bg-base-300 " +
-                          (hasValue && "!border-primary"),
-                        placeholder: () =>
-                          "!text-zinc-400 !text-sm sm:!text-base ",
-                        singleValue: () => "!text-base-content",
-                        input: () => "!text-base-content",
-                        option: ({ isSelected, isFocused }) =>
-                          isSelected || isFocused
-                            ? "!bg-primary !text-zinc-100"
-                            : "",
-                        menu: () => "!bg-base-300",
-                        dropdownIndicator: ({ hasValue }) =>
-                          hasValue ? "!text-primary" : "",
-                        indicatorSeparator: ({ hasValue }) =>
-                          hasValue ? "!bg-primary" : "",
-                      }}
+                      value={value}
                       placeholder="Barangay"
                       onChange={(newValue) => onChange(newValue?.value)}
                       options={barangayOptions}

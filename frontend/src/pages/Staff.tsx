@@ -1,8 +1,8 @@
 import { QueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
-import Select from "react-select";
 import { getStaffs } from "../axios/staff";
+import SelectDropdown from "../components/SelectDropdown";
 import StaffDataRow from "../components/StaffDataRow";
 import { useGetStaffs } from "../hooks/staff";
 
@@ -85,26 +85,10 @@ const Staff = (props: Props) => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-end items-center gap-2">
-        <Select
+        <SelectDropdown
           placeholder="Role"
           options={roles}
           isClearable={true}
-          classNames={{
-            container: () => "flex-1 max-w-[12rem]",
-            control: ({ hasValue }) =>
-              "pl-1.5 md:py-1 w-full !bg-base-300 " +
-              (hasValue && "!border-primary"),
-            placeholder: () => "!text-zinc-400 !text-sm sm:!text-base ",
-            singleValue: () => "!text-base-content",
-            input: () => "!text-base-content",
-            option: ({ isSelected, isFocused }) =>
-              isSelected || isFocused ? "!bg-primary !text-zinc-100" : "",
-            menu: () => "!bg-base-300 !z-20",
-            dropdownIndicator: ({ hasValue }) =>
-              hasValue ? "!text-primary" : "",
-            indicatorSeparator: ({ hasValue }) =>
-              hasValue ? "!bg-primary" : "",
-          }}
           onChange={(newValue) => setRoleFilter(newValue ? newValue.value : "")}
         />
         <input
