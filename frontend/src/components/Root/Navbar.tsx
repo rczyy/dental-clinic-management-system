@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { IoMenuOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import { useGetUser, useLogout } from "../hooks/user";
+import { useGetUser, useLogout } from "../../hooks/user";
 import { IoMdPerson } from "react-icons/io";
 import DarkModeToggle from "./DarkModeToggle";
 import { useDetectClickOutside } from "react-detect-click-outside";
-import { useAdminStore } from "../store/admin";
+import { useAdminStore } from "../../store/admin";
 
 type Props = {};
 

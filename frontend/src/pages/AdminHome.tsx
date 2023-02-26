@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useNavigation } from "react-router-dom";
 import { useAdminStore } from "../store/admin";
 import { useGetUser } from "../hooks/user";
-import AdminSideBar from "../components/AdminSideBar";
+import AdminSideBar from "../components/Root/AdminSideBar";
 
 type Props = {};
 

@@ -4,8 +4,8 @@ import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
 import AdminHome from "./pages/AdminHome";
-import Staff, { loader as staffLoader } from "./pages/Staff";
-import Patient, { loader as patientLoader } from "./pages/Patient";
+import StaffList, { loader as staffLoader } from "./pages/StaffList";
+import PatientList, { loader as patientLoader } from "./pages/PatientList";
 import RegisterStaff from "./pages/RegisterStaff";
 import Error from "./pages/Error";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -47,13 +47,13 @@ const router = createBrowserRouter([
         element: <AdminHome />,
         children: [
           {
-            path: "staff",
-            element: <Staff />,
+            path: "staffs",
+            element: <StaffList />,
             loader: staffLoader(queryClient),
           },
           {
-            path: "patient",
-            element: <Patient />,
+            path: "patients",
+            element: <PatientList />,
             loader: patientLoader(queryClient),
           },
           {

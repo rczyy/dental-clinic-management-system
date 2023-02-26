@@ -1,4 +1,4 @@
-import CategoryBox from "../components/ServiceBox";
+import CategoryBox from "../components/Services/ServiceBox";
 import { RiHealthBookLine } from "react-icons/ri";
 import { FaTooth, FaTeethOpen, FaTeeth } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";

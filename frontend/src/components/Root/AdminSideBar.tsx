@@ -3,7 +3,7 @@ import { VscNote } from "react-icons/vsc";
 import { CgUserList, CgUserAdd } from "react-icons/cg";
 import { IconType } from "react-icons/lib";
 import { Link } from "react-router-dom";
-import { useAdminStore } from "../store/admin";
+import { useAdminStore } from "../../store/admin";
 
 type SideBarItemProps = {
   name: string;
@@ -22,11 +22,15 @@ const AdminSideBar = () => {
       }
     >
       <div className="flex flex-col w-full gap-1">
-        <SideBarItem name="Staff list" Icon={CgUserList} route="/admin/staff" />
+        <SideBarItem
+          name="Staff list"
+          Icon={CgUserList}
+          route="/admin/staffs"
+        />
         <SideBarItem
           name="Patient list"
           Icon={CgUserList}
-          route="/admin/patient"
+          route="/admin/patients"
         />
         <SideBarItem name="Attendance" Icon={BiUserCheck} route="/" />
         <SideBarItem name="Logs" Icon={VscNote} route="/" />

@@ -18,7 +18,7 @@ import { useRegisterStaff } from "../hooks/staff";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Select from "react-select";
-import FormInput from "../components/FormInput";
+import FormInput from "../components/Form/FormInput";
 
 type Props = {};
 

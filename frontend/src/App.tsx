@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { Outlet } from "react-router";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import Navbar from "./components/Root/Navbar";
+import Footer from "./components/Root/Footer";
 import { getUser } from "./axios/user";
 
 type Props = {};

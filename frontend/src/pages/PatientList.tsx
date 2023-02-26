@@ -3,7 +3,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { getPatients } from "../axios/patient";
 import { useGetPatients } from "../hooks/patient";
 import { FiPlus, FiSearch } from "react-icons/fi";
-import PatientDataRow from "../components/PatientDataRow";
+import PatientDataRow from "../components/Table/PatientDataRow";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import { Link } from "react-router-dom";
 
@@ -15,7 +15,7 @@ export const loader = (queryClient: QueryClient) => async () =>
     queryFn: getPatients,
   });
 
-const Patient = (props: Props) => {
+const PatientList = (props: Props) => {
   const { data } = useGetPatients();
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [nameSort, setNameSort] = useState<"asc" | "desc">();
@@ -106,4 +106,4 @@ const Patient = (props: Props) => {
     </div>
   );
 };
-export default Patient;
+export default PatientList;

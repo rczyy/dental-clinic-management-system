@@ -5,7 +5,7 @@ import { FiPlus, FiSearch } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import Select from "react-select";
 import { getStaffs } from "../axios/staff";
-import StaffDataRow from "../components/StaffDataRow";
+import StaffDataRow from "../components/Table/StaffDataRow";
 import { useGetStaffs } from "../hooks/staff";
 
 type Props = {};
@@ -16,7 +16,7 @@ export const loader = (queryClient: QueryClient) => async () =>
     queryFn: getStaffs,
   });
 
-const Staff = (props: Props) => {
+const StaffList = (props: Props) => {
   const roles = [
     { value: "Manager", label: "Manager" },
     { value: "Dentist", label: "Dentist" },
@@ -99,11 +99,11 @@ const Staff = (props: Props) => {
       </header>
       <div className="flex justify-end items-center gap-2">
         <div className="flex flex-1 items-center bg-base-300 border rounded-md">
-          <FiSearch className="w-9 h-9 md:w-10 md:h-10 px-2.5" />
+          <FiSearch className="w-9 h-9 px-2.5" />
           <input
             type="text"
             placeholder="Search..."
-            className="input bg-base-300 w-full h-9 md:h-11 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm"
+            className="input bg-base-300 w-full h-8 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm"
             onChange={(e) => setSearchFilter(e.target.value)}
           />
         </div>
@@ -114,7 +114,7 @@ const Staff = (props: Props) => {
           classNames={{
             container: () => "flex-1 max-w-[12rem]",
             control: ({ hasValue }) =>
-              "pl-1.5 md:py-1 w-full !bg-base-300 " +
+              "pl-1.5 py-[1px] w-full !bg-base-300 " +
               (hasValue && "!border-primary"),
             placeholder: () => "!text-zinc-400 !text-sm",
             singleValue: () => "!text-base-content !text-sm",
@@ -186,4 +186,4 @@ const Staff = (props: Props) => {
   );
 };
 
-export default Staff;
+export default StaffList;
