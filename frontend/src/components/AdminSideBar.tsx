@@ -17,7 +17,7 @@ const AdminSideBar = () => {
   return (
     <div
       className={
-        "flex bg-base-100 min-h-[inherit] pt-20 pb-4 px-1 border-base-200 border-r fixed z-20 transition-all md:relative " +
+        "flex bg-base-100 min-h-[inherit] pt-20 pb-4 px-1 border-neutral border-r fixed z-20 transition-all md:relative " +
         (sidebar ? "left-0 w-72 md:w-80" : "-left-80 md:w-0")
       }
     >
