@@ -5,11 +5,13 @@ import {
   SubmitHandler,
   UseFormRegister,
 } from "react-hook-form";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FiAtSign, FiPhone } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useRegisterPatient } from "../hooks/patient";
+import { useGetUser } from "../hooks/user";
 import {
   getCities,
   getProvinces,
@@ -17,10 +19,8 @@ import {
   getBarangays,
 } from "../api/philippineAddress";
 import * as z from "zod";
-import Select from "react-select";
 import FormInput from "../components/Form/FormInput";
-import { useGetUser } from "../hooks/user";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import SelectDropdown from "../components/SelectDropdown";
 
 type Props = {};
 
@@ -382,33 +382,9 @@ const Signup = (props: Props) => {
                       name="region"
                       control={control}
                       render={({ field: { onChange, value, ...field } }) => (
-                        <Select
+                        <SelectDropdown
                           {...field}
-                          value={
-                            regionOptions &&
-                            regionOptions.find(
-                              (region) => region.value === value
-                            )
-                          }
-                          classNames={{
-                            control: ({ hasValue }) =>
-                              "pl-1.5 py-[1px] !bg-base-300 " +
-                              (hasValue && "!border-primary"),
-                            placeholder: () => "!text-zinc-400 !text-sm",
-                            singleValue: () => "!text-base-content !text-sm",
-                            input: () => "!text-base-content",
-                            option: ({ isSelected, isFocused }) =>
-                              "!text-sm " +
-                              (isSelected
-                                ? "!bg-primary !text-zinc-100 "
-                                : "") +
-                              (isFocused && !isSelected ? "!bg-neutral" : ""),
-                            menu: () => "!bg-base-300",
-                            dropdownIndicator: ({ hasValue }) =>
-                              hasValue ? "!text-primary" : "",
-                            indicatorSeparator: ({ hasValue }) =>
-                              hasValue ? "!bg-primary" : "",
-                          }}
+                          value={value}
                           placeholder="Region"
                           onChange={(val) => onChange(val?.value)}
                           options={regionOptions}
@@ -425,35 +401,9 @@ const Signup = (props: Props) => {
                       name="province"
                       control={control}
                       render={({ field: { onChange, value, ...field } }) => (
-                        <Select
+                        <SelectDropdown
                           {...field}
-                          value={
-                            value
-                              ? provinceOptions &&
-                                provinceOptions.find(
-                                  (province) => province.value === value
-                                )
-                              : null
-                          }
-                          classNames={{
-                            control: ({ hasValue }) =>
-                              "pl-1.5 py-[1px] !bg-base-300 " +
-                              (hasValue && "!border-primary"),
-                            placeholder: () => "!text-zinc-400 !text-sm",
-                            singleValue: () => "!text-base-content !text-sm",
-                            input: () => "!text-base-content",
-                            option: ({ isSelected, isFocused }) =>
-                              "!text-sm " +
-                              (isSelected
-                                ? "!bg-primary !text-zinc-100 "
-                                : "") +
-                              (isFocused && !isSelected ? "!bg-neutral" : ""),
-                            menu: () => "!bg-base-300",
-                            dropdownIndicator: ({ hasValue }) =>
-                              hasValue ? "!text-primary" : "",
-                            indicatorSeparator: ({ hasValue }) =>
-                              hasValue ? "!bg-primary" : "",
-                          }}
+                          value={value}
                           placeholder="Province"
                           onChange={(newValue) => onChange(newValue?.value)}
                           options={provinceOptions}
@@ -471,33 +421,9 @@ const Signup = (props: Props) => {
                       name="city"
                       control={control}
                       render={({ field: { onChange, value, ...field } }) => (
-                        <Select
+                        <SelectDropdown
                           {...field}
-                          value={
-                            value
-                              ? cityOptions &&
-                                cityOptions.find((city) => city.value === value)
-                              : null
-                          }
-                          classNames={{
-                            control: ({ hasValue }) =>
-                              "pl-1.5 py-[1px] !bg-base-300 " +
-                              (hasValue && "!border-primary"),
-                            placeholder: () => "!text-zinc-400 !text-sm",
-                            singleValue: () => "!text-base-content !text-sm",
-                            input: () => "!text-base-content",
-                            option: ({ isSelected, isFocused }) =>
-                              "!text-sm " +
-                              (isSelected
-                                ? "!bg-primary !text-zinc-100 "
-                                : "") +
-                              (isFocused && !isSelected ? "!bg-neutral" : ""),
-                            menu: () => "!bg-base-300",
-                            dropdownIndicator: ({ hasValue }) =>
-                              hasValue ? "!text-primary" : "",
-                            indicatorSeparator: ({ hasValue }) =>
-                              hasValue ? "!bg-primary" : "",
-                          }}
+                          value={value}
                           placeholder="City"
                           onChange={(newValue) => onChange(newValue?.value)}
                           options={cityOptions}
@@ -515,35 +441,9 @@ const Signup = (props: Props) => {
                       name="barangay"
                       control={control}
                       render={({ field: { onChange, value, ...field } }) => (
-                        <Select
+                        <SelectDropdown
                           {...field}
-                          value={
-                            value
-                              ? barangayOptions &&
-                                barangayOptions.find(
-                                  (barangay) => barangay.value === value
-                                )
-                              : null
-                          }
-                          classNames={{
-                            control: ({ hasValue }) =>
-                              "pl-1.5 py-[1px] !bg-base-300 " +
-                              (hasValue && "!border-primary"),
-                            placeholder: () => "!text-zinc-400 !text-sm",
-                            singleValue: () => "!text-base-content !text-sm",
-                            input: () => "!text-base-content",
-                            option: ({ isSelected, isFocused }) =>
-                              "!text-sm " +
-                              (isSelected
-                                ? "!bg-primary !text-zinc-100 "
-                                : "") +
-                              (isFocused && !isSelected ? "!bg-neutral" : ""),
-                            menu: () => "!bg-base-300",
-                            dropdownIndicator: ({ hasValue }) =>
-                              hasValue ? "!text-primary" : "",
-                            indicatorSeparator: ({ hasValue }) =>
-                              hasValue ? "!bg-primary" : "",
-                          }}
+                          value={value}
                           placeholder="Barangay"
                           onChange={(newValue) => onChange(newValue?.value)}
                           options={barangayOptions}

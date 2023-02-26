@@ -1,12 +1,12 @@
 import { QueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import { FiPlus, FiSearch } from "react-icons/fi";
-import { Link } from "react-router-dom";
-import Select from "react-select";
 import { getStaffs } from "../axios/staff";
-import StaffDataRow from "../components/Table/StaffDataRow";
 import { useGetStaffs } from "../hooks/staff";
+import StaffDataRow from "../components/Table/StaffDataRow";
+import SelectDropdown from "../components/SelectDropdown";
 
 type Props = {};
 
@@ -107,28 +107,10 @@ const StaffList = (props: Props) => {
             onChange={(e) => setSearchFilter(e.target.value)}
           />
         </div>
-        <Select
+        <SelectDropdown
           placeholder="Role"
           options={roles}
           isClearable={true}
-          classNames={{
-            container: () => "flex-1 max-w-[12rem]",
-            control: ({ hasValue }) =>
-              "pl-1.5 py-[1px] w-full !bg-base-300 " +
-              (hasValue && "!border-primary"),
-            placeholder: () => "!text-zinc-400 !text-sm",
-            singleValue: () => "!text-base-content !text-sm",
-            input: () => "!text-base-content",
-            option: ({ isSelected, isFocused }) =>
-              "!text-sm " +
-              (isSelected ? "!bg-primary !text-zinc-100 " : "") +
-              (isFocused && !isSelected ? "!bg-neutral" : ""),
-            menu: () => "!bg-base-300 !z-20",
-            dropdownIndicator: ({ hasValue }) =>
-              hasValue ? "!text-primary" : "",
-            indicatorSeparator: ({ hasValue }) =>
-              hasValue ? "!bg-primary" : "",
-          }}
           onChange={(newValue) => setRoleFilter(newValue ? newValue.value : "")}
         />
       </div>
