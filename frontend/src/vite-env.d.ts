@@ -104,7 +104,13 @@ interface UserResponse {
   address: Address;
   email: string;
   contactNo: string;
-  role: string;
+  role:
+    | "Admin"
+    | "Manager"
+    | "Assistant"
+    | "Dentist"
+    | "Front Desk"
+    | "Patient";
   createdAt: Date;
   updatedAt: Date;
 }
