@@ -11,7 +11,7 @@ type Props = {};
 const Landing = (props: Props) => {
   const { data } = useGetUser();
 
-  if (data && data.role === "Admin") return <Navigate to="/admin" />;
+  if (data?.role !== "Patient") return <Navigate to="/dashboard" />;
 
   return (
     <div className="min-h-screen flex flex-col gap-2 pt-16 pb-4 bg-base-300">

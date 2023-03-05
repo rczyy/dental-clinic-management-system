@@ -6,7 +6,7 @@ import { FiPlus, FiSearch } from "react-icons/fi";
 import { getStaffs } from "../axios/staff";
 import { useGetStaffs } from "../hooks/staff";
 import StaffDataRow from "../components/Table/StaffDataRow";
-import SelectDropdown from "../components/SelectDropdown";
+import SelectDropdown from "../components/Form/SelectDropdown";
 
 type Props = {};
 
@@ -89,7 +89,7 @@ const StaffList = (props: Props) => {
       <header className="flex justify-between items-end mb-4 gap-8">
         <h1 className="font-bold text-2xl md:text-3xl">Staff List</h1>
         <Link
-          to="/admin/register-staff"
+          to="/dashboard/staff/register"
           role="button"
           className="btn btn-primary w-full max-w-[10rem] min-h-[2.5rem] h-10 px-2 text-white normal-case gap-2"
         >
@@ -99,20 +99,24 @@ const StaffList = (props: Props) => {
       </header>
       <div className="flex justify-end items-center gap-2">
         <div className="flex flex-1 items-center bg-base-300 border rounded-md">
-          <FiSearch className="w-9 h-9 px-2.5" />
+          <FiSearch className="w-10 h-10 px-2.5" />
           <input
             type="text"
             placeholder="Search..."
-            className="input bg-base-300 w-full h-8 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm"
+            className="input bg-base-300 w-full h-10 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm"
             onChange={(e) => setSearchFilter(e.target.value)}
           />
         </div>
-        <SelectDropdown
-          placeholder="Role"
-          options={roles}
-          isClearable={true}
-          onChange={(newValue) => setRoleFilter(newValue ? newValue.value : "")}
-        />
+        <div className="w-40">
+          <SelectDropdown
+            placeholder="Role"
+            options={roles}
+            isClearable={true}
+            onChange={(newValue) =>
+              setRoleFilter(newValue ? newValue.value : "")
+            }
+          />
+        </div>
       </div>
       <div className="bg-base-300 p-4 rounded-box">
         <table className="table table-fixed [&>*]:bg-base-300 w-full text-sm sm:text-base">

@@ -58,11 +58,11 @@ const PatientList = (props: Props) => {
       </header>
       <div className="flex justify-end items-center">
         <div className="flex flex-1 items-center bg-base-300 border rounded-md">
-          <FiSearch className="w-9 h-9 px-2.5" />
+          <FiSearch className="w-10 h-10 px-2.5" />
           <input
             type="text"
             placeholder="Search..."
-            className="input bg-base-300 w-full h-8 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm"
+            className="input bg-base-300 w-full h-10 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm"
             onChange={(e) => setSearchFilter(e.target.value)}
           />
         </div>

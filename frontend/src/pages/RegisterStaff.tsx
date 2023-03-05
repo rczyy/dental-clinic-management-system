@@ -18,7 +18,7 @@ import { useRegisterStaff } from "../hooks/staff";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import FormInput from "../components/Form/FormInput";
-import SelectDropdown from "../components/SelectDropdown";
+import SelectDropdown from "../components/Form/SelectDropdown";
 
 type Props = {};
 

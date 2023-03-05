@@ -1,11 +1,11 @@
 import { Navigate, Outlet, useNavigation } from "react-router-dom";
 import { useAdminStore } from "../store/admin";
 import { useGetUser } from "../hooks/user";
-import AdminSideBar from "../components/Root/AdminSideBar";
+import Sidebar from "../components/Root/Sidebar";
 
 type Props = {};
 
-const AdminHome = (props: Props) => {
+const DashboardRoot = (props: Props) => {
   const sidebar = useAdminStore((state) => state.sidebar);
   const navigation = useNavigation();
   const { data } = useGetUser();
@@ -21,7 +21,7 @@ const AdminHome = (props: Props) => {
           (sidebar ? "md:hidden" : "hidden")
         }
       ></div>
-      <AdminSideBar />
+      <Sidebar />
       <main className={navigation.state === "loading" ? "opacity-50" : ""}>
         <Outlet />
       </main>
@@ -29,4 +29,4 @@ const AdminHome = (props: Props) => {
   );
 };
 
-export default AdminHome;
+export default DashboardRoot;

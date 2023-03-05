@@ -1,9 +1,9 @@
 import ReactDOM from "react-dom/client";
-import App, { loader as appLoader } from "./App";
+import Root, { loader as appLoader } from "./layout/Root";
+import DashboardRoot from "./layout/DashboardRoot";
 import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
-import AdminHome from "./pages/AdminHome";
 import StaffList, { loader as staffLoader } from "./pages/StaffList";
 import PatientList, { loader as patientLoader } from "./pages/PatientList";
 import RegisterStaff from "./pages/RegisterStaff";
@@ -26,7 +26,7 @@ const queryClient = new QueryClient({
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Root />,
     errorElement: <Error />,
     loader: appLoader(queryClient),
     children: [
@@ -43,21 +43,21 @@ const router = createBrowserRouter([
         element: <Signup />,
       },
       {
-        path: "admin",
-        element: <AdminHome />,
+        path: "dashboard",
+        element: <DashboardRoot />,
         children: [
-          {
-            path: "staffs",
-            element: <StaffList />,
-            loader: staffLoader(queryClient),
-          },
           {
             path: "patients",
             element: <PatientList />,
             loader: patientLoader(queryClient),
           },
           {
-            path: "register-staff",
+            path: "staffs",
+            element: <StaffList />,
+            loader: staffLoader(queryClient),
+          },
+          {
+            path: "staff/register",
             element: <RegisterStaff />,
           },
         ],

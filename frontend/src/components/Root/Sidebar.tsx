@@ -1,17 +1,19 @@
 import { BiUserCheck } from "react-icons/bi";
 import { VscNote } from "react-icons/vsc";
-import { CgUserList, CgUserAdd } from "react-icons/cg";
+import { CgUserList } from "react-icons/cg";
 import { IconType } from "react-icons/lib";
 import { Link } from "react-router-dom";
 import { useAdminStore } from "../../store/admin";
+import { useGetUser } from "../../hooks/user";
 
-type SideBarItemProps = {
+type SidebarItemProps = {
   name: string;
   Icon: IconType;
   route: string;
 };
 
-const AdminSideBar = () => {
+const Sidebar = () => {
+  const { data } = useGetUser();
   const sidebar = useAdminStore((state) => state.sidebar);
 
   return (
@@ -22,24 +24,28 @@ const AdminSideBar = () => {
       }
     >
       <div className="flex flex-col w-full gap-1">
-        <SideBarItem
-          name="Staff list"
-          Icon={CgUserList}
-          route="/admin/staffs"
-        />
-        <SideBarItem
+        <SidebarItem
           name="Patient list"
           Icon={CgUserList}
-          route="/admin/patients"
+          route="/dashboard/patients"
         />
-        <SideBarItem name="Attendance" Icon={BiUserCheck} route="/" />
-        <SideBarItem name="Logs" Icon={VscNote} route="/" />
+        {(data?.role === "Admin" || data?.role === "Manager") && (
+          <>
+            <SidebarItem
+              name="Staff list"
+              Icon={CgUserList}
+              route="/dashboard/staffs"
+            />
+            <SidebarItem name="Attendance" Icon={BiUserCheck} route="/" />
+            <SidebarItem name="Logs" Icon={VscNote} route="/" />
+          </>
+        )}
       </div>
     </div>
   );
 };
 
-const SideBarItem = ({ name, Icon, route }: SideBarItemProps) => {
+const SidebarItem = ({ name, Icon, route }: SidebarItemProps) => {
   const toggleSidebar = useAdminStore((state) => state.toggleSidebar);
 
   return (
@@ -55,4 +61,4 @@ const SideBarItem = ({ name, Icon, route }: SideBarItemProps) => {
   );
 };
 
-export default AdminSideBar;
+export default Sidebar;
