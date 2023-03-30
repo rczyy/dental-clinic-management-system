@@ -18,6 +18,7 @@ export const loader = (queryClient: QueryClient) => async () =>
 
 const StaffList = (props: Props) => {
   const roles = [
+    { value: "", label: "All" },
     { value: "Manager", label: "Manager" },
     { value: "Dentist", label: "Dentist" },
     { value: "Assistant", label: "Assistant Dentist" },
@@ -109,7 +110,7 @@ const StaffList = (props: Props) => {
         </div>
         <div className="w-40">
           <SelectDropdown
-            placeholder="Role"
+            placeholder={roleFilter != "" ? roleFilter : "All"}
             options={roles}
             isClearable={true}
             onChange={(newValue) =>
