@@ -4,7 +4,7 @@ import { FaTooth, FaTeethOpen, FaTeeth } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
 import { GiTooth } from "react-icons/gi";
 import { useGetUser } from "../hooks/user";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 type Props = {};
 
@@ -40,14 +40,30 @@ const Landing = (props: Props) => {
         </p>
       </section>
       <section className="grid grid-cols-1 p-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 w-full xl:px-64 gap-4 mb-12">
-        <CategoryBox title="First Appointment" Icon={RiHealthBookLine} />
-        <CategoryBox title="Restoration" Icon={FaTooth} />
-        <CategoryBox title="Cosmetic" Icon={HiSparkles} />
-        <CategoryBox title="Root canal treatment" Icon={FaTooth} />
-        <CategoryBox title="Crowns and Bridges" Icon={FaTeethOpen} />
-        <CategoryBox title="Oral surgery or Extraction" Icon={GiTooth} />
-        <CategoryBox title="Dentures" Icon={FaTeethOpen} />
-        <CategoryBox title="Orthodontics (Braces)" Icon={FaTeeth} />
+        <Link to="/services/first-appointment" role="button">
+          <CategoryBox title="First Appointment" Icon={RiHealthBookLine} />
+        </Link>
+        <Link to="/services/restoration" role="button">
+          <CategoryBox title="Restoration" Icon={FaTooth} />
+        </Link>
+        <Link to="/services/cosmetic" role="button">
+          <CategoryBox title="Cosmetic" Icon={HiSparkles} />
+        </Link>
+        <Link to="/services/root-canal-treatment" role="button">
+          <CategoryBox title="Root canal treatment" Icon={FaTooth} />
+        </Link>
+        <Link to="/services/crowns-bridges" role="button">
+          <CategoryBox title="Crowns and Bridges" Icon={FaTeethOpen} />
+        </Link>
+        <Link to="/services/oral-surgery-extraction" role="button">
+          <CategoryBox title="Oral surgery or Extraction" Icon={GiTooth} />
+        </Link>
+        <Link to="/services/dentures" role="button">
+          <CategoryBox title="Dentures" Icon={FaTeethOpen} />
+        </Link>
+        <Link to="/services/orthodontics" role="button">
+          <CategoryBox title="Orthodontics (Braces)" Icon={FaTeeth} />
+        </Link>
       </section>
     </div>
   );
