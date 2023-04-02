@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import StaffList, { loader as staffLoader } from "./pages/StaffList";
 import PatientList, { loader as patientLoader } from "./pages/PatientList";
 import RegisterStaff from "./pages/RegisterStaff";
+import RegisterPatient from "./pages/RegisterPatient";
 import Error from "./pages/Error";
 import Services from "./pages/Services";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -53,13 +54,17 @@ const router = createBrowserRouter([
             loader: patientLoader(queryClient),
           },
           {
-            path: "staffs",
+            path: "staff",
             element: <StaffList />,
             loader: staffLoader(queryClient),
           },
           {
             path: "staff/register",
             element: <RegisterStaff />,
+          },
+          {
+            path: "patient/register",
+            element: <RegisterPatient />,
           },
         ],
       },
