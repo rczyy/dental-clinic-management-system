@@ -4,6 +4,7 @@ import { z } from "zod";
 import { hash } from "bcrypt";
 import { Roles } from "../constants";
 import { verifyToken } from "../utilities/verifyToken";
+import { generateRandomPass } from "../utilities/generatePassword";
 import Patient from "../models/patient";
 import User from "../models/user";
 
@@ -91,17 +92,11 @@ export const registerPatient: RequestHandler = async (req, res) => {
       barangay: z.string({ required_error: "Barangay is required" }),
       street: z.string({ required_error: "Street is required" }),
       email: z.string({ required_error: "Email is required" }).email(),
-      password: z
-        .string({ required_error: "Password is required" })
-        .min(6, "Password must be at least 6 characters"),
-      confirmPassword: z.string({ required_error: "Confirm your password" }),
+      password: z.string().optional(),
       contactNo: z
         .string({ required_error: "Contact number is required" })
         .regex(/(^\+63)\d{10}$/, "Invalid contact number"),
     })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords doesn't match",
-    });
 
   type body = z.infer<typeof userSchema>;
 
@@ -122,8 +117,8 @@ export const registerPatient: RequestHandler = async (req, res) => {
     barangay,
     street,
     email,
-    password,
     contactNo,
+    password
   }: body = req.body;
 
   const existingUser = await User.findOne({ email });
@@ -137,7 +132,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
     return;
   }
 
-  const hashedPassword = await hash(password, 10);
+  const hashedPassword = await hash(password || generateRandomPass(), 10);
 
   const user = new User({
     name: {
