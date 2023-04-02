@@ -8,6 +8,7 @@ import StaffList, { loader as staffLoader } from "./pages/StaffList";
 import PatientList, { loader as patientLoader } from "./pages/PatientList";
 import RegisterStaff from "./pages/RegisterStaff";
 import Error from "./pages/Error";
+import Services from "./pages/Services";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -59,6 +60,16 @@ const router = createBrowserRouter([
           {
             path: "staff/register",
             element: <RegisterStaff />,
+          },
+        ],
+      },
+      {
+        path: "services",
+        element: <Services />,
+        children: [
+          {
+            path: ":serviceCategory",
+            element: <Services />,
           },
         ],
       },
