@@ -56,14 +56,14 @@ const schema = z.object({
     .length(10, "Invalid contact number"),
 });
 
-const RegisterPatient = (props: Props) => {
+const RegisterPatient = (_: Props) => {
   const [regions, setRegions] = useState<Region[]>();
   const [regionOptions, setRegionOptions] = useState<SelectOption[]>();
   const [provinces, setProvinces] = useState<Province[]>();
   const [provinceOptions, setProvinceOptions] = useState<SelectOption[]>();
   const [cities, setCities] = useState<City[]>();
   const [cityOptions, setCityOptions] = useState<SelectOption[]>();
-  const [barangays, setBarangays] = useState<Barangay[]>();
+  const [__, setBarangays] = useState<Barangay[]>();
   const [barangayOptions, setBarangayOptions] = useState<SelectOption[]>();
   const oldRegionValue = useRef<string>();
   const oldProvinceValue = useRef<string>();
@@ -77,7 +77,6 @@ const RegisterPatient = (props: Props) => {
     handleSubmit,
     watch,
     reset,
-    trigger,
     formState: { errors },
   } = useForm<SignupFormValues>({
     defaultValues: {
@@ -96,7 +95,6 @@ const RegisterPatient = (props: Props) => {
   });
 
   const onSubmit: SubmitHandler<SignupFormValues> = (data) => {
-    console.log(data)
     mutate(
       { ...data, contactNo: "+63" + watch("contactNo") },
       {
@@ -330,7 +328,7 @@ const RegisterPatient = (props: Props) => {
                       value={value}
                       placeholder="Region"
                       onChange={(val) => onChange(val?.value)}
-                      options={regionOptions}
+                      options={regionOptions || []}
                       isLoading={!regionOptions}
                     />
                   )}
@@ -349,7 +347,7 @@ const RegisterPatient = (props: Props) => {
                       value={value}
                       placeholder="Province"
                       onChange={(newValue) => onChange(newValue?.value)}
-                      options={provinceOptions}
+                      options={provinceOptions || []}
                       isLoading={!provinceOptions && !!watch("region")}
                       isDisabled={!watch("region")}
                     />
@@ -369,7 +367,7 @@ const RegisterPatient = (props: Props) => {
                       value={value}
                       placeholder="City"
                       onChange={(newValue) => onChange(newValue?.value)}
-                      options={cityOptions}
+                      options={cityOptions || []}
                       isLoading={!cityOptions && !!watch("province")}
                       isDisabled={!watch("province")}
                     />
@@ -389,7 +387,7 @@ const RegisterPatient = (props: Props) => {
                       value={value}
                       placeholder="Barangay"
                       onChange={(newValue) => onChange(newValue?.value)}
-                      options={barangayOptions}
+                      options={barangayOptions || []}
                       isLoading={!barangayOptions && !!watch("city")}
                       isDisabled={!watch("city")}
                     />

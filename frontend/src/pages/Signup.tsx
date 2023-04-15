@@ -69,7 +69,7 @@ const schema = z
     message: "Passwords doesn't match",
   });
 
-const Signup = (props: Props) => {
+const Signup = (_: Props) => {
   const navigate = useNavigate();
   const [step, setStep] = useState<number>(1);
   const [regions, setRegions] = useState<Region[]>();
@@ -78,7 +78,7 @@ const Signup = (props: Props) => {
   const [provinceOptions, setProvinceOptions] = useState<SelectOption[]>();
   const [cities, setCities] = useState<City[]>();
   const [cityOptions, setCityOptions] = useState<SelectOption[]>();
-  const [barangays, setBarangays] = useState<Barangay[]>();
+  const [__, setBarangays] = useState<Barangay[]>();
   const [barangayOptions, setBarangayOptions] = useState<SelectOption[]>();
   const oldRegionValue = useRef<string>();
   const oldProvinceValue = useRef<string>();
@@ -387,7 +387,7 @@ const Signup = (props: Props) => {
                           value={value}
                           placeholder="Region"
                           onChange={(val) => onChange(val?.value)}
-                          options={regionOptions}
+                          options={regionOptions || []}
                           isLoading={!regionOptions}
                         />
                       )}
@@ -406,7 +406,7 @@ const Signup = (props: Props) => {
                           value={value}
                           placeholder="Province"
                           onChange={(newValue) => onChange(newValue?.value)}
-                          options={provinceOptions}
+                          options={provinceOptions || []}
                           isLoading={!provinceOptions && !!watch("region")}
                           isDisabled={!watch("region")}
                         />
@@ -426,7 +426,7 @@ const Signup = (props: Props) => {
                           value={value}
                           placeholder="City"
                           onChange={(newValue) => onChange(newValue?.value)}
-                          options={cityOptions}
+                          options={cityOptions || []}
                           isLoading={!cityOptions && !!watch("province")}
                           isDisabled={!watch("province")}
                         />
@@ -446,7 +446,7 @@ const Signup = (props: Props) => {
                           value={value}
                           placeholder="Barangay"
                           onChange={(newValue) => onChange(newValue?.value)}
-                          options={barangayOptions}
+                          options={barangayOptions || []}
                           isLoading={!barangayOptions && !!watch("city")}
                           isDisabled={!watch("city")}
                         />
@@ -567,7 +567,9 @@ const Signup = (props: Props) => {
                     </button>
                   </div>
                   <span className="text-xs text-error text-center pl-1">
-                    {error && error.response.data.formErrors}
+                    {error &&
+                      "formErrors" in error.response.data &&
+                      error.response.data.formErrors}
                   </span>
                 </div>
               )}

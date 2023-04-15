@@ -358,7 +358,7 @@ const RegisterStaff = (props: Props) => {
                       value={value}
                       placeholder="Region"
                       onChange={(val) => onChange(val?.value)}
-                      options={regionOptions}
+                      options={regionOptions || []}
                       isLoading={!regionOptions}
                     />
                   )}
@@ -377,7 +377,7 @@ const RegisterStaff = (props: Props) => {
                       value={value}
                       placeholder="Province"
                       onChange={(newValue) => onChange(newValue?.value)}
-                      options={provinceOptions}
+                      options={provinceOptions || []}
                       isLoading={!provinceOptions && !!watch("region")}
                       isDisabled={!watch("region")}
                     />
@@ -397,7 +397,7 @@ const RegisterStaff = (props: Props) => {
                       value={value}
                       placeholder="City"
                       onChange={(newValue) => onChange(newValue?.value)}
-                      options={cityOptions}
+                      options={cityOptions || []}
                       isLoading={!cityOptions && !!watch("province")}
                       isDisabled={!watch("province")}
                     />
@@ -417,7 +417,7 @@ const RegisterStaff = (props: Props) => {
                       value={value}
                       placeholder="Barangay"
                       onChange={(newValue) => onChange(newValue?.value)}
-                      options={barangayOptions}
+                      options={barangayOptions || []}
                       isLoading={!barangayOptions && !!watch("city")}
                       isDisabled={!watch("city")}
                     />

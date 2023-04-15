@@ -8,10 +8,10 @@ import { Link, Navigate } from "react-router-dom";
 
 type Props = {};
 
-const Landing = (props: Props) => {
+const Landing = (_: Props) => {
   const { data } = useGetUser();
 
-  if (data?.role !== "Patient") return <Navigate to="/dashboard" />;
+  if (data && data.role !== "Patient") return <Navigate to="/dashboard" />;
 
   return (
     <div className="min-h-screen flex flex-col gap-2 pt-16 pb-4 bg-base-300">
