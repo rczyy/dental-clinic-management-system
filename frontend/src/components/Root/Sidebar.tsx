@@ -36,6 +36,7 @@ const Sidebar = () => {
               Icon={CgUserList}
               route="/dashboard/staffs"
             />
+            <SidebarItem name="Service List" Icon={BiUserCheck} route="/dashboard/services" />
             <SidebarItem name="Attendance" Icon={BiUserCheck} route="/" />
             <SidebarItem name="Logs" Icon={VscNote} route="/" />
           </>
