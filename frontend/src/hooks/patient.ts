@@ -21,11 +21,13 @@ export const useGetPatient = (id: string) => {
 
 export const useRegisterPatient = () => {
   const queryClient = useQueryClient();
-  return useMutation<UserResponse, FormErrorResponse, SignupFormValues>({
+  return useMutation<
+    UserResponse,
+    FormErrorResponse | ErrorMessageResponse,
+    SignupFormValues
+  >({
     mutationFn: registerPatient,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["patients"]);
-    },
+    onSuccess: () => queryClient.invalidateQueries(["patients"]),
   });
 };
 

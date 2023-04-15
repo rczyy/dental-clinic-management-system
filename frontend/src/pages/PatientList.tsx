@@ -48,7 +48,7 @@ const PatientList = (props: Props) => {
       <header className="flex justify-between items-end mb-4 gap-8">
         <h1 className="font-bold text-2xl md:text-3xl">Patient List</h1>
         <Link
-          to="/admin/register-staff"
+          to="/dashboard/patient/register"
           role="button"
           className="btn btn-primary w-full max-w-[10rem] min-h-[2.5rem] h-10 px-2 text-white normal-case gap-2"
         >
