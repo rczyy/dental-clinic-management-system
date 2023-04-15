@@ -37,8 +37,8 @@ const PatientList = (props: Props) => {
             : -1
           : 0;
       })
-      .filter((staff) =>
-        (staff.user.name.firstName + staff.user.name.lastName)
+      .filter((patient) =>
+        (patient.user.name.firstName + patient.user.name.lastName)
           .toLowerCase()
           .includes(searchFilter.toLowerCase())
       );
