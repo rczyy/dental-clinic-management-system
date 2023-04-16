@@ -88,7 +88,7 @@ const Navbar = (props: Props) => {
                   className="w-8 h-8 cursor-pointer"
                 />
                 {isOpen && (
-                  <ul className="menu bg-base-100 w-screen absolute top-12 -right-4 border border-base-200 shadow">
+                  <ul className="menu bg-base-100 w-screen absolute top-12 -right-4 border border-base-200 rounded-b-lg shadow">
                     <li>
                       <Link
                         to="/login"

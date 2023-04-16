@@ -71,12 +71,6 @@ const router = createBrowserRouter([
       {
         path: "services",
         element: <Services />,
-        children: [
-          {
-            path: ":serviceCategory",
-            element: <Services />,
-          },
-        ],
       },
     ],
   },

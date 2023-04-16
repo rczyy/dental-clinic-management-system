@@ -1,59 +1,38 @@
-import { useParams } from "react-router-dom";
+import { ServiceCategory } from "../components/Services/ServiceCategory";
 import { useGetServices } from "../hooks/service";
 
 type Props = {};
-const Services = (props: Props) => {
-  const { data } = useGetServices();
-  let filteredData;
-  const { serviceCategory } = useParams();
-  
-  if (serviceCategory === "restoration") {
-    filteredData = data?.filter((service) => {
-      return service.category.startsWith("Restoration");
-    });
-  }
-  if (serviceCategory === "cosmetic") {
-    filteredData = data?.filter((service) => {
-      return service.category.startsWith("Cosmetic");
-    });
-  }
-  if (serviceCategory === "root-canal-treatment") {
-    filteredData = data?.filter((service) => {
-      return service.category.startsWith("Root");
-    });
-  }
-  if (serviceCategory === "crowns-bridges") {
-    filteredData = data?.filter((service) => {
-      return service.category.startsWith("Crowns");
-    });
-  }
-  if (serviceCategory === "oral-surgery-extraction") {
-    filteredData = data?.filter((service) => {
-      return service.category.startsWith("Oral");
-    });
-  }
-  if (serviceCategory === "dentures") {
-    filteredData = data?.filter((service) => {
-      return service.category.startsWith("Dentures");
-    });
-  }
-  if (serviceCategory === "orthodontics") {
-    filteredData = data?.filter((service) => {
-      return service.category.startsWith("Orthodontics");
-    });
-  }
+const Services = (_: Props) => {
+  const { data: services } = useGetServices();
+
+  const serviceCategories: ServiceCategory[] = [
+    "First Appointment",
+    "Restoration",
+    "Cosmetic",
+    "Root Canal Treatment",
+    "Crowns and Bridges",
+    "Oral Surgery or Extractions",
+    "Dentures",
+    "Orthodontics (Braces)",
+  ];
+
   return (
-    <div>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      {filteredData && filteredData.map((service) => <p>{service.name}</p>)}
-    </div>
+    <main className="flex flex-col gap-4 py-24 max-w-screen-xl mx-auto">
+      <header>
+        <h1 className="text-2xl text-center font-extrabold">Our Services</h1>
+      </header>
+      <section className="flex flex-col gap-10">
+        {services && services.length > 0 ? (
+          serviceCategories.map(
+            (category, i) =>
+              services.filter((service) => service.category === category)
+                .length > 0 && <ServiceCategory key={i} category={category} />
+          )
+        ) : (
+          <h1>No Services</h1>
+        )}
+      </section>
+    </main>
   );
 };
 export default Services;

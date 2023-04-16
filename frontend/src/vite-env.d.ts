@@ -187,9 +187,19 @@ interface ErrorMessageResponse {
   };
 }
 
+type ServiceCategory =
+  | "First Appointment"
+  | "Restoration"
+  | "Cosmetic"
+  | "Root Canal Treatment"
+  | "Crowns and Bridges"
+  | "Oral Surgery or Extractions"
+  | "Dentures"
+  | "Orthodontics (Braces)";
+
 interface ServiceResponse {
   _id?: string;
-  category: string;
+  category: ServiceCategory;
   name: string;
   estimatedTime: string;
 }
