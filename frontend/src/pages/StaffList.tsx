@@ -160,8 +160,8 @@ const StaffList = (props: Props) => {
           </thead>
           <tbody>
             {filteredStaffs &&
-              filteredStaffs.map((staff, i) => (
-                <StaffDataRow key={staff._id} i={i} staff={staff} />
+              filteredStaffs.map((staff) => (
+                <StaffDataRow key={staff._id} staff={staff} />
               ))}
           </tbody>
         </table>

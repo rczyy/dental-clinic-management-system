@@ -88,14 +88,13 @@ const PatientList = (props: Props) => {
                 </div>
               </th>
               <th className="text-primary normal-case">Address</th>
-              <th className="text-primary normal-case">Email</th>
               <th className="text-primary normal-case">Contact No.</th>
             </tr>
           </thead>
           <tbody>
             {filteredPatients &&
-              filteredPatients.map((patient, i) => (
-                <PatientDataRow key={patient._id} i={i} patient={patient} />
+              filteredPatients.map((patient) => (
+                <PatientDataRow key={patient._id} patient={patient} />
               ))}
           </tbody>
         </table>
