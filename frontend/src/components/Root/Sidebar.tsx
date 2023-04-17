@@ -1,3 +1,4 @@
+import { AiOutlineMedicineBox } from "react-icons/ai";
 import { BiUserCheck } from "react-icons/bi";
 import { VscNote } from "react-icons/vsc";
 import { CgUserList } from "react-icons/cg";
@@ -19,8 +20,8 @@ const Sidebar = () => {
   return (
     <div
       className={
-        "flex bg-base-100 min-h-[inherit] pt-20 pb-4 px-1 border-neutral border-r fixed z-20 transition-all md:relative " +
-        (sidebar ? "left-0 w-72 md:w-80" : "-left-80 md:w-0")
+        "flex bg-base-100 min-h-[inherit] pt-20 pb-4 px-1 border-neutral border-r fixed z-20 transition-all lg:relative " +
+        (sidebar ? "left-0 w-72 lg:w-80" : "-left-80 lg:w-0")
       }
     >
       <div className="flex flex-col w-full gap-1">
@@ -40,6 +41,11 @@ const Sidebar = () => {
             <SidebarItem name="Logs" Icon={VscNote} route="/" />
           </>
         )}
+        <SidebarItem
+          name="Services"
+          Icon={AiOutlineMedicineBox}
+          route="/dashboard/services"
+        />
       </div>
     </div>
   );
