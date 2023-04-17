@@ -33,7 +33,7 @@ const Landing = (_: Props) => {
         <Blob className="text-base-300 fill-current" />
       </section>
 
-      <section className="flex flex-col justify-center gap-8 pb-20">
+      <section className="flex flex-col justify-center gap-8 px-4 pb-20">
         <div className="flex flex-col items-center justify-center gap-2">
           <h2 className="text-2xl font-semibold">Services</h2>
           <p className="text-center">

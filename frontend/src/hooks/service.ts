@@ -8,7 +8,10 @@ import {
 } from "../axios/service";
 
 export const useGetServices = () => {
-  return useQuery<ServiceResponse[], ErrorMessageResponse>({ queryKey: ["services"], queryFn: getServices });
+  return useQuery<ServiceResponse[], ErrorMessageResponse>({
+    queryKey: ["services"],
+    queryFn: getServices,
+  });
 };
 
 export const useGetService = (id: string) => {
@@ -20,7 +23,7 @@ export const useGetService = (id: string) => {
 
 export const useAddService = () => {
   const queryClient = useQueryClient();
-  return useMutation<ServiceResponse, ErrorMessageResponse>({
+  return useMutation<ServiceResponse, FormErrorResponse, ServiceFormValues>({
     mutationFn: addService,
     onSuccess: () => {
       queryClient.invalidateQueries(["services"]);

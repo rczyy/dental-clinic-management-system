@@ -1,5 +1,15 @@
 /// <reference types="vite/client" />
 
+type ServiceCategory =
+  | "First Appointment"
+  | "Restoration"
+  | "Cosmetic"
+  | "Root Canal Treatment"
+  | "Crowns and Bridges"
+  | "Oral Surgery or Extractions"
+  | "Dentures"
+  | "Orthodontics (Braces)";
+
 interface LoginFormValues {
   email: string;
   password: string;
@@ -33,6 +43,12 @@ interface StaffSignupFormValues {
   barangay: string;
   street: string;
   contactNo: string;
+}
+
+interface ServiceFormValues {
+  category: ServiceCategory | "";
+  name: string;
+  estimatedTime: string;
 }
 
 interface SelectOption {
@@ -186,16 +202,6 @@ interface ErrorMessageResponse {
     data: ErrorMessage;
   };
 }
-
-type ServiceCategory =
-  | "First Appointment"
-  | "Restoration"
-  | "Cosmetic"
-  | "Root Canal Treatment"
-  | "Crowns and Bridges"
-  | "Oral Surgery or Extractions"
-  | "Dentures"
-  | "Orthodontics (Braces)";
 
 interface ServiceResponse {
   _id?: string;

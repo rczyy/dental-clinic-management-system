@@ -18,10 +18,10 @@ const Services = (_: Props) => {
 
   return (
     <main className="flex flex-col gap-4 py-24 max-w-screen-xl mx-auto">
-      <header>
+      <header className="py-4 rounded-lg bg-base-300">
         <h1 className="text-2xl text-center font-extrabold">Our Services</h1>
       </header>
-      <section className="flex flex-col gap-10">
+      <section className="flex flex-col gap-10 p-4 pb-8 rounded-lg bg-base-300">
         {services && services.length > 0 ? (
           serviceCategories.map(
             (category, i) =>

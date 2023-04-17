@@ -8,8 +8,10 @@ import StaffList, { loader as staffLoader } from "./pages/StaffList";
 import PatientList, { loader as patientLoader } from "./pages/PatientList";
 import RegisterStaff from "./pages/RegisterStaff";
 import RegisterPatient from "./pages/RegisterPatient";
-import Error from "./pages/Error";
 import Services from "./pages/Services";
+import ServiceList from "./pages/ServiceList";
+import AddService from "./pages/AddService";
+import Error from "./pages/Error";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -59,12 +61,20 @@ const router = createBrowserRouter([
             loader: staffLoader(queryClient),
           },
           {
+            path: "services",
+            element: <ServiceList />,
+          },
+          {
             path: "staff/register",
             element: <RegisterStaff />,
           },
           {
             path: "patient/register",
             element: <RegisterPatient />,
+          },
+          {
+            path: "services/add",
+            element: <AddService />,
           },
         ],
       },
