@@ -119,10 +119,11 @@ const StaffList = (props: Props) => {
           />
         </div>
       </div>
-      <div className="bg-base-300 p-4 rounded-box">
-        <table className="table table-fixed [&>*]:bg-base-300 w-full text-sm sm:text-base">
+      <div className="bg-base-300 py-4 pr-4 rounded-box overflow-x-auto">
+        <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
           <thead>
             <tr className="[&>*]:bg-base-300 border-b border-base-200">
+              <th></th>
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
@@ -153,18 +154,14 @@ const StaffList = (props: Props) => {
                   ) : null}
                 </div>
               </th>
-              <th className="text-primary normal-case hidden lg:table-cell">
-                Email
-              </th>
-              <th className="text-primary normal-case hidden md:table-cell">
-                Contact No.
-              </th>
+              <th className="text-primary normal-case">Email</th>
+              <th className="text-primary normal-case">Contact No.</th>
             </tr>
           </thead>
           <tbody>
             {filteredStaffs &&
-              filteredStaffs.map((staff) => (
-                <StaffDataRow key={staff._id} staff={staff} />
+              filteredStaffs.map((staff, i) => (
+                <StaffDataRow key={staff._id} i={i} staff={staff} />
               ))}
           </tbody>
         </table>
