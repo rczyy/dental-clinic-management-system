@@ -1,4 +1,4 @@
-import { useForm, SubmitHandler, UseFormRegister } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, Navigate, useNavigate } from "react-router-dom";
@@ -69,11 +69,7 @@ const Login = (props: Props) => {
                 type="text"
                 label="email"
                 placeholder="Email"
-                register={
-                  register as UseFormRegister<
-                    SignupFormValues | LoginFormValues | StaffSignupFormValues
-                  >
-                }
+                register={register}
                 value={watch("email")}
                 error={errors.email?.message}
                 Logo={FiAtSign}
@@ -82,11 +78,7 @@ const Login = (props: Props) => {
                 type="password"
                 label="password"
                 placeholder="Password"
-                register={
-                  register as UseFormRegister<
-                    SignupFormValues | LoginFormValues | StaffSignupFormValues
-                  >
-                }
+                register={register}
                 value={watch("password")}
                 error={errors.password?.message}
               />

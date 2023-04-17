@@ -1,10 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  useForm,
-  Controller,
-  SubmitHandler,
-  UseFormRegister,
-} from "react-hook-form";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FiAtSign, FiPhone } from "react-icons/fi";
@@ -300,13 +295,7 @@ const Signup = (_: Props) => {
                     type="text"
                     label="firstName"
                     placeholder="First Name"
-                    register={
-                      register as UseFormRegister<
-                        | SignupFormValues
-                        | LoginFormValues
-                        | StaffSignupFormValues
-                      >
-                    }
+                    register={register}
                     value={watch("firstName")}
                     error={errors.firstName?.message}
                     Logo={BsPerson}
@@ -315,13 +304,7 @@ const Signup = (_: Props) => {
                     type="text"
                     label="middleName"
                     placeholder="Middle Name"
-                    register={
-                      register as UseFormRegister<
-                        | SignupFormValues
-                        | LoginFormValues
-                        | StaffSignupFormValues
-                      >
-                    }
+                    register={register}
                     value={watch("middleName")}
                     error={errors.middleName?.message}
                     Logo={BsPerson}
@@ -330,13 +313,7 @@ const Signup = (_: Props) => {
                     type="text"
                     label="lastName"
                     placeholder="Last Name"
-                    register={
-                      register as UseFormRegister<
-                        | SignupFormValues
-                        | LoginFormValues
-                        | StaffSignupFormValues
-                      >
-                    }
+                    register={register}
                     value={watch("lastName")}
                     error={errors.lastName?.message}
                     Logo={BsPerson}
@@ -345,13 +322,7 @@ const Signup = (_: Props) => {
                     type="number"
                     label="contactNo"
                     placeholder="Contact Number"
-                    register={
-                      register as UseFormRegister<
-                        | SignupFormValues
-                        | LoginFormValues
-                        | StaffSignupFormValues
-                      >
-                    }
+                    register={register}
                     value={watch("contactNo")}
                     error={errors.contactNo?.message}
                     Logo={FiPhone}
@@ -460,13 +431,7 @@ const Signup = (_: Props) => {
                     type="text"
                     label="street"
                     placeholder="Street"
-                    register={
-                      register as UseFormRegister<
-                        | SignupFormValues
-                        | LoginFormValues
-                        | StaffSignupFormValues
-                      >
-                    }
+                    register={register}
                     value={watch("street")}
                     error={errors.street?.message}
                     Logo={BsHouseDoor}
@@ -508,13 +473,7 @@ const Signup = (_: Props) => {
                     type="text"
                     label="email"
                     placeholder="Email"
-                    register={
-                      register as UseFormRegister<
-                        | SignupFormValues
-                        | LoginFormValues
-                        | StaffSignupFormValues
-                      >
-                    }
+                    register={register}
                     value={watch("email")}
                     error={errors.email?.message}
                     Logo={FiAtSign}
@@ -523,13 +482,7 @@ const Signup = (_: Props) => {
                     type="password"
                     label="password"
                     placeholder="Password"
-                    register={
-                      register as UseFormRegister<
-                        | SignupFormValues
-                        | LoginFormValues
-                        | StaffSignupFormValues
-                      >
-                    }
+                    register={register}
                     value={watch("password")}
                     error={errors.password?.message}
                   />
@@ -537,13 +490,7 @@ const Signup = (_: Props) => {
                     type="password"
                     label="confirmPassword"
                     placeholder="Confirm Password"
-                    register={
-                      register as UseFormRegister<
-                        | SignupFormValues
-                        | LoginFormValues
-                        | StaffSignupFormValues
-                      >
-                    }
+                    register={register}
                     value={watch("confirmPassword")}
                     error={errors.confirmPassword?.message}
                   />
