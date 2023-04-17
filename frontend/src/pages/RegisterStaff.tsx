@@ -422,7 +422,7 @@ const RegisterStaff = (props: Props) => {
               />
             </div>
           </section>
-          <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-start px-2">
+          <div className="flex flex-col items-start gap-2 px-2">
             <button
               type="submit"
               className="btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 w-full sm:w-48 px-8 mt-8"
@@ -434,7 +434,7 @@ const RegisterStaff = (props: Props) => {
                 "Add Staff"
               )}
             </button>
-            <span className="text-xs text-error text-center">
+            <span className="px-2 text-xs text-error text-center">
               {error && (error as any).response.data.formErrors}
             </span>
           </div>
