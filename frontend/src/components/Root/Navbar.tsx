@@ -55,10 +55,10 @@ const Navbar = (props: Props) => {
             >
               <IoMdPerson className="w-7 h-7 sm:w-8 sm:h-8" />
               <div className="hidden sm:block">
-                <p className="text-sm leading-tight font-semibold">
+                <p className="text-sm leading-tight tracking-tight font-semibold">
                   {data.name.firstName}
                 </p>
-                <p className="text-xs text-zinc-400 leading-tight">
+                <p className="text-xs text-zinc-400 leading-tight tracking-tight">
                   {data.email}
                 </p>
               </div>

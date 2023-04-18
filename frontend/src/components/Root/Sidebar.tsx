@@ -57,7 +57,7 @@ const SidebarItem = ({ name, Icon, route }: SidebarItemProps) => {
   return (
     <Link
       to={route}
-      className="flex gap-3.5 items-center px-3 py-4 cursor-pointer border-l-[6px] border-l-base-100 
+      className="flex gap-3.5 items-center px-3 py-4 tracking-tighter cursor-pointer border-l-[6px] border-l-base-100 
       hover:border-l-primary rounded-r-md hover:bg-base-200 transition-all ease-in-out duration-100"
       onClick={window.innerWidth < 768 ? toggleSidebar : undefined}
     >

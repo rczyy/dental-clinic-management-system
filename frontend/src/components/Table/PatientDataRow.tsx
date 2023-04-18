@@ -6,7 +6,7 @@ type Props = {
 
 const PatientDataRow = ({ patient }: Props) => {
   return (
-    <tr className="[&>*]:bg-transparent transition">
+    <tr className="[&>*]:bg-transparent transition tracking-tight">
       <th className="!bg-base-300">
         <div className="flex dropdown dropdown-right">
           <label
