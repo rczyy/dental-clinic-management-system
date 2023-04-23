@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
 import AdminHome from "./pages/AdminHome";
+import SetAppointment from "./pages/SetAppointment";
 import Staff, { loader as staffLoader } from "./pages/Staff";
 import Patient, { loader as patientLoader } from "./pages/Patient";
 import RegisterStaff from "./pages/RegisterStaff";
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
             element: <RegisterStaff />,
           },
         ],
+      },
+      {
+        path: "set-appointment",
+        element: <SetAppointment />,
       },
     ],
   },
