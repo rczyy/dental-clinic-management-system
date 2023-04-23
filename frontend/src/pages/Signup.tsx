@@ -567,7 +567,7 @@ const Signup = (props: Props) => {
                     </button>
                   </div>
                   <span className="text-xs text-error text-center pl-1">
-                    {error && error.response.data.formErrors}
+                    {error && "formErrors" in error.response.data && error.response.data.formErrors}
                   </span>
                 </div>
               )}
