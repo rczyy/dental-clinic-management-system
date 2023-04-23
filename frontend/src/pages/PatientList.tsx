@@ -3,7 +3,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { getPatients } from "../axios/patient";
 import { useGetPatients } from "../hooks/patient";
 import { FiPlus, FiSearch } from "react-icons/fi";
-import PatientDataRow from "../components/PatientDataRow";
+import PatientDataRow from "../components/Table/PatientDataRow";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import { Link } from "react-router-dom";
 
@@ -15,7 +15,7 @@ export const loader = (queryClient: QueryClient) => async () =>
     queryFn: getPatients,
   });
 
-const Patient = (props: Props) => {
+const PatientList = (props: Props) => {
   const { data } = useGetPatients();
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [nameSort, setNameSort] = useState<"asc" | "desc">();
@@ -37,8 +37,8 @@ const Patient = (props: Props) => {
             : -1
           : 0;
       })
-      .filter((staff) =>
-        (staff.user.name.firstName + staff.user.name.lastName)
+      .filter((patient) =>
+        (patient.user.name.firstName + patient.user.name.lastName)
           .toLowerCase()
           .includes(searchFilter.toLowerCase())
       );
@@ -48,7 +48,7 @@ const Patient = (props: Props) => {
       <header className="flex justify-between items-end mb-4 gap-8">
         <h1 className="font-bold text-2xl md:text-3xl">Patient List</h1>
         <Link
-          to="/admin/register-staff"
+          to="/dashboard/patient/register"
           role="button"
           className="btn btn-primary w-full max-w-[10rem] min-h-[2.5rem] h-10 px-2 text-white normal-case gap-2"
         >
@@ -58,11 +58,11 @@ const Patient = (props: Props) => {
       </header>
       <div className="flex justify-end items-center">
         <div className="flex flex-1 items-center bg-base-300 border rounded-md">
-          <FiSearch className="w-9 h-9 px-2.5" />
+          <FiSearch className="w-10 h-10 px-2.5" />
           <input
             type="text"
             placeholder="Search..."
-            className="input bg-base-300 w-full h-8 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm"
+            className="input bg-base-300 w-full h-10 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm"
             onChange={(e) => setSearchFilter(e.target.value)}
           />
         </div>
@@ -106,4 +106,4 @@ const Patient = (props: Props) => {
     </div>
   );
 };
-export default Patient;
+export default PatientList;

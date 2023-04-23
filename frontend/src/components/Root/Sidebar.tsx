@@ -1,41 +1,52 @@
 import { BiUserCheck } from "react-icons/bi";
 import { VscNote } from "react-icons/vsc";
-import { CgUserList, CgUserAdd } from "react-icons/cg";
+import { CgUserList } from "react-icons/cg";
 import { IconType } from "react-icons/lib";
 import { Link } from "react-router-dom";
-import { useAdminStore } from "../store/admin";
+import { useAdminStore } from "../../store/admin";
+import { useGetUser } from "../../hooks/user";
 
-type SideBarItemProps = {
+type SidebarItemProps = {
   name: string;
   Icon: IconType;
   route: string;
 };
 
-const AdminSideBar = () => {
+const Sidebar = () => {
+  const { data } = useGetUser();
   const sidebar = useAdminStore((state) => state.sidebar);
 
   return (
     <div
       className={
-        "flex bg-base-100 min-h-[inherit] pt-20 pb-4 px-1 border-base-200 border-r fixed z-20 transition-all md:relative " +
+        "flex bg-base-100 min-h-[inherit] pt-20 pb-4 px-1 border-neutral border-r fixed z-20 transition-all md:relative " +
         (sidebar ? "left-0 w-72 md:w-80" : "-left-80 md:w-0")
       }
     >
       <div className="flex flex-col w-full gap-1">
-        <SideBarItem name="Staff list" Icon={CgUserList} route="/admin/staff" />
-        <SideBarItem
+        <SidebarItem
           name="Patient list"
           Icon={CgUserList}
-          route="/admin/patient"
+          route="/dashboard/patients"
         />
-        <SideBarItem name="Attendance" Icon={BiUserCheck} route="/" />
-        <SideBarItem name="Logs" Icon={VscNote} route="/" />
+        {(data?.role === "Admin" || data?.role === "Manager") && (
+          <>
+            <SidebarItem
+              name="Staff list"
+              Icon={CgUserList}
+              route="/dashboard/staff"
+            />
+            <SidebarItem name="Service List" Icon={BiUserCheck} route="/dashboard/services" />
+            <SidebarItem name="Attendance" Icon={BiUserCheck} route="/" />
+            <SidebarItem name="Logs" Icon={VscNote} route="/" />
+          </>
+        )}
       </div>
     </div>
   );
 };
 
-const SideBarItem = ({ name, Icon, route }: SideBarItemProps) => {
+const SidebarItem = ({ name, Icon, route }: SidebarItemProps) => {
   const toggleSidebar = useAdminStore((state) => state.toggleSidebar);
 
   return (
@@ -51,4 +62,4 @@ const SideBarItem = ({ name, Icon, route }: SideBarItemProps) => {
   );
 };
 
-export default AdminSideBar;
+export default Sidebar;

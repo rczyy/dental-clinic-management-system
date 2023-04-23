@@ -6,7 +6,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiAtSign } from "react-icons/fi";
 import { useGetUser, useLogin } from "../hooks/user";
 import * as z from "zod";
-import FormInput from "../components/FormInput";
+import FormInput from "../components/Form/FormInput";
 
 type Props = {};
 

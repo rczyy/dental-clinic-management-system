@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { IoMenuOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import { useGetUser, useLogout } from "../hooks/user";
+import { useGetUser, useLogout } from "../../hooks/user";
 import { IoMdPerson } from "react-icons/io";
-import DarkModeToggle from "./DarkModeToggle";
+import DarkModeToggle from "../Utilities/DarkModeToggle";
 import { useDetectClickOutside } from "react-detect-click-outside";
-import { useAdminStore } from "../store/admin";
+import { useAdminStore } from "../../store/admin";
 
 type Props = {};
 
@@ -25,7 +25,7 @@ const Navbar = (props: Props) => {
   });
 
   return (
-    <div className="navbar bg-base-100 min-h-16 shadow gap-8 2xl:gap-0 px-4 py-0 z-30 md:px-8 fixed">
+    <div className="navbar bg-base-100 min-h-16 border-b border-b-neutral shadow gap-8 2xl:gap-0 px-4 py-0 z-30 md:px-8 fixed">
       {data && data.role === "Admin" && (
         <IoMenuOutline
           className="w-8 h-8 cursor-pointer"
@@ -64,7 +64,7 @@ const Navbar = (props: Props) => {
               </div>
               <div className="absolute w-screen sm:w-60 top-16 -right-4">
                 {isOpen && (
-                  <ul className="menu bg-base-100 border-base-200 border shadow">
+                  <ul className="menu bg-base-100 text-sm border-base-200 border shadow">
                     <li>
                       <Link to="/login">Account settings</Link>
                     </li>

@@ -6,3 +6,13 @@ export enum Roles {
   FrontDesk = "Front Desk",
   Patient = "Patient",
 }
+export enum ServiceCategory {
+  FirstAppointment = "First Appointment",
+  Restoration = "Restoration",
+  Cosmetic = "Cosmetic",
+  RootCanal = "Root Canal Treatment",
+  CrownsBridges = "Crowns and Bridges",
+  Oral = "Oral Surgery or Extractions",
+  Dentures = "Dentures",
+  Orthodontics = "Orthodontics (Braces)",
+}
