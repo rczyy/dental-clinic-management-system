@@ -58,7 +58,7 @@ const AddService = (props: Props) => {
     addService(data, { onSuccess: () => reset() });
 
   return (
-    <div className="flex flex-col w-full h-full transition-all">
+    <div className="flex flex-col items-center w-full h-full mt-4 transition-all">
       <section className="bg-base-300 max-w-4xl w-full rounded-2xl shadow-md px-8 py-10 md:px-10 lg:px-16">
         <header className="flex justify-start">
           <h1 className="text-2xl font-bold mx-2 py-3">Add a new service</h1>
