@@ -28,6 +28,7 @@ const userSchema = new Schema<User>(
         "Patient",
       ],
     },
+    verified: Boolean,
   },
   {
     timestamps: true,

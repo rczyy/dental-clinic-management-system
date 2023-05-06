@@ -16,3 +16,6 @@ export enum ServiceCategory {
   Dentures = "Dentures",
   Orthodontics = "Orthodontics (Braces)",
 }
+
+export const HOST_URL =
+  process.env.NODE_ENV === "development" ? "http://localhost:5173" : "";

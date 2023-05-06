@@ -1,16 +1,16 @@
 import { RequestHandler } from "express";
 import { isValidObjectId } from "mongoose";
 import { z } from "zod";
-import { hash } from "bcrypt";
 import { Roles } from "../constants";
 import { verifyToken } from "../utilities/verifyToken";
-import { generateRandomPass } from "../utilities/generatePassword";
 import User from "../models/user";
 import Staff from "../models/staff";
 import Manager from "../models/manager";
 import Assistant from "../models/assistant";
 import Dentist from "../models/dentist";
 import FrontDesk from "../models/frontDesk";
+import { sendEmail } from "../utilities/sendEmail";
+import { changePasswordStaff } from "../templates/changePasswordStaff";
 
 export const getStaffs: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -151,9 +151,6 @@ export const registerStaff: RequestHandler = async (req, res) => {
     return;
   }
 
-  const password = generateRandomPass();
-  const hashedPassword = await hash(password, 10);
-
   const user = new User({
     name: {
       firstName,
@@ -168,7 +165,6 @@ export const registerStaff: RequestHandler = async (req, res) => {
       street,
     },
     email,
-    password: hashedPassword,
     contactNo,
     role,
   });
@@ -204,6 +200,23 @@ export const registerStaff: RequestHandler = async (req, res) => {
     });
     await frontDesk.save();
   }
+
+  await sendEmail({
+    Messages: [
+      {
+        From: {
+          Email: process.env.EMAIL_SENDER,
+        },
+        To: [
+          {
+            Email: email,
+          },
+        ],
+        Subject: `Welcome to AT Dental Home`,
+        HTMLPart: changePasswordStaff(firstName),
+      },
+    ],
+  });
 
   res.status(201).json(user);
 };
