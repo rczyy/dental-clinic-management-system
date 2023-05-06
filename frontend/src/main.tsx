@@ -14,6 +14,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./styles.css";
+import ServiceList from "./pages/ServiceList";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,6 +66,10 @@ const router = createBrowserRouter([
           {
             path: "patient/register",
             element: <RegisterPatient />,
+          },
+          {
+            path: "services",
+            element: <ServiceList />,
           },
         ],
       },
