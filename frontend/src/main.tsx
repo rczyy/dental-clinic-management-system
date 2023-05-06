@@ -8,13 +8,14 @@ import StaffList, { loader as staffLoader } from "./pages/StaffList";
 import PatientList, { loader as patientLoader } from "./pages/PatientList";
 import RegisterStaff from "./pages/RegisterStaff";
 import RegisterPatient from "./pages/RegisterPatient";
-import Error from "./pages/Error";
 import Services from "./pages/Services";
+import ServiceList from "./pages/ServiceList";
+import AddService from "./pages/AddService";
+import Error from "./pages/Error";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./styles.css";
-import ServiceList from "./pages/ServiceList";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
             loader: staffLoader(queryClient),
           },
           {
+            path: "services",
+            element: <ServiceList />,
+          },
+          {
             path: "staff/register",
             element: <RegisterStaff />,
           },
@@ -68,20 +73,14 @@ const router = createBrowserRouter([
             element: <RegisterPatient />,
           },
           {
-            path: "services",
-            element: <ServiceList />,
+            path: "services/add",
+            element: <AddService />,
           },
         ],
       },
       {
         path: "services",
         element: <Services />,
-        children: [
-          {
-            path: ":serviceCategory",
-            element: <Services />,
-          },
-        ],
       },
     ],
   },

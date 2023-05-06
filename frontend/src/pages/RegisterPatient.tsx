@@ -1,10 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  useForm,
-  Controller,
-  SubmitHandler,
-  UseFormRegister,
-} from "react-hook-form";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiAtSign, FiPhone } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
@@ -247,11 +242,7 @@ const RegisterPatient = (_: Props) => {
                   type="text"
                   label="firstName"
                   placeholder="First name"
-                  register={
-                    register as UseFormRegister<
-                      SignupFormValues | LoginFormValues | StaffSignupFormValues
-                    >
-                  }
+                  register={register}
                   value={watch("firstName")}
                   error={errors.firstName?.message}
                   Logo={BsPerson}
@@ -262,11 +253,7 @@ const RegisterPatient = (_: Props) => {
                   type="text"
                   label="middleName"
                   placeholder="Middle name"
-                  register={
-                    register as UseFormRegister<
-                      SignupFormValues | LoginFormValues | StaffSignupFormValues
-                    >
-                  }
+                  register={register}
                   value={watch("middleName")}
                   error={errors.middleName?.message}
                   Logo={BsPerson}
@@ -275,11 +262,7 @@ const RegisterPatient = (_: Props) => {
                   type="text"
                   label="lastName"
                   placeholder="Last name"
-                  register={
-                    register as UseFormRegister<
-                      SignupFormValues | LoginFormValues | StaffSignupFormValues
-                    >
-                  }
+                  register={register}
                   value={watch("lastName")}
                   error={errors.lastName?.message}
                   Logo={BsPerson}
@@ -290,11 +273,7 @@ const RegisterPatient = (_: Props) => {
                   type="text"
                   label="email"
                   placeholder="Email"
-                  register={
-                    register as UseFormRegister<
-                      SignupFormValues | LoginFormValues | StaffSignupFormValues
-                    >
-                  }
+                  register={register}
                   value={watch("email")}
                   error={errors.email?.message}
                   Logo={FiAtSign}
@@ -305,11 +284,7 @@ const RegisterPatient = (_: Props) => {
                   type="number"
                   label="contactNo"
                   placeholder="Contact Number"
-                  register={
-                    register as UseFormRegister<
-                      SignupFormValues | LoginFormValues | StaffSignupFormValues
-                    >
-                  }
+                  register={register}
                   value={watch("contactNo")}
                   error={errors.contactNo?.message}
                   Logo={FiPhone}
@@ -401,18 +376,14 @@ const RegisterPatient = (_: Props) => {
                 type="text"
                 label="street"
                 placeholder="Street"
-                register={
-                  register as UseFormRegister<
-                    SignupFormValues | LoginFormValues | StaffSignupFormValues
-                  >
-                }
+                register={register}
                 value={watch("street")}
                 error={errors.street?.message}
                 Logo={BsHouseDoor}
               />
             </div>
           </section>
-          <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-start px-2">
+          <div className="flex flex-col items-start gap-2 px-2">
             <button
               type="submit"
               className="btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 w-full sm:w-48 px-8 mt-8"
@@ -424,7 +395,7 @@ const RegisterPatient = (_: Props) => {
                 "Add Patient"
               )}
             </button>
-            <span className="text-xs text-error text-center">
+            <span className="px-2 text-xs text-error text-center">
               {error && (error as any).response.data.formErrors}
             </span>
           </div>

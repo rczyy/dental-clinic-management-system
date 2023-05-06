@@ -55,10 +55,10 @@ const Navbar = (props: Props) => {
             >
               <IoMdPerson className="w-7 h-7 sm:w-8 sm:h-8" />
               <div className="hidden sm:block">
-                <p className="text-sm leading-tight font-semibold">
+                <p className="text-sm leading-tight tracking-tight font-semibold">
                   {data.name.firstName}
                 </p>
-                <p className="text-xs text-zinc-400 leading-tight">
+                <p className="text-xs text-zinc-400 leading-tight tracking-tight">
                   {data.email}
                 </p>
               </div>
@@ -88,7 +88,7 @@ const Navbar = (props: Props) => {
                   className="w-8 h-8 cursor-pointer"
                 />
                 {isOpen && (
-                  <ul className="menu bg-base-100 w-screen absolute top-12 -right-4 border border-base-200 shadow">
+                  <ul className="menu bg-base-100 w-screen absolute top-12 -right-4 border border-base-200 rounded-b-lg shadow">
                     <li>
                       <Link
                         to="/login"

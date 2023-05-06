@@ -7,6 +7,7 @@ type Props = {};
 
 const DashboardRoot = (props: Props) => {
   const sidebar = useAdminStore((state) => state.sidebar);
+  const toggleSidebar = useAdminStore((state) => state.toggleSidebar);
   const navigation = useNavigation();
   const { data } = useGetUser();
 
@@ -18,8 +19,11 @@ const DashboardRoot = (props: Props) => {
       <div
         className={
           "w-full min-h-[inherit] fixed bg-black bg-opacity-50 z-20 " +
-          (sidebar ? "md:hidden" : "hidden")
+          (sidebar ? "lg:hidden" : "hidden")
         }
+        onClick={(e) => {
+          if (e.target === e.currentTarget) toggleSidebar();
+        }}
       ></div>
       <Sidebar />
       <main className={navigation.state === "loading" ? "opacity-50" : ""}>

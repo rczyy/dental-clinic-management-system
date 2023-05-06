@@ -1,5 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import { Outlet } from "react-router";
+import { ScrollRestoration } from "react-router-dom";
 import { getUser } from "../axios/user";
 import Navbar from "../components/Root/Navbar";
 import Footer from "../components/Root/Footer";
@@ -12,6 +13,7 @@ export const loader = (queryClient: QueryClient) => async () =>
 const Root = (props: Props) => {
   return (
     <div className="flex flex-col min-h-screen justify-between">
+      <ScrollRestoration />
       <Navbar />
       <Outlet />
       <Footer />
