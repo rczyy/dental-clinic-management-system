@@ -5,6 +5,7 @@ import { Roles } from "../constants";
 import { verifyToken } from "../utilities/verifyToken";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
+import { JwtPayload } from "jsonwebtoken";
 
 export const getUsers: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -77,6 +78,57 @@ export const loginUser: RequestHandler = async (req, res) => {
   const token = jwt.sign({ role: existingUser.role }, process.env.JWT_SECRET);
 
   res.status(200).json({ user: existingUser, token });
+};
+
+export const verifyUser: RequestHandler = async (req, res) => {
+  const schema = z.object({
+    token: z.string({ required_error: "Token is required" }),
+  });
+
+  const parse = schema.safeParse(req.body);
+
+  if (!parse.success) {
+    res.status(400).json(parse.error.flatten());
+    return;
+  }
+
+  const { token } = req.body as z.infer<typeof schema>;
+
+  let decodedToken;
+
+  try {
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+  } catch (error) {
+    res.status(400).json({ message: "Invalid token" });
+    return;
+  }
+
+  const userToVerify = await User.findById(decodedToken._id);
+
+  if (!userToVerify) {
+    res.status(400).json({ message: "User does not exist" });
+    return;
+  }
+
+  if (userToVerify.verified) {
+    res.status(200).json({ message: "Account has been already verified" });
+    return;
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userToVerify._id,
+    {
+      verified: true,
+    },
+    { new: true }
+  );
+
+  if (!updatedUser) {
+    res.status(400).json({ message: "User does not exist" });
+    return;
+  }
+
+  res.status(200).json({ message: "Account has been successfully verified" });
 };
 
 export const logoutUser: RequestHandler = (req, res) => {

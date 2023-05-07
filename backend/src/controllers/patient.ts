@@ -8,6 +8,7 @@ import Patient from "../models/patient";
 import User from "../models/user";
 import { sendEmail } from "../utilities/sendEmail";
 import { emailVerification } from "../templates/emailVerification";
+import jwt from "jsonwebtoken";
 
 export const getPatients: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -77,7 +78,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
         .regex(/^[A-Za-z ]+$/, "First name may only contain letters"),
       middleName: z
         .string({ required_error: "Middle name is required" })
-        .regex(/^[A-Za-z ]+$/, "Middle name may only contain letters"),
+        .regex(/^[A-Za-z ]*$/, "Middle name may only contain letters"),
       lastName: z
         .string({ required_error: "Last name is required" })
         .regex(/^[A-Za-z ]+$/, "Last name may only contain letters"),
@@ -168,6 +169,12 @@ export const registerPatient: RequestHandler = async (req, res) => {
   await user.save();
   await patient.save();
 
+  const emailVerificationToken = jwt.sign(
+    { _id: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: "3d" }
+  );
+
   await sendEmail({
     Messages: [
       {
@@ -180,7 +187,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
           },
         ],
         Subject: "Verify your email address",
-        HTMLPart: emailVerification(firstName),
+        HTMLPart: emailVerification(firstName, emailVerificationToken),
       },
     ],
   });

@@ -105,4 +105,9 @@ declare global {
     name: string;
     estimatedTime: string;
   }
+
+  interface RequestToken {
+    _id?: Types.ObjectId;
+    token: string;
+  }
 }

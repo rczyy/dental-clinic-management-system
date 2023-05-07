@@ -1,6 +1,6 @@
 import { HOST_URL } from "../constants";
 
-export const emailVerification = (name: string) => {
+export const emailVerification = (name: string, token: string) => {
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -154,7 +154,7 @@ export const emailVerification = (name: string) => {
               If you did not sign up to AT Dental Home, please ignore this email.
             </p>
             <div>
-              <a href="${HOST_URL}/verify">Verify Email</a>
+              <a href="${HOST_URL}/verify-email?token=${token}">Verify Email</a>
             </div>
           </div>
           <div class="template-footer">
