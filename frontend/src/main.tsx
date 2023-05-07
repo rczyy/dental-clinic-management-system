@@ -11,6 +11,7 @@ import RegisterPatient from "./pages/RegisterPatient";
 import Services from "./pages/Services";
 import ServiceList from "./pages/ServiceList";
 import AddService from "./pages/AddService";
+import { VerifyEmail } from "./pages/VerifyEmail";
 import Error from "./pages/Error";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: "signup",
         element: <Signup />,
+      },
+      {
+        path: "verify-email",
+        element: <VerifyEmail />,
       },
       {
         path: "dashboard",

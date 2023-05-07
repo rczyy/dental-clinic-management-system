@@ -26,6 +26,12 @@ export const login = async (form: LoginFormValues) => {
   return res.data;
 };
 
+export const verifyUser = async (token: string) => {
+  const res = await axios.put<MessageResponse>(`${URL}/user/verify`, { token });
+
+  return res.data;
+};
+
 export const logout = async () => {
   const res = await axios.delete<MessageResponse>(`${URL}/user/logout`, {
     withCredentials: true,
