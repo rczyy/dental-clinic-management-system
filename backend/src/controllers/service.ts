@@ -14,7 +14,7 @@ export const getService: RequestHandler = async (req, res) => {
   const { serviceId } = req.params;
 
   if (!isValidObjectId(serviceId)) {
-    const error: ErrorMessage = { message: "Invalid user ID" };
+    const error: ErrorMessage = { message: "Invalid service ID" };
     res.status(400).json(error);
     return;
   }
@@ -45,8 +45,7 @@ export const addService: RequestHandler = async (req, res) => {
   }
 
   const userSchema = z.object({
-    name: z
-      .string({ required_error: "Name is required" }),
+    name: z.string({ required_error: "Name is required" }),
     estimatedTime: z
       .string({ required_error: "Estimated time is required" })
       .regex(/^[0-9]*$/, "Estimated time may only contain numbers"),
@@ -106,9 +105,7 @@ export const editService: RequestHandler = async (req, res) => {
   }
 
   const userSchema = z.object({
-    name: z
-      .string()
-      .optional(),
+    name: z.string().optional(),
     estimatedTime: z
       .string()
       .regex(/^[0-9]*$/, "Estimated time may only contain numbers")
@@ -134,12 +131,16 @@ export const editService: RequestHandler = async (req, res) => {
     return;
   }
 
-  const editedService = await Service.findOneAndUpdate({
-    _id: serviceId,
-    name,
-    estimatedTime,
-    category,
-  });
+  const editedService = await Service.findOneAndUpdate(
+    {
+      _id: serviceId,
+    },
+    {
+      name,
+      estimatedTime,
+      category,
+    }
+  );
 
   if (!editedService) {
     const error: ErrorMessage = { message: "Service doesn't exist" };
@@ -149,7 +150,7 @@ export const editService: RequestHandler = async (req, res) => {
 
   res.status(200).json({
     _id: editedService._id,
-    message: "Succesfully edited the service",
+    message: "Successfully edited the service",
   });
 };
 export const removeService: RequestHandler = async (req, res) => {
