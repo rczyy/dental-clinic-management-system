@@ -1,11 +1,12 @@
 import { RequestHandler } from "express";
 import { z } from "zod";
-import { compare } from "bcrypt";
+import { compare, hash } from "bcrypt";
 import { Roles } from "../constants";
 import { verifyToken } from "../utilities/verifyToken";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
 import { JwtPayload } from "jsonwebtoken";
+import EmailRequest from "../models/emailRequest";
 
 export const getUsers: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -129,6 +130,77 @@ export const verifyUser: RequestHandler = async (req, res) => {
   }
 
   res.status(200).json({ message: "Account has been successfully verified" });
+};
+
+export const resetPasswordUser: RequestHandler = async (req, res) => {
+  const schema = z
+    .object({
+      token: z
+        .string({ required_error: "Token is required" })
+        .min(1, "Token cannot be empty"),
+      password: z
+        .string({ required_error: "Password is required" })
+        .min(6, "Password must be atleast 6 characters"),
+      confirmPassword: z.string({ required_error: "Confirm your password" }),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords doesn't match",
+    });
+
+  const parse = schema.safeParse(req.body);
+
+  if (!parse.success) {
+    res.status(400).json(parse.error.flatten());
+    return;
+  }
+
+  const { token, password } = req.body as z.infer<typeof schema>;
+
+  let decodedToken: JwtPayload;
+  const existingToken = await EmailRequest.findOne({ token });
+
+  if (existingToken) {
+    res.status(400).json({ message: "Invalid token" });
+    return;
+  }
+
+  try {
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+  } catch (error) {
+    res.status(400).json({ message: "Invalid token" });
+    return;
+  }
+
+  if (!decodedToken._id) {
+    res.status(400).json({ message: "Token doesn't have an id payload" });
+    return;
+  }
+
+  const userToVerify = await User.findById(decodedToken._id);
+
+  if (!userToVerify) {
+    res.status(400).json({ message: "User does not exist" });
+    return;
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userToVerify._id,
+    {
+      password: await hash(password, 10),
+    },
+    { new: true }
+  );
+
+  if (!updatedUser) {
+    res.status(400).json({ message: "Updated user does not exist" });
+    return;
+  }
+
+  await EmailRequest.create({
+    token,
+  });
+
+  res.status(200).json({ message: "Reset account password successful" });
 };
 
 export const logoutUser: RequestHandler = (req, res) => {

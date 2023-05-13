@@ -1,6 +1,6 @@
 import { HOST_URL } from "../constants";
 
-export const changePasswordStaff = (name: string) => {
+export const changePasswordStaff = (name: string, token: string) => {
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -153,7 +153,7 @@ export const changePasswordStaff = (name: string) => {
               below.
             </p>
             <div>
-              <a href="${HOST_URL}/verify">Change Password</a>
+              <a href="${HOST_URL}/change-password?token=${token}">Change Password</a>
             </div>
           </div>
           <div class="template-footer">

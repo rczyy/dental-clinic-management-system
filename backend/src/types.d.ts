@@ -106,8 +106,11 @@ declare global {
     estimatedTime: string;
   }
 
-  interface RequestToken {
+  interface EmailRequest {
     _id?: Types.ObjectId;
     token: string;
+    email: string;
+    createdAt: Date;
+    updatedAt: Date;
   }
 }

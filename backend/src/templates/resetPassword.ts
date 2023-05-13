@@ -1,6 +1,6 @@
 import { HOST_URL } from "../constants";
 
-export const forgotPassword = (name: string) => {
+export const resetPassword = (name: string, token: string) => {
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -152,7 +152,7 @@ export const forgotPassword = (name: string) => {
               If you did not initiate this request, please contact us immediately.
             </p>
             <div>
-              <a href="${HOST_URL}/verify">Reset Password</a>
+              <a href="${HOST_URL}/reset-password?token=${token}">Reset Password</a>
             </div>
           </div>
           <div class="template-footer">
