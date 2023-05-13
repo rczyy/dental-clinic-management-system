@@ -11,9 +11,7 @@ import Dentist from "../models/dentist";
 import FrontDesk from "../models/frontDesk";
 import { sendEmail } from "../utilities/sendEmail";
 import { changePasswordStaff } from "../templates/changePasswordStaff";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { hash } from "bcrypt";
-import EmailRequest from "../models/emailRequest";
+import jwt from "jsonwebtoken";
 
 export const getStaffs: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -229,77 +227,6 @@ export const registerStaff: RequestHandler = async (req, res) => {
   });
 
   res.status(201).json({ user, changePasswordStaffToken });
-};
-
-export const changePasswordNewStaff: RequestHandler = async (req, res) => {
-  const schema = z
-    .object({
-      token: z
-        .string({ required_error: "Token is required" })
-        .min(1, "Token cannot be empty"),
-      password: z
-        .string({ required_error: "Password is required" })
-        .min(6, "Password must be atleast 6 characters"),
-      confirmPassword: z.string({ required_error: "Confirm your password" }),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords doesn't match",
-    });
-
-  const parse = schema.safeParse(req.body);
-
-  if (!parse.success) {
-    res.status(400).json(parse.error.flatten());
-    return;
-  }
-
-  const { token, password } = req.body as z.infer<typeof schema>;
-
-  let decodedToken: JwtPayload;
-  const existingToken = await EmailRequest.findOne({ token });
-
-  if (existingToken) {
-    res.status(400).json({ message: "Invalid token" });
-    return;
-  }
-
-  try {
-    decodedToken = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
-  } catch (error) {
-    res.status(400).json({ message: "Invalid token" });
-    return;
-  }
-
-  if (!decodedToken._id) {
-    res.status(400).json({ message: "Token doesn't have an id payload" });
-    return;
-  }
-
-  const userToVerify = await User.findById(decodedToken._id);
-
-  if (!userToVerify) {
-    res.status(400).json({ message: "User does not exist" });
-    return;
-  }
-
-  const updatedUser = await User.findByIdAndUpdate(
-    userToVerify._id,
-    {
-      password: await hash(password, 10),
-    },
-    { new: true }
-  );
-
-  if (!updatedUser) {
-    res.status(400).json({ message: "Updated user does not exist" });
-    return;
-  }
-
-  await EmailRequest.create({
-    token,
-  });
-
-  res.status(200).json({ message: "Successfully changed the password" });
 };
 
 export const removeStaff: RequestHandler = async (req, res) => {
