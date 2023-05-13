@@ -11,3 +11,13 @@ export const getDentists = async () => {
   });
   return res.data;
 };
+
+export const getDentistNames = async () => {
+  const res = await axios.get<DentistNamesResponse[]>(`${URL}/dentist/names`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
+  return res.data;
+};
