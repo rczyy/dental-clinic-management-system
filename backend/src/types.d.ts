@@ -101,4 +101,13 @@ declare global {
     name: string;
     estimatedTime: string;
   }
+
+  interface Appointment {
+    _id?: Types.ObjectId;
+    dateTimeScheduled: Date;
+    dateTimeFinished: Date;
+    patientId: Types.ObjectId;
+    dentistId: Types.ObjectId;
+    serviceId: Types.ObjectId;
+  }
 }

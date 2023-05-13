@@ -36,6 +36,7 @@ interface StaffSignupFormValues {
 }
 
 interface SelectOption {
+  _id?: string
   value: string;
   label: string;
 }
@@ -192,4 +193,27 @@ interface ServiceResponse {
   category: string;
   name: string;
   estimatedTime: string;
+}
+
+interface DentistNamesResponse {
+  _id: string;
+  name: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
+interface AppointmentZodFormValues {
+  serviceCategory: string;
+  service: string;
+  dentist: string;
+  date: Date;
+  time: Date;
+}
+
+interface AppointmentFormValues {
+  service: string;
+  dentist: string;
+  dateTimeScheduled: string;
+  dateTimeFinished: string;
 }
