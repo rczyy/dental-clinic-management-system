@@ -82,7 +82,12 @@ const Login = (props: Props) => {
                 value={watch("password")}
                 error={errors.password?.message}
               />
-              <a className="text-xs text-zinc-400 ml-auto">Forgot Password</a>
+              <Link
+                to="/forgot-password"
+                className="text-xs text-zinc-400 ml-auto transition duration-100 hover:text-zinc-600"
+              >
+                Forgot Password
+              </Link>
               <button
                 type="submit"
                 className="btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 my-8"

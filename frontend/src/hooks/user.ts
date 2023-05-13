@@ -1,6 +1,13 @@
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { getUser, getUsers, login, logout, verifyUser } from "../axios/user";
+import {
+  getUser,
+  getUsers,
+  login,
+  logout,
+  resetPassword,
+  verifyUser,
+} from "../axios/user";
 
 export const useGetUsers = () => {
   return useQuery<UserResponse[], ErrorMessageResponse>({
@@ -33,6 +40,16 @@ export const useVerifyUser = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
+  });
+};
+
+export const useResetPassword = () => {
+  return useMutation<
+    MessageResponse,
+    ErrorMessageResponse,
+    { token: string; password: string; confirmPassword: string }
+  >({
+    mutationFn: resetPassword,
   });
 };
 

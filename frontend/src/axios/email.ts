@@ -9,3 +9,11 @@ export const requestEmailVerification = async (token: string) => {
 
   return res.data;
 };
+
+export const requestResetPassword = async (email: string) => {
+  const res = await axios.post<MessageResponse>(`${URL}/email/reset-password`, {
+    email,
+  });
+
+  return res.data;
+};
