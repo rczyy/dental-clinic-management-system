@@ -31,10 +31,10 @@ export const useAddService = () => {
   });
 };
 
-export const useEditService = (id: string) => {
+export const useEditService = () => {
   const queryClient = useQueryClient();
-  return useMutation<ServiceResponse, ErrorMessageResponse>({
-    mutationFn: () => editService(id),
+  return useMutation<ServiceResponse, ErrorMessageResponse, { data: ServiceFormValues, id: string}>({
+    mutationFn: ({data, id}) => editService(data, id),
     onSuccess: () => {
       queryClient.invalidateQueries(["services"]);
     },
@@ -43,7 +43,7 @@ export const useEditService = (id: string) => {
 
 export const useDeleteService = (id: string) => {
   const queryClient = useQueryClient();
-  return useMutation<ServiceResponse, ErrorMessageResponse>({
+  return useMutation<ServiceResponse, ErrorMessageResponse, string>({
     mutationFn: () => deleteService(id),
     onSuccess: () => {
       queryClient.invalidateQueries(["services"]);

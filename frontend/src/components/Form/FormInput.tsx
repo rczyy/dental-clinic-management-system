@@ -66,6 +66,7 @@ const FormInput = ({
             type={
               type === "password" ? (showPassword ? "text" : "password") : type
             }
+            value={value}
             {...register(label)}
           />
           {Logo && (

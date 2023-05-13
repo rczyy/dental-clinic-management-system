@@ -26,8 +26,8 @@ export const addService = async (data: ServiceFormValues) => {
   return res.data;
 };
 
-export const editService = async (id: string) => {
-  const res = await axios.patch<ServiceResponse>(`${URL}/service/edit/${id}`, {
+export const editService = async (data: ServiceFormValues, id: string) => {
+  const res = await axios.patch<ServiceResponse>(`${URL}/service/edit/${id}`, data, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,

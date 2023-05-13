@@ -204,7 +204,7 @@ interface ErrorMessageResponse {
 }
 
 interface ServiceResponse {
-  _id?: string;
+  _id: string;
   category: ServiceCategory;
   name: string;
   estimatedTime: string;
