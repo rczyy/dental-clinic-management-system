@@ -4,15 +4,10 @@ import DashboardRoot from "./layout/DashboardRoot";
 import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
-<<<<<<< HEAD
-import AdminHome from "./pages/AdminHome";
 import SetAppointment from "./pages/SetAppointment";
-import Staff, { loader as staffLoader } from "./pages/Staff";
-import Patient, { loader as patientLoader } from "./pages/Patient";
-=======
+import ServiceList from "./pages/ServiceList";
 import StaffList, { loader as staffLoader } from "./pages/StaffList";
 import PatientList, { loader as patientLoader } from "./pages/PatientList";
->>>>>>> bbd1bf0e0c74260a4cdab6f3c84b3206682fcfda
 import RegisterStaff from "./pages/RegisterStaff";
 import RegisterPatient from "./pages/RegisterPatient";
 import Error from "./pages/Error";
@@ -20,8 +15,9 @@ import Services from "./pages/Services";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "./styles.css";
-import ServiceList from "./pages/ServiceList";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -100,7 +96,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <QueryClientProvider client={queryClient}>
-    <RouterProvider router={router} />
-    <ReactQueryDevtools />
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <RouterProvider router={router} />
+      <ReactQueryDevtools />
+    </LocalizationProvider>
   </QueryClientProvider>
 );
