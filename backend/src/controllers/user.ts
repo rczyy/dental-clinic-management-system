@@ -64,7 +64,9 @@ export const loginUser: RequestHandler = async (req, res) => {
     return;
   }
 
-  const samePassword = await compare(password, existingUser.password);
+  const samePassword = existingUser.password
+    ? await compare(password, existingUser.password)
+    : false;
 
   if (!samePassword) {
     const error: FormError = {
