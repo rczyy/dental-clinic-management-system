@@ -153,7 +153,7 @@ export const changePasswordStaff = (name: string, token: string) => {
               below.
             </p>
             <div>
-              <a href="${HOST_URL}/change-password?token=${token}">Change Password</a>
+              <a href="${HOST_URL}/reset-password?token=${token}">Change Password</a>
             </div>
           </div>
           <div class="template-footer">
