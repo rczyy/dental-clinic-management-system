@@ -6,15 +6,24 @@ import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { useGetDentistNames } from "../hooks/dentist";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BsCalendar3, BsClock, BsFillClockFill } from "react-icons/bs";
+import { BsFillClockFill } from "react-icons/bs";
 import { RiServiceFill } from "react-icons/ri";
-import Select from "react-select";
 import { FaTooth } from "react-icons/fa";
+import { IoCalendar } from "react-icons/io5";
+import { useGetUser } from "../hooks/user";
+import { getUser } from "../axios/user";
+import { QueryClient } from "@tanstack/react-query";
+import Select from "react-select";
 import DentistComponent from "../components/Appointment/DentistComponent";
 import dayjs from "dayjs";
-import { IoCalendar } from "react-icons/io5";
 
 type Props = {};
+
+export const loader = (queryClient: QueryClient) => async () =>
+  await queryClient.ensureQueryData({
+    queryKey: ["user"],
+    queryFn: getUser,
+  });
 
 const schema = z.object({
   dentist: z
@@ -39,8 +48,9 @@ const schema = z.object({
 });
 
 const SetAppointment = (props: Props) => {
-  const { data: servicesData, isLoading } = useGetServices();
-  const { data: dentistData, isLoading: dentistLoading } = useGetDentistNames();
+  const { data: userData } = useGetUser();
+  const { data: servicesData } = useGetServices();
+  const { data: dentistData } = useGetDentistNames();
   const [services, setServices] = useState<SelectOption[]>();
   const [selectedDentistId, setSelectedDentistId] = useState("");
   const [step, setStep] = useState<number>(1);
@@ -111,26 +121,33 @@ const SetAppointment = (props: Props) => {
 
   const onSubmit: SubmitHandler<AppointmentZodFormValues> = (data) => {
     const { date, time, dentist, service } = data;
-
-    const dateTimeScheduled = dayjs(
+    const dateTimeCombined = dayjs(
       `${dayjs(date).format("MM/DD/YY")} ${dayjs(time).format("h:mm a")}`
-    ).format("MM/DD/YY h:mm a");
-
-    //add logic for dateTimeFinished depending on service duration
-    const dateTimeFinished = dateTimeScheduled;
-    const serviceIdToFind = services?.find(
-      (serviceList) => service === serviceList.label
     );
-    const serviceId = serviceIdToFind && serviceIdToFind._id;
+    const dateTimeScheduled = dateTimeCombined.format("MM/DD/YY h:mm a");
+    const serviceSelected = servicesData?.find(
+      (serviceList) => service === serviceList.name
+    );
+    const serviceEstimatedTime =
+      serviceSelected && serviceSelected.estimatedTime;
 
+    let dateTimeFinished = dateTimeScheduled;
+    if (serviceEstimatedTime) {
+      dateTimeFinished = dateTimeCombined
+        .add(parseInt(serviceEstimatedTime), "minute")
+        .format("MM/DD/YY h:mm a");
+    }
+
+    const serviceId = serviceSelected && serviceSelected._id;
     const appointmentData: AppointmentFormValues = {
+      patient: userData?._id || "",
       dentist,
       service: serviceId || "",
       dateTimeScheduled,
       dateTimeFinished,
     };
 
-    // console.log(appointmentData);
+    console.log(appointmentData);
   };
 
   return (
@@ -403,7 +420,7 @@ const SetAppointment = (props: Props) => {
                         <th>Dentist: </th>
                         <td className="flex flex-col">
                           <div className="flex items-center gap-4">
-                            <FaTooth/>
+                            <FaTooth />
                             <span>Dr. {getDentistName()}</span>
                           </div>
                         </td>
@@ -412,7 +429,7 @@ const SetAppointment = (props: Props) => {
                         <th>Service: </th>
                         <td className="flex flex-col">
                           <div className="flex items-center gap-4">
-                            <RiServiceFill/>
+                            <RiServiceFill />
                             <span>{getService()}</span>
                           </div>
                         </td>
@@ -421,13 +438,13 @@ const SetAppointment = (props: Props) => {
                         <th>Schedule: </th>
                         <td className="flex flex-col">
                           <div className="flex items-center gap-4">
-                            <IoCalendar/>
+                            <IoCalendar />
                             <span>
                               {dayjs(watch("date")).format("MMMM/DD/YY")}
                             </span>
                           </div>
                           <div className="flex items-center gap-4">
-                            <BsFillClockFill/>
+                            <BsFillClockFill />
                             <span>{dayjs(watch("time")).format("h:mm A")}</span>
                           </div>
                         </td>
