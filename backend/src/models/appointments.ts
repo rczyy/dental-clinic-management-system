@@ -13,8 +13,8 @@ const appointmentSchema = new Schema<Appointment>({
         type: Schema.Types.ObjectId,
         ref: "Service"
     },
-    dateTimeScheduled: String,
-    dateTimeFinished: String,
+    dateTimeScheduled: Date,
+    dateTimeFinished: Date,
 })
 
 export default model<Appointment>("Appointment", appointmentSchema)

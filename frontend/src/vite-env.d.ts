@@ -212,9 +212,10 @@ interface AppointmentZodFormValues {
 }
 
 interface AppointmentFormValues {
-  patient: string;
-  service: string;
-  dentist: string;
+  _id?: string;
+  patientId: string;
+  serviceId: string;
+  dentistId: string;
   dateTimeScheduled: string;
   dateTimeFinished: string;
 }
