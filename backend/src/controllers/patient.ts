@@ -83,11 +83,11 @@ export const registerPatient: RequestHandler = async (req, res) => {
       lastName: z
         .string({ required_error: "Last name is required" })
         .regex(/^[A-Za-z ]+$/, "Last name may only contain letters"),
-      region: z.string().optional(),
-      province: z.string().optional(),
-      city: z.string().optional(),
-      barangay: z.string().optional(),
-      street: z.string().optional(),
+      region: z.string().min(1, "Region cannot be empty").optional(),
+      province: z.string().min(1, "Province cannot be empty").optional(),
+      city: z.string().min(1, "City cannot be empty").optional(),
+      barangay: z.string().min(1, "Barangay cannot be empty").optional(),
+      street: z.string().min(1, "Street cannot be empty").optional(),
       email: z.string({ required_error: "Email is required" }).email(),
       password: z
         .string({ required_error: "Password is required" })
