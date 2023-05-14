@@ -68,28 +68,4 @@ const Landing = (props: Props) => {
   );
 };
 
-type BlobProps = {
-  className: string;
-};
-
-const Blob = ({ className }: BlobProps) => {
-  return (
-    <svg
-      id="visual"
-      className="absolute bottom-0  z-0"
-      viewBox="0 0 900 600"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
-      version="1.1"
-    >
-      <path
-        d="M0 546L37.5 541C75 536 150 526 225 521.3C300 516.7 375 517.3 450 523.7C525 530 600 542 675 548.8C750 555.7 825 557.3 862.5 558.2L900 559L900 601L862.5 601C825 601 750 601 675 601C600 601 525 601 450 601C375 601 300 601 225 601C150 601 75 601 37.5 601L0 601Z"
-        className={className}
-        strokeLinecap="round"
-        strokeLinejoin="miter"
-      ></path>
-    </svg>
-  );
-};
-
 export default Landing;
