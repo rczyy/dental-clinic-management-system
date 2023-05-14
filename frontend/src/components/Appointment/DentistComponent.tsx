@@ -20,7 +20,7 @@ const DentistComponent = ({
 
   return (
     <label
-      className={`flex items-center gap-4 outline outline-none border rounded-md p-2 shadow cursor-pointer ${
+      className={`flex items-center gap-4 outline outline-none border border-neutral rounded-md p-2 shadow cursor-pointer ${
         selectedId === dentist._id &&
         "outline-primary outline-2 border-transparent"
       }`}
