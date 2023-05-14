@@ -26,6 +26,25 @@ export const login = async (form: LoginFormValues) => {
   return res.data;
 };
 
+export const verifyUser = async (token: string) => {
+  const res = await axios.put<MessageResponse>(`${URL}/user/verify`, { token });
+
+  return res.data;
+};
+
+export const resetPassword = async (body: {
+  token: string;
+  password: string;
+  confirmPassword: string;
+}) => {
+  const res = await axios.put<MessageResponse>(
+    `${URL}/user/reset-password`,
+    body
+  );
+
+  return res.data;
+};
+
 export const logout = async () => {
   const res = await axios.delete<MessageResponse>(`${URL}/user/logout`, {
     withCredentials: true,

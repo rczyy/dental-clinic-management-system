@@ -20,6 +20,9 @@ declare global {
       SESSION_SECRET: string;
       JWT_SECRET: string;
       NODE_ENV: "development" | "production";
+      MJ_API_KEY: string;
+      MJ_SECRET_KEY: string;
+      EMAIL_SENDER: string;
     }
   }
 
@@ -56,6 +59,7 @@ declare global {
     password: string;
     contactNo: string;
     role: Roles;
+    verified: boolean;
     createdAt: Date;
     updatedAt: Date;
   }
@@ -100,5 +104,13 @@ declare global {
     category: ServiceCategory;
     name: string;
     estimatedTime: string;
+  }
+
+  interface EmailRequest {
+    _id?: Types.ObjectId;
+    token: string;
+    email: string;
+    createdAt: Date;
+    updatedAt: Date;
   }
 }

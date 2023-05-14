@@ -1,16 +1,17 @@
 import { RequestHandler } from "express";
 import { isValidObjectId } from "mongoose";
 import { z } from "zod";
-import { hash } from "bcrypt";
 import { Roles } from "../constants";
 import { verifyToken } from "../utilities/verifyToken";
-import { generateRandomPass } from "../utilities/generatePassword";
 import User from "../models/user";
 import Staff from "../models/staff";
 import Manager from "../models/manager";
 import Assistant from "../models/assistant";
 import Dentist from "../models/dentist";
 import FrontDesk from "../models/frontDesk";
+import { sendEmail } from "../utilities/sendEmail";
+import { changePasswordStaff } from "../templates/changePasswordStaff";
+import jwt from "jsonwebtoken";
 
 export const getStaffs: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -81,7 +82,8 @@ export const registerStaff: RequestHandler = async (req, res) => {
       .regex(/^[A-Za-z ]+$/, "First name may only contain letters"),
     middleName: z
       .string({ required_error: "Middle name is required" })
-      .regex(/^[A-Za-z ]+$/, "Middle name may only contain letters"),
+      .regex(/^[A-Za-z ]+$/, "Middle name may only contain letters")
+      .optional(),
     lastName: z
       .string({ required_error: "Last name is required" })
       .regex(/^[A-Za-z ]+$/, "Last name may only contain letters"),
@@ -151,9 +153,6 @@ export const registerStaff: RequestHandler = async (req, res) => {
     return;
   }
 
-  const password = generateRandomPass();
-  const hashedPassword = await hash(password, 10);
-
   const user = new User({
     name: {
       firstName,
@@ -168,9 +167,9 @@ export const registerStaff: RequestHandler = async (req, res) => {
       street,
     },
     email,
-    password: hashedPassword,
     contactNo,
     role,
+    verified: true,
   });
 
   const staff = new Staff({
@@ -204,6 +203,28 @@ export const registerStaff: RequestHandler = async (req, res) => {
     });
     await frontDesk.save();
   }
+
+  const changePasswordStaffToken = jwt.sign(
+    { _id: user._id },
+    process.env.JWT_SECRET
+  );
+
+  await sendEmail({
+    Messages: [
+      {
+        From: {
+          Email: process.env.EMAIL_SENDER,
+        },
+        To: [
+          {
+            Email: email,
+          },
+        ],
+        Subject: `Welcome to AT Dental Home`,
+        HTMLPart: changePasswordStaff(firstName, changePasswordStaffToken),
+      },
+    ],
+  });
 
   res.status(201).json(user);
 };

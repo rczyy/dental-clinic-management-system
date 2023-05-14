@@ -1,3 +1,4 @@
+import "./styles.css";
 import ReactDOM from "react-dom/client";
 import Root, { loader as appLoader } from "./layout/Root";
 import DashboardRoot from "./layout/DashboardRoot";
@@ -11,11 +12,13 @@ import RegisterPatient from "./pages/RegisterPatient";
 import Services from "./pages/Services";
 import ServiceList from "./pages/ServiceList";
 import AddService from "./pages/AddService";
+import { VerifyEmail } from "./pages/VerifyEmail";
 import Error from "./pages/Error";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import "./styles.css";
+import { ForgotPassword } from "./pages/ForgotPassword";
+import { ResetPassword } from "./pages/ResetPassword";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,6 +48,18 @@ const router = createBrowserRouter([
       {
         path: "signup",
         element: <Signup />,
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPassword />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPassword />,
+      },
+      {
+        path: "verify-email",
+        element: <VerifyEmail />,
       },
       {
         path: "dashboard",

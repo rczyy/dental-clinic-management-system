@@ -4,9 +4,11 @@ import { z } from "zod";
 import { hash } from "bcrypt";
 import { Roles } from "../constants";
 import { verifyToken } from "../utilities/verifyToken";
-import { generateRandomPass } from "../utilities/generatePassword";
 import Patient from "../models/patient";
 import User from "../models/user";
+import { sendEmail } from "../utilities/sendEmail";
+import { emailVerification } from "../templates/emailVerification";
+import jwt from "jsonwebtoken";
 
 export const getPatients: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -76,7 +78,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
         .regex(/^[A-Za-z ]+$/, "First name may only contain letters"),
       middleName: z
         .string({ required_error: "Middle name is required" })
-        .regex(/^[A-Za-z ]+$/, "Middle name may only contain letters"),
+        .regex(/^[A-Za-z ]*$/, "Middle name may only contain letters"),
       lastName: z
         .string({ required_error: "Last name is required" })
         .regex(/^[A-Za-z ]+$/, "Last name may only contain letters"),
@@ -92,11 +94,17 @@ export const registerPatient: RequestHandler = async (req, res) => {
       barangay: z.string({ required_error: "Barangay is required" }),
       street: z.string({ required_error: "Street is required" }),
       email: z.string({ required_error: "Email is required" }).email(),
-      password: z.string().optional(),
+      password: z
+        .string({ required_error: "Password is required" })
+        .min(6, "Password must be atleast 6 characters"),
+      confirmPassword: z.string({ required_error: "Confirm your password" }),
       contactNo: z
         .string({ required_error: "Contact number is required" })
         .regex(/(^\+63)\d{10}$/, "Invalid contact number"),
     })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords doesn't match",
+    });
 
   type body = z.infer<typeof userSchema>;
 
@@ -118,7 +126,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
     street,
     email,
     contactNo,
-    password
+    password,
   }: body = req.body;
 
   const existingUser = await User.findOne({ email });
@@ -132,7 +140,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
     return;
   }
 
-  const hashedPassword = await hash(password || generateRandomPass(), 10);
+  const hashedPassword = await hash(password, 10);
 
   const user = new User({
     name: {
@@ -151,6 +159,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
     password: hashedPassword,
     contactNo,
     role: Roles.Patient,
+    verified: false,
   });
 
   const patient = new Patient({
@@ -159,6 +168,29 @@ export const registerPatient: RequestHandler = async (req, res) => {
 
   await user.save();
   await patient.save();
+
+  const emailVerificationToken = jwt.sign(
+    { _id: user._id },
+    process.env.JWT_SECRET,
+    { expiresIn: "3d" }
+  );
+
+  await sendEmail({
+    Messages: [
+      {
+        From: {
+          Email: process.env.EMAIL_SENDER,
+        },
+        To: [
+          {
+            Email: email,
+          },
+        ],
+        Subject: "Verify your email address",
+        HTMLPart: emailVerification(firstName, emailVerificationToken),
+      },
+    ],
+  });
 
   res.status(201).json(user);
 };
