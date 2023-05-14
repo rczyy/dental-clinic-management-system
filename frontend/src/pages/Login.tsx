@@ -7,6 +7,9 @@ import { FiAtSign } from "react-icons/fi";
 import { useGetUser, useLogin } from "../hooks/user";
 import * as z from "zod";
 import FormInput from "../components/Form/FormInput";
+import { FcGoogle } from "react-icons/fc";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useLoginWithGoogle } from "../hooks/oauth";
 
 type Props = {};
 
@@ -25,6 +28,8 @@ const Login = (props: Props) => {
   const queryClient = useQueryClient();
   const { data } = useGetUser();
   const { mutate, error, isLoading: loginLoading } = useLogin();
+  const { mutate: loginWithGoogle } = useLoginWithGoogle();
+
   const {
     register,
     handleSubmit,
@@ -39,6 +44,13 @@ const Login = (props: Props) => {
         navigate("/");
       },
     });
+
+  const googleLogin = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: ({ code }) => {
+      loginWithGoogle(code);
+    },
+  });
 
   if (data) return <Navigate to="/" />;
 
@@ -88,17 +100,27 @@ const Login = (props: Props) => {
               >
                 Forgot Password
               </Link>
-              <button
-                type="submit"
-                className="btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 my-8"
-                disabled={loginLoading}
-              >
-                {loginLoading ? (
-                  <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin" />
-                ) : (
-                  "Log In"
-                )}
-              </button>
+              <div className="flex flex-col items-center my-8 gap-4">
+                <button
+                  type="submit"
+                  className="btn btn-primary w-full min-h-[2.5rem] h-10 border-primary text-zinc-50 normal-case"
+                  disabled={loginLoading}
+                >
+                  {loginLoading ? (
+                    <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin" />
+                  ) : (
+                    "Log In"
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className="btn flex items-center gap-2 bg-zinc-800 w-full min-h-[2.5rem] h-10 normal-case text-zinc-50 hover:bg-zinc-700"
+                  onClick={() => googleLogin()}
+                >
+                  <FcGoogle className="w-6 h-6" />
+                  Continue with Google
+                </button>
+              </div>
               <span className="text-xs text-error text-center pl-1">
                 {error && (error as any).response.data.formErrors}
               </span>
