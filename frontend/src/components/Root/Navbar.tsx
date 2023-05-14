@@ -6,6 +6,7 @@ import { IoMdPerson } from "react-icons/io";
 import DarkModeToggle from "../Utilities/DarkModeToggle";
 import { useDetectClickOutside } from "react-detect-click-outside";
 import { useAdminStore } from "../../store/admin";
+import ATLogo from "../Utilities/ATLogo";
 
 type Props = {};
 
@@ -37,9 +38,10 @@ const Navbar = (props: Props) => {
           {(!data || (data && data.role !== "Admin")) && (
             <Link
               to="/"
-              className="font-extrabold text-3xl cursor-pointer text-primary"
+              className="flex items-center font-bold -tracking-widest text-2xl cursor-pointer text-primary"
             >
-              Logo
+              <ATLogo className="fill-primary"/>
+              Dental Home
             </Link>
           )}
         </div>

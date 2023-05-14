@@ -25,12 +25,11 @@ const Landing = (props: Props) => {
           </h1>
         </div>
         <div className="z-10">
-          <button className="btn btn-primary text-base-100">
+          <Link to="/set-appointment" className="btn btn-primary text-base-100">
             Book an appointment
-          </button>
+          </Link>
         </div>
-        <div className="absolute w-full h-full bg-black bg-opacity-60 backdrop-blur-[2px]"></div>
-        <Blob className="text-base-300 fill-current" />
+        <div className="absolute w-full h-full bg-black bg-opacity-70"></div>
       </section>
       <section className="flex flex-col items-center justify-center py-12">
         <h2 className="text-2xl">Services</h2>
