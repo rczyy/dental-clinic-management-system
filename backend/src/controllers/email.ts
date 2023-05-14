@@ -25,7 +25,7 @@ export const requestEmailVerification: RequestHandler = async (req, res) => {
     ignoreExpiration: true,
   }) as JwtPayload;
 
-  if (decodedToken.exp && new Date(decodedToken.exp) >= new Date()) {
+  if (decodedToken.exp && decodedToken.exp * 1000 > new Date().getTime()) {
     res.status(400).json({ message: "Token is still valid" });
     return;
   }

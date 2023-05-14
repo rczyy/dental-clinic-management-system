@@ -178,15 +178,15 @@ export const resetPasswordUser: RequestHandler = async (req, res) => {
     return;
   }
 
-  const userToVerify = await User.findById(decodedToken._id);
+  const user = await User.findById(decodedToken._id);
 
-  if (!userToVerify) {
+  if (!user) {
     res.status(400).json({ message: "User does not exist" });
     return;
   }
 
   const updatedUser = await User.findByIdAndUpdate(
-    userToVerify._id,
+    user._id,
     {
       password: await hash(password, 10),
     },

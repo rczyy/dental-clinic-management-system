@@ -226,7 +226,7 @@ export const registerStaff: RequestHandler = async (req, res) => {
     ],
   });
 
-  res.status(201).json({ user, changePasswordStaffToken });
+  res.status(201).json(user);
 };
 
 export const removeStaff: RequestHandler = async (req, res) => {
