@@ -14,6 +14,7 @@
     "bcrypt": "^5.1.0",
     "connect-mongo": "^4.6.0",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.7",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "generate-password": "^1.7.0",
