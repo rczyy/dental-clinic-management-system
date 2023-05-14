@@ -34,8 +34,7 @@ export const getAppointments: RequestHandler = async (req, res) => {
 
 export const addAppointment: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
-  console.log(req.body);
-  
+
   if ("message" in token) {
     const error: ErrorMessage = { message: token.message };
     res.status(401).json(error);
@@ -140,4 +139,58 @@ export const addAppointment: RequestHandler = async (req, res) => {
 
   await appointment.save();
   res.status(201).json(appointment);
+};
+
+export const getDentistAppointments: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (
+    token.role !== Roles.Admin &&
+    token.role !== Roles.Manager &&
+    token.role !== Roles.Dentist &&
+    token.role !== Roles.Assistant &&
+    token.role !== Roles.FrontDesk
+  ) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const { dentistId } = req.params;
+
+  if (!dentistId) {
+    const error: ErrorMessage = { message: "Invalid user ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const appointments = await Appointment.find({ dentistId });
+  res.status(200).json(appointments);
+};
+
+export const getPatientAppointments: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  const { patientId } = req.params;
+
+  if (!patientId) {
+    const error: ErrorMessage = { message: "Invalid user ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const appointments = await Appointment.find({ patientId });
+  res.status(200).json(appointments);
 };
