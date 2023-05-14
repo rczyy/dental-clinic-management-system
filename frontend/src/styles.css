@@ -38,3 +38,52 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+/*MUI Date picker*/
+.css-nxo287-MuiInputBase-input-MuiOutlinedInput-input {
+  @apply !py-3 !font-sans !text-sm !bg-base-300 !text-base-content
+}
+
+.css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root{
+  @apply !text-lg
+}
+
+.css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input {
+  @apply !bg-base-300  !text-xs !text-base-content !rounded-md !font-sans
+}
+
+.css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
+  @apply !text-zinc-400 !text-sm !-top-1 !left-[3px] !font-sans 
+}
+
+.css-1u3bzj6-MuiFormControl-root-MuiTextField-root {
+  @apply !bg-base-300
+}
+
+.css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
+  @apply !rounded-md !overflow-hidden
+}
+
+.css-1d3z3hw-MuiOutlinedInput-notchedOutline {
+  @apply !border !border-zinc-400
+}
+
+.css-i4bv87-MuiSvgIcon-root {
+  @apply !text-zinc-400
+}
+
+.css-1jy569b-MuiFormLabel-root-MuiInputLabel-root {
+  @apply !text-zinc-400
+}
+
+.css-i4bv87-MuiSvgIcon-root {
+  @apply !fill-primary
+}
+
+.css-1qs309j-MuiButtonBase-root-MuiPickersDay-root.Mui-selected {
+  @apply !bg-primary
+}
+
+.css-cwhad8-MuiDateCalendar-root, .css-31ca4x-MuiPickersFadeTransitionGroup-root {
+  @apply !font-sans
+}
