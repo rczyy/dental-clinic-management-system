@@ -54,6 +54,27 @@ const SetAppointment = (props: Props) => {
   const { data: servicesData } = useGetServices();
   const { data: dentistData } = useGetDentistNames();
   const { mutate, isLoading: addAppointmentLoading } = useAddAppointment();
+  const timeOptions = [
+    { value: "8:00 AM", label: "8:00 AM" },
+    { value: "8:30 AM", label: "8:30 AM" },
+    { value: "9:00 AM", label: "9:00 AM" },
+    { value: "9:30 AM", label: "9:30 AM" },
+    { value: "10:00 AM", label: "10:00 AM" },
+    { value: "10:30 AM", label: "10:30 AM" },
+    { value: "11:00 AM", label: "11:00 AM" },
+    { value: "11:30 AM", label: "11:30 AM" },
+    { value: "12:00 PM", label: "12:00 PM" },
+    { value: "12:30 PM", label: "12:30 PM" },
+    { value: "1:00 PM", label: "1:00 PM" },
+    { value: "1:30 PM", label: "1:30 PM" },
+    { value: "2:00 PM", label: "2:00 PM" },
+    { value: "2:30 PM", label: "2:30 PM" },
+    { value: "3:00 PM", label: "3:00 PM" },
+    { value: "3:30 PM", label: "3:30 PM" },
+    { value: "4:00 PM", label: "4:00 PM" },
+    { value: "4:30 PM", label: "4:30 PM" },
+    { value: "5:00 PM", label: "5:00 PM" },
+  ];
   const [services, setServices] = useState<SelectOption[]>();
   const [selectedDentistId, setSelectedDentistId] = useState("");
   const [step, setStep] = useState<number>(1);
@@ -70,7 +91,7 @@ const SetAppointment = (props: Props) => {
       dentist: "",
       service: "",
       date: undefined,
-      time: undefined,
+      time: "",
     },
     resolver: zodResolver(schema),
   });
@@ -156,14 +177,14 @@ const SetAppointment = (props: Props) => {
   return (
     <main className="flex items-center justify-center">
       <div className="flex flex-col gap-8 bg-base-300 max-w-screen-lg w-full min-h-[40rem] rounded-box border border-base-200 shadow">
-        <header className="flex justify-center border-b shadow-sm">
+        <header className="flex justify-center border-b border-neutral shadow-sm">
           <h1 className="text-xl md:text-2xl font-bold mx-2 py-6">
             Book an appointment
           </h1>
         </header>
-        <section className="flex flex-col md:flex-row md:gap-8 md:justify-around md:px-24 md:pb-12 md:flex-1">
+        <section className="flex flex-col md:flex-row md:gap-8 md:justify-around md:px-24 md:pb-12">
           <div className="flex justify-center mb-6">
-            <ul className="steps steps-horizontal md:steps-vertical text-xs md:text-sm p-2 w-full md:h-full">
+            <ul className="steps steps-horizontal md:flex md:flex-col md:steps-vertical text-xs md:text-sm p-2 ">
               <li
                 className={
                   "step after:!text-zinc-100 " +
@@ -362,7 +383,7 @@ const SetAppointment = (props: Props) => {
             {step === 3 && (
               <section className="flex flex-col gap-8">
                 <h1 className="font-bold tracking-wide text-center md:text-lg">
-                  Schedule
+                  Available Schedule
                 </h1>
                 <div className="flex flex-col gap-2 p-2">
                   <div className="flex flex-col gap-2">
@@ -385,15 +406,39 @@ const SetAppointment = (props: Props) => {
                   </div>
                   <div className="flex flex-col">
                     <Controller
-                      control={control}
                       name="time"
+                      control={control}
                       render={({ field: { onChange, value, ...field } }) => (
-                        <TimePicker
+                        <Select
                           {...field}
-                          label="Time"
-                          onChange={onChange}
-                          className="bg-white rounded-md"
-                          value={watch("time")}
+                          value={
+                            value
+                              ? timeOptions &&
+                                timeOptions.find((time) => time.value === value)
+                              : null
+                          }
+                          classNames={{
+                            control: () =>
+                              "pl-1.5 py-[1px] !bg-base-300",
+                            placeholder: () => "!text-zinc-400 !text-sm",
+                            singleValue: () => "!text-base-content !text-sm",
+                            input: () => "!text-base-content",
+                            option: ({ isSelected, isFocused }) =>
+                              "!text-sm " +
+                              (isSelected
+                                ? "!bg-primary !text-zinc-100 "
+                                : "") +
+                              (isFocused && !isSelected ? "!bg-neutral" : ""),
+                            menu: () => "!bg-base-300",
+                            dropdownIndicator: ({ hasValue }) =>
+                              hasValue ? "!text-primary" : "",
+                            indicatorSeparator: ({ hasValue }) =>
+                              hasValue ? "!bg-primary" : "",
+                          }}
+                          placeholder="Time"
+                          onChange={(val) => onChange(val?.value)}
+                          options={timeOptions}
+                          isLoading={!serviceCategories}
                         />
                       )}
                     />

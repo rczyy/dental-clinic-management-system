@@ -215,7 +215,7 @@ interface AppointmentZodFormValues {
   service: string;
   dentist: string;
   date: Date;
-  time: Date;
+  time: string;
 }
 
 interface AppointmentFormValues {
