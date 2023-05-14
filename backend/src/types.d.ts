@@ -23,21 +23,23 @@ declare global {
       MJ_API_KEY: string;
       MJ_SECRET_KEY: string;
       EMAIL_SENDER: string;
+      GOOGLE_CLIENT_ID: string;
+      GOOGLE_CLIENT_SECRET: string;
     }
   }
 
   interface Name {
     firstName: string;
-    middleName: string;
+    middleName?: string;
     lastName: string;
   }
 
   interface Address {
-    region: string;
-    province: string;
-    city: string;
-    barangay: string;
-    street: string;
+    region?: string;
+    province?: string;
+    city?: string;
+    barangay?: string;
+    street?: string;
   }
 
   interface FormError {
@@ -52,12 +54,12 @@ declare global {
   }
 
   interface User {
-    _id?: Types.ObjectId;
+    _id: Types.ObjectId;
     name: Name;
-    address: Address;
+    address?: Address;
     email: string;
-    password: string;
-    contactNo: string;
+    password?: string;
+    contactNo?: string;
     role: Roles;
     verified: boolean;
     createdAt: Date;
@@ -65,51 +67,51 @@ declare global {
   }
 
   interface Admin {
-    _id?: Types.ObjectId;
+    _id: Types.ObjectId;
     user: Types.ObjectId;
   }
 
   interface Staff {
-    _id?: Types.ObjectId;
+    _id: Types.ObjectId;
     user: Types.ObjectId;
   }
 
   interface Patient {
-    _id?: Types.ObjectId;
+    _id: Types.ObjectId;
     user: Types.ObjectId;
   }
 
   interface Manager {
-    _id?: Types.ObjectId;
+    _id: Types.ObjectId;
     staff: Types.ObjectId;
   }
 
   interface Dentist {
-    _id?: Types.ObjectId;
+    _id: Types.ObjectId;
     staff: Types.ObjectId;
   }
 
   interface FrontDesk {
-    _id?: Types.ObjectId;
+    _id: Types.ObjectId;
     staff: Types.ObjectId;
   }
 
   interface Assistant {
-    _id?: Types.ObjectId;
+    _id: Types.ObjectId;
     staff: Types.ObjectId;
   }
 
   interface Service {
-    _id?: Types.ObjectId;
+    _id: Types.ObjectId;
     category: ServiceCategory;
     name: string;
     estimatedTime: string;
   }
 
   interface EmailRequest {
-    _id?: Types.ObjectId;
-    token: string;
-    email: string;
+    _id: Types.ObjectId;
+    token?: string;
+    email?: string;
     createdAt: Date;
     updatedAt: Date;
   }

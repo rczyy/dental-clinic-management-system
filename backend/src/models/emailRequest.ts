@@ -2,8 +2,14 @@ import { Schema, model } from "mongoose";
 
 const emailRequestSchema = new Schema<EmailRequest>(
   {
-    token: String,
-    email: String,
+    token: {
+      type: String,
+      required: false,
+    },
+    email: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

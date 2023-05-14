@@ -82,26 +82,21 @@ export const registerStaff: RequestHandler = async (req, res) => {
       .regex(/^[A-Za-z ]+$/, "First name may only contain letters"),
     middleName: z
       .string({ required_error: "Middle name is required" })
-      .regex(/^[A-Za-z ]+$/, "Middle name may only contain letters")
+      .regex(/^[A-Za-z ]*$/, "Middle name may only contain letters")
       .optional(),
     lastName: z
       .string({ required_error: "Last name is required" })
       .regex(/^[A-Za-z ]+$/, "Last name may only contain letters"),
-    region: z
-      .string({ required_error: "Region is required" })
-      .regex(/^[A-Za-z ]+$/, "Region may only contain letters"),
-    province: z
-      .string({ required_error: "Province is required" })
-      .regex(/^[A-Za-z ]+$/, "Province may only contain letters"),
-    city: z
-      .string({ required_error: "City is required" })
-      .regex(/^[A-Za-z ]+$/, "City may only contain letters"),
-    barangay: z.string({ required_error: "Barangay is required" }),
-    street: z.string({ required_error: "Street is required" }),
+    region: z.string({ required_error: "Region is required" }).optional(),
+    province: z.string({ required_error: "Province is required" }).optional(),
+    city: z.string({ required_error: "City is required" }).optional(),
+    barangay: z.string({ required_error: "Barangay is required" }).optional(),
+    street: z.string({ required_error: "Street is required" }).optional(),
     email: z.string({ required_error: "Email is required" }).email(),
     contactNo: z
       .string({ required_error: "Contact number is required" })
-      .regex(/(^\+63)\d{10}$/, "Invalid contact number"),
+      .regex(/(^\+63)\d{10}$/, "Invalid contact number")
+      .optional(),
     role: z.nativeEnum(Roles),
   });
 

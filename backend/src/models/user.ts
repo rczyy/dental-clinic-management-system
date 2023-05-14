@@ -3,20 +3,54 @@ import { Schema, model } from "mongoose";
 const userSchema = new Schema<User>(
   {
     name: {
-      firstName: String,
-      middleName: String,
-      lastName: String,
+      firstName: {
+        type: String,
+        required: true,
+      },
+      middleName: {
+        type: String,
+        required: false,
+      },
+      lastName: {
+        type: String,
+        required: true,
+      },
     },
     address: {
-      region: String,
-      province: String,
-      city: String,
-      barangay: String,
-      street: String,
+      region: {
+        type: String,
+        required: false,
+      },
+      province: {
+        type: String,
+        required: false,
+      },
+      city: {
+        type: String,
+        required: false,
+      },
+      barangay: {
+        type: String,
+        required: false,
+      },
+      street: {
+        type: String,
+        required: false,
+      },
     },
-    email: String,
-    password: String,
-    contactNo: String,
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: false,
+    },
+    contactNo: {
+      type: String,
+      required: false,
+    },
     role: {
       type: String,
       enum: [
@@ -27,8 +61,12 @@ const userSchema = new Schema<User>(
         "Front Desk",
         "Patient",
       ],
+      required: true,
     },
-    verified: Boolean,
+    verified: {
+      type: Boolean,
+      required: true,
+    },
   },
   {
     timestamps: true,
