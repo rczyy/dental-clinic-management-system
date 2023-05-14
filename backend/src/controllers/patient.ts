@@ -77,17 +77,17 @@ export const registerPatient: RequestHandler = async (req, res) => {
         .string({ required_error: "First name is required" })
         .regex(/^[A-Za-z ]+$/, "First name may only contain letters"),
       middleName: z
-        .string({ required_error: "Middle name is required" })
+        .string()
         .regex(/^[A-Za-z ]*$/, "Middle name may only contain letters")
         .optional(),
       lastName: z
         .string({ required_error: "Last name is required" })
         .regex(/^[A-Za-z ]+$/, "Last name may only contain letters"),
-      region: z.string({ required_error: "Region is required" }).optional(),
-      province: z.string({ required_error: "Province is required" }).optional(),
-      city: z.string({ required_error: "City is required" }).optional(),
-      barangay: z.string({ required_error: "Barangay is required" }).optional(),
-      street: z.string({ required_error: "Street is required" }).optional(),
+      region: z.string().optional(),
+      province: z.string().optional(),
+      city: z.string().optional(),
+      barangay: z.string().optional(),
+      street: z.string().optional(),
       email: z.string({ required_error: "Email is required" }).email(),
       password: z
         .string({ required_error: "Password is required" })
@@ -96,7 +96,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
         .string({ required_error: "Confirm your password" })
         .min(1, "Confirm your password"),
       contactNo: z
-        .string({ required_error: "Contact number is required" })
+        .string()
         .regex(/(^\+63)\d{10}$/, "Invalid contact number")
         .optional(),
     })
