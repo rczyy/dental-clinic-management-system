@@ -111,6 +111,7 @@ export const registerAdmin: RequestHandler = async (req, res) => {
     password: hashedPassword,
     contactNo,
     role: Roles.Admin,
+    verified: true,
   });
 
   const admin = new Admin({
