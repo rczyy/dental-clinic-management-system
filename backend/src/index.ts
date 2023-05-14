@@ -13,6 +13,7 @@ import managerRoute from "./routes/manager";
 import patientRoute from "./routes/patient";
 import staffRoute from "./routes/staff";
 import serviceRoute from "./routes/service";
+import appointmentRoute from "./routes/appointment"
 
 const main = async () => {
   mongoose.set("strictQuery", false);
@@ -48,6 +49,7 @@ const main = async () => {
   app.use("/patient", patientRoute);
   app.use("/staff", staffRoute);
   app.use("/service", serviceRoute);
+  app.use("/appointment", appointmentRoute);
 
   app.listen(port, () =>
     console.log(`Server listening to http://localhost:${port}`)
