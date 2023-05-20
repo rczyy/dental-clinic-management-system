@@ -96,9 +96,8 @@ export const registerPatient: RequestHandler = async (req, res) => {
         .string({ required_error: "Confirm your password" })
         .min(1, "Confirm your password"),
       contactNo: z
-        .string()
-        .regex(/(^\+63)\d{10}$/, "Invalid contact number")
-        .optional(),
+        .string({ required_error: "Contact number is required" })
+        .regex(/(^\+63)\d{10}$/, "Invalid contact number"),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords doesn't match",

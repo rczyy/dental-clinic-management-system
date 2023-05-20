@@ -94,9 +94,8 @@ export const registerStaff: RequestHandler = async (req, res) => {
     street: z.string().min(1, "Street cannot be empty").optional(),
     email: z.string({ required_error: "Email is required" }).email(),
     contactNo: z
-      .string()
-      .regex(/(^\+63)\d{10}$/, "Invalid contact number")
-      .optional(),
+      .string({ required_error: "Contact number is required" })
+      .regex(/(^\+63)\d{10}$/, "Invalid contact number"),
     role: z.nativeEnum(Roles),
   });
 
