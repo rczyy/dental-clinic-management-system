@@ -12,7 +12,14 @@ const DashboardRoot = (props: Props) => {
   const { data } = useGetUser();
 
   if (!data) return <Navigate to="/login" />;
-  if (data.role !== "Admin") return <Navigate to="/" />;
+  if (
+    data.role !== "Admin" &&
+    data.role !== "Manager" &&
+    data.role !== "Dentist" &&
+    data.role !== "Front Desk" &&
+    data.role !== "Assistant"
+  )
+    return <Navigate to="/" />;
 
   return (
     <div className="flex min-h-[inherit] relative">
