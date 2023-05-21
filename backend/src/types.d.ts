@@ -3,7 +3,7 @@ import { Roles, ServiceCategory } from "./constants";
 
 declare module "express-session" {
   interface SessionData {
-    uid: Types.ObjectId;
+    uid: string;
   }
 }
 

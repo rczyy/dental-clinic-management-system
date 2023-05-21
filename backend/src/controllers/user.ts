@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/user";
 import { JwtPayload } from "jsonwebtoken";
 import EmailRequest from "../models/emailRequest";
+import { isValidObjectId } from "mongoose";
 
 export const getUsers: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -77,10 +78,160 @@ export const loginUser: RequestHandler = async (req, res) => {
     return;
   }
 
-  req.session.uid = existingUser._id;
+  req.session.uid = existingUser._id.toString();
   const token = jwt.sign({ role: existingUser.role }, process.env.JWT_SECRET);
 
   res.status(200).json({ user: existingUser, token });
+};
+
+export const editUser: RequestHandler = async (req, res) => {
+  const paramsSchema = z.object({
+    id: z
+      .string({ required_error: "ID is required" })
+      .min(1, "ID cannot be empty")
+      .refine((val) => isValidObjectId(val), { message: "Invalid ID" }),
+  });
+
+  const paramsParse = paramsSchema.safeParse(req.params);
+
+  if (!paramsParse.success) {
+    res.status(400).json(paramsParse.error.flatten());
+    return;
+  }
+
+  const { id } = req.params as z.infer<typeof paramsSchema>;
+
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role !== Roles.Admin && req.session.uid !== id) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const userSchema = z
+    .object({
+      firstName: z
+        .string({ required_error: "First name is required" })
+        .min(1, "First name cannot be empty")
+        .regex(/^[A-Za-zÑñ. ]+$/, "Invalid first name")
+        .optional(),
+      middleName: z
+        .string()
+        .min(1, "Middle name cannot be empty")
+        .regex(/^[A-Za-zÑñ ]+$/, "Invalid middle name")
+        .optional(),
+      lastName: z
+        .string({ required_error: "Last name is required" })
+        .min(1, "Last name cannot be empty")
+        .regex(/^[A-Za-zÑñ ]+$/, "Invalid last name")
+        .optional(),
+      region: z
+        .string()
+        .min(1, "Region cannot be empty")
+        .regex(/^[A-Za-z. -]+$/, "Invalid region")
+        .optional(),
+      province: z
+        .string()
+        .min(1, "Province cannot be empty")
+        .regex(/^[A-Za-zÑñ.() -]+$/, "Invalid province")
+        .optional(),
+      city: z
+        .string()
+        .min(1, "City cannot be empty")
+        .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid city")
+        .optional(),
+      barangay: z
+        .string()
+        .min(1, "Barangay cannot be empty")
+        .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid barangay")
+        .optional(),
+      street: z
+        .string()
+        .min(1, "Street cannot be empty")
+        .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid street")
+        .optional(),
+      password: z
+        .string({ required_error: "Password is required" })
+        .min(6, "Password must be atleast 6 characters")
+        .optional(),
+      confirmPassword: z
+        .string({ required_error: "Confirm your password" })
+        .min(1, "Confirm your password")
+        .optional(),
+      contactNo: z
+        .string({ required_error: "Contact number is required" })
+        .min(1, "Contact number cannot be empty")
+        .regex(/(^\+639)\d{9}$/, "Invalid contact number")
+        .optional(),
+      role: z.nativeEnum(Roles).optional(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords doesn't match",
+    });
+
+  const userParse = userSchema.safeParse(req.body);
+
+  if (!userParse.success) {
+    res.status(400).json(userParse.error.flatten());
+    return;
+  }
+
+  const {
+    firstName,
+    middleName,
+    lastName,
+    region,
+    province,
+    city,
+    barangay,
+    street,
+    contactNo,
+    password,
+    role,
+  } = req.body as z.infer<typeof userSchema>;
+
+  if (role && token.role !== Roles.Admin) {
+    res.status(400).send({ message: "Unauthorized to edit a user's role" });
+    return;
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    id,
+    {
+      name: {
+        firstName,
+        middleName,
+        lastName,
+      },
+      address: {
+        region,
+        province,
+        city,
+        barangay,
+        street,
+      },
+      contactNo,
+      password: password && (await hash(password, 10)),
+      role,
+    },
+    {
+      new: true,
+    }
+  ).select("-password");
+
+  if (!updatedUser) {
+    res.status(400).send({ message: "User does not exist" });
+    return;
+  }
+
+  res.status(200).send(updatedUser);
 };
 
 export const verifyUser: RequestHandler = async (req, res) => {
