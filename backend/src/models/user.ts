@@ -49,7 +49,7 @@ const userSchema = new Schema<User>(
     },
     contactNo: {
       type: String,
-      required: false,
+      required: true,
     },
     role: {
       type: String,

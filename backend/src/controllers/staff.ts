@@ -79,24 +79,47 @@ export const registerStaff: RequestHandler = async (req, res) => {
   const userSchema = z.object({
     firstName: z
       .string({ required_error: "First name is required" })
-      .regex(/^[A-Za-z ]+$/, "First name may only contain letters"),
+      .min(1, "First name cannot be empty")
+      .regex(/^[A-Za-zÑñ. ]+$/, "Invalid first name"),
     middleName: z
       .string()
-      .regex(/^[A-Za-z ]*$/, "Middle name may only contain letters")
+      .min(1, "Middle name cannot be empty")
+      .regex(/^[A-Za-zÑñ ]+$/, "Invalid middle name")
       .optional(),
     lastName: z
       .string({ required_error: "Last name is required" })
-      .regex(/^[A-Za-z ]+$/, "Last name may only contain letters"),
-    region: z.string().min(1, "Region cannot be empty").optional(),
-    province: z.string().min(1, "Province cannot be empty").optional(),
-    city: z.string().min(1, "City cannot be empty").optional(),
-    barangay: z.string().min(1, "Barangay cannot be empty").optional(),
-    street: z.string().min(1, "Street cannot be empty").optional(),
+      .min(1, "Last name cannot be empty")
+      .regex(/^[A-Za-zÑñ ]+$/, "Invalid last name"),
+    region: z
+      .string()
+      .min(1, "Region cannot be empty")
+      .regex(/^[A-Za-z. -]+$/, "Invalid region")
+      .optional(),
+    province: z
+      .string()
+      .min(1, "Province cannot be empty")
+      .regex(/^[A-Za-zÑñ.() -]+$/, "Invalid province")
+      .optional(),
+    city: z
+      .string()
+      .min(1, "City cannot be empty")
+      .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid city")
+      .optional(),
+    barangay: z
+      .string()
+      .min(1, "Barangay cannot be empty")
+      .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid barangay")
+      .optional(),
+    street: z
+      .string()
+      .min(1, "Street cannot be empty")
+      .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid street")
+      .optional(),
     email: z.string({ required_error: "Email is required" }).email(),
     contactNo: z
-      .string()
-      .regex(/(^\+63)\d{10}$/, "Invalid contact number")
-      .optional(),
+      .string({ required_error: "Contact number is required" })
+      .min(1, "Contact number cannot be empty")
+      .regex(/(^\+639)\d{9}$/, "Invalid contact number"),
     role: z.nativeEnum(Roles),
   });
 
