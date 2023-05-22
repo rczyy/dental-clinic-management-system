@@ -1,3 +1,4 @@
+import "./styles.css";
 import ReactDOM from "react-dom/client";
 import Root, { loader as appLoader } from "./layout/Root";
 import DashboardRoot from "./layout/DashboardRoot";
@@ -10,12 +11,16 @@ import RegisterStaff from "./pages/RegisterStaff";
 import RegisterPatient from "./pages/RegisterPatient";
 import ServiceList from "./pages/ServiceList";
 import AddService from "./pages/AddService";
+import { VerifyEmail } from "./pages/VerifyEmail";
 import Error from "./pages/Error";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./styles.css";
 import Profile from "./pages/Profile";
+import { ForgotPassword } from "./pages/ForgotPassword";
+import { ResetPassword } from "./pages/ResetPassword";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +54,18 @@ const router = createBrowserRouter([
       {
         path: "profile",
         element: <Profile />,
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPassword />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPassword />,
+      },
+      {
+        path: "verify-email",
+        element: <VerifyEmail />,
       },
       {
         path: "dashboard",
@@ -88,7 +105,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <QueryClientProvider client={queryClient}>
-    <RouterProvider router={router} />
-    <ReactQueryDevtools />
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <RouterProvider router={router} />
+      <ReactQueryDevtools />
+    </GoogleOAuthProvider>
   </QueryClientProvider>
 );

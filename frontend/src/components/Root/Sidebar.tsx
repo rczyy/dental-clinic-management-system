@@ -1,5 +1,9 @@
-import { AiOutlineMedicineBox } from "react-icons/ai";
-import { BiUserCheck } from "react-icons/bi";
+import {
+  AiOutlineCreditCard,
+  AiOutlineMedicineBox,
+  AiTwotoneCalendar,
+} from "react-icons/ai";
+import { BiCalendarCheck, BiUserCheck } from "react-icons/bi";
 import { VscNote } from "react-icons/vsc";
 import { CgUserList } from "react-icons/cg";
 import { IconType } from "react-icons/lib";
@@ -25,28 +29,66 @@ const Sidebar = () => {
       }
     >
       <div className="flex flex-col w-full gap-1">
+        {(data?.role === "Admin" || data?.role === "Manager") && (
+          <SidebarItem
+            name="Staff list"
+            Icon={CgUserList}
+            route="/dashboard/staff"
+          />
+        )}
+
         <SidebarItem
           name="Patient list"
           Icon={CgUserList}
           route="/dashboard/patients"
         />
-        {(data?.role === "Admin" || data?.role === "Manager") && (
-          <>
-            <SidebarItem
-              name="Staff list"
-              Icon={CgUserList}
-              route="/dashboard/staff"
-            />
-            <SidebarItem name="Service List" Icon={BiUserCheck} route="/dashboard/services" />
-            <SidebarItem name="Attendance" Icon={BiUserCheck} route="/" />
-            <SidebarItem name="Logs" Icon={VscNote} route="/" />
-          </>
+
+        <SidebarItem
+          name="Appointments"
+          Icon={BiCalendarCheck}
+          route="/dashboard"
+        />
+
+        {(data?.role === "Admin" ||
+          data?.role === "Manager" ||
+          data?.role === "Dentist" ||
+          data?.role === "Front Desk") && (
+          <SidebarItem
+            name="Billings"
+            Icon={AiOutlineCreditCard}
+            route="/dashboard"
+          />
         )}
+
+        {data?.role === "Dentist" && (
+          <SidebarItem
+            name="My Schedule"
+            Icon={AiTwotoneCalendar}
+            route="/dashboard"
+          />
+        )}
+
+        {(data?.role === "Admin" ||
+          data?.role === "Manager" ||
+          data?.role === "Front Desk") && (
+          <SidebarItem
+            name="Dentists' Schedules"
+            Icon={AiTwotoneCalendar}
+            route="/dashboard"
+          />
+        )}
+
         <SidebarItem
           name="Services"
           Icon={AiOutlineMedicineBox}
           route="/dashboard/services"
         />
+
+        <SidebarItem name="Attendance" Icon={BiUserCheck} route="/" />
+
+        {(data?.role === "Admin" || data?.role === "Manager") && (
+          <SidebarItem name="Logs" Icon={VscNote} route="/" />
+        )}
       </div>
     </div>
   );

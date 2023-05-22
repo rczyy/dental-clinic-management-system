@@ -47,12 +47,18 @@ const PatientDataRow = ({ patient }: Props) => {
       </td>
       <td className="font-medium text-sm">
         <div className="flex flex-col">
-          <span>
-            {`${patient.user.address.street} ${patient.user.address.barangay}`}
-          </span>
-          <span className="font-medium text-xs text-zinc-400">
-            {`${patient.user.address.city}, ${patient.user.address.province}`}
-          </span>
+          {patient.user.address ? (
+            <>
+              <span>
+                {`${patient.user.address.street} ${patient.user.address.barangay}`}
+              </span>
+              <span className="font-medium text-xs text-zinc-400">
+                {`${patient.user.address.city}, ${patient.user.address.province}`}
+              </span>
+            </>
+          ) : (
+            <span className="font-medium text-xs text-zinc-400">—</span>
+          )}
         </div>
       </td>
       <td className="font-medium text-sm">{patient.user.contactNo}</td>

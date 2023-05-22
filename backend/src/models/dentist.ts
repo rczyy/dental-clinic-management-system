@@ -4,6 +4,7 @@ const dentistSchema = new Schema<Dentist>({
   staff: {
     type: Schema.Types.ObjectId,
     ref: "Staff",
+    required: true,
   },
 });
 

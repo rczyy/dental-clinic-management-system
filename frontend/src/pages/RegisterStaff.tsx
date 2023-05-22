@@ -19,41 +19,92 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import FormInput from "../components/Form/FormInput";
 import SelectDropdown from "../components/Form/SelectDropdown";
+import { toast } from "react-toastify";
 
 type Props = {};
 
 const schema = z.object({
   firstName: z
     .string({ required_error: "First name is required" })
-    .min(1, "First name is required"),
-  middleName: z
-    .string({ required_error: "Middle name is required" })
-    .min(1, "Middle name is required"),
+    .min(1, "First name cannot be empty")
+    .regex(/^[A-Za-zÑñ. ]+$/, "Invalid first name"),
+  middleName: z.preprocess(
+    (data) => {
+      if (!data || typeof data !== "string") return undefined;
+      return data === "" ? undefined : data;
+    },
+    z
+      .string()
+      .min(1, "Middle name cannot be empty")
+      .regex(/^[A-Za-zÑñ ]+$/, "Invalid middle name")
+      .optional()
+  ),
   lastName: z
     .string({ required_error: "Last name is required" })
-    .min(1, "Last name is required"),
-  region: z
-    .string({ required_error: "Region is required" })
-    .min(1, "Region is required"),
-  province: z
-    .string({ required_error: "Province is required" })
-    .min(1, "Province is required"),
-  city: z
-    .string({ required_error: "City is required" })
-    .min(1, "City is required"),
-  barangay: z
-    .string({ required_error: "Barangay is required" })
-    .min(1, "Barangay is required"),
-  street: z
-    .string({ required_error: "Street is required" })
-    .min(1, "Street is required"),
+    .min(1, "Last name cannot be empty")
+    .regex(/^[A-Za-zÑñ ]+$/, "Invalid last name"),
+  region: z.preprocess(
+    (data) => {
+      if (!data || typeof data !== "string") return undefined;
+      return data === "" ? undefined : data;
+    },
+    z
+      .string()
+      .min(1, "Region cannot be empty")
+      .regex(/^[A-Za-z. -]+$/, "Invalid region")
+      .optional()
+  ),
+  province: z.preprocess(
+    (data) => {
+      if (!data || typeof data !== "string") return undefined;
+      return data === "" ? undefined : data;
+    },
+    z
+      .string()
+      .min(1, "Province cannot be empty")
+      .regex(/^[A-Za-zÑñ.() -]+$/, "Invalid province")
+      .optional()
+  ),
+  city: z.preprocess(
+    (data) => {
+      if (!data || typeof data !== "string") return undefined;
+      return data === "" ? undefined : data;
+    },
+    z
+      .string()
+      .min(1, "City cannot be empty")
+      .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid city")
+      .optional()
+  ),
+  barangay: z.preprocess(
+    (data) => {
+      if (!data || typeof data !== "string") return undefined;
+      return data === "" ? undefined : data;
+    },
+    z
+      .string()
+      .min(1, "Barangay cannot be empty")
+      .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid barangay")
+      .optional()
+  ),
+  street: z.preprocess(
+    (data) => {
+      if (!data || typeof data !== "string") return undefined;
+      return data === "" ? undefined : data;
+    },
+    z
+      .string()
+      .min(1, "Street cannot be empty")
+      .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid street")
+      .optional()
+  ),
   email: z
     .string({ required_error: "Email is required" })
-    .min(1, "Email is required")
     .email("Invalid email"),
   contactNo: z
-    .string({ required_error: "Invalid contact number" })
-    .length(10, "Invalid contact number"),
+    .string({ required_error: "Contact number is required" })
+    .min(1, "Contact number cannot be empty")
+    .regex(/(^9)\d{9}$/, "Invalid contact number"),
   role: z
     .string({ required_error: "Role is required" })
     .min(1, "Role is required"),
@@ -108,7 +159,7 @@ const RegisterStaff = (props: Props) => {
     mutate(
       { ...data, contactNo: "+63" + watch("contactNo") },
       {
-        onSuccess: () =>
+        onSuccess: (data) => {
           reset({
             firstName: "",
             middleName: "",
@@ -121,7 +172,30 @@ const RegisterStaff = (props: Props) => {
             barangay: "",
             street: "",
             email: "",
-          }),
+          });
+          toast.success(
+            `Successfully registered ${data.name.firstName} ${data.name.lastName}`,
+            {
+              theme:
+                localStorage.getItem("theme") === "darkTheme"
+                  ? "dark"
+                  : "light",
+            }
+          );
+        },
+        onError(error) {
+          toast.error(
+            "message" in error.response.data
+              ? error.response.data.message
+              : error.response.data.formErrors,
+            {
+              theme:
+                localStorage.getItem("theme") === "darkTheme"
+                  ? "dark"
+                  : "light",
+            }
+          );
+        },
       }
     );
   };
@@ -262,6 +336,7 @@ const RegisterStaff = (props: Props) => {
                   value={watch("firstName")}
                   error={errors.firstName?.message}
                   Logo={BsPerson}
+                  required
                 />
               </div>
               <div className="flex flex-col sm:flex-row w-full justify-evenly gap-1">
@@ -282,6 +357,7 @@ const RegisterStaff = (props: Props) => {
                   value={watch("lastName")}
                   error={errors.lastName?.message}
                   Logo={BsPerson}
+                  required
                 />
               </div>
               <div>
@@ -293,6 +369,7 @@ const RegisterStaff = (props: Props) => {
                   value={watch("email")}
                   error={errors.email?.message}
                   Logo={FiAtSign}
+                  required
                 />
               </div>
               <div>
@@ -304,6 +381,7 @@ const RegisterStaff = (props: Props) => {
                   value={watch("contactNo")}
                   error={errors.contactNo?.message}
                   Logo={FiPhone}
+                  required
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -327,7 +405,7 @@ const RegisterStaff = (props: Props) => {
               </div>
             </div>
             <div className="flex flex-col p-2 rounded flex-1 gap-2">
-              <h2 className="font-semibold m-1">Address</h2>
+              <h2 className="font-semibold m-1">Address (optional)</h2>
               <div className="flex flex-col gap-1">
                 <Controller
                   name="region"

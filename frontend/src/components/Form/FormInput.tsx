@@ -11,6 +11,7 @@ type Props = {
   placeholder: string;
   value: string;
   Logo?: IconType;
+  required?: boolean;
 };
 
 const FormInput = ({
@@ -21,6 +22,7 @@ const FormInput = ({
   value,
   error,
   Logo,
+  required,
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -54,7 +56,8 @@ const FormInput = ({
                   (label !== "contactNo" ? "left-3.5" : "-left-6 sm:-left-8"))
             }
           >
-            {placeholder}
+            {placeholder}{" "}
+            {required && <span className="text-red-400 text-xs">*</span>}
           </label>
           <input
             className={

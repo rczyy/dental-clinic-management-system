@@ -1,8 +1,14 @@
 import { Schema, model } from "mongoose";
 
 const serviceSchema = new Schema<Service>({
-  name: String,
-  estimatedTime: String,
+  name: {
+    type: String,
+    required: true,
+  },
+  estimatedTime: {
+    type: String,
+    required: true,
+  },
   category: {
     type: String,
     enum: [
@@ -15,6 +21,7 @@ const serviceSchema = new Schema<Service>({
       "Dentures",
       "Orthodontics (Braces)",
     ],
+    required: true,
   },
 });
 

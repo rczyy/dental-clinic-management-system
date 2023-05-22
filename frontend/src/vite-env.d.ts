@@ -104,22 +104,22 @@ interface Barangay {
 
 interface Name {
   firstName: string;
-  middleName: string;
+  middleName?: string;
   lastName: string;
 }
 
 interface Address {
-  region: string;
-  province: string;
-  city: string;
-  barangay: string;
-  street: string;
+  region?: string;
+  province?: string;
+  city?: string;
+  barangay?: string;
+  street?: string;
 }
 
 interface UserResponse {
-  _id?: string;
+  _id: string;
   name: Name;
-  address: Address;
+  address?: Address;
   email: string;
   contactNo: string;
   role:
@@ -134,37 +134,37 @@ interface UserResponse {
 }
 
 interface AdminResponse {
-  _id?: string;
+  _id: string;
   user: UserResponse;
 }
 
 interface StaffResponse {
-  _id?: string;
+  _id: string;
   user: UserResponse;
 }
 
 interface PatientResponse {
-  _id?: string;
+  _id: string;
   user: UserResponse;
 }
 
 interface ManagerResponse {
-  _id?: string;
+  _id: string;
   staff: string;
 }
 
 interface DentistResponse {
-  _id?: string;
+  _id: string;
   staff: string;
 }
 
 interface FrontDeskResponse {
-  _id?: string;
+  _id: string;
   staff: string;
 }
 
 interface AssistantResponse {
-  _id?: string;
+  _id: string;
   staff: string;
 }
 
