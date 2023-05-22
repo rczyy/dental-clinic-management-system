@@ -11,8 +11,8 @@ const router = Router();
 
 router
   .get("/", checkAuth, getAppointments)
-  .get("/get-dentist-appointments/:dentistId", checkAuth, getDentistAppointments)
-  .get("/get-patient-appointments/:patientId", checkAuth, getPatientAppointments);
+  .get("/get-dentist-appointments/:dentist", checkAuth, getDentistAppointments)
+  .get("/get-patient-appointments/:patient", checkAuth, getPatientAppointments);
 router.post("/add", checkAuth, addAppointment);
 
 export default router;

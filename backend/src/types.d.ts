@@ -106,8 +106,8 @@ declare global {
     _id?: Types.ObjectId;
     dateTimeScheduled: Date;
     dateTimeFinished: Date;
-    patientId: Types.ObjectId;
-    dentistId: Types.ObjectId;
-    serviceId: Types.ObjectId;
+    patient: Types.ObjectId;
+    dentist: Types.ObjectId;
+    service: Types.ObjectId;
   }
 }

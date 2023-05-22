@@ -1,15 +1,15 @@
 import { Schema, model } from "mongoose";
 
 const appointmentSchema = new Schema<Appointment>({
-    dentistId: {
+    dentist: {
         type: Schema.Types.ObjectId,
         ref: "Dentist"
     },
-    patientId: {
+    patient: {
         type: Schema.Types.ObjectId,
         ref: "Patient"
     },
-    serviceId: {
+    service: {
         type: Schema.Types.ObjectId,
         ref: "Service"
     },
