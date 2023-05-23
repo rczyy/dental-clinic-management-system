@@ -10,6 +10,19 @@ type ServiceCategory =
   | "Dentures"
   | "Orthodontics (Braces)";
 
+interface EditFormValues {
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  role: string;
+  region: string;
+  province: string;
+  city: string;
+  barangay: string;
+  street: string;
+  contactNo: string;
+}
+
 interface LoginFormValues {
   email: string;
   password: string;

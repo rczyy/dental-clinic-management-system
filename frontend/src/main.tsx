@@ -9,7 +9,6 @@ import StaffList, { loader as staffLoader } from "./pages/StaffList";
 import PatientList, { loader as patientLoader } from "./pages/PatientList";
 import RegisterStaff from "./pages/RegisterStaff";
 import RegisterPatient from "./pages/RegisterPatient";
-import Services from "./pages/Services";
 import ServiceList from "./pages/ServiceList";
 import AddService from "./pages/AddService";
 import { VerifyEmail } from "./pages/VerifyEmail";
@@ -17,6 +16,8 @@ import Error from "./pages/Error";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import "./styles.css";
+import Profile from "./pages/Profile";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: "signup",
         element: <Signup />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
       },
       {
         path: "forgot-password",
@@ -93,10 +98,6 @@ const router = createBrowserRouter([
             element: <AddService />,
           },
         ],
-      },
-      {
-        path: "services",
-        element: <Services />,
       },
     ],
   },
