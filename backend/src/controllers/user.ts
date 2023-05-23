@@ -8,6 +8,7 @@ import User from "../models/user";
 import { JwtPayload } from "jsonwebtoken";
 import EmailRequest from "../models/emailRequest";
 import { isValidObjectId } from "mongoose";
+import { imageUpload } from "../utilities/imageUpload";
 
 export const getUsers: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -197,9 +198,25 @@ export const editUser: RequestHandler = async (req, res) => {
     role,
   } = req.body as z.infer<typeof userSchema>;
 
+  const { file } = req;
+
   if (role && token.role !== Roles.Admin) {
     res.status(400).send({ message: "Unauthorized to edit a user's role" });
     return;
+  }
+
+  let avatar;
+
+  if (file) {
+    // if (token.role === Roles.Patient) {
+    //   res.status(400).send({ message: "Unauthorized to edit a user's avatar" });
+    //   return;
+    // }
+
+    const folder = "avatars/";
+    const object = await imageUpload(folder, file);
+
+    avatar = object.Location;
   }
 
   const updatedUser = await User.findByIdAndUpdate(
@@ -220,6 +237,7 @@ export const editUser: RequestHandler = async (req, res) => {
       contactNo,
       password: password && (await hash(password, 10)),
       role,
+      avatar,
     },
     {
       new: true,

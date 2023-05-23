@@ -62,6 +62,7 @@ declare global {
     contactNo?: string;
     role: Roles;
     verified: boolean;
+    avatar: string;
     createdAt: Date;
     updatedAt: Date;
   }

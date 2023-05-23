@@ -67,6 +67,11 @@ const userSchema = new Schema<User>(
       type: Boolean,
       required: true,
     },
+    avatar: {
+      type: String,
+      default:
+        "https://at-dental-home-bucket.s3.ap-southeast-1.amazonaws.com/avatars/blank-profile-picture.png",
+    },
   },
   {
     timestamps: true,
