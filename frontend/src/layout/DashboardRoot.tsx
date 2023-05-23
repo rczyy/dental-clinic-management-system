@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useNavigation } from "react-router-dom";
 import { useAdminStore } from "../store/admin";
-import { useGetUser } from "../hooks/user";
+import { useGetMe } from "../hooks/user";
 import Sidebar from "../components/Root/Sidebar";
 
 type Props = {};
@@ -9,7 +9,7 @@ const DashboardRoot = (props: Props) => {
   const sidebar = useAdminStore((state) => state.sidebar);
   const toggleSidebar = useAdminStore((state) => state.toggleSidebar);
   const navigation = useNavigation();
-  const { data } = useGetUser();
+  const { data } = useGetMe();
 
   if (!data) return <Navigate to="/login" />;
   if (

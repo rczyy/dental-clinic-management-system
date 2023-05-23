@@ -1,5 +1,5 @@
 import { MdOutlineModeEditOutline } from "react-icons/md";
-import { useEditUser, useGetUser } from "../hooks/user";
+import { useEditUser, useGetMe } from "../hooks/user";
 import { z } from "zod";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -103,7 +103,7 @@ const schema = z.object({
 
 const Profile = () => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const { data: userData } = useGetUser();
+  const { data: userData } = useGetMe();
   return (
     <>
       <main className="flex flex-col gap-4">
@@ -188,7 +188,7 @@ const EditProfileModal = ({ setIsEditModalVisible }: Props) => {
   const oldProvinceValue = useRef<string>();
   const oldCityValue = useRef<string>();
 
-  const { data: userData } = useGetUser();
+  const { data: userData } = useGetMe();
   const { mutate: editUser, error: editUserError } = useEditUser();
 
   if (!userData) return <Navigate to="/dashboard" />;

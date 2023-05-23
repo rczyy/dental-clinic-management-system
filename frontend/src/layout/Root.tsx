@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { Outlet } from "react-router";
 import { ScrollRestoration } from "react-router-dom";
-import { getUser } from "../axios/user";
+import { getMe } from "../axios/user";
 import { ToastContainer } from "react-toastify";
 import Navbar from "../components/Root/Navbar";
 import Footer from "../components/Root/Footer";
@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 type Props = {};
 
 export const loader = (queryClient: QueryClient) => async () =>
-  await queryClient.ensureQueryData({ queryKey: ["user"], queryFn: getUser });
+  await queryClient.ensureQueryData({ queryKey: ["user"], queryFn: getMe });
 
 const Root = (props: Props) => {
   return (

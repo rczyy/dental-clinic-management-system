@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiAtSign } from "react-icons/fi";
-import { useGetUser, useLogin } from "../hooks/user";
+import { useGetMe, useLogin } from "../hooks/user";
 import * as z from "zod";
 import FormInput from "../components/Form/FormInput";
 import { FcGoogle } from "react-icons/fc";
@@ -26,7 +26,7 @@ const schema = z.object({
 const Login = (props: Props) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { data } = useGetUser();
+  const { data } = useGetMe();
   const { mutate, error, isLoading: loginLoading } = useLogin();
   const { mutate: loginWithGoogle } = useLoginWithGoogle();
 
