@@ -18,6 +18,16 @@ export const getUser = async () => {
   return res.data;
 };
 
+export const editUser = async (data: EditFormValues, id: string) => {
+  const res = await axios.put<UserResponse>(`${URL}/user/edit/${id}`, data, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
+  return res.data;
+};
+
 export const login = async (form: LoginFormValues) => {
   const res = await axios.post<LoginResponse>(`${URL}/user/login`, form, {
     withCredentials: true,
