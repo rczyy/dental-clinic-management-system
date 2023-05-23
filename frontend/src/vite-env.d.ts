@@ -10,8 +10,7 @@ type ServiceCategory =
   | "Dentures"
   | "Orthodontics (Braces)";
 
-interface UserFormValues {
-  email: string;
+interface EditFormValues {
   firstName: string;
   middleName: string;
   lastName: string;
@@ -45,7 +44,19 @@ interface SignupFormValues {
   contactNo: string;
 }
 
-type StaffSignupFormValues = UserFormValues;
+interface StaffSignupFormValues {
+  email: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  role: string;
+  region: string;
+  province: string;
+  city: string;
+  barangay: string;
+  street: string;
+  contactNo: string;
+}
 
 interface ServiceFormValues {
   category: ServiceCategory | "";
