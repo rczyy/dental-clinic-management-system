@@ -3,6 +3,7 @@ import { checkAuth } from "../middlewares/checkAuth";
 import {
   editUser,
   getMe,
+  getUser,
   getUsers,
   loginUser,
   logoutUser,
@@ -13,7 +14,7 @@ import upload from "multer";
 
 const router = Router();
 
-router.get("/", checkAuth, getUsers).get("/me", getMe);
+router.get("/", checkAuth, getUsers).get("/:id", checkAuth, getUser).get("/me", getMe);
 router.post("/login", loginUser);
 router.put("/edit/:id", checkAuth, upload().single("avatar"), editUser);
 router.put("/verify", verifyUser);
