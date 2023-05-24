@@ -5,18 +5,21 @@ type Props = {
   schedule: string;
   register: UseFormRegister<AppointmentZodFormValues>;
   selectedId: string;
-  setSelectedDentistId: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedDentist: React.Dispatch<React.SetStateAction<string>>;
+  handleDisableSchedule: () => void;
 };
 const DentistComponent = ({
   dentist,
   schedule,
   register,
   selectedId,
-  setSelectedDentistId,
+  setSelectedDentist,
+  handleDisableSchedule
 }: Props) => {
-  
-  const selectDentistId: React.MouseEventHandler<HTMLLabelElement> = () =>
-    setSelectedDentistId(dentist._id);
+  const selectDentist: React.MouseEventHandler<HTMLLabelElement> = () => {
+    setSelectedDentist(dentist._id);
+    handleDisableSchedule()
+  };
 
   return (
     <label
@@ -25,7 +28,7 @@ const DentistComponent = ({
         "outline-primary outline-2 border-transparent"
       }`}
       htmlFor={dentist._id}
-      onClick={selectDentistId}
+      onClick={selectDentist}
     >
       <img
         src="https://www.yourfreecareertest.com/wp-content/uploads/2018/01/how_to_become_a_doctor.jpg"

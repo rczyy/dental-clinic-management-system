@@ -2,7 +2,6 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useGetServices } from "../hooks/service";
 import { useEffect, useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { useGetDentistNames } from "../hooks/dentist";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,11 +12,16 @@ import { IoCalendar } from "react-icons/io5";
 import { useGetUser } from "../hooks/user";
 import { getUser } from "../axios/user";
 import { QueryClient } from "@tanstack/react-query";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useAddAppointment } from "../hooks/appointment";
+import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import DentistComponent from "../components/Appointment/DentistComponent";
-import dayjs from "dayjs";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import dayjs, { Dayjs } from "dayjs";
+import {
+  useLazyGetDentistAppointmentsQuery,
+  useLazyGetPatientAppointmentsQuery,
+} from "../redux/api/appointment";
 
 type Props = {};
 
@@ -37,46 +41,48 @@ const schema = z.object({
   service: z
     .string({ required_error: "Service is required" })
     .min(1, { message: "Service is required" }),
-  date: z
-    .any({ required_error: "Date is required" })
-    .refine((val) => val != undefined, {
-      message: "Date is required",
-    }),
+  date: z.instanceof(dayjs as unknown as typeof Dayjs, {
+    message: "Date is required",
+  }),
   time: z
-    .any({ required_error: "Time is required" })
-    .refine((val) => val != undefined, {
-      message: "Time is required",
-    }),
+    .string({ required_error: "Time is required" })
+    .min(1, { message: "Time is required" }),
 });
 
 const SetAppointment = (props: Props) => {
+  const navigate = useNavigate();
   const { data: userData } = useGetUser();
   const { data: servicesData } = useGetServices();
   const { data: dentistData } = useGetDentistNames();
+  const [getDentistAppointments, { data: dentistAppointments }] =
+    useLazyGetDentistAppointmentsQuery();
+  const [getPatientAppointments, { data: patientAppointments }] =
+    useLazyGetPatientAppointmentsQuery();
+
   const { mutate, isLoading: addAppointmentLoading } = useAddAppointment();
-  const timeOptions = [
-    { value: "8:00 AM", label: "8:00 AM" },
-    { value: "8:30 AM", label: "8:30 AM" },
-    { value: "9:00 AM", label: "9:00 AM" },
-    { value: "9:30 AM", label: "9:30 AM" },
-    { value: "10:00 AM", label: "10:00 AM" },
-    { value: "10:30 AM", label: "10:30 AM" },
-    { value: "11:00 AM", label: "11:00 AM" },
-    { value: "11:30 AM", label: "11:30 AM" },
-    { value: "12:00 PM", label: "12:00 PM" },
-    { value: "12:30 PM", label: "12:30 PM" },
-    { value: "1:00 PM", label: "1:00 PM" },
-    { value: "1:30 PM", label: "1:30 PM" },
-    { value: "2:00 PM", label: "2:00 PM" },
-    { value: "2:30 PM", label: "2:30 PM" },
-    { value: "3:00 PM", label: "3:00 PM" },
-    { value: "3:30 PM", label: "3:30 PM" },
-    { value: "4:00 PM", label: "4:00 PM" },
-    { value: "4:30 PM", label: "4:30 PM" },
-    { value: "5:00 PM", label: "5:00 PM" },
-  ];
+  const [timeOptions, setTimeOptions] = useState([
+    { value: "8:00 AM", label: "8:00 AM", isDisabled: false },
+    { value: "8:30 AM", label: "8:30 AM", isDisabled: false },
+    { value: "9:00 AM", label: "9:00 AM", isDisabled: false },
+    { value: "9:30 AM", label: "9:30 AM", isDisabled: false },
+    { value: "10:00 AM", label: "10:00 AM", isDisabled: false },
+    { value: "10:30 AM", label: "10:30 AM", isDisabled: false },
+    { value: "11:00 AM", label: "11:00 AM", isDisabled: false },
+    { value: "11:30 AM", label: "11:30 AM", isDisabled: false },
+    { value: "12:00 PM", label: "12:00 PM", isDisabled: false },
+    { value: "12:30 PM", label: "12:30 PM", isDisabled: false },
+    { value: "1:00 PM", label: "1:00 PM", isDisabled: false },
+    { value: "1:30 PM", label: "1:30 PM", isDisabled: false },
+    { value: "2:00 PM", label: "2:00 PM", isDisabled: false },
+    { value: "2:30 PM", label: "2:30 PM", isDisabled: false },
+    { value: "3:00 PM", label: "3:00 PM", isDisabled: false },
+    { value: "3:30 PM", label: "3:30 PM", isDisabled: false },
+    { value: "4:00 PM", label: "4:00 PM", isDisabled: false },
+    { value: "4:30 PM", label: "4:30 PM", isDisabled: false },
+    { value: "5:00 PM", label: "5:00 PM", isDisabled: false },
+  ]);
   const [services, setServices] = useState<SelectOption[]>();
-  const [selectedDentistId, setSelectedDentistId] = useState("");
+  const [selectedDentist, setSelectedDentist] = useState("");
   const [step, setStep] = useState<number>(1);
   const {
     control,
@@ -90,11 +96,12 @@ const SetAppointment = (props: Props) => {
     defaultValues: {
       dentist: "",
       service: "",
-      date: undefined,
+      date: "",
       time: "",
     },
     resolver: zodResolver(schema),
   });
+
   const serviceCategories = [
     { value: "First Appointment", label: "First Appointment" },
     { value: "Restoration", label: "Restoration" },
@@ -107,6 +114,92 @@ const SetAppointment = (props: Props) => {
     { value: "Dentures", label: "Dentures" },
     { value: "Orthodontics (Braces)", label: "Orthodontics (Braces)" },
   ];
+
+  const handleDisableSchedule = () => {
+    if (watch("dentist")) {
+      getDentistAppointments({
+        id: watch("dentist"),
+        date: dayjs(watch("date")).format("YYYY-MM-DD"),
+      });
+    }
+
+    if (userData) {
+      getPatientAppointments({
+        id: userData._id!,
+        date: dayjs(watch("date")).format("YYYY-MM-DD"),
+      });
+    }
+  };
+
+  useEffect(() => {
+    const unavailableSchedules: string[] = [];
+    const service =
+      servicesData &&
+      servicesData.find((service) => service.name === watch("service"));
+    if (service) {
+      if (dentistAppointments) {
+        dentistAppointments.forEach((appointment: AppointmentResponse) => {
+          let serviceToAddTime = parseInt(service?.estimatedTime);
+          let serviceTime = parseInt(appointment.service.estimatedTime);
+          let startTime = dayjs(appointment.dateTimeScheduled);
+          let startTime2 = dayjs(appointment.dateTimeScheduled);
+
+          while (serviceToAddTime > 30) {
+            unavailableSchedules.push(
+              startTime.subtract(30, "minute").format("h:mm A")
+            );
+
+            serviceToAddTime -= 30;
+            startTime = startTime.subtract(30, "minute");
+          }
+
+          while (serviceTime >= 30) {
+            unavailableSchedules.push(startTime2.format("h:mm A"));
+
+            serviceTime -= 30;
+            startTime2 = startTime2.add(30, "minute");
+          }
+        });
+      }
+
+      if (patientAppointments) {
+        patientAppointments.forEach((appointment: AppointmentResponse) => {
+          let serviceToAddTime = parseInt(service?.estimatedTime);
+          let serviceTime = parseInt(appointment.service.estimatedTime);
+          let startTime = dayjs(appointment.dateTimeScheduled);
+          let startTime2 = dayjs(appointment.dateTimeScheduled);
+
+          while (serviceToAddTime > 30) {
+            unavailableSchedules.push(
+              startTime.subtract(30, "minute").format("h:mm A")
+            );
+
+            serviceToAddTime -= 30;
+            startTime = startTime.subtract(30, "minute");
+          }
+
+          while (serviceTime >= 30) {
+            unavailableSchedules.push(startTime2.format("h:mm A"));
+
+            serviceTime -= 30;
+            startTime2 = startTime2.add(30, "minute");
+          }
+        });
+      }
+
+      let uniqueUnavailableSchedules = unavailableSchedules.filter(
+        (c, index) => unavailableSchedules.indexOf(c) === index
+      );
+
+      setTimeOptions(
+        timeOptions.map((option) => {
+          return uniqueUnavailableSchedules.includes(option.value)
+            ? { ...option, isDisabled: true }
+            : { ...option, isDisabled: false };
+        })
+      );
+    }
+  }, [dentistAppointments, patientAppointments, watch("service")]);
 
   useEffect(() => {
     setServices(undefined);
@@ -145,9 +238,7 @@ const SetAppointment = (props: Props) => {
 
   const onSubmit: SubmitHandler<AppointmentZodFormValues> = (data) => {
     const { date, time, dentist, service } = data;
-    const dateTimeCombined = dayjs(
-      `${dayjs(date).format("MM/DD/YY")} ${dayjs(time).format("h:mm a")}`
-    );
+    const dateTimeCombined = dayjs(`${dayjs(date).format("MM/DD/YY")} ${time}`);
     const dateTimeScheduled = dateTimeCombined.format("MM/DD/YY h:mm a");
     const serviceSelected = servicesData?.find(
       (serviceList) => service === serviceList.name
@@ -164,14 +255,18 @@ const SetAppointment = (props: Props) => {
 
     const serviceId = serviceSelected && serviceSelected._id;
     const appointmentData: AppointmentFormValues = {
-      patientId: userData?._id || "",
-      dentistId: dentist,
-      serviceId: serviceId || "",
+      patient: userData?._id || "",
+      dentist: dentist,
+      service: serviceId || "",
       dateTimeScheduled,
       dateTimeFinished,
     };
 
-    mutate(appointmentData);
+    mutate(appointmentData, {
+      onSuccess: () => {
+        navigate("success");
+      },
+    });
   };
 
   return (
@@ -307,7 +402,9 @@ const SetAppointment = (props: Props) => {
                             hasValue ? "!bg-primary" : "",
                         }}
                         placeholder="Service"
-                        onChange={(val) => onChange(val?.value)}
+                        onChange={(val) => {
+                          onChange(val?.value);
+                        }}
                         options={services}
                         isLoading={!services && !!watch("serviceCategory")}
                         isDisabled={!watch("serviceCategory")}
@@ -347,10 +444,11 @@ const SetAppointment = (props: Props) => {
                         <DentistComponent
                           dentist={dentist}
                           register={register}
-                          selectedId={selectedDentistId}
+                          selectedId={selectedDentist}
                           key={dentist._id}
-                          setSelectedDentistId={setSelectedDentistId}
+                          setSelectedDentist={setSelectedDentist}
                           schedule="(Mon, Tue, Wed)"
+                          handleDisableSchedule={handleDisableSchedule}
                         />
                       );
                     })}
@@ -394,9 +492,19 @@ const SetAppointment = (props: Props) => {
                         <DatePicker
                           {...field}
                           label="Date"
-                          onChange={onChange}
                           className="bg-white rounded-md"
-                          value={watch("date")}
+                          onChange={(date) => {
+                            if (date) onChange(dayjs(date.toString()));
+                            handleDisableSchedule();
+                            reset(
+                              (formValues) => ({
+                                ...formValues,
+                                time: "",
+                              }),
+                              { keepErrors: true }
+                            );
+                          }}
+                          value={value}
                         />
                       )}
                     />
@@ -418,8 +526,7 @@ const SetAppointment = (props: Props) => {
                               : null
                           }
                           classNames={{
-                            control: () =>
-                              "pl-1.5 py-[1px] !bg-base-300",
+                            control: () => "pl-1.5 py-[1px] !bg-base-300",
                             placeholder: () => "!text-zinc-400 !text-sm",
                             singleValue: () => "!text-base-content !text-sm",
                             input: () => "!text-base-content",
@@ -439,6 +546,8 @@ const SetAppointment = (props: Props) => {
                           onChange={(val) => onChange(val?.value)}
                           options={timeOptions}
                           isLoading={!serviceCategories}
+                          isOptionDisabled={(option) => option.isDisabled}
+                          isDisabled={!watch("date")}
                         />
                       )}
                     />
@@ -507,9 +616,7 @@ const SetAppointment = (props: Props) => {
                             </div>
                             <div className="flex items-center gap-4">
                               <BsFillClockFill />
-                              <span>
-                                {dayjs(watch("time")).format("h:mm A")}
-                              </span>
+                              <span>{watch("time")}</span>
                             </div>
                           </td>
                         </tr>
