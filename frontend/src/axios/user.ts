@@ -18,7 +18,7 @@ export const getUser = async () => {
   return res.data;
 };
 
-export const editUser = async (data: EditFormValues, id: string) => {
+export const editUser = async (data: FormData, id: string) => {
   const res = await axios.put<UserResponse>(`${URL}/user/edit/${id}`, data, {
     withCredentials: true,
     headers: {

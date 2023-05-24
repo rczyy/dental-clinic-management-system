@@ -26,8 +26,12 @@ export const useGetUser = () => {
 
 export const useEditUser = () => {
   const queryClient = useQueryClient();
-  return useMutation<UserResponse, ErrorMessageResponse, { data: UserFormValues, id: string}>({
-    mutationFn: ({data, id}) => editUser(data, id),
+  return useMutation<
+    UserResponse,
+    ErrorMessageResponse,
+    { data: FormData; id: string }
+  >({
+    mutationFn: ({ data, id }) => editUser(data, id),
     onSuccess: () => {
       queryClient.invalidateQueries(["user"]);
     },

@@ -140,6 +140,7 @@ interface UserResponse {
     | "Dentist"
     | "Front Desk"
     | "Patient";
+  avatar: string;
   createdAt: Date;
   updatedAt: Date;
 }
