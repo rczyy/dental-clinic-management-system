@@ -28,7 +28,7 @@ export const getAppointments: RequestHandler = async (req, res) => {
     return;
   }
 
-  const appointments = await Appointment.find();
+  const appointments = await Appointment.find().populate("service");
   res.status(200).json(appointments);
 };
 
@@ -42,9 +42,9 @@ export const addAppointment: RequestHandler = async (req, res) => {
   }
 
   const appointmentSchema = z.object({
-    dentistId: z.string({ required_error: "Dentist id is required" }),
-    patientId: z.string({ required_error: "Patient is required" }),
-    serviceId: z.string({ required_error: "Service is required" }),
+    dentist: z.string({ required_error: "Dentist id is required" }),
+    patient: z.string({ required_error: "Patient is required" }),
+    service: z.string({ required_error: "Service is required" }),
     dateTimeScheduled: z.string({
       required_error: "Date and time scheduled is required",
     }),
@@ -63,17 +63,17 @@ export const addAppointment: RequestHandler = async (req, res) => {
   }
 
   const {
-    dentistId,
-    patientId,
-    serviceId,
+    dentist,
+    patient,
+    service,
     dateTimeScheduled,
     dateTimeFinished,
   }: body = req.body;
 
-  const patientAppointmentDates = await Appointment.find({ patientId }).select(
+  const patientAppointmentDates = await Appointment.find({ patient }).select(
     "dateTimeScheduled dateTimeFinished"
   );
-  const dentistAppointmentDates = await Appointment.find({ dentistId }).select(
+  const dentistAppointmentDates = await Appointment.find({ dentist }).select(
     "dateTimeScheduled dateTimeFinished"
   );
 
@@ -130,9 +130,9 @@ export const addAppointment: RequestHandler = async (req, res) => {
   }
 
   const appointment = new Appointment({
-    dentistId,
-    patientId,
-    serviceId,
+    dentist,
+    patient,
+    service,
     dateTimeScheduled,
     dateTimeFinished,
   });
@@ -150,27 +150,30 @@ export const getDentistAppointments: RequestHandler = async (req, res) => {
     return;
   }
 
-  if (
-    token.role !== Roles.Admin &&
-    token.role !== Roles.Manager &&
-    token.role !== Roles.Dentist &&
-    token.role !== Roles.Assistant &&
-    token.role !== Roles.FrontDesk
-  ) {
-    const error: ErrorMessage = { message: "Unauthorized to do this" };
-    res.status(401).json(error);
-    return;
-  }
+  const { dentist } = req.params;
+  const { date } = req.query;
 
-  const { dentistId } = req.params;
-
-  if (!dentistId) {
+  if (!dentist) {
     const error: ErrorMessage = { message: "Invalid user ID" };
     res.status(400).json(error);
     return;
   }
 
-  const appointments = await Appointment.find({ dentistId });
+  let appointments;
+
+  if (date) {
+    appointments = await Appointment.find({
+      dentist,
+      dateTimeScheduled: {
+        $gte: dayjs(date.toString()),
+        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+      },
+    }).populate("service");
+  } else {
+    appointments = await Appointment.find({
+      dentist,
+    }).populate("service");
+  }
   res.status(200).json(appointments);
 };
 
@@ -183,14 +186,30 @@ export const getPatientAppointments: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { patientId } = req.params;
+  const { patient } = req.params;
+  const { date } = req.query;
 
-  if (!patientId) {
+  if (!patient) {
     const error: ErrorMessage = { message: "Invalid user ID" };
     res.status(400).json(error);
     return;
   }
 
-  const appointments = await Appointment.find({ patientId });
+  let appointments;
+
+  if (date) {
+    appointments = await Appointment.find({
+      patient,
+      dateTimeScheduled: {
+        $gte: dayjs(date.toString()),
+        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+      },
+    }).populate("service");
+  } else {
+    appointments = await Appointment.find({
+      patient,
+    }).populate("service");
+  }
+
   res.status(200).json(appointments);
 };
