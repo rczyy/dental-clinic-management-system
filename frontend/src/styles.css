@@ -38,3 +38,93 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+/*MUI Date picker*/
+.css-nxo287-MuiInputBase-input-MuiOutlinedInput-input {
+  @apply !py-3 !font-sans !text-sm !bg-base-300 !text-base-content
+}
+
+.css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root{
+  @apply !text-lg
+}
+
+.css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input {
+  @apply !bg-base-300  !text-xs !text-base-content !rounded-md !font-sans
+}
+
+.css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
+  @apply !text-zinc-400 !text-sm !-top-1 !left-[3px] !font-sans 
+}
+
+.css-1u3bzj6-MuiFormControl-root-MuiTextField-root {
+  @apply !bg-base-300
+}
+
+.css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
+  @apply !rounded-md !overflow-hidden
+}
+
+.css-1d3z3hw-MuiOutlinedInput-notchedOutline {
+  @apply !border !border-zinc-400
+}
+
+.css-i4bv87-MuiSvgIcon-root {
+  @apply !text-zinc-400
+}
+
+.css-1jy569b-MuiFormLabel-root-MuiInputLabel-root {
+  @apply !text-zinc-400
+}
+
+.css-i4bv87-MuiSvgIcon-root {
+  @apply !fill-primary
+}
+
+.css-1qs309j-MuiButtonBase-root-MuiPickersDay-root.Mui-selected {
+  @apply !bg-primary
+}
+
+.css-cwhad8-MuiDateCalendar-root, .css-31ca4x-MuiPickersFadeTransitionGroup-root {
+  @apply !font-sans
+}
+=======
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+main {
+  @apply w-full min-h-screen pt-20 pb-4 px-4;
+}
+
+.adminMain {
+  @apply pt-20 pb-3 px-3 sm:px-4;
+}
+
+::-webkit-scrollbar {
+  @apply w-1 h-1;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-base-300;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary rounded-md;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-black;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}

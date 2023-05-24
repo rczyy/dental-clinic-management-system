@@ -12,9 +12,9 @@ const router = Router();
 
 router
   .get("/", getServices)
-  .get("/:serviceId", getService);
+  .get("/:service", getService);
 router.post("/add", checkAuth, addService);
-router.patch("/edit/:serviceId", checkAuth, editService);
-router.delete("/remove/:serviceId", checkAuth, removeService);
+router.patch("/edit/:service", checkAuth, editService);
+router.delete("/remove/:service", checkAuth, removeService);
 
 export default router;

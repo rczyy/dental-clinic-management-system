@@ -52,6 +52,7 @@ interface ServiceFormValues {
 }
 
 interface SelectOption {
+  _id?: string;
   value: string;
   label: string;
 }
@@ -190,7 +191,27 @@ interface FormError {
 interface ErrorMessage {
   message: string;
 }
+interface AppointmentResponse {
+  _id?: string;
+  patient: string;
+  service: {
+    _id: string;
+    name: string;
+    estimatedTime: string;
+    category: string;
+  };
+  dentist: string;
+  dateTimeScheduled: string;
+  dateTimeFinished: string;
+}
 
+interface DentistNamesResponse {
+  _id: string;
+  name: {
+    firstName: string;
+    lastName: string;
+  };
+}
 interface FormErrorResponse {
   response: {
     data: FormError;
@@ -208,4 +229,20 @@ interface ServiceResponse {
   category: ServiceCategory;
   name: string;
   estimatedTime: string;
+}
+
+interface AppointmentZodFormValues {
+  serviceCategory: string;
+  service: string;
+  dentist: string;
+  date: string;
+  time: string;
+}
+
+interface AppointmentFormValues {
+  patient: string;
+  service: string;
+  dentist: string;
+  dateTimeScheduled: string;
+  dateTimeFinished: string;
 }
