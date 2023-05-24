@@ -1,4 +1,4 @@
-import { useEditUser, useGetUser } from "../hooks/user";
+import { useEditUser, useGetMe } from "../hooks/user";
 import { z } from "zod";
 import {
   Dispatch,
@@ -121,7 +121,7 @@ const Profile = () => {
   const [isEditAvatarModalVisible, setIsEditAvatarModalVisible] =
     useState(false);
 
-  const { data: userData } = useGetUser();
+  const { data: userData } = useGetMe();
 
   if (!userData) return <Navigate to="/login" />;
 

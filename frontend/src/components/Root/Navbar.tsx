@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IoMenuOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import { useGetUser, useLogout } from "../../hooks/user";
+import { useGetMe, useLogout } from "../../hooks/user";
 import DarkModeToggle from "../Utilities/DarkModeToggle";
 import { useDetectClickOutside } from "react-detect-click-outside";
 import { useAdminStore } from "../../store/admin";
@@ -11,7 +11,7 @@ type Props = {};
 const Navbar = (props: Props) => {
   const toggleSidebar = useAdminStore((state) => state.toggleSidebar);
   const [isOpen, setIsOpen] = useState(false);
-  const { data } = useGetUser();
+  const { data } = useGetMe();
   const { mutate } = useLogout();
 
   const handleLogout: React.MouseEventHandler<HTMLSpanElement> = () => {

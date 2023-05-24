@@ -9,7 +9,7 @@ import { CgUserList } from "react-icons/cg";
 import { IconType } from "react-icons/lib";
 import { Link } from "react-router-dom";
 import { useAdminStore } from "../../store/admin";
-import { useGetUser } from "../../hooks/user";
+import { useGetMe } from "../../hooks/user";
 
 type SidebarItemProps = {
   name: string;
@@ -18,7 +18,7 @@ type SidebarItemProps = {
 };
 
 const Sidebar = () => {
-  const { data } = useGetUser();
+  const { data } = useGetMe();
   const sidebar = useAdminStore((state) => state.sidebar);
 
   return (

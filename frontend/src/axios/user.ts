@@ -10,8 +10,16 @@ export const getUsers = async () => {
   });
   return res.data;
 };
-
-export const getUser = async () => {
+export const getUser = async (id: string) => {
+  const res = await axios.get<UserResponse>(`${URL}/user/${id}`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
+  return res.data;
+};
+export const getMe = async () => {
   const res = await axios.get<UserResponse>(`${URL}/user/me`, {
     withCredentials: true,
   });

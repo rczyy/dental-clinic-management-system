@@ -6,7 +6,7 @@ import { FiAtSign, FiPhone } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useRegisterPatient } from "../hooks/patient";
-import { useGetUser } from "../hooks/user";
+import { useGetMe } from "../hooks/user";
 import {
   getCities,
   getProvinces,
@@ -126,7 +126,7 @@ const Signup = (_: Props) => {
   const oldProvinceValue = useRef<string>();
   const oldCityValue = useRef<string>();
 
-  const { data } = useGetUser();
+  const { data } = useGetMe();
   const { mutate, isSuccess, isLoading, error } = useRegisterPatient();
 
   const {

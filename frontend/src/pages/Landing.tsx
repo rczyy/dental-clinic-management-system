@@ -3,13 +3,13 @@ import { RiHealthBookLine } from "react-icons/ri";
 import { FaTooth, FaTeethOpen, FaTeeth } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
 import { GiTooth } from "react-icons/gi";
-import { useGetUser } from "../hooks/user";
+import { useGetMe } from "../hooks/user";
 import { Navigate, Link } from "react-router-dom";
 
 type Props = {};
 
 const Landing = (_: Props) => {
-  const { data } = useGetUser();
+  const { data } = useGetMe();
 
   if (data && data.role !== "Patient") return <Navigate to="/dashboard" />;
 

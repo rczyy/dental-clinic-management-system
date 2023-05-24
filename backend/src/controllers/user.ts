@@ -30,6 +30,29 @@ export const getUsers: RequestHandler = async (req, res) => {
   res.status(200).json(users);
 };
 
+export const getUser: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager
+    && token.role !== Roles.Dentist && token.role !== Roles.Assistant
+    && token.role !== Roles.FrontDesk  && token.role !== Roles.Patient) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const {id} = req.params;
+  const user = await User.findById(id).select("-password");
+
+  res.status(200).json(user);
+};
+
 export const getMe: RequestHandler = async (req, res) => {
   const me = await User.findById(req.session.uid);
 

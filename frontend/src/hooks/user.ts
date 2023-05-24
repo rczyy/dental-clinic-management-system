@@ -2,6 +2,7 @@ import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
   editUser,
+  getMe,
   getUser,
   getUsers,
   login,
@@ -17,10 +18,17 @@ export const useGetUsers = () => {
   });
 };
 
-export const useGetUser = () => {
+export const useGetUser = (id: string) => {
   return useQuery<UserResponse, ErrorMessageResponse>({
-    queryKey: ["user"],
-    queryFn: getUser,
+    queryKey: ["users", id],
+    queryFn: () => getUser(id),
+  });
+};
+
+export const useGetMe = () => {
+  return useQuery<UserResponse, ErrorMessageResponse>({
+    queryKey: ["me"],
+    queryFn: getMe,
   });
 };
 
