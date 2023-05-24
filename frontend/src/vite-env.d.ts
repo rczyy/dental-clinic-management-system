@@ -178,7 +178,12 @@ interface ErrorMessage {
 interface AppointmentResponse {
   _id?: string;
   patient: string;
-  service: string;
+  service: {
+    _id: string;
+    name: string;
+    estimatedTime: string;
+    category: string;
+  };
   dentist: string;
   dateTimeScheduled: string;
   dateTimeFinished: string;
@@ -214,7 +219,7 @@ interface AppointmentZodFormValues {
   serviceCategory: string;
   service: string;
   dentist: string;
-  date: Date;
+  date: string;
   time: string;
 }
 
