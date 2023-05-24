@@ -1,10 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  useForm,
-  Controller,
-  SubmitHandler,
-  UseFormRegister,
-} from "react-hook-form";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiAtSign, FiPhone } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
@@ -19,51 +14,101 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import FormInput from "../components/Form/FormInput";
 import SelectDropdown from "../components/Form/SelectDropdown";
+import { toast } from "react-toastify";
 
 type Props = {};
 
 const schema = z.object({
   firstName: z
     .string({ required_error: "First name is required" })
-    .min(1, "First name is required"),
-  middleName: z
-    .string({ required_error: "Middle name is required" })
-    .min(1, "Middle name is required"),
+    .min(1, "First name cannot be empty")
+    .regex(/^[A-Za-zÑñ. ]+$/, "Invalid first name"),
+  middleName: z.preprocess(
+    (data) => {
+      if (!data || typeof data !== "string") return undefined;
+      return data === "" ? undefined : data;
+    },
+    z
+      .string()
+      .min(1, "Middle name cannot be empty")
+      .regex(/^[A-Za-zÑñ ]+$/, "Invalid middle name")
+      .optional()
+  ),
   lastName: z
     .string({ required_error: "Last name is required" })
-    .min(1, "Last name is required"),
-  region: z
-    .string({ required_error: "Region is required" })
-    .min(1, "Region is required"),
-  province: z
-    .string({ required_error: "Province is required" })
-    .min(1, "Province is required"),
-  city: z
-    .string({ required_error: "City is required" })
-    .min(1, "City is required"),
-  barangay: z
-    .string({ required_error: "Barangay is required" })
-    .min(1, "Barangay is required"),
-  street: z
-    .string({ required_error: "Street is required" })
-    .min(1, "Street is required"),
+    .min(1, "Last name cannot be empty")
+    .regex(/^[A-Za-zÑñ ]+$/, "Invalid last name"),
+  region: z.preprocess(
+    (data) => {
+      if (!data || typeof data !== "string") return undefined;
+      return data === "" ? undefined : data;
+    },
+    z
+      .string()
+      .min(1, "Region cannot be empty")
+      .regex(/^[A-Za-z. -]+$/, "Invalid region")
+      .optional()
+  ),
+  province: z.preprocess(
+    (data) => {
+      if (!data || typeof data !== "string") return undefined;
+      return data === "" ? undefined : data;
+    },
+    z
+      .string()
+      .min(1, "Province cannot be empty")
+      .regex(/^[A-Za-zÑñ.() -]+$/, "Invalid province")
+      .optional()
+  ),
+  city: z.preprocess(
+    (data) => {
+      if (!data || typeof data !== "string") return undefined;
+      return data === "" ? undefined : data;
+    },
+    z
+      .string()
+      .min(1, "City cannot be empty")
+      .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid city")
+      .optional()
+  ),
+  barangay: z.preprocess(
+    (data) => {
+      if (!data || typeof data !== "string") return undefined;
+      return data === "" ? undefined : data;
+    },
+    z
+      .string()
+      .min(1, "Barangay cannot be empty")
+      .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid barangay")
+      .optional()
+  ),
+  street: z.preprocess(
+    (data) => {
+      if (!data || typeof data !== "string") return undefined;
+      return data === "" ? undefined : data;
+    },
+    z
+      .string()
+      .min(1, "Street cannot be empty")
+      .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid street")
+      .optional()
+  ),
   email: z
     .string({ required_error: "Email is required" })
-    .min(1, "Email is required")
     .email("Invalid email"),
   contactNo: z
-    .string({ required_error: "Invalid contact number" })
-    .length(10, "Invalid contact number"),
+    .string({ required_error: "Contact number is required" })
+    .regex(/(^9)\d{9}$/, "Invalid contact number"),
 });
 
-const RegisterPatient = (props: Props) => {
+const RegisterPatient = (_: Props) => {
   const [regions, setRegions] = useState<Region[]>();
   const [regionOptions, setRegionOptions] = useState<SelectOption[]>();
   const [provinces, setProvinces] = useState<Province[]>();
   const [provinceOptions, setProvinceOptions] = useState<SelectOption[]>();
   const [cities, setCities] = useState<City[]>();
   const [cityOptions, setCityOptions] = useState<SelectOption[]>();
-  const [barangays, setBarangays] = useState<Barangay[]>();
+  const [__, setBarangays] = useState<Barangay[]>();
   const [barangayOptions, setBarangayOptions] = useState<SelectOption[]>();
   const oldRegionValue = useRef<string>();
   const oldProvinceValue = useRef<string>();
@@ -77,7 +122,6 @@ const RegisterPatient = (props: Props) => {
     handleSubmit,
     watch,
     reset,
-    trigger,
     formState: { errors },
   } = useForm<SignupFormValues>({
     defaultValues: {
@@ -96,24 +140,45 @@ const RegisterPatient = (props: Props) => {
   });
 
   const onSubmit: SubmitHandler<SignupFormValues> = (data) => {
-    console.log(data)
     mutate(
       { ...data, contactNo: "+63" + watch("contactNo") },
       {
-        onSuccess: () =>
+        onSuccess: (data) => {
           reset({
             firstName: "",
             middleName: "",
             lastName: "",
             contactNo: "",
-            role: "",
             region: "",
             province: "",
             city: "",
             barangay: "",
             street: "",
             email: "",
-          }),
+          });
+          toast.success(
+            `Successfully registered ${data.name.firstName} ${data.name.lastName}`,
+            {
+              theme:
+                localStorage.getItem("theme") === "darkTheme"
+                  ? "dark"
+                  : "light",
+            }
+          );
+        },
+        onError(error) {
+          toast.error(
+            "message" in error.response.data
+              ? error.response.data.message
+              : error.response.data.formErrors,
+            {
+              theme:
+                localStorage.getItem("theme") === "darkTheme"
+                  ? "dark"
+                  : "light",
+            }
+          );
+        },
       }
     );
   };
@@ -238,7 +303,7 @@ const RegisterPatient = (props: Props) => {
     <div className="w-full h-full flex">
       <section className="bg-base-300 max-w-4xl w-full m-auto rounded-2xl shadow-md px-8 py-10 md:px-10 lg:px-16">
         <header className="flex justify-start">
-          <h1 className="text-2xl font-bold mx-2 py-3">Add a new Patient</h1>
+          <h1 className="text-2xl font-bold mx-2 py-3">Add a new patient</h1>
         </header>
         <form onSubmit={handleSubmit(onSubmit)}>
           <section className="flex flex-col gap-1">
@@ -249,14 +314,11 @@ const RegisterPatient = (props: Props) => {
                   type="text"
                   label="firstName"
                   placeholder="First name"
-                  register={
-                    register as UseFormRegister<
-                      SignupFormValues | LoginFormValues | StaffSignupFormValues
-                    >
-                  }
+                  register={register}
                   value={watch("firstName")}
                   error={errors.firstName?.message}
                   Logo={BsPerson}
+                  required
                 />
               </div>
               <div className="flex flex-col sm:flex-row w-full justify-evenly gap-1">
@@ -264,11 +326,7 @@ const RegisterPatient = (props: Props) => {
                   type="text"
                   label="middleName"
                   placeholder="Middle name"
-                  register={
-                    register as UseFormRegister<
-                      SignupFormValues | LoginFormValues | StaffSignupFormValues
-                    >
-                  }
+                  register={register}
                   value={watch("middleName")}
                   error={errors.middleName?.message}
                   Logo={BsPerson}
@@ -277,14 +335,11 @@ const RegisterPatient = (props: Props) => {
                   type="text"
                   label="lastName"
                   placeholder="Last name"
-                  register={
-                    register as UseFormRegister<
-                      SignupFormValues | LoginFormValues | StaffSignupFormValues
-                    >
-                  }
+                  register={register}
                   value={watch("lastName")}
                   error={errors.lastName?.message}
                   Logo={BsPerson}
+                  required
                 />
               </div>
               <div>
@@ -292,14 +347,11 @@ const RegisterPatient = (props: Props) => {
                   type="text"
                   label="email"
                   placeholder="Email"
-                  register={
-                    register as UseFormRegister<
-                      SignupFormValues | LoginFormValues | StaffSignupFormValues
-                    >
-                  }
+                  register={register}
                   value={watch("email")}
                   error={errors.email?.message}
                   Logo={FiAtSign}
+                  required
                 />
               </div>
               <div>
@@ -307,19 +359,16 @@ const RegisterPatient = (props: Props) => {
                   type="number"
                   label="contactNo"
                   placeholder="Contact Number"
-                  register={
-                    register as UseFormRegister<
-                      SignupFormValues | LoginFormValues | StaffSignupFormValues
-                    >
-                  }
+                  register={register}
                   value={watch("contactNo")}
                   error={errors.contactNo?.message}
                   Logo={FiPhone}
+                  required
                 />
               </div>
             </div>
             <div className="flex flex-col p-2 rounded flex-1 gap-2">
-              <h2 className="font-semibold m-1">Address</h2>
+              <h2 className="font-semibold m-1">Address (optional)</h2>
               <div className="flex flex-col gap-1">
                 <Controller
                   name="region"
@@ -330,7 +379,7 @@ const RegisterPatient = (props: Props) => {
                       value={value}
                       placeholder="Region"
                       onChange={(val) => onChange(val?.value)}
-                      options={regionOptions}
+                      options={regionOptions || []}
                       isLoading={!regionOptions}
                     />
                   )}
@@ -349,7 +398,7 @@ const RegisterPatient = (props: Props) => {
                       value={value}
                       placeholder="Province"
                       onChange={(newValue) => onChange(newValue?.value)}
-                      options={provinceOptions}
+                      options={provinceOptions || []}
                       isLoading={!provinceOptions && !!watch("region")}
                       isDisabled={!watch("region")}
                     />
@@ -369,7 +418,7 @@ const RegisterPatient = (props: Props) => {
                       value={value}
                       placeholder="City"
                       onChange={(newValue) => onChange(newValue?.value)}
-                      options={cityOptions}
+                      options={cityOptions || []}
                       isLoading={!cityOptions && !!watch("province")}
                       isDisabled={!watch("province")}
                     />
@@ -389,7 +438,7 @@ const RegisterPatient = (props: Props) => {
                       value={value}
                       placeholder="Barangay"
                       onChange={(newValue) => onChange(newValue?.value)}
-                      options={barangayOptions}
+                      options={barangayOptions || []}
                       isLoading={!barangayOptions && !!watch("city")}
                       isDisabled={!watch("city")}
                     />
@@ -403,18 +452,14 @@ const RegisterPatient = (props: Props) => {
                 type="text"
                 label="street"
                 placeholder="Street"
-                register={
-                  register as UseFormRegister<
-                    SignupFormValues | LoginFormValues | StaffSignupFormValues
-                  >
-                }
+                register={register}
                 value={watch("street")}
                 error={errors.street?.message}
                 Logo={BsHouseDoor}
               />
             </div>
           </section>
-          <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-start px-2">
+          <div className="flex flex-col items-start gap-2 px-2">
             <button
               type="submit"
               className="btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 w-full sm:w-48 px-8 mt-8"
@@ -426,7 +471,7 @@ const RegisterPatient = (props: Props) => {
                 "Add Patient"
               )}
             </button>
-            <span className="text-xs text-error text-center">
+            <span className="px-2 text-xs text-error text-center">
               {error && (error as any).response.data.formErrors}
             </span>
           </div>

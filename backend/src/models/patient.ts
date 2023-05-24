@@ -4,6 +4,7 @@ const patientSchema = new Schema<Patient>({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
 });
 

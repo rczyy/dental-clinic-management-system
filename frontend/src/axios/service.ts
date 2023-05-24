@@ -16,8 +16,8 @@ export const getService = async (id: string) => {
   return res.data;
 };
 
-export const addService = async () => {
-  const res = await axios.post<ServiceResponse>(`${URL}/service/add`, {
+export const addService = async (data: ServiceFormValues) => {
+  const res = await axios.post<ServiceResponse>(`${URL}/service/add`, data, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
@@ -26,8 +26,8 @@ export const addService = async () => {
   return res.data;
 };
 
-export const editService = async (id: string) => {
-  const res = await axios.patch<ServiceResponse>(`${URL}/service/edit/${id}`, {
+export const editService = async (data: ServiceFormValues, id: string) => {
+  const res = await axios.patch<ServiceResponse>(`${URL}/service/edit/${id}`, data, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,

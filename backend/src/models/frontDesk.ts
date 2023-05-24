@@ -4,6 +4,7 @@ const frontDeskSchema = new Schema<FrontDesk>({
   staff: {
     type: Schema.Types.ObjectId,
     ref: "Staff",
+    required: true,
   },
 });
 

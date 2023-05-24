@@ -1,9 +1,8 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import asd from "../assets/Untitled-1.png";
+
 type Props = {};
 
-const Error = (props: Props) => {
+const Error = (_: Props) => {
   return (
     <div className="flex w-screen h-screen justify-center items-center">
       <div className="border-base-100 flex flex-col items-center gap-6 p-8 m-4 rounded-md">
