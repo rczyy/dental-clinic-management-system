@@ -10,7 +10,7 @@ export const useLoginWithGoogle = () => {
   >({
     mutationFn: loginWithGoogle,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
 };

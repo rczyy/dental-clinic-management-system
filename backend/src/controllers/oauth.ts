@@ -77,14 +77,14 @@ export const loginWithGoogle: RequestHandler = async (req, res) => {
     await user.save();
     await patient.save();
 
-    req.session.uid = user._id;
+    req.session.uid = user._id.toString();
     const token = sign({ role: user.role }, process.env.JWT_SECRET);
 
     res.status(200).json({ user: user, token });
     return;
   }
 
-  req.session.uid = existingUser._id;
+  req.session.uid = existingUser._id.toString();
   const token = sign({ role: existingUser.role }, process.env.JWT_SECRET);
 
   res.status(200).json({ user: existingUser, token });
