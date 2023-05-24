@@ -67,10 +67,11 @@ const PatientList = (props: Props) => {
           />
         </div>
       </div>
-      <div className="bg-base-300 p-4 rounded-box">
-        <table className="table table-fixed [&>*]:bg-base-300 w-full text-sm sm:text-base">
+      <div className="bg-base-300 py-4 pr-4 rounded-box overflow-x-auto">
+        <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
           <thead>
             <tr className="[&>*]:bg-base-300 border-b border-base-200">
+              <th></th>
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
@@ -86,12 +87,7 @@ const PatientList = (props: Props) => {
                   ) : null}
                 </div>
               </th>
-              <th className="text-primary normal-case hidden md:table-cell">
-                Address
-              </th>
-              <th className="text-primary normal-case hidden lg:table-cell">
-                Email
-              </th>
+              <th className="text-primary normal-case">Address</th>
               <th className="text-primary normal-case">Contact No.</th>
             </tr>
           </thead>

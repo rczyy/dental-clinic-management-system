@@ -4,6 +4,7 @@ const managerSchema = new Schema<Manager>({
   staff: {
     type: Schema.Types.ObjectId,
     ref: "Staff",
+    required: true,
   },
 });
 

@@ -31,32 +31,53 @@ export const registerAdmin: RequestHandler = async (req, res) => {
     .object({
       firstName: z
         .string({ required_error: "First name is required" })
-        .regex(/^[A-Za-z ]+$/, "First name may only contain letters"),
+        .min(1, "First name cannot be empty")
+        .regex(/^[A-Za-zÑñ. ]+$/, "Invalid first name"),
       middleName: z
-        .string({ required_error: "Middle name is required" })
-        .regex(/^[A-Za-z ]+$/, "Middle name may only contain letters"),
+        .string()
+        .min(1, "Middle name cannot be empty")
+        .regex(/^[A-Za-zÑñ ]+$/, "Invalid middle name")
+        .optional(),
       lastName: z
         .string({ required_error: "Last name is required" })
-        .regex(/^[A-Za-z ]+$/, "Last name may only contain letters"),
+        .min(1, "Last name cannot be empty")
+        .regex(/^[A-Za-zÑñ ]+$/, "Invalid last name"),
       region: z
-        .string({ required_error: "Region is required" })
-        .regex(/^[A-Za-z ]+$/, "Region may only contain letters"),
+        .string()
+        .min(1, "Region cannot be empty")
+        .regex(/^[A-Za-z. -]+$/, "Invalid region")
+        .optional(),
       province: z
-        .string({ required_error: "Province is required" })
-        .regex(/^[A-Za-z ]+$/, "Province may only contain letters"),
+        .string()
+        .min(1, "Province cannot be empty")
+        .regex(/^[A-Za-zÑñ.() -]+$/, "Invalid province")
+        .optional(),
       city: z
-        .string({ required_error: "City is required" })
-        .regex(/^[A-Za-z ]+$/, "City may only contain letters"),
-      barangay: z.string({ required_error: "Barangay is required" }),
-      street: z.string({ required_error: "Street is required" }),
+        .string()
+        .min(1, "City cannot be empty")
+        .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid city")
+        .optional(),
+      barangay: z
+        .string()
+        .min(1, "Barangay cannot be empty")
+        .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid barangay")
+        .optional(),
+      street: z
+        .string()
+        .min(1, "Street cannot be empty")
+        .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid street")
+        .optional(),
       email: z.string({ required_error: "Email is required" }).email(),
       password: z
         .string({ required_error: "Password is required" })
         .min(6, "Password must be atleast 6 characters"),
-      confirmPassword: z.string({ required_error: "Confirm your password" }),
+      confirmPassword: z
+        .string({ required_error: "Confirm your password" })
+        .min(1, "Confirm your password"),
       contactNo: z
-          .string({ required_error: "Contact number is required" })
-          .regex(/(^\+63)\d{10}$/, "Invalid contact number"),
+        .string({ required_error: "Contact number is required" })
+        .min(1, "Contact number cannot be empty")
+        .regex(/(^\+639)\d{9}$/, "Invalid contact number"),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords doesn't match",
@@ -115,6 +136,7 @@ export const registerAdmin: RequestHandler = async (req, res) => {
     password: hashedPassword,
     contactNo,
     role: Roles.Admin,
+    verified: true,
   });
 
   const admin = new Admin({

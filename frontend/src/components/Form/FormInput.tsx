@@ -4,15 +4,14 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { IconType } from "react-icons/lib";
 
 type Props = {
-  label: Path<LoginFormValues | SignupFormValues | StaffSignupFormValues>;
-  register: UseFormRegister<
-    LoginFormValues | SignupFormValues | StaffSignupFormValues
-  >;
+  label: Path<any>;
+  register: UseFormRegister<any>;
   error: string | undefined;
   type: string;
   placeholder: string;
   value: string;
   Logo?: IconType;
+  required?: boolean;
 };
 
 const FormInput = ({
@@ -23,6 +22,7 @@ const FormInput = ({
   value,
   error,
   Logo,
+  required,
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -56,7 +56,8 @@ const FormInput = ({
                   (label !== "contactNo" ? "left-3.5" : "-left-6 sm:-left-8"))
             }
           >
-            {placeholder}
+            {placeholder}{" "}
+            {required && <span className="text-red-400 text-xs">*</span>}
           </label>
           <input
             className={
@@ -68,6 +69,7 @@ const FormInput = ({
             type={
               type === "password" ? (showPassword ? "text" : "password") : type
             }
+            value={value}
             {...register(label)}
           />
           {Logo && (

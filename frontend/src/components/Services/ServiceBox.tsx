@@ -1,4 +1,3 @@
-import React from "react";
 import { IconType } from "react-icons/lib";
 
 type Props = {
@@ -8,10 +7,9 @@ type Props = {
 
 const CategoryBox = ({ title, Icon }: Props) => {
   return (
-    <div className="flex flex-col border border-neutral items-center gap-2 shadow-md  h-[238px] p-6 rounded-md">
+    <div className="flex flex-col justify-center items-center gap-4 h-[238px] p-6 border border-neutral rounded-md shadow">
       <Icon className="h-24 w-24 text-primary" />
       <span className="font-semibold text-lg text-center">{title}</span>
-      <span className="text-sm">Learn more</span>
     </div>
   );
 };

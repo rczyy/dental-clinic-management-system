@@ -1,5 +1,15 @@
 /// <reference types="vite/client" />
 
+type ServiceCategory =
+  | "First Appointment"
+  | "Restoration"
+  | "Cosmetic"
+  | "Root Canal Treatment"
+  | "Crowns and Bridges"
+  | "Oral Surgery or Extractions"
+  | "Dentures"
+  | "Orthodontics (Braces)";
+
 interface LoginFormValues {
   email: string;
   password: string;
@@ -33,6 +43,12 @@ interface StaffSignupFormValues {
   barangay: string;
   street: string;
   contactNo: string;
+}
+
+interface ServiceFormValues {
+  category: ServiceCategory | "";
+  name: string;
+  estimatedTime: string;
 }
 
 interface SelectOption {
@@ -87,22 +103,22 @@ interface Barangay {
 
 interface Name {
   firstName: string;
-  middleName: string;
+  middleName?: string;
   lastName: string;
 }
 
 interface Address {
-  region: string;
-  province: string;
-  city: string;
-  barangay: string;
-  street: string;
+  region?: string;
+  province?: string;
+  city?: string;
+  barangay?: string;
+  street?: string;
 }
 
 interface UserResponse {
-  _id?: string;
+  _id: string;
   name: Name;
-  address: Address;
+  address?: Address;
   email: string;
   contactNo: string;
   role:
@@ -117,37 +133,37 @@ interface UserResponse {
 }
 
 interface AdminResponse {
-  _id?: string;
+  _id: string;
   user: UserResponse;
 }
 
 interface StaffResponse {
-  _id?: string;
+  _id: string;
   user: UserResponse;
 }
 
 interface PatientResponse {
-  _id?: string;
+  _id: string;
   user: UserResponse;
 }
 
 interface ManagerResponse {
-  _id?: string;
+  _id: string;
   staff: string;
 }
 
 interface DentistResponse {
-  _id?: string;
+  _id: string;
   staff: string;
 }
 
 interface FrontDeskResponse {
-  _id?: string;
+  _id: string;
   staff: string;
 }
 
 interface AssistantResponse {
-  _id?: string;
+  _id: string;
   staff: string;
 }
 
@@ -209,8 +225,8 @@ interface ErrorMessageResponse {
 }
 
 interface ServiceResponse {
-  _id?: string;
-  category: string;
+  _id: string;
+  category: ServiceCategory;
   name: string;
   estimatedTime: string;
 }

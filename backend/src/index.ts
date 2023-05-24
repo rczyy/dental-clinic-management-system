@@ -13,6 +13,8 @@ import managerRoute from "./routes/manager";
 import patientRoute from "./routes/patient";
 import staffRoute from "./routes/staff";
 import serviceRoute from "./routes/service";
+import emailRoute from "./routes/email";
+import oauthRoute from "./routes/oauth";
 import appointmentRoute from "./routes/appointment"
 
 const main = async () => {
@@ -50,6 +52,8 @@ const main = async () => {
   app.use("/staff", staffRoute);
   app.use("/service", serviceRoute);
   app.use("/appointment", appointmentRoute);
+  app.use("/email", emailRoute);
+  app.use("/oauth", oauthRoute);
 
   app.listen(port, () =>
     console.log(`Server listening to http://localhost:${port}`)

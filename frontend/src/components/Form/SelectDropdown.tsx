@@ -32,14 +32,15 @@ const SelectDropdown = ({
       {...field}
       value={
         value
-          ? options &&
-            options.find((item: SelectOption) => item.value === value)
+          ? (options &&
+              options.find((item: SelectOption) => item.value === value)) ||
+            null
           : null
       }
       classNames={{
         control: ({ hasValue }) =>
           "pl-1.5 py-0.5 !bg-base-300 " + (hasValue && "!border-primary"),
-        placeholder: () => "!text-zinc-400 !text-sm ",
+        placeholder: () => "!text-zinc-400 !text-sm truncate",
         singleValue: () => "!text-base-content",
         input: () => "!text-base-content",
         option: ({ isSelected, isFocused }) =>
@@ -49,10 +50,10 @@ const SelectDropdown = ({
         indicatorSeparator: ({ hasValue }) => (hasValue ? "!bg-primary" : ""),
       }}
       placeholder={placeholder}
-      onChange={onChange}
+      onChange={onChange || (() => null)}
       options={options}
       isLoading={isLoading}
-      isClearable={isClearable}
+      isClearable={Boolean(isClearable)}
       isDisabled={isDisabled}
     />
   );

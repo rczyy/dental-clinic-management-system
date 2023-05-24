@@ -7,19 +7,30 @@ type Props = {};
 
 const DashboardRoot = (props: Props) => {
   const sidebar = useAdminStore((state) => state.sidebar);
+  const toggleSidebar = useAdminStore((state) => state.toggleSidebar);
   const navigation = useNavigation();
   const { data } = useGetUser();
 
   if (!data) return <Navigate to="/login" />;
-  if (data.role !== "Admin") return <Navigate to="/" />;
+  if (
+    data.role !== "Admin" &&
+    data.role !== "Manager" &&
+    data.role !== "Dentist" &&
+    data.role !== "Front Desk" &&
+    data.role !== "Assistant"
+  )
+    return <Navigate to="/" />;
 
   return (
     <div className="flex min-h-[inherit] relative">
       <div
         className={
           "w-full min-h-[inherit] fixed bg-black bg-opacity-50 z-20 " +
-          (sidebar ? "md:hidden" : "hidden")
+          (sidebar ? "lg:hidden" : "hidden")
         }
+        onClick={(e) => {
+          if (e.target === e.currentTarget) toggleSidebar();
+        }}
       ></div>
       <Sidebar />
       <main className={navigation.state === "loading" ? "opacity-50" : ""}>

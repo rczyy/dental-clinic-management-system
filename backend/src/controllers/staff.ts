@@ -1,16 +1,17 @@
 import { RequestHandler } from "express";
 import { isValidObjectId } from "mongoose";
 import { z } from "zod";
-import { hash } from "bcrypt";
 import { Roles } from "../constants";
 import { verifyToken } from "../utilities/verifyToken";
-import { generateRandomPass } from "../utilities/generatePassword";
 import User from "../models/user";
 import Staff from "../models/staff";
 import Manager from "../models/manager";
 import Assistant from "../models/assistant";
 import Dentist from "../models/dentist";
 import FrontDesk from "../models/frontDesk";
+import { sendEmail } from "../utilities/sendEmail";
+import { changePasswordStaff } from "../templates/changePasswordStaff";
+import jwt from "jsonwebtoken";
 
 export const getStaffs: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -78,28 +79,47 @@ export const registerStaff: RequestHandler = async (req, res) => {
   const userSchema = z.object({
     firstName: z
       .string({ required_error: "First name is required" })
-      .regex(/^[A-Za-z ]+$/, "First name may only contain letters"),
+      .min(1, "First name cannot be empty")
+      .regex(/^[A-Za-zÑñ. ]+$/, "Invalid first name"),
     middleName: z
-      .string({ required_error: "Middle name is required" })
-      .regex(/^[A-Za-z ]+$/, "Middle name may only contain letters"),
+      .string()
+      .min(1, "Middle name cannot be empty")
+      .regex(/^[A-Za-zÑñ ]+$/, "Invalid middle name")
+      .optional(),
     lastName: z
       .string({ required_error: "Last name is required" })
-      .regex(/^[A-Za-z ]+$/, "Last name may only contain letters"),
+      .min(1, "Last name cannot be empty")
+      .regex(/^[A-Za-zÑñ ]+$/, "Invalid last name"),
     region: z
-      .string({ required_error: "Region is required" })
-      .regex(/^[A-Za-z ]+$/, "Region may only contain letters"),
+      .string()
+      .min(1, "Region cannot be empty")
+      .regex(/^[A-Za-z. -]+$/, "Invalid region")
+      .optional(),
     province: z
-      .string({ required_error: "Province is required" })
-      .regex(/^[A-Za-z ]+$/, "Province may only contain letters"),
+      .string()
+      .min(1, "Province cannot be empty")
+      .regex(/^[A-Za-zÑñ.() -]+$/, "Invalid province")
+      .optional(),
     city: z
-      .string({ required_error: "City is required" })
-      .regex(/^[A-Za-z ]+$/, "City may only contain letters"),
-    barangay: z.string({ required_error: "Barangay is required" }),
-    street: z.string({ required_error: "Street is required" }),
+      .string()
+      .min(1, "City cannot be empty")
+      .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid city")
+      .optional(),
+    barangay: z
+      .string()
+      .min(1, "Barangay cannot be empty")
+      .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid barangay")
+      .optional(),
+    street: z
+      .string()
+      .min(1, "Street cannot be empty")
+      .regex(/^[\dA-Za-zÑñ.() -]+$/, "Invalid street")
+      .optional(),
     email: z.string({ required_error: "Email is required" }).email(),
     contactNo: z
       .string({ required_error: "Contact number is required" })
-      .regex(/(^\+63)\d{10}$/, "Invalid contact number"),
+      .min(1, "Contact number cannot be empty")
+      .regex(/(^\+639)\d{9}$/, "Invalid contact number"),
     role: z.nativeEnum(Roles),
   });
 
@@ -151,9 +171,6 @@ export const registerStaff: RequestHandler = async (req, res) => {
     return;
   }
 
-  const password = generateRandomPass();
-  const hashedPassword = await hash(password, 10);
-
   const user = new User({
     name: {
       firstName,
@@ -168,9 +185,9 @@ export const registerStaff: RequestHandler = async (req, res) => {
       street,
     },
     email,
-    password: hashedPassword,
     contactNo,
     role,
+    verified: true,
   });
 
   const staff = new Staff({
@@ -204,6 +221,28 @@ export const registerStaff: RequestHandler = async (req, res) => {
     });
     await frontDesk.save();
   }
+
+  const changePasswordStaffToken = jwt.sign(
+    { _id: user._id },
+    process.env.JWT_SECRET
+  );
+
+  await sendEmail({
+    Messages: [
+      {
+        From: {
+          Email: process.env.EMAIL_SENDER,
+        },
+        To: [
+          {
+            Email: email,
+          },
+        ],
+        Subject: `Welcome to AT Dental Home`,
+        HTMLPart: changePasswordStaff(firstName, changePasswordStaffToken),
+      },
+    ],
+  });
 
   res.status(201).json(user);
 };
