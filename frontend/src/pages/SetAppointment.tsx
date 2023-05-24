@@ -116,9 +116,11 @@ const SetAppointment = (props: Props) => {
   ];
 
   const handleDisableSchedule = () => {
+    if (!watch("date")) return;
+
     if (watch("dentist")) {
       getDentistAppointments({
-        id: watch("dentist"),
+        id: selectedDentist,
         date: dayjs(watch("date")).format("YYYY-MM-DD"),
       });
     }
@@ -546,7 +548,9 @@ const SetAppointment = (props: Props) => {
                           onChange={(val) => onChange(val?.value)}
                           options={timeOptions}
                           isLoading={!serviceCategories}
-                          isOptionDisabled={(option) => option.isDisabled}
+                          isOptionDisabled={(option) =>
+                            option ? option.isDisabled : false
+                          }
                           isDisabled={!watch("date")}
                         />
                       )}
