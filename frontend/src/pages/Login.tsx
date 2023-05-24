@@ -40,7 +40,7 @@ const Login = (props: Props) => {
   const onSubmit: SubmitHandler<LoginFormValues> = (data) =>
     mutate(data, {
       onSuccess: (data) => {
-        queryClient.setQueryData(["user"], data.user);
+        queryClient.setQueryData(["me"], data.user);
         navigate("/");
       },
     });
