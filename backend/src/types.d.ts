@@ -109,6 +109,15 @@ declare global {
     estimatedTime: string;
   }
 
+  interface Appointment {
+    _id?: Types.ObjectId;
+    dateTimeScheduled: Date;
+    dateTimeFinished: Date;
+    patient: Types.ObjectId;
+    dentist: Types.ObjectId;
+    service: Types.ObjectId;
+  }
+  
   interface EmailRequest {
     _id: Types.ObjectId;
     token?: string;

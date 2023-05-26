@@ -5,11 +5,12 @@ import DashboardRoot from "./layout/DashboardRoot";
 import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
+import SetAppointment from "./pages/SetAppointment";
+import ServiceList from "./pages/ServiceList";
 import StaffList, { loader as staffLoader } from "./pages/StaffList";
 import PatientList, { loader as patientLoader } from "./pages/PatientList";
 import RegisterStaff from "./pages/RegisterStaff";
 import RegisterPatient from "./pages/RegisterPatient";
-import ServiceList from "./pages/ServiceList";
 import AddService from "./pages/AddService";
 import { VerifyEmail } from "./pages/VerifyEmail";
 import Error from "./pages/Error";
@@ -18,6 +19,10 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./styles.css";
 import Profile from "./pages/Profile";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { ApiProvider } from "@reduxjs/toolkit/query/react";
+import { appointmentApi } from "./redux/api/appointment";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -99,15 +104,31 @@ const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: "services",
+        element: <Services />,
+      },
+      {
+        path: "set-appointment",
+        element: <SetAppointment />,
+      },
+      {
+        path: "set-appointment/success",
+        element: <AppointmentSuccess />,
+      },
     ],
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <QueryClientProvider client={queryClient}>
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <RouterProvider router={router} />
-      <ReactQueryDevtools />
-    </GoogleOAuthProvider>
+    <ApiProvider api={appointmentApi}>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <RouterProvider router={router} />
+          <ReactQueryDevtools />
+        </LocalizationProvider>
+      </GoogleOAuthProvider>
+    </ApiProvider>
   </QueryClientProvider>
 );

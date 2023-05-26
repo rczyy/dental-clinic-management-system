@@ -11,7 +11,7 @@ export const getServices: RequestHandler = async (_, res) => {
   res.status(200).json(services);
 };
 export const getService: RequestHandler = async (req, res) => {
-  const { serviceId } = req.params;
+  const { service } = req.params;
 
   if (!isValidObjectId(serviceId)) {
     const error: ErrorMessage = { message: "Invalid service ID" };
@@ -19,9 +19,9 @@ export const getService: RequestHandler = async (req, res) => {
     return;
   }
 
-  const service = await Service.findOne({ _id: serviceId });
+  const serviceRes = await Service.findOne({ _id: service});
 
-  res.status(200).json(service);
+  res.status(200).json(serviceRes);
 };
 export const addService: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -123,9 +123,9 @@ export const editService: RequestHandler = async (req, res) => {
   }
 
   const { name, estimatedTime, category }: body = req.body;
-  const { serviceId } = req.params;
+  const { service } = req.params;
 
-  if (!isValidObjectId(serviceId)) {
+  if (!isValidObjectId(service)) {
     const error: ErrorMessage = { message: "Invalid service ID" };
     res.status(400).json(error);
     return;
@@ -174,15 +174,15 @@ export const removeService: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { serviceId } = req.params;
+  const { service } = req.params;
 
-  if (!isValidObjectId(serviceId)) {
+  if (!isValidObjectId(service)) {
     const error: ErrorMessage = { message: "Invalid service ID" };
     res.status(400).json(error);
     return;
   }
 
-  const deletedService = await Service.findOneAndDelete({ _id: serviceId });
+  const deletedService = await Service.findOneAndDelete({ _id: service });
 
   if (!deletedService) {
     const error: ErrorMessage = { message: "Service doesn't exist" };

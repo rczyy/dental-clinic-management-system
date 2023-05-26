@@ -5,6 +5,7 @@ import { useGetMe, useLogout } from "../../hooks/user";
 import DarkModeToggle from "../Utilities/DarkModeToggle";
 import { useDetectClickOutside } from "react-detect-click-outside";
 import { useAdminStore } from "../../store/admin";
+import ATLogo from "../Utilities/ATLogo";
 
 type Props = {};
 
@@ -13,6 +14,7 @@ const Navbar = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const { data } = useGetMe();
   const { mutate } = useLogout();
+  const roles = ["Admin", "Manager", "Assistant", "Dentist", "Front Desk",]
 
   const handleLogout: React.MouseEventHandler<HTMLSpanElement> = () => {
     mutate();
@@ -25,7 +27,7 @@ const Navbar = (props: Props) => {
 
   return (
     <div className="navbar bg-base-100 min-h-16 border-b border-b-neutral shadow gap-8 2xl:gap-0 px-4 py-0 z-30 md:px-8 fixed">
-      {data && data.role === "Admin" && (
+      {data && roles.includes(data.role) && (
         <IoMenuOutline
           className="w-8 h-8 cursor-pointer"
           onClick={toggleSidebar}
@@ -36,9 +38,10 @@ const Navbar = (props: Props) => {
           {(!data || (data && data.role !== "Admin")) && (
             <Link
               to="/"
-              className="font-extrabold text-3xl cursor-pointer text-primary"
+              className="flex items-center font-bold -tracking-widest text-2xl cursor-pointer text-primary"
             >
-              Logo
+              <ATLogo className="fill-primary"/>
+              Dental Home
             </Link>
           )}
         </div>

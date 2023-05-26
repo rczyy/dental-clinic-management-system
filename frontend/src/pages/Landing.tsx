@@ -25,12 +25,11 @@ const Landing = (_: Props) => {
           </h1>
         </div>
         <div className="z-10">
-          <button className="btn btn-primary text-base-100">
+          <Link to="/set-appointment" className="btn btn-primary text-base-100">
             Book an appointment
-          </button>
+          </Link>
         </div>
-        <div className="absolute w-full h-full bg-black bg-opacity-60 backdrop-blur-[2px]"></div>
-        <Blob className="text-base-300 fill-current" />
+        <div className="absolute w-full h-full bg-black bg-opacity-70"></div>
       </section>
 
       <section className="flex flex-col justify-center gap-8 px-4 pb-20">
@@ -58,30 +57,6 @@ const Landing = (_: Props) => {
         </div>
       </section>
     </div>
-  );
-};
-
-type BlobProps = {
-  className: string;
-};
-
-const Blob = ({ className }: BlobProps) => {
-  return (
-    <svg
-      id="visual"
-      className="absolute bottom-0  z-0"
-      viewBox="0 0 900 600"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
-      version="1.1"
-    >
-      <path
-        d="M0 546L37.5 541C75 536 150 526 225 521.3C300 516.7 375 517.3 450 523.7C525 530 600 542 675 548.8C750 555.7 825 557.3 862.5 558.2L900 559L900 601L862.5 601C825 601 750 601 675 601C600 601 525 601 450 601C375 601 300 601 225 601C150 601 75 601 37.5 601L0 601Z"
-        className={className}
-        strokeLinecap="round"
-        strokeLinejoin="miter"
-      ></path>
-    </svg>
   );
 };
 

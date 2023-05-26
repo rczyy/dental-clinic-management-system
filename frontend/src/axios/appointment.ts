@@ -2,18 +2,18 @@ import axios from "axios";
 
 const URL = import.meta.env.VITE_AXIOS_BASE_URL;
 
-export const getDentists = async () => {
-  const res = await axios.get<DentistResponse[]>(`${URL}/dentist`, {
+export const getAppointments = async () => {
+  const res = await axios.get<AppointmentResponse[]>(`${URL}/appointment/`, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
     },
   });
   return res.data;
-};
+}
 
-export const getDentistNames = async () => {
-  const res = await axios.get<DentistNamesResponse[]>(`${URL}/dentist/names`, {
+export const addAppointment = async (appointment: AppointmentFormValues) => {
+  const res = await axios.post<AppointmentResponse>(`${URL}/appointment/add`, appointment, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
