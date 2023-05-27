@@ -13,13 +13,13 @@ export const getServices: RequestHandler = async (_, res) => {
 export const getService: RequestHandler = async (req, res) => {
   const { service } = req.params;
 
-  if (!isValidObjectId(serviceId)) {
+  if (!isValidObjectId(service)) {
     const error: ErrorMessage = { message: "Invalid service ID" };
     res.status(400).json(error);
     return;
   }
 
-  const serviceRes = await Service.findOne({ _id: service});
+  const serviceRes = await Service.findOne({ _id: service });
 
   res.status(200).json(serviceRes);
 };
@@ -133,7 +133,7 @@ export const editService: RequestHandler = async (req, res) => {
 
   const editedService = await Service.findOneAndUpdate(
     {
-      _id: serviceId,
+      _id: service,
     },
     {
       name,
