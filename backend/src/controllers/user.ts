@@ -31,6 +31,7 @@ export const getUsers: RequestHandler = async (req, res) => {
 };
 
 export const getUser: RequestHandler = async (req, res) => {
+  const { id } = req.params;
   const token = verifyToken(req.headers.authorization);
 
   if ("message" in token) {
@@ -39,15 +40,20 @@ export const getUser: RequestHandler = async (req, res) => {
     return;
   }
 
-  if (token.role !== Roles.Admin && token.role !== Roles.Manager
-    && token.role !== Roles.Dentist && token.role !== Roles.Assistant
-    && token.role !== Roles.FrontDesk  && token.role !== Roles.Patient) {
+  if (
+    (token.role !== Roles.Admin &&
+      token.role !== Roles.Manager &&
+      token.role !== Roles.Dentist &&
+      token.role !== Roles.Assistant &&
+      token.role !== Roles.FrontDesk &&
+      token.role !== Roles.Patient) ||
+    (token.role === Roles.Patient && req.session.uid !== id)
+  ) {
     const error: ErrorMessage = { message: "Unauthorized to do this" };
     res.status(401).json(error);
     return;
   }
 
-  const {id} = req.params;
   const user = await User.findById(id).select("-password");
 
   res.status(200).json(user);
