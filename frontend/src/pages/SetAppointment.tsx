@@ -9,8 +9,8 @@ import { BsFillClockFill } from "react-icons/bs";
 import { RiServiceFill } from "react-icons/ri";
 import { FaTooth } from "react-icons/fa";
 import { IoCalendar } from "react-icons/io5";
-import { useGetUser } from "../hooks/user";
-import { getUser } from "../axios/user";
+import { useGetMe } from "../hooks/user";
+import { getMe } from "../axios/user";
 import { QueryClient } from "@tanstack/react-query";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useAddAppointment } from "../hooks/appointment";
@@ -27,8 +27,8 @@ type Props = {};
 
 export const loader = (queryClient: QueryClient) => async () =>
   await queryClient.ensureQueryData({
-    queryKey: ["user"],
-    queryFn: getUser,
+    queryKey: ["me"],
+    queryFn: getMe,
   });
 
 const schema = z.object({
@@ -51,7 +51,7 @@ const schema = z.object({
 
 const SetAppointment = (props: Props) => {
   const navigate = useNavigate();
-  const { data: userData } = useGetUser();
+  const { data: userData } = useGetMe();
   const { data: servicesData } = useGetServices();
   const { data: dentistData } = useGetDentistNames();
   const [getDentistAppointments, { data: dentistAppointments }] =
@@ -227,6 +227,8 @@ const SetAppointment = (props: Props) => {
       );
       return `${dentistName?.name.firstName} ${dentistName?.name.lastName}`;
     }
+
+    return;
   };
 
   const getService = () => {
@@ -236,6 +238,8 @@ const SetAppointment = (props: Props) => {
       );
       return `${service?.category} - ${service?.name}`;
     }
+
+    return;
   };
 
   const onSubmit: SubmitHandler<AppointmentZodFormValues> = (data) => {

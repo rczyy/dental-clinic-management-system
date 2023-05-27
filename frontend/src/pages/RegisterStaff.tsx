@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   useForm,
   Controller,
@@ -8,18 +8,18 @@ import {
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiAtSign, FiPhone } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
-import {
-  getCities,
-  getProvinces,
-  getRegions,
-  getBarangays,
-} from "../api/philippineAddress";
 import { useRegisterStaff } from "../hooks/staff";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import FormInput from "../components/Form/FormInput";
 import SelectDropdown from "../components/Form/SelectDropdown";
 import { toast } from "react-toastify";
+import {
+  useGetRegionsQuery,
+  useLazyGetBarangaysQuery,
+  useLazyGetCitiesQuery,
+  useLazyGetProvincesQuery,
+} from "../redux/api/address";
 
 type Props = {};
 
@@ -117,19 +117,23 @@ const RegisterStaff = (props: Props) => {
     { value: "Assistant", label: "Assistant Dentist" },
     { value: "Front Desk", label: "Front Desk" },
   ];
-  const [regions, setRegions] = useState<Region[]>();
   const [regionOptions, setRegionOptions] = useState<SelectOption[]>();
-  const [provinces, setProvinces] = useState<Province[]>();
+  const [selectedRegion, setSelectedRegion] = useState<Region>();
   const [provinceOptions, setProvinceOptions] = useState<SelectOption[]>();
-  const [cities, setCities] = useState<City[]>();
+  const [selectedProvince, setSelectedProvince] = useState<Province>();
   const [cityOptions, setCityOptions] = useState<SelectOption[]>();
-  const [_, setBarangays] = useState<Barangay[]>();
+  const [selectedCity, setSelectedCity] = useState<City>();
   const [barangayOptions, setBarangayOptions] = useState<SelectOption[]>();
-  const oldRegionValue = useRef<string>();
-  const oldProvinceValue = useRef<string>();
-  const oldCityValue = useRef<string>();
 
   const { mutate, isLoading, error } = useRegisterStaff();
+
+  const { data: regions, isFetching: isRegionsLoading } = useGetRegionsQuery();
+  const [getProvinces, { data: provinces, isFetching: isProvincesLoading }] =
+    useLazyGetProvincesQuery();
+  const [getCities, { data: cities, isFetching: isCitiesLoading }] =
+    useLazyGetCitiesQuery();
+  const [getBarangays, { data: barangays, isFetching: isBarangaysLoading }] =
+    useLazyGetBarangaysQuery();
 
   const {
     control,
@@ -201,121 +205,141 @@ const RegisterStaff = (props: Props) => {
   };
 
   useEffect(() => {
-    const getOptions = async () => {
-      if (!regions) {
-        const res = await getRegions();
+    if (regions)
+      setRegionOptions(
+        regions.map((region) => ({
+          value: region.name,
+          label: region.name,
+        }))
+      );
+  }, [regions]);
 
-        setRegions(res);
-      } else {
-        if (!regionOptions) {
-          setRegionOptions(
-            regions.map((region) => ({
-              value: region.name,
-              label: region.name,
-            }))
-          );
-        }
-      }
+  useEffect(() => {
+    if (regions && watch("region")) {
+      setProvinceOptions([]);
 
-      if (
-        watch("region") !== oldRegionValue.current &&
-        watch("region") !== ""
-      ) {
-        setProvinceOptions(undefined);
-        oldRegionValue.current = watch("region");
-        reset(
-          (formValues) => ({
-            ...formValues,
-            province: "",
-            city: "",
-            barangay: "",
-          }),
-          { keepErrors: true }
-        );
+      setSelectedRegion(
+        regions.find((region) => region.name === watch("region"))
+      );
 
-        if (regions) {
-          const selectedRegion = regions.find(
-            (region) => region.name === watch("region")
-          );
-          const regionCode = selectedRegion ? selectedRegion.code : "";
-          const res = await getProvinces(regionCode);
+      reset(
+        (formValues) => ({
+          ...formValues,
+          province: "",
+          city: "",
+          barangay: "",
+        }),
+        { keepErrors: true }
+      );
+    }
+  }, [watch("region")]);
 
-          setProvinces(res);
-          setProvinceOptions(
-            res.map((province) => ({
-              value: province.name,
-              label: province.name,
-            }))
-          );
-          setCityOptions(undefined);
-          setBarangayOptions(undefined);
-        }
-      }
+  useEffect(() => {
+    if (selectedRegion) getProvinces(selectedRegion.code || "");
+  }, [selectedRegion]);
 
-      if (
-        watch("province") !== oldProvinceValue.current &&
-        watch("province") !== ""
-      ) {
-        setCityOptions(undefined);
-        oldProvinceValue.current = watch("province");
-        reset(
-          (formValues) => ({
-            ...formValues,
-            city: "",
-            barangay: "",
-          }),
-          { keepErrors: true }
-        );
+  useEffect(() => {
+    if (provinces)
+      setProvinceOptions(
+        provinces.map((province) => ({
+          value: province.name,
+          label: province.name,
+        }))
+      );
+  }, [provinces]);
 
-        if (provinces) {
-          const selectedProvince = provinces.find(
-            (province) => province.name === watch("province")
-          );
-          const provinceCode = selectedProvince ? selectedProvince.code : "";
-          const res = await getCities(provinceCode);
+  useEffect(() => {
+    if (provinces && watch("province")) {
+      setCityOptions([]);
 
-          setCities(res);
-          setCityOptions(
-            res.map((city) => ({
-              value: city.name,
-              label: city.name,
-            }))
-          );
-          setBarangayOptions(undefined);
-        }
-      }
+      setSelectedProvince(
+        provinces.find((province) => province.name === watch("province"))
+      );
 
-      if (watch("city") !== oldCityValue.current && watch("city") !== "") {
-        setBarangayOptions(undefined);
-        oldCityValue.current = watch("city");
-        reset(
-          (formValues) => ({
-            ...formValues,
-            barangay: "",
-          }),
-          { keepErrors: true }
-        );
+      reset(
+        (formValues) => ({
+          ...formValues,
+          city: "",
+          barangay: "",
+        }),
+        { keepErrors: true }
+      );
+    }
+  }, [watch("province")]);
 
-        if (cities) {
-          const selectedCity = cities.find(
-            (city) => city.name === watch("city")
-          );
-          const cityCode = selectedCity ? selectedCity.code : "";
-          const res = await getBarangays(cityCode);
+  useEffect(() => {
+    if (selectedProvince) getCities(selectedProvince.code || "");
+  }, [selectedProvince]);
 
-          setBarangays(res);
-          setBarangayOptions(
-            res.map((barangay) => ({
-              value: barangay.name,
-              label: barangay.name,
-            }))
-          );
-        }
-      }
-    };
+  useEffect(() => {
+    if (cities)
+      setCityOptions(
+        cities.map((city) => ({
+          value: city.name,
+          label: city.name,
+        }))
+      );
+  }, [cities]);
 
-    getOptions();
-  }, [regions, watch("region"), watch("province"), watch("city")]);
+  useEffect(() => {
+    if (cities && watch("city")) {
+      setBarangayOptions([]);
+
+      setSelectedCity(cities.find((city) => city.name === watch("city")));
+
+      reset(
+        (formValues) => ({
+          ...formValues,
+          barangay: "",
+        }),
+        { keepErrors: true }
+      );
+    }
+  }, [watch("city")]);
+
+  useEffect(() => {
+    if (selectedCity) getBarangays(selectedCity.code || "");
+  }, [selectedCity]);
+
+  useEffect(() => {
+    if (cities)
+      setCityOptions(
+        cities.map((city) => ({
+          value: city.name,
+          label: city.name,
+        }))
+      );
+  }, [cities]);
+
+  useEffect(() => {
+    if (cities && watch("city")) {
+      setBarangayOptions([]);
+
+      setSelectedCity(cities.find((city) => city.name === watch("city")));
+
+      reset(
+        (formValues) => ({
+          ...formValues,
+          barangay: "",
+        }),
+        { keepErrors: true }
+      );
+    }
+  }, [watch("city")]);
+
+  useEffect(() => {
+    if (selectedCity) getBarangays(selectedCity.code || "");
+  }, [selectedCity]);
+
+  useEffect(() => {
+    if (barangays)
+      setBarangayOptions(
+        barangays.map((barangay) => ({
+          value: barangay.name,
+          label: barangay.name,
+        }))
+      );
+  }, [barangays]);
 
   return (
     <div className="w-full h-full flex transition-all">
@@ -417,7 +441,7 @@ const RegisterStaff = (props: Props) => {
                       placeholder="Region"
                       onChange={(val) => onChange(val?.value)}
                       options={regionOptions || []}
-                      isLoading={!regionOptions}
+                      isLoading={isRegionsLoading}
                     />
                   )}
                 />
@@ -436,7 +460,7 @@ const RegisterStaff = (props: Props) => {
                       placeholder="Province"
                       onChange={(newValue) => onChange(newValue?.value)}
                       options={provinceOptions || []}
-                      isLoading={!provinceOptions && !!watch("region")}
+                      isLoading={isProvincesLoading}
                       isDisabled={!watch("region")}
                     />
                   )}
@@ -456,7 +480,7 @@ const RegisterStaff = (props: Props) => {
                       placeholder="City"
                       onChange={(newValue) => onChange(newValue?.value)}
                       options={cityOptions || []}
-                      isLoading={!cityOptions && !!watch("province")}
+                      isLoading={isCitiesLoading}
                       isDisabled={!watch("province")}
                     />
                   )}
@@ -476,7 +500,7 @@ const RegisterStaff = (props: Props) => {
                       placeholder="Barangay"
                       onChange={(newValue) => onChange(newValue?.value)}
                       options={barangayOptions || []}
-                      isLoading={!barangayOptions && !!watch("city")}
+                      isLoading={isBarangaysLoading}
                       isDisabled={!watch("city")}
                     />
                   )}

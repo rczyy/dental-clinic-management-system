@@ -5,25 +5,26 @@ import {
   SetStateAction,
   useEffect,
   useLayoutEffect,
-  useRef,
   useState,
+  useRef,
 } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { FiCamera, FiEdit2, FiMapPin, FiPhone, FiX } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
-import {
-  getCities,
-  getProvinces,
-  getRegions,
-  getBarangays,
-} from "../api/philippineAddress";
 import FormInput from "../components/Form/FormInput";
 import SelectDropdown from "../components/Form/SelectDropdown";
 import { Navigate } from "react-router-dom";
 import { MdOutlineAddAPhoto } from "react-icons/md";
 import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import {
+  useGetRegionsQuery,
+  useLazyGetBarangaysQuery,
+  useLazyGetCitiesQuery,
+  useLazyGetProvincesQuery,
+} from "../redux/api/address";
+import DisabledFormInput from "../components/Form/DisabledFormInput";
 
 type EditModalProps = {
   userData: UserResponse;
@@ -231,19 +232,24 @@ const EditProfileModal = ({
   userData,
   setIsEditModalVisible,
 }: EditModalProps) => {
-  const [regions, setRegions] = useState<Region[]>();
+  const [isEditAddressOpen, setIsEditAddressOpen] = useState(false);
   const [regionOptions, setRegionOptions] = useState<SelectOption[]>();
-  const [provinces, setProvinces] = useState<Province[]>();
+  const [selectedRegion, setSelectedRegion] = useState<Region>();
   const [provinceOptions, setProvinceOptions] = useState<SelectOption[]>();
-  const [cities, setCities] = useState<City[]>();
+  const [selectedProvince, setSelectedProvince] = useState<Province>();
   const [cityOptions, setCityOptions] = useState<SelectOption[]>();
-  const [__, setBarangays] = useState<Barangay[]>();
+  const [selectedCity, setSelectedCity] = useState<City>();
   const [barangayOptions, setBarangayOptions] = useState<SelectOption[]>();
-  const oldRegionValue = useRef<string>();
-  const oldProvinceValue = useRef<string>();
-  const oldCityValue = useRef<string>();
 
   const { mutate: editUser, error: editUserError } = useEditUser();
+
+  const { data: regions, isFetching: isRegionsLoading } = useGetRegionsQuery();
+  const [getProvinces, { data: provinces, isFetching: isProvincesLoading }] =
+    useLazyGetProvincesQuery();
+  const [getCities, { data: cities, isFetching: isCitiesLoading }] =
+    useLazyGetCitiesQuery();
+  const [getBarangays, { data: barangays, isFetching: isBarangaysLoading }] =
+    useLazyGetBarangaysQuery();
 
   const {
     control,
@@ -269,121 +275,111 @@ const EditProfileModal = ({
   });
 
   useEffect(() => {
-    const getOptions = async () => {
-      if (!regions) {
-        const res = await getRegions();
+    if (regions)
+      setRegionOptions(
+        regions.map((region) => ({
+          value: region.name,
+          label: region.name,
+        }))
+      );
+  }, [regions]);
 
-        setRegions(res);
-      } else {
-        if (!regionOptions) {
-          setRegionOptions(
-            regions.map((region) => ({
-              value: region.name,
-              label: region.name,
-            }))
-          );
-        }
-      }
+  useEffect(() => {
+    if (regions && watch("region")) {
+      setProvinceOptions([]);
 
-      if (
-        watch("region") !== oldRegionValue.current &&
-        watch("region") !== ""
-      ) {
-        oldRegionValue.current = watch("region");
-        setProvinceOptions(undefined);
-        reset(
-          (formValues) => ({
-            ...formValues,
-            province: "",
-            city: "",
-            barangay: "",
-          }),
-          { keepErrors: true }
-        );
+      setSelectedRegion(
+        regions.find((region) => region.name === watch("region"))
+      );
 
-        if (regions) {
-          const selectedRegion = regions.find(
-            (region) => region.name === watch("region")
-          );
-          const regionCode = selectedRegion ? selectedRegion.code : "";
-          const res = await getProvinces(regionCode);
+      reset(
+        (formValues) => ({
+          ...formValues,
+          province: "",
+          city: "",
+          barangay: "",
+        }),
+        { keepErrors: true }
+      );
+    }
+  }, [watch("region")]);
 
-          setProvinces(res);
-          setProvinceOptions(
-            res.map((province) => ({
-              value: province.name,
-              label: province.name,
-            }))
-          );
-          setCityOptions(undefined);
-          setBarangayOptions(undefined);
-        }
-      }
+  useEffect(() => {
+    if (selectedRegion) getProvinces(selectedRegion.code || "");
+  }, [selectedRegion]);
 
-      if (
-        watch("province") !== oldProvinceValue.current &&
-        watch("province") !== ""
-      ) {
-        oldProvinceValue.current = watch("province");
-        setCityOptions(undefined);
-        reset(
-          (formValues) => ({
-            ...formValues,
-            city: "",
-            barangay: "",
-          }),
-          { keepErrors: true }
-        );
+  useEffect(() => {
+    if (provinces)
+      setProvinceOptions(
+        provinces.map((province) => ({
+          value: province.name,
+          label: province.name,
+        }))
+      );
+  }, [provinces]);
 
-        if (provinces) {
-          const selectedProvince = provinces.find(
-            (province) => province.name === watch("province")
-          );
-          const provinceCode = selectedProvince ? selectedProvince.code : "";
-          const res = await getCities(provinceCode);
+  useEffect(() => {
+    if (provinces && watch("province")) {
+      setCityOptions([]);
 
-          setCities(res);
-          setCityOptions(
-            res.map((city) => ({
-              value: city.name,
-              label: city.name,
-            }))
-          );
-          setBarangayOptions(undefined);
-        }
-      }
+      setSelectedProvince(
+        provinces.find((province) => province.name === watch("province"))
+      );
 
-      if (watch("city") !== oldCityValue.current && watch("city") !== "") {
-        oldCityValue.current = watch("city");
-        setBarangayOptions(undefined);
-        reset(
-          (formValues) => ({
-            ...formValues,
-            barangay: "",
-          }),
-          { keepErrors: true }
-        );
+      reset(
+        (formValues) => ({
+          ...formValues,
+          city: "",
+          barangay: "",
+        }),
+        { keepErrors: true }
+      );
+    }
+  }, [watch("province")]);
 
-        if (cities) {
-          const selectedCity = cities.find(
-            (city) => city.name === watch("city")
-          );
-          const cityCode = selectedCity ? selectedCity.code : "";
-          const res = await getBarangays(cityCode);
+  useEffect(() => {
+    if (selectedProvince) getCities(selectedProvince.code || "");
+  }, [selectedProvince]);
 
-          setBarangays(res);
-          setBarangayOptions(
-            res.map((barangay) => ({
-              value: barangay.name,
-              label: barangay.name,
-            }))
-          );
-        }
-      }
-    };
+  useEffect(() => {
+    if (cities)
+      setCityOptions(
+        cities.map((city) => ({
+          value: city.name,
+          label: city.name,
+        }))
+      );
+  }, [cities]);
 
-    getOptions();
-  }, [regions, watch("region"), watch("province"), watch("city")]);
+  useEffect(() => {
+    if (cities && watch("city")) {
+      setBarangayOptions([]);
+
+      setSelectedCity(cities.find((city) => city.name === watch("city")));
+
+      reset(
+        (formValues) => ({
+          ...formValues,
+          barangay: "",
+        }),
+        { keepErrors: true }
+      );
+    }
+  }, [watch("city")]);
+
+  useEffect(() => {
+    if (selectedCity) getBarangays(selectedCity.code || "");
+  }, [selectedCity]);
+
+  useEffect(() => {
+    if (barangays)
+      setBarangayOptions(
+        barangays.map((barangay) => ({
+          value: barangay.name,
+          label: barangay.name,
+        }))
+      );
+  }, [barangays]);
 
   const onSubmit: SubmitHandler<EditFormValues> = (data) => {
     const formData = new FormData();
@@ -392,8 +388,6 @@ const EditProfileModal = ({
       const [key, value] = entry;
 
       if (value) {
-        console.log(key, value);
-
         if (key === "contactNo") {
           formData.append(key, "+63" + value);
           return;
@@ -474,98 +468,157 @@ const EditProfileModal = ({
               Logo={FiPhone}
             />
           </div>
-          <div className="flex gap-1">
-            <div className="flex flex-col flex-1 gap-1">
-              <Controller
-                name="region"
-                control={control}
-                render={({ field: { onChange, value, ...field } }) => (
-                  <SelectDropdown
-                    {...field}
-                    value={value}
-                    placeholder="Region"
-                    onChange={(val) => onChange(val?.value)}
-                    options={regionOptions || []}
-                    isLoading={!regionOptions}
+          {isEditAddressOpen ? (
+            <div className="flex flex-col gap-1">
+              <div
+                className="ml-auto cursor-pointer"
+                onClick={() => setIsEditAddressOpen(false)}
+              >
+                <FiX className="w-8 h-8 p-2" />
+              </div>
+              <div className="flex gap-1">
+                <div className="flex flex-col flex-1 gap-1">
+                  <Controller
+                    name="region"
+                    control={control}
+                    render={({ field: { onChange, value, ...field } }) => (
+                      <SelectDropdown
+                        {...field}
+                        value={value}
+                        placeholder="Region"
+                        onChange={(val) => onChange(val?.value)}
+                        options={regionOptions || []}
+                        isLoading={isRegionsLoading}
+                      />
+                    )}
                   />
-                )}
-              />
-              <span className="text-xs text-error pl-1">
-                {errors.region?.message}
-              </span>
-            </div>
-            <div className="flex flex-col flex-1 gap-1">
-              <Controller
-                name="province"
-                control={control}
-                render={({ field: { onChange, value, ...field } }) => (
-                  <SelectDropdown
-                    {...field}
-                    value={value}
-                    placeholder="Province"
-                    onChange={(newValue) => onChange(newValue?.value)}
-                    options={provinceOptions || []}
-                    isLoading={!provinceOptions && !!watch("region")}
-                    isDisabled={!watch("region")}
+                  <span className="text-xs text-error pl-1">
+                    {errors.region?.message}
+                  </span>
+                </div>
+                <div className="flex flex-col flex-1 gap-1">
+                  <Controller
+                    name="province"
+                    control={control}
+                    render={({ field: { onChange, value, ...field } }) => (
+                      <SelectDropdown
+                        {...field}
+                        value={value}
+                        placeholder="Province"
+                        onChange={(newValue) => onChange(newValue?.value)}
+                        options={provinceOptions || []}
+                        isLoading={isProvincesLoading}
+                        isDisabled={!watch("region")}
+                      />
+                    )}
                   />
-                )}
-              />
-              <span className="text-xs text-error pl-1">
-                {errors.province?.message}
-              </span>
-            </div>
-          </div>
-          <div className="flex gap-1">
-            <div className="flex flex-col flex-1 gap-1">
-              <Controller
-                name="city"
-                control={control}
-                render={({ field: { onChange, value, ...field } }) => (
-                  <SelectDropdown
-                    {...field}
-                    value={value}
-                    placeholder="City"
-                    onChange={(newValue) => onChange(newValue?.value)}
-                    options={cityOptions || []}
-                    isLoading={!cityOptions && !!watch("province")}
-                    isDisabled={!watch("province")}
+                  <span className="text-xs text-error pl-1">
+                    {errors.province?.message}
+                  </span>
+                </div>
+              </div>
+              <div className="flex gap-1">
+                <div className="flex flex-col flex-1 gap-1">
+                  <Controller
+                    name="city"
+                    control={control}
+                    render={({ field: { onChange, value, ...field } }) => (
+                      <SelectDropdown
+                        {...field}
+                        value={value}
+                        placeholder="City"
+                        onChange={(newValue) => onChange(newValue?.value)}
+                        options={cityOptions || []}
+                        isLoading={isCitiesLoading}
+                        isDisabled={!watch("province")}
+                      />
+                    )}
                   />
-                )}
-              />
-              <span className="text-xs text-error pl-1">
-                {errors.city?.message}
-              </span>
-            </div>
-            <div className="flex flex-col flex-1 gap-1">
-              <Controller
-                name="barangay"
-                control={control}
-                render={({ field: { onChange, value, ...field } }) => (
-                  <SelectDropdown
-                    {...field}
-                    value={value}
-                    placeholder="Barangay"
-                    onChange={(newValue) => onChange(newValue?.value)}
-                    options={barangayOptions || []}
-                    isLoading={!barangayOptions && !!watch("city")}
-                    isDisabled={!watch("city")}
+                  <span className="text-xs text-error pl-1">
+                    {errors.city?.message}
+                  </span>
+                </div>
+                <div className="flex flex-col flex-1 gap-1">
+                  <Controller
+                    name="barangay"
+                    control={control}
+                    render={({ field: { onChange, value, ...field } }) => (
+                      <SelectDropdown
+                        {...field}
+                        value={value}
+                        placeholder="Barangay"
+                        onChange={(newValue) => onChange(newValue?.value)}
+                        options={barangayOptions || []}
+                        isLoading={isBarangaysLoading}
+                        isDisabled={!watch("city")}
+                      />
+                    )}
                   />
-                )}
+                  <span className="text-xs text-error pl-1">
+                    {errors.barangay?.message}
+                  </span>
+                </div>
+              </div>
+              <FormInput
+                type="text"
+                label="street"
+                placeholder="Street"
+                register={register}
+                value={watch("street")}
+                error={errors.street?.message}
+                Logo={BsHouseDoor}
               />
-              <span className="text-xs text-error pl-1">
-                {errors.barangay?.message}
-              </span>
             </div>
-          </div>
-          <FormInput
-            type="text"
-            label="street"
-            placeholder="Street"
-            register={register}
-            value={watch("street")}
-            error={errors.street?.message}
-            Logo={BsHouseDoor}
-          />
+          ) : (
+            <div className="flex flex-col gap-1">
+              <div
+                className="ml-auto cursor-pointer"
+                onClick={() => setIsEditAddressOpen(true)}
+              >
+                <FiEdit2 className="w-8 h-8 p-2" />
+              </div>
+              <div className="flex gap-1">
+                <DisabledFormInput
+                  type="text"
+                  label="region"
+                  placeholder="Region"
+                  value={userData.address?.region || ""}
+                  Logo={BsHouseDoor}
+                />
+                <DisabledFormInput
+                  type="text"
+                  label="province"
+                  placeholder="Province"
+                  value={userData.address?.province || ""}
+                  Logo={BsHouseDoor}
+                />
+              </div>
+              <div className="flex gap-1">
+                <DisabledFormInput
+                  type="text"
+                  label="city"
+                  placeholder="City"
+                  value={userData.address?.city || ""}
+                  Logo={BsHouseDoor}
+                />
+                <DisabledFormInput
+                  type="text"
+                  label="barangay"
+                  placeholder="Barangay"
+                  value={userData.address?.barangay || ""}
+                  Logo={BsHouseDoor}
+                />
+              </div>
+              <DisabledFormInput
+                type="text"
+                label="street"
+                placeholder="Street"
+                value={userData.address?.street || ""}
+                Logo={BsHouseDoor}
+              />
+            </div>
+          )}
+
           <div className="flex flex-col items-start gap-2 px-2">
             <button
               type="submit"

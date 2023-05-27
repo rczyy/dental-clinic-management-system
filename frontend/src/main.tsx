@@ -26,6 +26,8 @@ import { appointmentApi } from "./redux/api/appointment";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import AppointmentSuccess from "./pages/AppointmentSuccess";
+import { addressApi } from "./redux/api/address";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -106,7 +108,7 @@ const router = createBrowserRouter([
       },
       {
         path: "services",
-        element: <Services />,
+        element: <ServiceList />,
       },
       {
         path: "set-appointment",
@@ -123,12 +125,14 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <QueryClientProvider client={queryClient}>
     <ApiProvider api={appointmentApi}>
-      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <RouterProvider router={router} />
-          <ReactQueryDevtools />
-        </LocalizationProvider>
-      </GoogleOAuthProvider>
+      <ApiProvider api={addressApi}>
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <RouterProvider router={router} />
+            <ReactQueryDevtools />
+          </LocalizationProvider>
+        </GoogleOAuthProvider>
+      </ApiProvider>
     </ApiProvider>
   </QueryClientProvider>
 );
