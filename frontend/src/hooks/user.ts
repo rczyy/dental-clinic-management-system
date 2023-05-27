@@ -34,10 +34,14 @@ export const useGetMe = () => {
 
 export const useEditUser = () => {
   const queryClient = useQueryClient();
-  return useMutation<UserResponse, ErrorMessageResponse, { data: EditFormValues, id: string}>({
-    mutationFn: ({data, id}) => editUser(data, id),
+  return useMutation<
+    UserResponse,
+    ErrorMessageResponse,
+    { data: FormData; id: string }
+  >({
+    mutationFn: ({ data, id }) => editUser(data, id),
     onSuccess: () => {
-      queryClient.invalidateQueries(["user"]);
+      queryClient.invalidateQueries(["me"]);
     },
   });
 };
@@ -47,7 +51,7 @@ export const useLogin = () => {
   return useMutation<LoginResponse, FormErrorResponse, LoginFormValues>({
     mutationFn: login,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
 };
@@ -57,7 +61,7 @@ export const useVerifyUser = () => {
   return useMutation<MessageResponse, ErrorMessageResponse, string>({
     mutationFn: verifyUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
 };
@@ -78,7 +82,7 @@ export const useLogout = () => {
   return useMutation<MessageResponse, ErrorMessageResponse>({
     mutationFn: logout,
     onMutate: () => {
-      queryClient.setQueryData(["user"], null);
+      queryClient.setQueryData(["me"], null);
       navigate("/login");
     },
   });

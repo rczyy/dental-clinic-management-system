@@ -2,7 +2,6 @@ import { useState } from "react";
 import { IoMenuOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { useGetMe, useLogout } from "../../hooks/user";
-import { IoMdPerson } from "react-icons/io";
 import DarkModeToggle from "../Utilities/DarkModeToggle";
 import { useDetectClickOutside } from "react-detect-click-outside";
 import { useAdminStore } from "../../store/admin";
@@ -45,15 +44,17 @@ const Navbar = (props: Props) => {
         </div>
         {data ? (
           <>
-            <DarkModeToggle className="flex items-center mx-4 sm:hidden" />
+            <DarkModeToggle className="flex items-center mx-6 sm:hidden" />
             <div
-              className="flex items-center sm:gap-5 cursor-pointer"
+              className="flex items-center sm:gap-3 cursor-pointer"
               onClick={() => {
                 setIsOpen(!isOpen);
               }}
               ref={menuRef}
             >
-              <IoMdPerson className="w-7 h-7 sm:w-8 sm:h-8" />
+              <figure className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden">
+                <img src={data.avatar} />
+              </figure>
               <div className="hidden sm:block">
                 <p className="text-sm leading-tight tracking-tight font-semibold">
                   {data.name.firstName}

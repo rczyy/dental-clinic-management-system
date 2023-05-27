@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 type Props = {};
 
 export const loader = (queryClient: QueryClient) => async () =>
-  await queryClient.ensureQueryData({ queryKey: ["user"], queryFn: getMe });
+  await queryClient.ensureQueryData({ queryKey: ["me"], queryFn: getMe });
 
 const Root = (props: Props) => {
   return (

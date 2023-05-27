@@ -237,31 +237,36 @@ export const editUser: RequestHandler = async (req, res) => {
   let avatar;
 
   if (file) {
-    // if (token.role === Roles.Patient) {
-    //   res.status(400).send({ message: "Unauthorized to edit a user's avatar" });
-    //   return;
-    // }
+    if (token.role === Roles.Patient) {
+      res.status(400).send({ message: "Unauthorized to edit a user's avatar" });
+      return;
+    }
 
     const folder = "avatars/";
-    const object = await imageUpload(folder, file);
 
-    avatar = object.Location;
+    try {
+      const object = await imageUpload(folder, file);
+      avatar = object.Location;
+    } catch (error) {
+      const err = error as Error;
+
+      res.status(400).send({ message: err.message });
+      return;
+    }
   }
 
   const updatedUser = await User.findByIdAndUpdate(
     id,
     {
-      name: {
-        firstName,
-        middleName,
-        lastName,
-      },
-      address: {
-        region,
-        province,
-        city,
-        barangay,
-        street,
+      $set: {
+        "name.firstName": firstName,
+        "name.middleName": middleName || "",
+        "name.lastName": lastName,
+        "address.region": region,
+        "address.province": province,
+        "address.city": city,
+        "address.barangay": barangay,
+        "address.street": street,
       },
       contactNo,
       password: password && (await hash(password, 10)),
