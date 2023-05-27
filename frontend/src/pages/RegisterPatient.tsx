@@ -15,6 +15,8 @@ import {
   useLazyGetCitiesQuery,
   useLazyGetProvincesQuery,
 } from "../redux/api/address";
+import { Navigate } from "react-router-dom";
+import { useGetMe } from "../hooks/user";
 
 type Props = {};
 
@@ -110,6 +112,7 @@ const RegisterPatient = (_: Props) => {
   const [selectedCity, setSelectedCity] = useState<City>();
   const [barangayOptions, setBarangayOptions] = useState<SelectOption[]>();
 
+  const { data: me } = useGetMe();
   const { mutate, isLoading, error } = useRegisterPatient();
 
   const { data: regions, isFetching: isRegionsLoading } = useGetRegionsQuery();
@@ -294,8 +297,10 @@ const RegisterPatient = (_: Props) => {
       );
   }, [barangays]);
 
+  if (!me || me.role === "Patient") return <Navigate to="/" />;
+
   return (
-    <div className="w-full h-full flex">
+    <main className="w-full h-full flex">
       <section className="bg-base-300 max-w-4xl w-full m-auto rounded-2xl shadow-md px-8 py-10 md:px-10 lg:px-16">
         <header className="flex justify-start">
           <h1 className="text-2xl font-bold mx-2 py-3">Add a new patient</h1>
@@ -472,7 +477,7 @@ const RegisterPatient = (_: Props) => {
           </div>
         </form>
       </section>
-    </div>
+    </main>
   );
 };
 export default RegisterPatient;

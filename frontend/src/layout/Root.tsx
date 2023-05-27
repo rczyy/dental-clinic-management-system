@@ -5,7 +5,9 @@ import { getMe } from "../axios/user";
 import { ToastContainer } from "react-toastify";
 import Navbar from "../components/Root/Navbar";
 import Footer from "../components/Root/Footer";
+import Sidebar from "../components/Root/Sidebar";
 import "react-toastify/dist/ReactToastify.css";
+import { useGetMe } from "../hooks/user";
 
 type Props = {};
 
@@ -13,6 +15,8 @@ export const loader = (queryClient: QueryClient) => async () =>
   await queryClient.ensureQueryData({ queryKey: ["me"], queryFn: getMe });
 
 const Root = (props: Props) => {
+  const { data: me } = useGetMe();
+
   return (
     <div className="flex flex-col min-h-screen justify-between">
       <ScrollRestoration />
@@ -28,8 +32,13 @@ const Root = (props: Props) => {
         pauseOnHover
       />
       <Navbar />
-      <Outlet />
-      <Footer />
+      <div className="flex items-start">
+        {me && me.role !== "Patient" && <Sidebar />}
+        <div className="flex flex-col min-w-0 w-full">
+          <Outlet />
+          <Footer />
+        </div>
+      </div>
     </div>
   );
 };

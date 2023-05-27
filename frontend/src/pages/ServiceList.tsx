@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { useGetServices } from "../hooks/service";
 import SelectDropdown from "../components/Form/SelectDropdown";
 import ServiceDataRow from "../components/Table/ServiceDataRow";
+import { useGetMe } from "../hooks/user";
 
 type Props = {};
 
@@ -24,6 +25,7 @@ const ServiceList = (props: Props) => {
     { value: "Orthodontics (Braces)", label: "Orthodontics (Braces)" },
   ];
 
+  const { data: me } = useGetMe();
   const { data } = useGetServices();
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [categoryFilter, setCategoryFilter] = useState<string>("");
@@ -83,12 +85,14 @@ const ServiceList = (props: Props) => {
           service.category.toLowerCase().includes(categoryFilter.toLowerCase())
       );
 
+  if (!me || me.role === "Patient") return <Navigate to="/" />;
+
   return (
-    <div className="flex flex-col gap-4">
+    <main className={`flex flex-col gap-4 max-w-screen-2xl m-auto`}>
       <header className="flex justify-between items-end mb-4 gap-8">
         <h1 className="font-bold text-2xl md:text-3xl">Service List</h1>
         <Link
-          to="/dashboard/services/add"
+          to="/services/add"
           role="button"
           className="btn btn-primary w-full max-w-[10rem] min-h-[2.5rem] h-10 px-2 text-white normal-case gap-2"
         >
@@ -165,7 +169,7 @@ const ServiceList = (props: Props) => {
           </tbody>
         </table>
       </div>
-    </div>
+    </main>
   );
 };
 export default ServiceList;

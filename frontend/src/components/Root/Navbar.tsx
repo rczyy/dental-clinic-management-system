@@ -14,7 +14,7 @@ const Navbar = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const { data } = useGetMe();
   const { mutate } = useLogout();
-  const roles = ["Admin", "Manager", "Assistant", "Dentist", "Front Desk",]
+  const roles = ["Admin", "Manager", "Assistant", "Dentist", "Front Desk"];
 
   const handleLogout: React.MouseEventHandler<HTMLSpanElement> = () => {
     mutate();
@@ -35,15 +35,13 @@ const Navbar = (props: Props) => {
       )}
       <div className="max-w-screen-xl w-full min-h-[inherit] m-auto relative">
         <div className="flex-1">
-          {(!data || (data && data.role !== "Admin")) && (
-            <Link
-              to="/"
-              className="flex items-center font-bold -tracking-widest text-2xl cursor-pointer text-primary"
-            >
-              <ATLogo className="fill-primary"/>
-              Dental Home
-            </Link>
-          )}
+          <Link
+            to="/"
+            className="flex items-center font-bold -tracking-widest text-2xl cursor-pointer text-primary"
+          >
+            <ATLogo className="fill-primary" />
+            Dental Home
+          </Link>
         </div>
         {data ? (
           <>

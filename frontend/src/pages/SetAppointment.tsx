@@ -275,7 +275,8 @@ const SetAppointment = (props: Props) => {
     });
   };
 
-  if (userData && !userData.contactNo) return <Navigate to="/" />;
+  if (!userData || (userData && !userData.contactNo))
+    return <Navigate to="/" />;
 
   return (
     <main className="flex items-center justify-center">

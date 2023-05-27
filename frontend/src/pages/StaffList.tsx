@@ -1,20 +1,13 @@
-import { QueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import { FiPlus, FiSearch } from "react-icons/fi";
-import { getStaffs } from "../axios/staff";
 import { useGetStaffs } from "../hooks/staff";
 import StaffDataRow from "../components/Table/StaffDataRow";
 import SelectDropdown from "../components/Form/SelectDropdown";
+import { useGetMe } from "../hooks/user";
 
 type Props = {};
-
-export const loader = (queryClient: QueryClient) => async () =>
-  await queryClient.ensureQueryData({
-    queryKey: ["staffs"],
-    queryFn: getStaffs,
-  });
 
 const StaffList = (props: Props) => {
   const roles = [
@@ -24,15 +17,16 @@ const StaffList = (props: Props) => {
     { value: "Assistant", label: "Assistant Dentist" },
     { value: "Front Desk", label: "Front Desk" },
   ];
-  const { data } = useGetStaffs();
+  const { data: me } = useGetMe();
+  const { data: staffs } = useGetStaffs();
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [roleFilter, setRoleFilter] = useState<string>("");
   const [roleSort, setRoleSort] = useState<"asc" | "desc">();
   const [nameSort, setNameSort] = useState<"asc" | "desc">();
 
   const filteredStaffs =
-    data &&
-    data
+    staffs &&
+    staffs
       .sort((a, b) => {
         const roleA: string = a.user.role.toUpperCase();
         const roleB: string = b.user.role.toUpperCase();
@@ -85,12 +79,14 @@ const StaffList = (props: Props) => {
           staff.user.role.includes(roleFilter)
       );
 
+  if (!me || me.role === "Patient") return <Navigate to="/" />;
+
   return (
-    <div className="flex flex-col gap-4">
+    <main className={`flex flex-col gap-4 max-w-screen-2xl m-auto`}>
       <header className="flex justify-between items-end mb-4 gap-8">
         <h1 className="font-bold text-2xl md:text-3xl">Staff List</h1>
         <Link
-          to="/dashboard/staff/register"
+          to="/staff/register"
           role="button"
           className="btn btn-primary w-full max-w-[10rem] min-h-[2.5rem] h-10 px-2 text-white normal-case gap-2"
         >
@@ -166,7 +162,7 @@ const StaffList = (props: Props) => {
           </tbody>
         </table>
       </div>
-    </div>
+    </main>
   );
 };
 

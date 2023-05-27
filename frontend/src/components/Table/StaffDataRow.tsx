@@ -6,7 +6,7 @@ type Props = {
 
 const StaffDataRow = ({ staff }: Props) => {
   return (
-    <tr className="[&>*]:bg-transparent">
+    <tr className="[&>*]:bg-transparent whitespace-normal">
       <th className="!bg-base-300">
         <div className="flex dropdown dropdown-right">
           <label
@@ -37,8 +37,10 @@ const StaffDataRow = ({ staff }: Props) => {
           </ul>
         </div>
       </th>
-      <td className="font-medium text-sm">{staff.user.role}</td>
-      <td className="font-medium text-sm">
+      <td className="font-medium text-sm whitespace-normal">
+        {staff.user.role}
+      </td>
+      <td className="font-medium text-sm whitespace-normal">
         <div className="flex flex-col">
           <span>{`${staff.user.name.firstName} ${staff.user.name.lastName}`}</span>
           <span className="font-medium text-xs text-zinc-400">
@@ -46,8 +48,12 @@ const StaffDataRow = ({ staff }: Props) => {
           </span>
         </div>
       </td>
-      <td className="font-medium text-sm">{staff.user.email}</td>
-      <td className="font-medium text-sm">{staff.user.contactNo}</td>
+      <td className="font-medium text-sm whitespace-normal">
+        {staff.user.email}
+      </td>
+      <td className="font-medium text-sm whitespace-normal">
+        {staff.user.contactNo}
+      </td>
     </tr>
   );
 };

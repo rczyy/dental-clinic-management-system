@@ -1,14 +1,13 @@
 import "./styles.css";
 import ReactDOM from "react-dom/client";
 import Root, { loader as appLoader } from "./layout/Root";
-import DashboardRoot from "./layout/DashboardRoot";
 import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
 import SetAppointment from "./pages/SetAppointment";
 import ServiceList from "./pages/ServiceList";
-import StaffList, { loader as staffLoader } from "./pages/StaffList";
-import PatientList, { loader as patientLoader } from "./pages/PatientList";
+import StaffList from "./pages/StaffList";
+import PatientList from "./pages/PatientList";
 import RegisterStaff from "./pages/RegisterStaff";
 import RegisterPatient from "./pages/RegisterPatient";
 import AddService from "./pages/AddService";
@@ -75,40 +74,28 @@ const router = createBrowserRouter([
         element: <VerifyEmail />,
       },
       {
-        path: "dashboard",
-        element: <DashboardRoot />,
-        children: [
-          {
-            path: "patients",
-            element: <PatientList />,
-            loader: patientLoader(queryClient),
-          },
-          {
-            path: "staff",
-            element: <StaffList />,
-            loader: staffLoader(queryClient),
-          },
-          {
-            path: "services",
-            element: <ServiceList />,
-          },
-          {
-            path: "staff/register",
-            element: <RegisterStaff />,
-          },
-          {
-            path: "patient/register",
-            element: <RegisterPatient />,
-          },
-          {
-            path: "services/add",
-            element: <AddService />,
-          },
-        ],
+        path: "patients",
+        element: <PatientList />,
+      },
+      {
+        path: "staff",
+        element: <StaffList />,
       },
       {
         path: "services",
         element: <ServiceList />,
+      },
+      {
+        path: "staff/register",
+        element: <RegisterStaff />,
+      },
+      {
+        path: "patient/register",
+        element: <RegisterPatient />,
+      },
+      {
+        path: "services/add",
+        element: <AddService />,
       },
       {
         path: "set-appointment",

@@ -4,18 +4,19 @@ import { FaTooth, FaTeethOpen, FaTeeth } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
 import { GiTooth } from "react-icons/gi";
 import { useGetMe } from "../hooks/user";
-import { Navigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AddMobileNumber } from "../components/Modal/AddMobileNumber";
 import { useState } from "react";
+import { useAdminStore } from "../store/admin";
 
 type Props = {};
 
 const Landing = (_: Props) => {
+  const sidebar = useAdminStore((state) => state.sidebar);
+
   const [isAddMobileOpen, setIsAddMobileOpen] = useState(true);
 
   const { data } = useGetMe();
-
-  if (data && data.role !== "Patient") return <Navigate to="/dashboard" />;
 
   return (
     <>
@@ -33,7 +34,9 @@ const Landing = (_: Props) => {
             <Link
               to={data ? (data.contactNo ? "/set-appointment" : "") : "/login"}
               className="btn btn-primary text-base-100"
-              onClick={() => setIsAddMobileOpen(true)}
+              onClick={() => {
+                if (data && !data.contactNo) setIsAddMobileOpen(true);
+              }}
             >
               Book an appointment
             </Link>
@@ -49,7 +52,11 @@ const Landing = (_: Props) => {
               labore. Repellat, voluptatem?
             </p>
           </div>
-          <div className="grid grid-cols-1 p-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 w-full xl:px-64 gap-4">
+          <div
+            className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 p-4 ${
+              sidebar ? "xl:px-16" : "xl:px-64"
+            } w-full gap-4`}
+          >
             <CategoryBox title="First Appointment" Icon={RiHealthBookLine} />
             <CategoryBox title="Restoration" Icon={FaTooth} />
             <CategoryBox title="Cosmetic" Icon={HiSparkles} />
@@ -61,7 +68,9 @@ const Landing = (_: Props) => {
           </div>
           <div className="flex justify-center">
             <Link to="/services">
-              <button className="btn btn-primary text-white">Learn More</button>
+              <button className="btn btn-primary text-white">
+                Go to services
+              </button>
             </Link>
           </div>
         </section>
