@@ -14,7 +14,7 @@ import { getMe } from "../axios/user";
 import { QueryClient } from "@tanstack/react-query";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useAddAppointment } from "../hooks/appointment";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import DentistComponent from "../components/Appointment/DentistComponent";
 import dayjs, { Dayjs } from "dayjs";
@@ -274,6 +274,8 @@ const SetAppointment = (props: Props) => {
       },
     });
   };
+
+  if (userData && !userData.contactNo) return <Navigate to="/" />;
 
   return (
     <main className="flex items-center justify-center">

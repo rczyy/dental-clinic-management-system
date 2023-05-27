@@ -263,7 +263,7 @@ const EditProfileModal = ({
       firstName: userData.name.firstName,
       middleName: userData.name.middleName || "",
       lastName: userData.name.lastName,
-      contactNo: userData.contactNo.slice(3),
+      contactNo: userData.contactNo ? userData.contactNo.slice(3) : "",
       region: userData.address?.region || "",
       province: userData.address?.province || "",
       city: userData.address?.city || "",

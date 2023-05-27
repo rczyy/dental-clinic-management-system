@@ -133,7 +133,7 @@ interface UserResponse {
   name: Name;
   address?: Address;
   email: string;
-  contactNo: string;
+  contactNo?: string;
   role:
     | "Admin"
     | "Manager"
