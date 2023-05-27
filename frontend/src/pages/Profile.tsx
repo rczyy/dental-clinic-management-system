@@ -459,7 +459,7 @@ const EditProfileModal = ({
               Logo={BsPerson}
             />
             <FormInput
-              type="number"
+              type="text"
               label="contactNo"
               placeholder="Contact Number"
               register={register}

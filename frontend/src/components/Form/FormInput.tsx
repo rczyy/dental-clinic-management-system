@@ -65,6 +65,7 @@ const FormInput = ({
               (label !== "contactNo" ? "pl-4" : "pl-2")
             }
             autoComplete="off"
+            maxLength={label === "contactNo" ? 10 : undefined}
             id={label}
             type={
               type === "password" ? (showPassword ? "text" : "password") : type

@@ -59,7 +59,7 @@ export const AddMobileNumber = ({}: Props): JSX.Element => {
       </div>
       <form className="flex flex-col gap-8" onSubmit={handleSubmit(onSubmit)}>
         <FormInput
-          type="number"
+          type="text"
           label="contactNo"
           placeholder="Contact Number"
           register={register}

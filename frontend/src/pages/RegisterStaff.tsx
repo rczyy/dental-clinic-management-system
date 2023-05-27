@@ -398,7 +398,7 @@ const RegisterStaff = (props: Props) => {
               </div>
               <div>
                 <FormInput
-                  type="number"
+                  type="text"
                   label="contactNo"
                   placeholder="Contact Number"
                   register={register}
