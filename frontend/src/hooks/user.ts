@@ -40,8 +40,8 @@ export const useEditUser = () => {
     { data: FormData; id: string }
   >({
     mutationFn: ({ data, id }) => editUser(data, id),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["me"]);
+    onSuccess: ({_id: id}) => {
+      queryClient.invalidateQueries(["users", id]);
     },
   });
 };
