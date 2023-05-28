@@ -10,8 +10,10 @@ export const convertToTotalHoursAndMinutes = (minutes: number) => {
     : minutes;
 
   return totalHours && totalMinutes
-    ? `${totalHours} hrs ${totalMinutes} mins`
+    ? `${totalHours} ${totalHours > 1 ? "hrs" : "hr"} ${totalMinutes} ${
+        totalMinutes > 1 ? "mins" : "min"
+      }`
     : totalHours
-    ? `${totalHours} hrs`
-    : `${totalMinutes} mins`;
+    ? `${totalHours} ${totalHours > 1 ? "hrs" : "hr"}`
+    : `${totalMinutes} ${totalMinutes > 1 ? "mins" : "min"}`;
 };
