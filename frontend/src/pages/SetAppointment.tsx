@@ -10,8 +10,6 @@ import { RiServiceFill } from "react-icons/ri";
 import { FaTooth } from "react-icons/fa";
 import { IoCalendar } from "react-icons/io5";
 import { useGetMe } from "../hooks/user";
-import { getMe } from "../axios/user";
-import { QueryClient } from "@tanstack/react-query";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useAddAppointment } from "../hooks/appointment";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -24,12 +22,6 @@ import {
 } from "../redux/api/appointment";
 
 type Props = {};
-
-export const loader = (queryClient: QueryClient) => async () =>
-  await queryClient.ensureQueryData({
-    queryKey: ["me"],
-    queryFn: getMe,
-  });
 
 const schema = z.object({
   dentist: z
@@ -127,7 +119,7 @@ const SetAppointment = (props: Props) => {
 
     if (userData) {
       getPatientAppointments({
-        id: userData._id!,
+        id: userData._id,
         date: dayjs(watch("date")).format("YYYY-MM-DD"),
       });
     }
@@ -514,6 +506,10 @@ const SetAppointment = (props: Props) => {
                             );
                           }}
                           value={value}
+                          disablePast
+                          shouldDisableDate={(day) =>
+                            dayjs(day).date() === dayjs().date()
+                          }
                         />
                       )}
                     />
@@ -622,7 +618,7 @@ const SetAppointment = (props: Props) => {
                             <div className="flex items-center gap-4">
                               <IoCalendar />
                               <span>
-                                {dayjs(watch("date")).format("MMMM/DD/YY")}
+                                {dayjs(watch("date")).format("MMMM DD, YYYY")}
                               </span>
                             </div>
                             <div className="flex items-center gap-4">
