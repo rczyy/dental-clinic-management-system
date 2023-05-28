@@ -120,11 +120,19 @@ const schema = z.object({
 const Profile = () => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isEditAvatarModalVisible, setIsEditAvatarModalVisible] =
-  useState(false);
+    useState(false);
   const { userID } = useParams();
-  const { data: userData, isLoading } = useGetUser(userID  || "");
-  if(isLoading) return <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin m-auto" />
+  const { data: userData, isLoading } = useGetUser(userID || "");
+
+  if (isLoading)
+    return (
+      <main className="flex justify-center items-center">
+        <AiOutlineLoading3Quarters className="w-16 h-16 animate-spin m-auto" />
+      </main>
+    );
+
   if (!userData) return <Navigate to="/login" />;
+
   return (
     <>
       <main className="flex flex-col gap-4">
@@ -163,6 +171,9 @@ const Profile = () => {
                   {userData.name.lastName}
                 </span>
                 <span className="text-zinc-400 text-sm">{userData.email}</span>
+                <span className="my-2 font-semibold text-primary text-sm">
+                  {userData.role}
+                </span>
               </div>
             </div>
             <div className="px-2 py-4 border-t flex justify-between">
