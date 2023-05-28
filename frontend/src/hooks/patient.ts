@@ -31,10 +31,10 @@ export const useRegisterPatient = () => {
   });
 };
 
-export const useRemovePatient = () => {
+export const useRemovePatient = (id: string) => {
   const queryClient = useQueryClient();
   return useMutation<DeleteResponse, ErrorMessageResponse, string>({
-    mutationFn: removePatient,
+    mutationFn: () => removePatient(id),
     onSuccess: () => {
       queryClient.invalidateQueries(["patients"]);
     },
