@@ -1,4 +1,4 @@
-import { useEditUser, useGetMe } from "../hooks/user";
+import { useEditUser, useGetUser } from "../hooks/user";
 import { z } from "zod";
 import {
   Dispatch,
@@ -14,7 +14,7 @@ import { FiCamera, FiEdit2, FiMapPin, FiPhone, FiX } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
 import FormInput from "../components/Form/FormInput";
 import SelectDropdown from "../components/Form/SelectDropdown";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { MdOutlineAddAPhoto } from "react-icons/md";
 import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -120,12 +120,11 @@ const schema = z.object({
 const Profile = () => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isEditAvatarModalVisible, setIsEditAvatarModalVisible] =
-    useState(false);
-
-  const { data: userData } = useGetMe();
-
+  useState(false);
+  const { userID } = useParams();
+  const { data: userData, isLoading } = useGetUser(userID  || "");
+  if(isLoading) return <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin m-auto" />
   if (!userData) return <Navigate to="/login" />;
-
   return (
     <>
       <main className="flex flex-col gap-4">
