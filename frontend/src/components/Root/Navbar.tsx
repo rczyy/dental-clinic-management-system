@@ -70,7 +70,7 @@ const Navbar = (props: Props) => {
                 {isOpen && (
                   <ul className="menu bg-base-100 text-sm border-base-200 border shadow">
                     <li>
-                      <Link to="/profile">Account settings</Link>
+                      <Link to={`/profile/${data._id}`}>Account settings</Link>
                     </li>
                     <li>
                       <span onClick={handleLogout}>Log out</span>
