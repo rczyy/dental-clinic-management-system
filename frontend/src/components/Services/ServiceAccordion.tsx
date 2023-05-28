@@ -16,9 +16,7 @@ export const ServiceAccordion = ({ category, Icon }: Props): JSX.Element => {
     (service) => service.category === category
   );
 
-  const [isOpen, setIsOpen] = useState(
-    servicesByCategory ? servicesByCategory.length > 0 : false
-  );
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <>
@@ -37,7 +35,7 @@ export const ServiceAccordion = ({ category, Icon }: Props): JSX.Element => {
           {servicesByCategory &&
             (servicesByCategory.length > 0 ? (
               servicesByCategory.map((service) => (
-                <ServiceAccordionRow service={service} />
+                <ServiceAccordionRow key={service._id} service={service} />
               ))
             ) : (
               <p className="px-8 py-4 text-base-content/90 text-sm md:text-base font-medium">
