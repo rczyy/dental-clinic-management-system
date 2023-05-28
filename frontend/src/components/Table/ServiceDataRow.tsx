@@ -228,7 +228,7 @@ const DeleteServiceModal = ({
           />
         </header>
         <div className="flex flex-col items-center mx-2 py-3">
-          <p>This will delete the service from the Service List</p>
+          <p>You are about to permanently delete a service.</p>
           <p>Are you sure?</p>
         </div>
         <div className="flex gap-3 justify-end mx-2 py-3">
