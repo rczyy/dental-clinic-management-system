@@ -1,15 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { appointmentApi } from "../api/appointment";
-import { addressApi } from "../api/address";
+import { rootApi } from "../api/root";
 
 export const store = configureStore({
   reducer: {
-    [appointmentApi.reducerPath]: appointmentApi.reducer,
-    [addressApi.reducerPath]: addressApi.reducer,
+    [rootApi.reducerPath]: rootApi.reducer,
   },
 
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-      .concat(appointmentApi.middleware)
-      .concat(addressApi.middleware),
+    getDefaultMiddleware().concat(rootApi.middleware),
 });

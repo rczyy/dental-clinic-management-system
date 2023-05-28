@@ -21,12 +21,11 @@ import Profile from "./pages/Profile";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ApiProvider } from "@reduxjs/toolkit/query/react";
-import { appointmentApi } from "./redux/api/appointment";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import AppointmentSuccess from "./pages/AppointmentSuccess";
-import { addressApi } from "./redux/api/address";
+import { rootApi } from "./redux/api/root";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -111,15 +110,13 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <QueryClientProvider client={queryClient}>
-    <ApiProvider api={appointmentApi}>
-      <ApiProvider api={addressApi}>
-        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <RouterProvider router={router} />
-            <ReactQueryDevtools />
-          </LocalizationProvider>
-        </GoogleOAuthProvider>
-      </ApiProvider>
+    <ApiProvider api={rootApi}>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <RouterProvider router={router} />
+          <ReactQueryDevtools />
+        </LocalizationProvider>
+      </GoogleOAuthProvider>
     </ApiProvider>
   </QueryClientProvider>
 );
