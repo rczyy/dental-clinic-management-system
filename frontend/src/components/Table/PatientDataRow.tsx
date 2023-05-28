@@ -1,8 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { FiEye, FiMoreHorizontal, FiTrash } from "react-icons/fi";
+import { FiEye, FiMoreHorizontal, FiTrash, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useRemovePatient } from "../../hooks/patient";
-import { GrFormClose } from "react-icons/gr";
 
 type Props = {
   patient: PatientResponse;
@@ -83,9 +82,8 @@ const RemoveUserModal = ({
   patient,
   setIsDeleteModalVisible,
 }: RemovePatientProps) => {
-  const { mutate: removePatient, error: removePatientError } = useRemovePatient(
-    patient.user._id
-  );
+  const { mutate: removePatient, error: removePatientError } =
+    useRemovePatient();
   const handleDelete = () => {
     removePatient(patient.user._id, {
       onSuccess: () => setIsDeleteModalVisible(false),
@@ -96,24 +94,26 @@ const RemoveUserModal = ({
       <section className="flex flex-col gap-2 bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
         <header className="flex justify-between items-center mx-2 py-3">
           <h1 className="text-2xl font-bold">Remove Patient</h1>
-          <GrFormClose
-            className="hover: cursor-pointer w-5 h-5"
-            onClick={() => setIsDeleteModalVisible(false)}
-          />
+          <div>
+            <FiX
+              className="w-6 h-6 p-1 text-base-content rounded-full cursor-pointer transition hover:bg-base-200"
+              onClick={() => setIsDeleteModalVisible(false)}
+            />
+          </div>
         </header>
-        <div className="flex flex-col items-center mx-2 py-3">
+        <div className="flex flex-col mx-2 py-3">
           <p>You are about to permanently remove a patient.</p>
           <p>Are you sure?</p>
         </div>
         <div className="flex gap-3 justify-end mx-2 py-3">
           <button
-            className="btn"
+            className="btn px-8"
             onClick={() => setIsDeleteModalVisible(false)}
           >
             No
           </button>
           <button
-            className="btn btn-error"
+            className="btn btn-error px-8 text-white hover:bg-red-700"
             onClick={() => {
               handleDelete();
             }}
@@ -128,4 +128,5 @@ const RemoveUserModal = ({
     </div>
   );
 };
+
 export default PatientDataRow;
