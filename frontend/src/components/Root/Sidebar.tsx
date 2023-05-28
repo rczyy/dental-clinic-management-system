@@ -25,7 +25,7 @@ const Sidebar = () => {
     <div
       className={`fixed lg:sticky inset-0 lg:top-0 flex flex-col gap-1 bg-base-100/95 min-h-screen ${
         sidebar ? "max-w-xs border-r" : "max-w-0 border-none"
-      } min-w-0 w-full pt-20 shadow-2xl lg:shadow z-20 transition-all overflow-hidden`}
+      } min-w-0 w-full pt-20 border-r-neutral shadow-2xl lg:shadow z-20 transition-all overflow-hidden`}
     >
       {(data?.role === "Admin" || data?.role === "Manager") && (
         <SidebarItem name="Staff list" Icon={CgUserList} route="/staff" />

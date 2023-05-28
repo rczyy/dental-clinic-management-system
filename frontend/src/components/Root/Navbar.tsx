@@ -40,7 +40,7 @@ const Navbar = (props: Props) => {
             className="flex items-center font-bold -tracking-widest text-2xl cursor-pointer text-primary"
           >
             <ATLogo className="fill-primary" />
-            Dental Home
+            <span className="hidden sm:block">Dental Home</span>
           </Link>
         </div>
         {data ? (
