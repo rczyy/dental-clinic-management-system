@@ -26,6 +26,7 @@ import { ResetPassword } from "./pages/ResetPassword";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import AppointmentSuccess from "./pages/AppointmentSuccess";
 import { rootApi } from "./redux/api/root";
+import { MyAppointments } from "./pages/MyAppointments";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -103,6 +104,10 @@ const router = createBrowserRouter([
       {
         path: "set-appointment/success",
         element: <AppointmentSuccess />,
+      },
+      {
+        path: "my-appointments",
+        element: <MyAppointments />,
       },
     ],
   },
