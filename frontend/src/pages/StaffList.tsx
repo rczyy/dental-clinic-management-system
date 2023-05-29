@@ -119,14 +119,17 @@ const StaffList = (props: Props) => {
         <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
           <thead>
             <tr className="[&>*]:bg-base-300 border-b border-base-200">
-              <th></th>
+              {filteredStaffs && filteredStaffs.length > 0 && (
+                <th className="min-w-[2.5rem] w-10"></th>
+              )}
+
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
                   setRoleSort((val) => (val === "asc" ? "desc" : "asc"))
                 }
               >
-                <div className="flex items-center gap-1">
+                <div className="flex justify-center items-center gap-1">
                   <span>Role</span>
                   {roleSort === "asc" ? (
                     <AiFillCaretDown className="w-2.5 h-2.5" />
@@ -135,13 +138,14 @@ const StaffList = (props: Props) => {
                   ) : null}
                 </div>
               </th>
+
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
                   setNameSort((val) => (val === "asc" ? "desc" : "asc"))
                 }
               >
-                <div className="flex items-center gap-1">
+                <div className="flex justify-center items-center gap-1">
                   <span>Name</span>
                   {nameSort === "asc" ? (
                     <AiFillCaretDown className="w-2.5 h-2.5" />
@@ -150,14 +154,29 @@ const StaffList = (props: Props) => {
                   ) : null}
                 </div>
               </th>
-              <th className="text-primary normal-case">Email</th>
-              <th className="text-primary normal-case">Contact No.</th>
+
+              <th className="text-primary text-center normal-case">Email</th>
+
+              <th className="text-primary text-center normal-case">
+                Contact No.
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredStaffs &&
-              filteredStaffs.map((staff) => (
-                <StaffDataRow key={staff._id} staff={staff} />
+              (filteredStaffs.length > 0 ? (
+                filteredStaffs.map((staff) => (
+                  <StaffDataRow key={staff._id} staff={staff} />
+                ))
+              ) : (
+                <tr className="[&>*]:bg-transparent">
+                  <td
+                    colSpan={4}
+                    className="py-8 text-2xl text-center font-bold"
+                  >
+                    No staffs registered
+                  </td>
+                </tr>
               ))}
           </tbody>
         </table>

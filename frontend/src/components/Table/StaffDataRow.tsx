@@ -1,4 +1,4 @@
-import { FiEye, FiMoreHorizontal, FiTrash, FiX } from "react-icons/fi";
+import { FiEye, FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useRemoveStaff } from "../../hooks/staff";
 import { SetStateAction, useState } from "react";
@@ -19,13 +19,13 @@ const StaffDataRow = ({ staff }: Props) => {
   return (
     <>
       <tr className="[&>*]:bg-transparent whitespace-normal">
-        <th className="!bg-base-300">
+        <th className="!bg-base-300 w-10 p-1.5">
           <div className="flex dropdown dropdown-right">
             <label
               tabIndex={0}
-              className="w-8 h-8 p-2 mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
+              className="w-full h-full mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
             >
-              <FiMoreHorizontal />
+              <FiMoreVertical className="w-full h-full p-1" />
             </label>
             <ul
               tabIndex={0}
@@ -44,21 +44,25 @@ const StaffDataRow = ({ staff }: Props) => {
             </ul>
           </div>
         </th>
-        <td className="font-medium text-sm whitespace-normal">
+
+        <td className="font-medium text-sm text-center whitespace-normal">
           {staff.user.role}
         </td>
+
         <td className="font-medium text-sm whitespace-normal">
-          <div className="flex flex-col">
+          <div className="flex flex-col items-center">
             <span>{`${staff.user.name.firstName} ${staff.user.name.lastName}`}</span>
             <span className="font-medium text-xs text-zinc-400">
               {staff.user.email}
             </span>
           </div>
         </td>
-        <td className="font-medium text-sm whitespace-normal">
+
+        <td className="font-medium text-sm text-center whitespace-normal">
           {staff.user.email}
         </td>
-        <td className="font-medium text-sm whitespace-normal">
+
+        <td className="font-medium text-sm text-center whitespace-normal">
           {staff.user.contactNo}
         </td>
       </tr>

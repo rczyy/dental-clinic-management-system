@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { FiEye, FiMoreHorizontal, FiTrash, FiX } from "react-icons/fi";
+import { FiEye, FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useRemovePatient } from "../../hooks/patient";
 
@@ -17,13 +17,13 @@ const PatientDataRow = ({ patient }: Props) => {
   return (
     <>
       <tr className="[&>*]:bg-transparent transition tracking-tight">
-        <th className="!bg-base-300">
+        <th className="!bg-base-300 w-10 p-1.5">
           <div className="flex dropdown dropdown-right">
             <label
               tabIndex={0}
-              className="w-8 h-8 p-2 mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
+              className="w-full h-full mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
             >
-              <FiMoreHorizontal />
+              <FiMoreVertical className="w-full h-full p-1" />
             </label>
             <ul
               tabIndex={0}
@@ -42,23 +42,29 @@ const PatientDataRow = ({ patient }: Props) => {
             </ul>
           </div>
         </th>
+
         <td className="font-medium text-sm">
-          <div className="flex flex-col">
+          <div className="flex flex-col items-center">
             <span>{`${patient.user.name.firstName} ${patient.user.name.lastName}`}</span>
             <span className="font-medium text-xs text-zinc-400">
               {patient.user.email}
             </span>
           </div>
         </td>
+
         <td className="font-medium text-sm">
-          <div className="flex flex-col">
+          <div className="flex flex-col items-center">
             {patient.user.address ? (
               <>
                 <span>
-                  {`${patient.user.address.street} ${patient.user.address.barangay}`}
+                  {`${patient.user.address.street || ""} ${
+                    patient.user.address.barangay || ""
+                  }`}
                 </span>
                 <span className="font-medium text-xs text-zinc-400">
-                  {`${patient.user.address.city}, ${patient.user.address.province}`}
+                  {`${patient.user.address.city || ""} ${
+                    patient.user.address.province || ""
+                  }`}
                 </span>
               </>
             ) : (
@@ -66,8 +72,12 @@ const PatientDataRow = ({ patient }: Props) => {
             )}
           </div>
         </td>
-        <td className="font-medium text-sm">{patient.user.contactNo}</td>
+
+        <td className="font-medium text-sm text-center">
+          {patient.user.contactNo}
+        </td>
       </tr>
+
       {isDeleteModalVisible && (
         <RemoveUserModal
           patient={patient}

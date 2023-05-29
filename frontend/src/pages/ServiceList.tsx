@@ -125,14 +125,17 @@ const ServiceList = (props: Props) => {
         <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
           <thead>
             <tr className="[&>*]:bg-base-300 border-b border-base-200">
-              <th></th>
+              {filteredServices && filteredServices.length > 0 && (
+                <th className="min-w-[2.5rem] w-10"></th>
+              )}
+
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
                   setNameSort((val) => (val === "asc" ? "desc" : "asc"))
                 }
               >
-                <div className="flex items-center gap-1">
+                <div className="flex justify-center items-center gap-1">
                   <span>Service Name</span>
                   {nameSort === "asc" ? (
                     <AiFillCaretDown className="w-2.5 h-2.5" />
@@ -148,7 +151,7 @@ const ServiceList = (props: Props) => {
                   setCategorySort((val) => (val === "asc" ? "desc" : "asc"))
                 }
               >
-                <div className="flex items-center gap-1">
+                <div className="flex justify-center items-center gap-1">
                   <span>Category</span>
                   {categorySort === "asc" ? (
                     <AiFillCaretDown className="w-2.5 h-2.5" />
@@ -158,13 +161,26 @@ const ServiceList = (props: Props) => {
                 </div>
               </th>
 
-              <th className="text-primary normal-case">Estimated Time</th>
+              <th className="text-primary text-center normal-case">
+                Estimated Time
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredServices &&
-              filteredServices.map((service) => (
-                <ServiceDataRow key={service._id} service={service} />
+              (filteredServices.length > 0 ? (
+                filteredServices.map((service) => (
+                  <ServiceDataRow key={service._id} service={service} />
+                ))
+              ) : (
+                <tr className="[&>*]:bg-transparent">
+                  <td
+                    colSpan={3}
+                    className="py-8 text-2xl text-center font-bold"
+                  >
+                    No services to show
+                  </td>
+                </tr>
               ))}
           </tbody>
         </table>

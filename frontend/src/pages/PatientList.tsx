@@ -67,14 +67,17 @@ const PatientList = (props: Props) => {
         <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
           <thead>
             <tr className="[&>*]:bg-base-300 border-b border-base-200">
-              <th></th>
+              {filteredPatients && filteredPatients.length > 0 && (
+                <th className="min-w-[2.5rem] w-10"></th>
+              )}
+
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
                   setNameSort((val) => (val === "asc" ? "desc" : "asc"))
                 }
               >
-                <div className="flex items-center gap-1">
+                <div className="flex justify-center items-center gap-1">
                   <span>Name</span>
                   {nameSort === "asc" ? (
                     <AiFillCaretDown className="w-2.5 h-2.5" />
@@ -83,14 +86,29 @@ const PatientList = (props: Props) => {
                   ) : null}
                 </div>
               </th>
-              <th className="text-primary normal-case">Address</th>
-              <th className="text-primary normal-case">Contact No.</th>
+
+              <th className="text-primary text-center normal-case">Address</th>
+
+              <th className="text-primary text-center normal-case">
+                Contact No.
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredPatients &&
-              filteredPatients.map((patient) => (
-                <PatientDataRow key={patient._id} patient={patient} />
+              (filteredPatients.length > 0 ? (
+                filteredPatients.map((patient) => (
+                  <PatientDataRow key={patient._id} patient={patient} />
+                ))
+              ) : (
+                <tr className="[&>*]:bg-transparent">
+                  <td
+                    colSpan={3}
+                    className="py-8 text-2xl text-center font-bold"
+                  >
+                    No patients registered
+                  </td>
+                </tr>
               ))}
           </tbody>
         </table>
