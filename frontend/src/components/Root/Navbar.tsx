@@ -33,8 +33,9 @@ const Navbar = (props: Props) => {
           onClick={toggleSidebar}
         />
       )}
-      <div className="max-w-screen-xl w-full min-h-[inherit] m-auto relative">
-        <div className="flex-1">
+
+      <div className="flex justify-between gap-6 max-w-screen-xl w-full min-h-[inherit] m-auto relative">
+        <div>
           <Link
             to="/"
             className="flex items-center font-bold -tracking-widest text-2xl cursor-pointer text-primary"
@@ -43,9 +44,10 @@ const Navbar = (props: Props) => {
             <span className="hidden sm:block">Dental Home</span>
           </Link>
         </div>
+
         {data ? (
-          <>
-            <DarkModeToggle className="flex items-center mx-6 sm:hidden" />
+          <div className="flex gap-4">
+            <DarkModeToggle className="flex items-center sm:hidden" />
             <div
               className="flex items-center sm:gap-3 cursor-pointer"
               onClick={() => {
@@ -53,8 +55,11 @@ const Navbar = (props: Props) => {
               }}
               ref={menuRef}
             >
-              <figure className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden">
-                <img src={data.avatar} />
+              <figure className="rounded-full overflow-hidden">
+                <img
+                  src={data.avatar}
+                  className="w-9 h-9 sm:w-10 sm:h-10 object-cover"
+                />
               </figure>
               <div className="hidden sm:block">
                 <p className="text-sm leading-tight tracking-tight font-semibold">
@@ -64,20 +69,29 @@ const Navbar = (props: Props) => {
                   {data.email}
                 </p>
               </div>
-              <div className="absolute w-screen sm:w-60 top-16 -right-4">
-                {isOpen && (
-                  <ul className="menu bg-base-100 text-sm border-base-200 border shadow">
-                    <li>
-                      <Link to={`/profile/${data._id}`}>Account settings</Link>
-                    </li>
-                    <li>
-                      <span onClick={handleLogout}>Log out</span>
-                    </li>
-                  </ul>
-                )}
+              <div
+                className={`absolute top-16 -right-4 grid ${
+                  isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                } w-screen sm:w-60 transition-[grid-template-rows]`}
+              >
+                <ul
+                  className={`menu flex-nowrap bg-base-100 ${
+                    isOpen && "border border-base-200"
+                  } rounded-b-box text-sm shadow overflow-hidden`}
+                >
+                  <li>
+                    <Link to={`/profile/${data._id}`}>Account settings</Link>
+                  </li>
+                  <li>
+                    <Link to={`/my-appointments`}>My Appointments</Link>
+                  </li>
+                  <li>
+                    <span onClick={handleLogout}>Log out</span>
+                  </li>
+                </ul>
               </div>
             </div>
-          </>
+          </div>
         ) : (
           <>
             <div className="flex flex-none items-center gap-6 relative sm:hidden">
@@ -132,6 +146,7 @@ const Navbar = (props: Props) => {
           </>
         )}
       </div>
+
       <DarkModeToggle className="hidden sm:flex" />
     </div>
   );
