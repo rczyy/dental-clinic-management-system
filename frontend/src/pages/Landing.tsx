@@ -50,7 +50,7 @@ const Landing = (_: Props) => {
             </p>
           </div>
 
-          <div className="flex flex-col max-w-6xl w-full m-auto divide-y divide-base-300">
+          <div className="flex flex-col max-w-6xl w-full m-auto border border-primary rounded-box overflow-hidden">
             <ServiceAccordion
               category="First Appointment"
               Icon={RiHealthBookLine}
