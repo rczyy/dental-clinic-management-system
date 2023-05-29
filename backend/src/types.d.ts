@@ -117,6 +117,14 @@ declare global {
     dentist: Types.ObjectId;
     service: Types.ObjectId;
   }
+
+  interface Attendance {
+    _id?: Types.ObjectId;
+    timeIn: Date;
+    timeOut: Date;
+    date: Date;
+    staff: Types.ObjectId;
+  }
   
   interface EmailRequest {
     _id: Types.ObjectId;
