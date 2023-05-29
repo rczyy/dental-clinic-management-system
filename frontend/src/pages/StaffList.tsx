@@ -73,7 +73,7 @@ const StaffList = (props: Props) => {
       })
       .filter(
         (staff) =>
-          (staff.user.name.firstName + staff.user.name.lastName)
+          `${staff.user.name.firstName} ${staff.user.name.lastName}`
             .toLowerCase()
             .includes(searchFilter.toLowerCase()) &&
           staff.user.role.includes(roleFilter)

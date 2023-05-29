@@ -32,7 +32,7 @@ const PatientList = (props: Props) => {
           : 0;
       })
       .filter((patient) =>
-        (patient.user.name.firstName + patient.user.name.lastName)
+        `${patient.user.name.firstName} ${patient.user.name.lastName}`
           .toLowerCase()
           .includes(searchFilter.toLowerCase())
       );
