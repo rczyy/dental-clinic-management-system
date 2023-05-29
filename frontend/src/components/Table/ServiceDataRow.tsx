@@ -140,7 +140,12 @@ const EditServiceModal = ({
     );
   };
   return (
-    <div className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25">
+    <div
+      className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsEditModalVisible(false);
+      }}
+    >
       <section className="bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
         <header className="flex justify-between items-center">
           <h1 className="text-2xl font-bold mx-2 py-3">Edit service</h1>
@@ -221,7 +226,12 @@ const DeleteServiceModal = ({
     });
   };
   return (
-    <div className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25">
+    <div
+      className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsDeleteModalVisible(false);
+      }}
+    >
       <section className="flex flex-col gap-2 bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
         <header className="flex justify-between items-center mx-2 py-3">
           <h1 className="text-2xl font-bold">Delete service</h1>
@@ -230,7 +240,7 @@ const DeleteServiceModal = ({
             onClick={() => setIsDeleteModalVisible(false)}
           />
         </header>
-        <div className="flex flex-col items-center mx-2 py-3">
+        <div className="flex flex-col mx-2 py-3">
           <p>You are about to permanently delete a service.</p>
           <p>Are you sure?</p>
         </div>
