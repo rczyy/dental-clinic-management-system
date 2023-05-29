@@ -28,7 +28,10 @@ export const getAppointments: RequestHandler = async (req, res) => {
     return;
   }
 
-  const appointments = await Appointment.find().populate("service");
+  const appointments = await Appointment.find()
+    .populate("dentist")
+    .populate("patient")
+    .populate("service");
   res.status(200).json(appointments);
 };
 
@@ -172,7 +175,10 @@ export const getDentistAppointments: RequestHandler = async (req, res) => {
   } else {
     appointments = await Appointment.find({
       dentist,
-    }).populate("service");
+    })
+      .populate("dentist")
+      .populate("patient")
+      .populate("service");
   }
   res.status(200).json(appointments);
 };
@@ -204,11 +210,17 @@ export const getPatientAppointments: RequestHandler = async (req, res) => {
         $gte: dayjs(date.toString()),
         $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
       },
-    }).populate("service");
+    })
+      .populate("dentist")
+      .populate("patient")
+      .populate("service");
   } else {
     appointments = await Appointment.find({
       patient,
-    }).populate("service");
+    })
+      .populate("dentist")
+      .populate("patient")
+      .populate("service");
   }
 
   res.status(200).json(appointments);
