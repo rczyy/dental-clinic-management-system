@@ -162,7 +162,7 @@ const Profile = () => {
                 )}
                 <img
                   src={userData.avatar}
-                  className="bg-base-300 rounded-full"
+                  className="w-[8rem] h-[8rem] bg-base-300 rounded-full object-cover"
                 ></img>
               </figure>
               <div className="flex flex-col items-center sm:items-start">
