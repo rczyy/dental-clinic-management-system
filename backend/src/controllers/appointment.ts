@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { verifyToken } from "../utilities/verifyToken";
 import { z } from "zod";
 import { Roles } from "../constants";
+import { isValidObjectId } from "mongoose";
 import Appointment from "../models/appointment";
 import Dentist from "../models/dentist";
 import Service from "../models/service";
@@ -75,6 +76,24 @@ export const addAppointment: RequestHandler = async (req, res) => {
   if (token.role === Roles.Patient && req.session.uid !== patient) {
     const error: ErrorMessage = { message: "Unauthorized to do this" };
     res.status(401).json(error);
+    return;
+  }
+
+  if (!isValidObjectId(dentist)) {
+    const error: ErrorMessage = { message: "Invalid dentist ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  if (!isValidObjectId(patient)) {
+    const error: ErrorMessage = { message: "Invalid patient ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  if (!isValidObjectId(service)) {
+    const error: ErrorMessage = { message: "Invalid service ID" };
+    res.status(400).json(error);
     return;
   }
 
@@ -277,6 +296,30 @@ export const editAppointment: RequestHandler = async (req, res) => {
 
   const { appointmentId } = req.params;
 
+  if (!isValidObjectId(appointmentId)) {
+    const error: ErrorMessage = { message: "Invalid appointment ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  if (!isValidObjectId(dentist)) {
+    const error: ErrorMessage = { message: "Invalid dentist ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  if (!isValidObjectId(patient)) {
+    const error: ErrorMessage = { message: "Invalid patient ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  if (!isValidObjectId(service)) {
+    const error: ErrorMessage = { message: "Invalid service ID" };
+    res.status(400).json(error);
+    return;
+  }
+
   if (token.role === Roles.Patient && req.session.uid !== patient) {
     const error: ErrorMessage = { message: "Unauthorized to do this" };
     res.status(401).json(error);
@@ -374,5 +417,50 @@ export const editAppointment: RequestHandler = async (req, res) => {
   res.status(200).json({
     _id: editedAppointment._id,
     message: "Successfully edited the Appointment",
+  });
+};
+
+export const removeAppointment: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  const { appointmentId } = req.params;
+
+  if (!isValidObjectId(appointmentId)) {
+    const error: ErrorMessage = { message: "Invalid appointment ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const appointmentToDelete = await Appointment.findById(appointmentId);
+
+  if (!appointmentToDelete) {
+    const error: ErrorMessage = { message: "Appointment doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  if (token.role === Roles.Patient && req.session.uid !== appointmentToDelete.patient.toString()) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const deletedAppointment = await Appointment.findByIdAndDelete(appointmentId);
+
+  if (!deletedAppointment) {
+    const error: ErrorMessage = { message: "Appointment doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  res.status(200).json({
+    _id: deletedAppointment._id,
+    message: "Succesfully deleted the appointment",
   });
 };
