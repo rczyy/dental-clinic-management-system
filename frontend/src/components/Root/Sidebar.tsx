@@ -23,9 +23,9 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`fixed lg:sticky inset-0 lg:top-0 flex flex-col gap-1 bg-base-100/95 min-h-screen ${
+      className={`fixed lg:sticky inset-0 lg:top-0 flex flex-col bg-base-100/95 min-h-screen ${
         sidebar ? "max-w-xs border-r" : "max-w-0 border-none"
-      } min-w-0 w-full pt-20 border-r-neutral shadow-2xl lg:shadow z-20 transition-all overflow-hidden`}
+      } min-w-0 w-full pt-20 border-r-neutral divide-y shadow-2xl lg:shadow z-20 transition-all overflow-hidden`}
     >
       {(data?.role === "Admin" || data?.role === "Manager") && (
         <SidebarItem name="Staff list" Icon={CgUserList} route="/staff" />
@@ -77,7 +77,7 @@ const SidebarItem = ({ name, Icon, route }: SidebarItemProps) => {
   return (
     <Link
       to={route}
-      className="flex gap-3.5 items-center px-3 py-4 tracking-tighter cursor-pointer border-l-[6px] border-l-transparent
+      className="flex gap-3.5 items-center px-4 py-5 tracking-tighter cursor-pointer border-l-[6px] border-l-transparent
       hover:border-l-primary rounded-r-md hover:bg-base-200 transition-all ease-in-out duration-100"
       onClick={window.innerWidth < 768 ? toggleSidebar : undefined}
     >
