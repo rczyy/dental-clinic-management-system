@@ -117,12 +117,18 @@ declare global {
     dentist: Types.ObjectId;
     service: Types.ObjectId;
   }
-  
+
   interface EmailRequest {
     _id: Types.ObjectId;
     token?: string;
     email?: string;
     createdAt: Date;
     updatedAt: Date;
+  }
+
+  interface DentistSchedule {
+    _id: Types.ObjectId;
+    dentist: Types.ObjectId;
+    date: Date;
   }
 }
