@@ -2,9 +2,20 @@ import axios from "axios";
 
 const URL = import.meta.env.VITE_AXIOS_BASE_URL;
 
-export const getAppointments = async (date: string) => {
+export const getAppointments = async ({
+  date,
+  includePast,
+}: {
+  date: string;
+  includePast: boolean;
+}) => {
+  const searchParams = new URLSearchParams({
+    ...(date && { date: date }),
+    ...(includePast !== undefined && { includePast: String(includePast) }),
+  });
+
   const res = await axios.get<AppointmentResponse[]>(
-    `${URL}/appointment${date ? `?date=${date}` : ""}`,
+    `${URL}/appointment?${searchParams}`,
     {
       withCredentials: true,
       headers: {
@@ -36,10 +47,12 @@ export const getDentistAppointments = async ({
   dentist: string;
   date: string;
 }) => {
+  const searchParams = new URLSearchParams({
+    ...(date && { date: date }),
+  });
+
   const res = await axios.get<AppointmentResponse[]>(
-    `${URL}/appointment/get-dentist-appointments/${dentist}${
-      date ? `?date=${date}` : ""
-    }`,
+    `${URL}/appointment/get-dentist-appointments/${dentist}?${searchParams}`,
     {
       withCredentials: true,
       headers: {
@@ -57,10 +70,12 @@ export const getPatientAppointments = async ({
   patient: string;
   date: string;
 }) => {
+  const searchParams = new URLSearchParams({
+    ...(date && { date: date }),
+  });
+
   const res = await axios.get<AppointmentResponse[]>(
-    `${URL}/appointment/get-patient-appointments/${patient}${
-      date ? `?date=${date}` : ""
-    }`,
+    `${URL}/appointment/get-patient-appointments/${patient}?${searchParams}`,
     {
       withCredentials: true,
       headers: {

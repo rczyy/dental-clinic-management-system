@@ -6,10 +6,16 @@ import {
   getPatientAppointments,
 } from "../axios/appointment";
 
-export const useGetAppointments = (date: string) => {
+export const useGetAppointments = ({
+  date,
+  includePast,
+}: {
+  date: string;
+  includePast: boolean;
+}) => {
   return useQuery<AppointmentResponse[], ErrorMessageResponse>({
     queryKey: ["appointments"],
-    queryFn: () => getAppointments(date),
+    queryFn: () => getAppointments({ date, includePast }),
   });
 };
 

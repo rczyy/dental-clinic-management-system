@@ -16,12 +16,14 @@ export const AppointmentList = (_: Props): JSX.Element => {
   const [searchDentistFilter, setSearchDentistFilter] = useState<string>("");
   const [searchPatientFilter, setSearchPatientFilter] = useState<string>("");
   const [dateFilter, setDateFilter] = useState<dayjs.Dayjs | null>(null);
+  const [pastFilter, setPastFilter] = useState<boolean>(false);
 
   const { data: me } = useGetMe();
   const { data: appointments, refetch: refetchGetAppointments } =
-    useGetAppointments(
-      dateFilter ? dayjs(dateFilter).format("MM/DD/YYYY") : ""
-    );
+    useGetAppointments({
+      date: dateFilter ? dayjs(dateFilter).format("MM/DD/YYYY") : "",
+      includePast: pastFilter,
+    });
 
   const filteredAppointments =
     appointments &&
@@ -41,7 +43,7 @@ export const AppointmentList = (_: Props): JSX.Element => {
 
   useEffect(() => {
     refetchGetAppointments();
-  }, [dateFilter]);
+  }, [dateFilter, pastFilter]);
 
   if (!me || me.role === "Patient") return <Navigate to={"/"} />;
 
@@ -55,18 +57,30 @@ export const AppointmentList = (_: Props): JSX.Element => {
         <h1 className="text-2xl md:text-3xl font-bold">Appointments</h1>
       </header>
       <div className="flex flex-wrap justify-between items-center gap-2">
-        <DesktopDatePicker
-          label="Select date"
-          className="w-36 sm:w-44"
-          defaultValue={dateFilter}
-          onChange={(date) => setDateFilter(date)}
-          slotProps={{
-            actionBar: {
-              actions: ["clear"],
-            },
-          }}
-          disablePast
-        />
+        <div className="flex gap-6">
+          <DesktopDatePicker
+            label="Select date"
+            className="w-36 sm:w-44"
+            defaultValue={dateFilter}
+            onChange={(date) => setDateFilter(date)}
+            slotProps={{
+              actionBar: {
+                actions: ["clear"],
+              },
+            }}
+            disablePast={!pastFilter}
+          />
+          <div className="form-control">
+            <label className="label gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-primary checkbox-sm checked:bg-base-300"
+                onChange={(e) => setPastFilter(e.target.checked)}
+              />
+              <span className="label-text">Include Past</span>
+            </label>
+          </div>
+        </div>
 
         <div className="flex gap-2">
           <div className="flex flex-1 items-center bg-base-300 max-w-sm border rounded-md">

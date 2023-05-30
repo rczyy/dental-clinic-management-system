@@ -29,6 +29,7 @@ export const getAppointments: RequestHandler = async (req, res) => {
 
   const querySchema = z.object({
     date: z.coerce.date().optional(),
+    includePast: z.coerce.boolean().optional(),
   });
 
   const queryParse = querySchema.safeParse(req.query);
@@ -38,55 +39,37 @@ export const getAppointments: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { date } = req.query;
+  const { date, includePast } = req.query;
 
-  const appointments = date
-    ? await Appointment.find({
-        dateTimeScheduled: {
-          $gte: dayjs(date.toString()),
-          $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+  const appointments = await Appointment.find({
+    ...(date && {
+      dateTimeScheduled: {
+        $gte: dayjs(date.toString()),
+        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+      },
+    }),
+    ...(includePast === "false" && {
+      dateTimeFinished: {
+        $gt: dayjs(),
+      },
+    }),
+  })
+    .populate({
+      path: "dentist",
+      populate: {
+        path: "staff",
+        populate: {
+          path: "user",
         },
-        dateTimeFinished: {
-          $gt: dayjs(),
-        },
-      })
-        .populate({
-          path: "dentist",
-          populate: {
-            path: "staff",
-            populate: {
-              path: "user",
-            },
-          },
-        })
-        .populate({
-          path: "patient",
-          populate: {
-            path: "user",
-          },
-        })
-        .populate({ path: "service" })
-    : await Appointment.find({
-        dateTimeFinished: {
-          $gt: dayjs(),
-        },
-      })
-        .populate({
-          path: "dentist",
-          populate: {
-            path: "staff",
-            populate: {
-              path: "user",
-            },
-          },
-        })
-        .populate({
-          path: "patient",
-          populate: {
-            path: "user",
-          },
-        })
-        .populate({ path: "service" });
+      },
+    })
+    .populate({
+      path: "patient",
+      populate: {
+        path: "user",
+      },
+    })
+    .populate({ path: "service" });
 
   res.status(200).json(appointments);
 };
@@ -305,55 +288,34 @@ export const getDentistAppointments: RequestHandler = async (req, res) => {
     return;
   }
 
-  const appointments = date
-    ? await Appointment.find({
-        dentist: dentistSelected._id,
-        dateTimeScheduled: {
-          $gte: dayjs(date.toString()),
-          $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+  const appointments = await Appointment.find({
+    dentist: dentistSelected._id,
+    ...(date && {
+      dateTimeScheduled: {
+        $gte: dayjs(date.toString()),
+        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+      },
+    }),
+    dateTimeFinished: {
+      $gt: dayjs(),
+    },
+  })
+    .populate({
+      path: "dentist",
+      populate: {
+        path: "staff",
+        populate: {
+          path: "user",
         },
-        dateTimeFinished: {
-          $gt: dayjs(),
-        },
-      })
-        .populate({
-          path: "dentist",
-          populate: {
-            path: "staff",
-            populate: {
-              path: "user",
-            },
-          },
-        })
-        .populate({
-          path: "patient",
-          populate: {
-            path: "user",
-          },
-        })
-        .populate({ path: "service" })
-    : await Appointment.find({
-        dentist: dentistSelected._id,
-        dateTimeFinished: {
-          $gt: dayjs(),
-        },
-      })
-        .populate({
-          path: "dentist",
-          populate: {
-            path: "staff",
-            populate: {
-              path: "user",
-            },
-          },
-        })
-        .populate({
-          path: "patient",
-          populate: {
-            path: "user",
-          },
-        })
-        .populate({ path: "service" });
+      },
+    })
+    .populate({
+      path: "patient",
+      populate: {
+        path: "user",
+      },
+    })
+    .populate({ path: "service" });
 
   res.status(200).json(appointments);
 };
@@ -403,55 +365,34 @@ export const getPatientAppointments: RequestHandler = async (req, res) => {
     return;
   }
 
-  const appointments = date
-    ? await Appointment.find({
-        patient: patientSelected._id,
-        dateTimeScheduled: {
-          $gte: dayjs(date.toString()),
-          $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+  const appointments = await Appointment.find({
+    patient: patientSelected._id,
+    ...(date && {
+      dateTimeScheduled: {
+        $gte: dayjs(date.toString()),
+        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+      },
+    }),
+    dateTimeFinished: {
+      $gt: dayjs(),
+    },
+  })
+    .populate({
+      path: "dentist",
+      populate: {
+        path: "staff",
+        populate: {
+          path: "user",
         },
-        dateTimeFinished: {
-          $gt: dayjs(),
-        },
-      })
-        .populate({
-          path: "patient",
-          populate: {
-            path: "staff",
-            populate: {
-              path: "user",
-            },
-          },
-        })
-        .populate({
-          path: "patient",
-          populate: {
-            path: "user",
-          },
-        })
-        .populate({ path: "service" })
-    : await Appointment.find({
-        patient: patientSelected._id,
-        dateTimeFinished: {
-          $gt: dayjs(),
-        },
-      })
-        .populate({
-          path: "dentist",
-          populate: {
-            path: "staff",
-            populate: {
-              path: "user",
-            },
-          },
-        })
-        .populate({
-          path: "patient",
-          populate: {
-            path: "user",
-          },
-        })
-        .populate({ path: "service" });
+      },
+    })
+    .populate({
+      path: "patient",
+      populate: {
+        path: "user",
+      },
+    })
+    .populate({ path: "service" });
 
   res.status(200).json(appointments);
 };
