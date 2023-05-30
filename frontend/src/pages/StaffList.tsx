@@ -88,7 +88,7 @@ const StaffList = (props: Props) => {
     <main
       className={`flex flex-col gap-4 ${
         sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
-      } m-auto`}
+      } m-auto transition-[max-width]`}
     >
       <header className="flex justify-between items-end mb-4 gap-8">
         <h1 className="font-bold text-2xl md:text-3xl">Staffs</h1>
