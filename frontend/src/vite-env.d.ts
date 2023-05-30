@@ -245,6 +245,14 @@ interface ServiceResponse {
   estimatedTime: string;
 }
 
+interface AttendanceResponse {
+  _id: string;
+  timeIn: string;
+  timeOut: string;
+  date: string;
+  staff: StaffResponse;
+}
+
 interface AppointmentZodFormValues {
   serviceCategory: string;
   service: string;
