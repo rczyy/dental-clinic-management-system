@@ -24,8 +24,47 @@ export const getAttendance: RequestHandler = async (req, res) => {
     return;
   }
 
-  const attendance = await Attendance.find();
+  const attendance = await Attendance.find().populate({
+    path: "staff",
+    populate: { path: "user" },
+  });
   res.status(201).json(attendance);
+};
+
+export const getMyAttendance: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (
+    token.role !== Roles.Admin &&
+    token.role !== Roles.Manager &&
+    token.role !== Roles.Dentist &&
+    token.role !== Roles.Assistant &&
+    token.role !== Roles.FrontDesk
+  ) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const existingStaff = await Staff.findOne({ user: req.session.uid });
+
+  if (!existingStaff) {
+    const error: FormError = {
+      formErrors: ["Staff does not exist"],
+    };
+
+    res.status(401).json(error);
+    return;
+  }
+
+  const myAttendance = await Attendance.find({ staff: existingStaff._id });
+  res.status(201).json(myAttendance);
 };
 
 export const logTimeIn: RequestHandler = async (req, res) => {
@@ -171,6 +210,6 @@ export const logTimeOut: RequestHandler = async (req, res) => {
     },
     { new: true }
   );
-
+  console.log(dateToday);
   res.status(201).json(attendance);
 };

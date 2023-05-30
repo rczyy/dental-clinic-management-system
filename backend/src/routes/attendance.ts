@@ -1,11 +1,19 @@
 import { Router } from "express";
 import { checkAuth } from "../middlewares/checkAuth";
-import { getAttendance, logTimeIn, logTimeOut } from "../controllers/attendance";
+import {
+  getAttendance,
+  getMyAttendance,
+  logTimeIn,
+  logTimeOut,
+} from "../controllers/attendance";
 
 const router = Router();
 
-router.get("/", checkAuth, getAttendance);
-router.post("/time-in", checkAuth, logTimeIn);
-router.post("/time-out", checkAuth, logTimeOut);
+router
+  .get("/", checkAuth, getAttendance)
+  .get("/me", checkAuth, getMyAttendance);
+router
+  .post("/time-in", checkAuth, logTimeIn)
+  .post("/time-out", checkAuth, logTimeOut);
 
 export default router;
