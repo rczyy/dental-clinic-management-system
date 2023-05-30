@@ -27,6 +27,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import AppointmentSuccess from "./pages/AppointmentSuccess";
 import { rootApi } from "./redux/api/root";
 import { MyAppointments } from "./pages/MyAppointments";
+import { MySchedule } from "./pages/MySchedule";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -108,6 +109,10 @@ const router = createBrowserRouter([
       {
         path: "my-appointments",
         element: <MyAppointments />,
+      },
+      {
+        path: "my-schedule",
+        element: <MySchedule />,
       },
     ],
   },

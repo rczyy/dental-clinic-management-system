@@ -260,3 +260,9 @@ interface AppointmentFormValues {
   dateTimeScheduled: string;
   dateTimeFinished: string;
 }
+
+interface DentistScheduleResponse {
+  _id: string;
+  dentist: string;
+  date: Date;
+}
