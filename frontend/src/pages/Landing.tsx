@@ -74,7 +74,7 @@ const Landing = (_: Props) => {
       {data && !data?.contactNo && isAddMobileOpen && (
         <div
           className="fixed inset-0 flex items-center justify-center bg-black/50 px-4 z-50"
-          onClick={(e) => {
+          onMouseDown={(e) => {
             if (e.target === e.currentTarget) setIsAddMobileOpen(false);
           }}
         >

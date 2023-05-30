@@ -8,7 +8,11 @@ import Dentist from "../models/dentist";
 import Service from "../models/service";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import Staff from "../models/staff";
+import Patient from "../models/patient";
 dayjs.extend(isBetween);
+dayjs.extend(isSameOrBefore);
 
 export const getAppointments: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -19,22 +23,56 @@ export const getAppointments: RequestHandler = async (req, res) => {
     return;
   }
 
-  if (
-    token.role !== Roles.Admin &&
-    token.role !== Roles.Manager &&
-    token.role !== Roles.Dentist &&
-    token.role !== Roles.Assistant &&
-    token.role !== Roles.FrontDesk
-  ) {
+  if (token.role === Roles.Patient) {
     const error: ErrorMessage = { message: "Unauthorized to do this" };
     res.status(401).json(error);
     return;
   }
 
-  const appointments = await Appointment.find()
-    .populate("dentist")
-    .populate("patient")
-    .populate("service");
+  const querySchema = z.object({
+    date: z.coerce.date().optional(),
+    includePast: z.coerce.boolean().optional(),
+  });
+
+  const queryParse = querySchema.safeParse(req.query);
+
+  if (!queryParse.success) {
+    res.status(400).send(queryParse.error.flatten());
+    return;
+  }
+
+  const { date, includePast } = req.query;
+
+  const appointments = await Appointment.find({
+    ...(date && {
+      dateTimeScheduled: {
+        $gte: dayjs(date.toString()),
+        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+      },
+    }),
+    ...(includePast === "false" && {
+      dateTimeFinished: {
+        $gt: dayjs(),
+      },
+    }),
+  })
+    .populate({
+      path: "dentist",
+      populate: {
+        path: "staff",
+        populate: {
+          path: "user",
+        },
+      },
+    })
+    .populate({
+      path: "patient",
+      populate: {
+        path: "user",
+      },
+    })
+    .populate({ path: "service" });
+
   res.status(200).json(appointments);
 };
 
@@ -100,14 +138,28 @@ export const addAppointment: RequestHandler = async (req, res) => {
     return;
   }
 
-  const dentistSelected = await Dentist.findById(dentist);
-  const serviceSelected = await Service.findById(service);
+  const existingStaff = await Staff.findOne({ user: dentist });
 
-  if (!dentistSelected) {
-    const error: ErrorMessage = { message: "Dentist doesn't exist" };
-    res.status(400).json(error);
+  if (!existingStaff) {
+    res.status(400).send({ message: "Dentist doesn't exist" });
     return;
   }
+
+  const dentistSelected = await Dentist.findOne({ staff: existingStaff._id });
+
+  if (!dentistSelected) {
+    res.status(400).send({ message: "Dentist doesn't exist" });
+    return;
+  }
+
+  const patientSelected = await Patient.findOne({ user: patient });
+
+  if (!patientSelected) {
+    res.status(400).send({ message: "Patient does not exist" });
+    return;
+  }
+
+  const serviceSelected = await Service.findById(service);
 
   if (!serviceSelected) {
     const error: ErrorMessage = { message: "Service doesn't exist" };
@@ -175,8 +227,8 @@ export const addAppointment: RequestHandler = async (req, res) => {
   }
 
   const appointment = new Appointment({
-    dentist,
-    patient,
+    dentist: dentistSelected._id,
+    patient: patientSelected._id,
     service,
     dateTimeScheduled,
     dateTimeFinished,
@@ -195,33 +247,78 @@ export const getDentistAppointments: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { dentist } = req.params;
-  const { date } = req.query;
+  const paramsSchema = z
+    .object({
+      dentist: z.string({ required_error: "User ID is required" }),
+    })
+    .refine(({ dentist }) => isValidObjectId(dentist), {
+      message: "Invalid user ID",
+    });
 
-  if (!dentist) {
-    const error: ErrorMessage = { message: "Invalid user ID" };
-    res.status(400).json(error);
+  const paramsParse = paramsSchema.safeParse(req.params);
+
+  if (!paramsParse.success) {
+    res.status(400).send(paramsParse.error.flatten());
     return;
   }
 
-  let appointments;
+  const querySchema = z.object({
+    date: z.coerce.date().optional(),
+  });
 
-  if (date) {
-    appointments = await Appointment.find({
-      dentist,
+  const queryParse = querySchema.safeParse(req.query);
+
+  if (!queryParse.success) {
+    res.status(400).send(queryParse.error.flatten());
+    return;
+  }
+
+  const { dentist } = req.params as z.infer<typeof paramsSchema>;
+  const { date } = req.query;
+
+  const existingStaff = await Staff.findOne({ user: dentist });
+
+  if (!existingStaff) {
+    res.status(400).send({ message: "Dentist doesn't exist" });
+    return;
+  }
+
+  const dentistSelected = await Dentist.findOne({ staff: existingStaff._id });
+
+  if (!dentistSelected) {
+    res.status(400).send({ message: "Dentist doesn't exist" });
+    return;
+  }
+
+  const appointments = await Appointment.find({
+    dentist: dentistSelected._id,
+    ...(date && {
       dateTimeScheduled: {
         $gte: dayjs(date.toString()),
         $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
       },
-    }).populate("service");
-  } else {
-    appointments = await Appointment.find({
-      dentist,
+    }),
+    dateTimeFinished: {
+      $gt: dayjs(),
+    },
+  })
+    .populate({
+      path: "dentist",
+      populate: {
+        path: "staff",
+        populate: {
+          path: "user",
+        },
+      },
     })
-      .populate("dentist")
-      .populate("patient")
-      .populate("service");
-  }
+    .populate({
+      path: "patient",
+      populate: {
+        path: "user",
+      },
+    })
+    .populate({ path: "service" });
+
   res.status(200).json(appointments);
 };
 
@@ -234,36 +331,70 @@ export const getPatientAppointments: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { patient } = req.params;
-  const { date } = req.query;
+  const paramsSchema = z
+    .object({
+      patient: z.string({ required_error: "User ID is required" }),
+    })
+    .refine(({ patient }) => isValidObjectId(patient), {
+      message: "Invalid user ID",
+    });
 
-  if (!patient) {
-    const error: ErrorMessage = { message: "Invalid user ID" };
-    res.status(400).json(error);
+  const paramsParse = paramsSchema.safeParse(req.params);
+
+  if (!paramsParse.success) {
+    res.status(400).send(paramsParse.error.flatten());
     return;
   }
 
-  let appointments;
+  const querySchema = z.object({
+    date: z.coerce.date().optional(),
+  });
 
-  if (date) {
-    appointments = await Appointment.find({
-      patient,
+  const queryParse = querySchema.safeParse(req.query);
+
+  if (!queryParse.success) {
+    res.status(400).send(queryParse.error.flatten());
+    return;
+  }
+
+  const { patient } = req.params as z.infer<typeof paramsSchema>;
+  const { date } = req.query;
+
+  const patientSelected = await Patient.findOne({ user: patient });
+
+  if (!patientSelected) {
+    res.status(400).send({ message: "Patient does not exist" });
+    return;
+  }
+
+  const appointments = await Appointment.find({
+    patient: patientSelected._id,
+    ...(date && {
       dateTimeScheduled: {
         $gte: dayjs(date.toString()),
         $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
       },
+    }),
+    dateTimeFinished: {
+      $gt: dayjs(),
+    },
+  })
+    .populate({
+      path: "dentist",
+      populate: {
+        path: "staff",
+        populate: {
+          path: "user",
+        },
+      },
     })
-      .populate("dentist")
-      .populate("patient")
-      .populate("service");
-  } else {
-    appointments = await Appointment.find({
-      patient,
+    .populate({
+      path: "patient",
+      populate: {
+        path: "user",
+      },
     })
-      .populate("dentist")
-      .populate("patient")
-      .populate("service");
-  }
+    .populate({ path: "service" });
 
   res.status(200).json(appointments);
 };
@@ -449,7 +580,14 @@ export const removeAppointment: RequestHandler = async (req, res) => {
     return;
   }
 
-  const appointmentToDelete = await Appointment.findById(appointmentId);
+  const appointmentToDelete = await Appointment.findById(
+    appointmentId
+  ).populate({
+    path: "patient",
+    populate: {
+      path: "user",
+    },
+  });
 
   if (!appointmentToDelete) {
     const error: ErrorMessage = { message: "Appointment doesn't exist" };
@@ -457,9 +595,27 @@ export const removeAppointment: RequestHandler = async (req, res) => {
     return;
   }
 
-  if (token.role === Roles.Patient && req.session.uid !== appointmentToDelete.patient.toString()) {
+  if (
+    token.role === Roles.Patient &&
+    (
+      appointmentToDelete.patient as unknown as { user: User }
+    ).user._id.toString() !== req.session.uid
+  ) {
     const error: ErrorMessage = { message: "Unauthorized to do this" };
     res.status(401).json(error);
+    return;
+  }
+
+  if (
+    token.role === Roles.Patient &&
+    !dayjs()
+      .add(2, "day")
+      .isSameOrBefore(dayjs(appointmentToDelete.dateTimeScheduled))
+  ) {
+    const error: ErrorMessage = {
+      message: "Cancelling should be at least two days in advance.",
+    };
+    res.status(400).json(error);
     return;
   }
 

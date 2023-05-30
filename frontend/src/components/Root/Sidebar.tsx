@@ -1,10 +1,10 @@
 import {
-  AiOutlineCreditCard,
+  // AiOutlineCreditCard,
   AiOutlineMedicineBox,
   AiTwotoneCalendar,
 } from "react-icons/ai";
 import { BiCalendarCheck, BiUserCheck } from "react-icons/bi";
-import { VscNote } from "react-icons/vsc";
+// import { VscNote } from "react-icons/vsc";
 import { CgUserList } from "react-icons/cg";
 import { IconType } from "react-icons/lib";
 import { Link } from "react-router-dom";
@@ -28,19 +28,23 @@ const Sidebar = () => {
       } min-w-0 w-full pt-20 border-r-neutral divide-y shadow-2xl lg:shadow z-20 transition-all overflow-hidden`}
     >
       {(data?.role === "Admin" || data?.role === "Manager") && (
-        <SidebarItem name="Staff list" Icon={CgUserList} route="/staff" />
+        <SidebarItem name="Staff" Icon={CgUserList} route="/staff" />
       )}
 
-      <SidebarItem name="Patient list" Icon={CgUserList} route="/patients" />
+      <SidebarItem name="Patients" Icon={CgUserList} route="/patients" />
 
-      <SidebarItem name="Appointments" Icon={BiCalendarCheck} route="/" />
+      <SidebarItem
+        name="Appointments"
+        Icon={BiCalendarCheck}
+        route="/appointments"
+      />
 
-      {(data?.role === "Admin" ||
+      {/* {(data?.role === "Admin" ||
         data?.role === "Manager" ||
         data?.role === "Dentist" ||
         data?.role === "Front Desk") && (
         <SidebarItem name="Billings" Icon={AiOutlineCreditCard} route="/" />
-      )}
+      )} */}
 
       {data?.role === "Dentist" && (
         <SidebarItem name="My Schedule" Icon={AiTwotoneCalendar} route="/" />
@@ -64,9 +68,9 @@ const Sidebar = () => {
 
       <SidebarItem name="Attendance" Icon={BiUserCheck} route="/" />
 
-      {(data?.role === "Admin" || data?.role === "Manager") && (
+      {/* {(data?.role === "Admin" || data?.role === "Manager") && (
         <SidebarItem name="Logs" Icon={VscNote} route="/" />
-      )}
+      )} */}
     </div>
   );
 };

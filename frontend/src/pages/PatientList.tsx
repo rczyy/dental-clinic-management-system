@@ -5,10 +5,13 @@ import PatientDataRow from "../components/Table/PatientDataRow";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import { Link, Navigate } from "react-router-dom";
 import { useGetMe } from "../hooks/user";
+import { useAdminStore } from "../store/admin";
 
 type Props = {};
 
 const PatientList = (props: Props) => {
+  const sidebar = useAdminStore((state) => state.sidebar);
+
   const { data: me } = useGetMe();
   const { data: patients } = useGetPatients();
   const [searchFilter, setSearchFilter] = useState<string>("");
@@ -32,7 +35,7 @@ const PatientList = (props: Props) => {
           : 0;
       })
       .filter((patient) =>
-        (patient.user.name.firstName + patient.user.name.lastName)
+        `${patient.user.name.firstName} ${patient.user.name.lastName}`
           .toLowerCase()
           .includes(searchFilter.toLowerCase())
       );
@@ -40,9 +43,13 @@ const PatientList = (props: Props) => {
   if (!me || me.role === "Patient") return <Navigate to="/" />;
 
   return (
-    <main className={`flex flex-col gap-4 max-w-screen-2xl m-auto`}>
+    <main
+      className={`flex flex-col gap-4 ${
+        sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
+      } m-auto transition-[max-width]`}
+    >
       <header className="flex justify-between items-end mb-4 gap-8">
-        <h1 className="font-bold text-2xl md:text-3xl">Patient List</h1>
+        <h1 className="font-bold text-2xl md:text-3xl">Patients</h1>
         <Link
           to="/patient/register"
           role="button"
@@ -67,14 +74,19 @@ const PatientList = (props: Props) => {
         <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
           <thead>
             <tr className="[&>*]:bg-base-300 border-b border-base-200">
+              {filteredPatients && filteredPatients.length > 0 && (
+                <th className="min-w-[2.5rem] w-10"></th>
+              )}
+
               <th></th>
+
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
                   setNameSort((val) => (val === "asc" ? "desc" : "asc"))
                 }
               >
-                <div className="flex items-center gap-1">
+                <div className="flex justify-center items-center gap-1">
                   <span>Name</span>
                   {nameSort === "asc" ? (
                     <AiFillCaretDown className="w-2.5 h-2.5" />
@@ -83,14 +95,29 @@ const PatientList = (props: Props) => {
                   ) : null}
                 </div>
               </th>
-              <th className="text-primary normal-case">Address</th>
-              <th className="text-primary normal-case">Contact No.</th>
+
+              <th className="text-primary text-center normal-case">Address</th>
+
+              <th className="text-primary text-center normal-case">
+                Contact No.
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredPatients &&
-              filteredPatients.map((patient) => (
-                <PatientDataRow key={patient._id} patient={patient} />
+              (filteredPatients.length > 0 ? (
+                filteredPatients.map((patient) => (
+                  <PatientDataRow key={patient._id} patient={patient} />
+                ))
+              ) : (
+                <tr className="[&>*]:bg-transparent">
+                  <td
+                    colSpan={3}
+                    className="py-8 text-2xl text-center font-bold"
+                  >
+                    No patients registered
+                  </td>
+                </tr>
               ))}
           </tbody>
         </table>
