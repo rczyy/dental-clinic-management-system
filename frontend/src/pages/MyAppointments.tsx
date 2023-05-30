@@ -1,10 +1,10 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { FiSearch } from "react-icons/fi";
+import { FiPlus, FiSearch } from "react-icons/fi";
 import { DesktopDatePicker } from "@mui/x-date-pickers";
 import { useGetMe } from "../hooks/user";
 import { AppointmentDataRow } from "../components/Table/AppointmentDataRow";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useAdminStore } from "../store/admin";
 import {
   useGetDentistAppointments,
@@ -61,8 +61,16 @@ export const MyAppointments = (_: Props): JSX.Element => {
         sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
       } mx-auto`}
     >
-      <header>
+      <header className="flex flex-wrap justify-between items-end mb-4 gap-8">
         <h1 className="text-2xl md:text-3xl font-bold">My Appointments</h1>
+        <Link
+          to="/set-appointment"
+          role="button"
+          className="btn btn-primary w-full max-w-[12rem] min-h-[2.5rem] h-10 px-2 text-white normal-case gap-2"
+        >
+          <FiPlus className="w-4 h-4" />
+          Add an Appointment
+        </Link>
       </header>
       <div className="flex justify-between items-center gap-2">
         <DesktopDatePicker
@@ -102,6 +110,8 @@ export const MyAppointments = (_: Props): JSX.Element => {
               <th className="text-primary text-center normal-case">Date</th>
 
               <th className="text-primary text-center normal-case">Time</th>
+
+              <th></th>
 
               <th className="text-primary text-center normal-case">
                 {me && me.role === "Patient" ? "Dentist" : "Patient"}

@@ -4,7 +4,6 @@ import { FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { useGetMe } from "../../hooks/user";
 import { useRemoveAppointment } from "../../hooks/appointment";
 import { toast } from "react-toastify";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   appointment: AppointmentResponse;
