@@ -53,7 +53,7 @@ export const AppointmentList = (_: Props): JSX.Element => {
         sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
       } mx-auto transition-[max-width]`}
     >
-      <header className="flex justify-between items-end mb-4 gap-8">
+      <header className="flex flex-wrap justify-between items-end mb-4 gap-8">
         <h1 className="text-2xl md:text-3xl font-bold">Appointments</h1>
         <Link
           to="/set-appointment"
