@@ -83,12 +83,11 @@ const Navbar = (props: Props) => {
                     <Link to={`/profile/${data._id}`}>Account settings</Link>
                   </li>
 
-                  {data.role === "Patient" ||
-                    (data.role === "Dentist" && (
-                      <li>
-                        <Link to={`/my-appointments`}>My Appointments</Link>
-                      </li>
-                    ))}
+                  {(data.role === "Patient" || data.role === "Dentist") && (
+                    <li>
+                      <Link to={`/my-appointments`}>My Appointments</Link>
+                    </li>
+                  )}
 
                   <li>
                     <span onClick={handleLogout}>Log out</span>
