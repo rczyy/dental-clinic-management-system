@@ -84,8 +84,23 @@ const Sidebar = () => {
           route="/dashboard/services"
         />
 
-        <SidebarItem name="Attendance" Icon={BiUserCheck} route="/" />
+        {data?.role !== "Admin" && (
+          <SidebarItem
+            name="My Attendance"
+            Icon={BiUserCheck}
+            route="/dashboard/attendance"
+          />
+        )}
 
+        {(data?.role === "Admin" ||
+          data?.role === "Manager" ||
+          data?.role === "Front Desk") && (
+          <SidebarItem
+            name="Staff Attendance"
+            Icon={BiUserCheck}
+            route="/dashboard/staff-attendance"
+          />
+        )}
         {(data?.role === "Admin" || data?.role === "Manager") && (
           <SidebarItem name="Logs" Icon={VscNote} route="/" />
         )}
