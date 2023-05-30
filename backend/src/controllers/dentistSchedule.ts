@@ -11,7 +11,7 @@ export const getDentistSchedule: RequestHandler = async (req, res) => {
       dentist: z.string({ required_error: "ID is required" }),
     })
     .refine(({ dentist }) => isValidObjectId(dentist), {
-      message: "Invalid ID",
+      message: "Invalid User ID",
     });
 
   const paramsParse = paramsSchema.safeParse(req.params);
@@ -23,7 +23,23 @@ export const getDentistSchedule: RequestHandler = async (req, res) => {
 
   const { dentist } = req.params as z.infer<typeof paramsSchema>;
 
-  const schedules = await DentistSchedule.find({ dentist });
+  const existingStaff = await Staff.findOne({ user: dentist });
+
+  if (!existingStaff) {
+    res.status(400).send({ message: "Dentist does not exist" });
+    return;
+  }
+
+  const existingDentist = await Dentist.findOne({ staff: existingStaff._id });
+
+  if (!existingDentist) {
+    res.status(400).send({ message: "Dentist does not exist" });
+    return;
+  }
+
+  const schedules = await DentistSchedule.find({
+    dentist: existingDentist._id,
+  });
 
   res.status(200).send(schedules);
 };
