@@ -17,6 +17,7 @@ module.exports = {
       {
         lightTheme: {
           primary: "#2d9cdb",
+          "primary-content": "rgb(244, 244, 245)",
           secondary: "#9ae6b4",
           accent: "#dc2626",
           neutral: "#e4e4e7",
@@ -31,6 +32,7 @@ module.exports = {
       {
         darkTheme: {
           primary: "#2d9cdb",
+          "primary-content": "rgb(244, 244, 245)",
           secondary: "#2f855a",
           accent: "#dc2626",
           neutral: "#3f3f46",
