@@ -43,6 +43,12 @@ const PatientDataRow = ({ patient }: Props) => {
           </div>
         </th>
 
+        <td className="!bg-base-300 pr-0">
+          <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
+            <img className="h-full object-cover" src={patient.user.avatar} />
+          </figure>
+        </td>
+
         <td className="font-medium text-sm">
           <div className="flex flex-col items-center">
             <span>{`${patient.user.name.firstName} ${patient.user.name.lastName}`}</span>

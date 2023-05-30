@@ -49,6 +49,12 @@ const StaffDataRow = ({ staff }: Props) => {
           {staff.user.role}
         </td>
 
+        <td className="!bg-base-300 pr-0">
+          <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
+            <img className="h-full object-cover" src={staff.user.avatar} />
+          </figure>
+        </td>
+
         <td className="font-medium text-sm whitespace-normal">
           <div className="flex flex-col items-center">
             <span>{`${staff.user.name.firstName} ${staff.user.name.lastName}`}</span>
@@ -58,8 +64,25 @@ const StaffDataRow = ({ staff }: Props) => {
           </div>
         </td>
 
-        <td className="font-medium text-sm text-center whitespace-normal">
-          {staff.user.email}
+        <td className="font-medium text-sm">
+          <div className="flex flex-col items-center">
+            {staff.user.address ? (
+              <>
+                <span>
+                  {`${staff.user.address.street || ""} ${
+                    staff.user.address.barangay || ""
+                  }`}
+                </span>
+                <span className="font-medium text-xs text-zinc-400">
+                  {`${staff.user.address.city || ""} ${
+                    staff.user.address.province || ""
+                  }`}
+                </span>
+              </>
+            ) : (
+              <span className="font-medium text-xs text-zinc-400">—</span>
+            )}
+          </div>
         </td>
 
         <td className="font-medium text-sm text-center whitespace-normal">

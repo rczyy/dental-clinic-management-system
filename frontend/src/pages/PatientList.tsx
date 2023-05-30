@@ -78,6 +78,8 @@ const PatientList = (props: Props) => {
                 <th className="min-w-[2.5rem] w-10"></th>
               )}
 
+              <th></th>
+
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>

@@ -146,6 +146,8 @@ const StaffList = (props: Props) => {
                 </div>
               </th>
 
+              <th></th>
+
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
