@@ -28,6 +28,8 @@ import { ResetPassword } from "./pages/ResetPassword";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import AppointmentSuccess from "./pages/AppointmentSuccess";
 import { addressApi } from "./redux/api/address";
+import MyAttendance from "./pages/MyAttendance";
+import StaffAttendance from "./pages/StaffAttendance";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -103,6 +105,14 @@ const router = createBrowserRouter([
           {
             path: "services/add",
             element: <AddService />,
+          },
+          {
+            path: "attendance",
+            element: <MyAttendance />,
+          },
+          {
+            path: "staff-attendance",
+            element: <StaffAttendance />,
           },
         ],
       },
