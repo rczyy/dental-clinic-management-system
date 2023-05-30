@@ -206,7 +206,7 @@ interface ErrorMessage {
   message: string;
 }
 interface AppointmentResponse {
-  _id?: string;
+  _id: string;
   dentist: DentistResponse;
   patient: PatientResponse;
   service: ServiceResponse;

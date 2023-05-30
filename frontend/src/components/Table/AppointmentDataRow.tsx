@@ -2,6 +2,9 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { useGetMe } from "../../hooks/user";
+import { useRemoveAppointment } from "../../hooks/appointment";
+import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   appointment: AppointmentResponse;
@@ -118,6 +121,15 @@ const CancelAppointmentModal = ({
   appointment,
   setIsCancelModalVisible,
 }: CancelAppointmentModalProps) => {
+  const { mutate: removeAppointment } = useRemoveAppointment();
+
+  const handleDelete = () => {
+    removeAppointment(appointment._id, {
+      onSuccess: () => setIsCancelModalVisible(false),
+      onError: (err) => toast.error(err.response.data.message),
+    });
+  };
+
   return (
     <div
       className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
@@ -148,16 +160,11 @@ const CancelAppointmentModal = ({
           </button>
           <button
             className="btn btn-error px-8 text-white hover:bg-red-700"
-            onClick={() => {
-              // handleDelete();
-            }}
+            onClick={handleDelete}
           >
             Yes
           </button>
         </div>
-        {/* <p className="px-2 text-xs text-error text-center">
-          {removePatientError && removePatientError.response.data.message}
-        </p> */}
       </section>
     </div>
   );

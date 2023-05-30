@@ -4,6 +4,7 @@ import {
   getAppointments,
   getDentistAppointments,
   getPatientAppointments,
+  removeAppointment,
 } from "../axios/appointment";
 
 export const useGetAppointments = ({
@@ -56,5 +57,20 @@ export const useGetPatientAppointments = ({
   return useQuery<AppointmentResponse[], ErrorMessageResponse>({
     queryKey: ["appointments", patient],
     queryFn: () => getPatientAppointments({ patient, date }),
+  });
+};
+
+export const useRemoveAppointment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    { id: string; message: string },
+    ErrorMessageResponse,
+    string
+  >({
+    mutationFn: removeAppointment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+    },
   });
 };

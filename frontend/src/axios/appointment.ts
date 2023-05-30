@@ -85,3 +85,16 @@ export const getPatientAppointments = async ({
   );
   return res.data;
 };
+
+export const removeAppointment = async (appointmentId: string) => {
+  const res = await axios.delete<{ id: string; message: string }>(
+    `${URL}/appointment/remove/${appointmentId}`,
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+      },
+    }
+  );
+  return res.data;
+};
