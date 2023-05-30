@@ -1,36 +1,27 @@
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { DesktopDatePicker } from "@mui/x-date-pickers";
-import { useGetMe } from "../hooks/user";
-import { AppointmentDataRow } from "../components/Table/AppointmentDataRow";
-import { Navigate } from "react-router-dom";
 import { useAdminStore } from "../store/admin";
-import {
-  useGetDentistAppointments,
-  useGetPatientAppointments,
-} from "../hooks/appointment";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
+import { useEffect, useState } from "react";
+import { useGetAppointments } from "../hooks/appointment";
+import { AppointmentDataRow } from "../components/Table/AppointmentDataRow";
+import { useGetMe } from "../hooks/user";
+import { Navigate } from "react-router-dom";
 
 interface Props {}
 
-export const MyAppointments = (_: Props): JSX.Element => {
+export const AppointmentList = (_: Props): JSX.Element => {
   const sidebar = useAdminStore((state) => state.sidebar);
 
-  const [searchFilter, setSearchFilter] = useState<string>("");
+  const [searchDentistFilter, setSearchDentistFilter] = useState<string>("");
+  const [searchPatientFilter, setSearchPatientFilter] = useState<string>("");
   const [dateFilter, setDateFilter] = useState<dayjs.Dayjs | null>(null);
 
   const { data: me } = useGetMe();
-  const { data: appointments, refetch } = me
-    ? me.role === "Patient"
-      ? useGetPatientAppointments({
-          patient: me._id,
-          date: dateFilter ? dateFilter.format("MM/DD/YYYY") : "",
-        })
-      : useGetDentistAppointments({
-          dentist: me._id,
-          date: dateFilter ? dateFilter.format("MM/DD/YYYY") : "",
-        })
-    : { data: [], refetch: () => [] };
+  const { data: appointments, refetch: refetchGetAppointments } =
+    useGetAppointments(
+      dateFilter ? dayjs(dateFilter).format("MM/DD/YYYY") : ""
+    );
 
   const filteredAppointments =
     appointments &&
@@ -38,33 +29,32 @@ export const MyAppointments = (_: Props): JSX.Element => {
       .sort((a, b) =>
         dayjs(a.dateTimeScheduled).isBefore(dayjs(b.dateTimeScheduled)) ? -1 : 1
       )
-      .filter((appointment) =>
-        me && me.role === "Patient"
-          ? `${appointment.dentist.staff.user.name.firstName} ${appointment.dentist.staff.user.name.lastName}`
-              .toLowerCase()
-              .includes(searchFilter.toLowerCase())
-          : `${appointment.patient.user.name.firstName} ${appointment.patient.user.name.lastName}`
-              .toLowerCase()
-              .includes(searchFilter.toLowerCase())
+      .filter(
+        (appointment) =>
+          `${appointment.dentist.staff.user.name.firstName} ${appointment.dentist.staff.user.name.lastName}`
+            .toLowerCase()
+            .includes(searchDentistFilter.toLowerCase()) &&
+          `${appointment.patient.user.name.firstName} ${appointment.patient.user.name.lastName}`
+            .toLowerCase()
+            .includes(searchPatientFilter.toLowerCase())
       );
 
   useEffect(() => {
-    refetch();
+    refetchGetAppointments();
   }, [dateFilter]);
 
-  if (!me || (me.role !== "Dentist" && me.role !== "Patient"))
-    return <Navigate to="/" />;
+  if (!me || me.role === "Patient") return <Navigate to={"/"} />;
 
   return (
     <main
       className={`flex flex-col gap-8 ${
         sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
-      } mx-auto`}
+      } mx-auto transition-[max-width]`}
     >
       <header>
-        <h1 className="text-2xl md:text-3xl font-bold">My Appointments</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">Appointments</h1>
       </header>
-      <div className="flex justify-between items-center gap-2">
+      <div className="flex flex-wrap justify-between items-center gap-2">
         <DesktopDatePicker
           label="Select date"
           className="w-36 sm:w-44"
@@ -77,18 +67,26 @@ export const MyAppointments = (_: Props): JSX.Element => {
           }}
           disablePast
         />
-        <div className="flex flex-1 items-center bg-base-300 max-w-sm border rounded-md">
-          <FiSearch className="w-10 h-10 px-2.5" />
-          <input
-            type="text"
-            placeholder={`${
-              me.role === "Patient"
-                ? "Search by dentist's name..."
-                : "Search by patient's name..."
-            }`}
-            className="input bg-base-300 w-full h-10 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm"
-            onChange={(e) => setSearchFilter(e.target.value)}
-          />
+
+        <div className="flex gap-2">
+          <div className="flex flex-1 items-center bg-base-300 max-w-sm border rounded-md">
+            <FiSearch className="w-10 h-10 px-2.5" />
+            <input
+              type="text"
+              placeholder="Search by dentist's name..."
+              className="input bg-base-300 w-full h-10 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm"
+              onChange={(e) => setSearchDentistFilter(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-1 items-center bg-base-300 max-w-sm border rounded-md">
+            <FiSearch className="w-10 h-10 px-2.5" />
+            <input
+              type="text"
+              placeholder="Search by patient's name..."
+              className="input bg-base-300 w-full h-10 pl-0 pr-2 md:pr-4 focus:outline-none placeholder:text-sm"
+              onChange={(e) => setSearchPatientFilter(e.target.value)}
+            />
+          </div>
         </div>
       </div>
       <div className="bg-base-300 rounded-box overflow-x-auto">
@@ -103,9 +101,9 @@ export const MyAppointments = (_: Props): JSX.Element => {
 
               <th className="text-primary text-center normal-case">Time</th>
 
-              <th className="text-primary text-center normal-case">
-                {me && me.role === "Patient" ? "Dentist" : "Patient"}
-              </th>
+              <th className="text-primary text-center normal-case">Dentist</th>
+
+              <th className="text-primary text-center normal-case">Patient</th>
 
               <th className="text-primary text-center normal-case">Service</th>
             </tr>
@@ -117,12 +115,13 @@ export const MyAppointments = (_: Props): JSX.Element => {
                   <AppointmentDataRow
                     key={appointment._id}
                     appointment={appointment}
+                    showAllDetails
                   />
                 ))
               ) : (
                 <tr className="[&>*]:bg-transparent">
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="py-8 text-2xl text-center font-bold"
                   >
                     No appointments to show
