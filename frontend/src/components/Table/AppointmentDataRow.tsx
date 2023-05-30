@@ -60,17 +60,43 @@ export const AppointmentDataRow = ({
         </td>
 
         {me && (me.role === "Patient" || showAllDetails) && (
-          <td className="font-semibold text-sm text-center">
-            {appointment.dentist.staff.user.name.firstName}{" "}
-            {appointment.dentist.staff.user.name.lastName}
-          </td>
+          <>
+            <td className="pr-0">
+              <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
+                <img
+                  className="h-full object-cover"
+                  src={appointment.dentist.staff.user.avatar}
+                />
+              </figure>
+            </td>
+
+            <td className="font-semibold text-sm text-center">
+              <span>
+                {appointment.dentist.staff.user.name.firstName}{" "}
+                {appointment.dentist.staff.user.name.lastName}
+              </span>
+            </td>
+          </>
         )}
 
         {me && (me.role === "Dentist" || showAllDetails) && (
-          <td className="font-semibold text-sm text-center">
-            {appointment.patient.user.name.firstName}{" "}
-            {appointment.patient.user.name.lastName}
-          </td>
+          <>
+            <td className="pr-0">
+              <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
+                <img
+                  className="h-full object-cover"
+                  src={appointment.dentist.staff.user.avatar}
+                />
+              </figure>
+            </td>
+
+            <td className="font-semibold text-sm text-center">
+              <span>
+                {appointment.patient.user.name.firstName}{" "}
+                {appointment.patient.user.name.lastName}
+              </span>
+            </td>
+          </>
         )}
 
         <td className="font-medium text-sm text-center">

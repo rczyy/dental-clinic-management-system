@@ -101,7 +101,11 @@ export const AppointmentList = (_: Props): JSX.Element => {
 
               <th className="text-primary text-center normal-case">Time</th>
 
+              <th></th>
+
               <th className="text-primary text-center normal-case">Dentist</th>
+
+              <th></th>
 
               <th className="text-primary text-center normal-case">Patient</th>
 
