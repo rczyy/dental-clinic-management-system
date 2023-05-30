@@ -8,9 +8,11 @@ import Dentist from "../models/dentist";
 import Service from "../models/service";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import Staff from "../models/staff";
 import Patient from "../models/patient";
 dayjs.extend(isBetween);
+dayjs.extend(isSameOrBefore);
 
 export const getAppointments: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -578,7 +580,14 @@ export const removeAppointment: RequestHandler = async (req, res) => {
     return;
   }
 
-  const appointmentToDelete = await Appointment.findById(appointmentId);
+  const appointmentToDelete = await Appointment.findById(
+    appointmentId
+  ).populate({
+    path: "patient",
+    populate: {
+      path: "user",
+    },
+  });
 
   if (!appointmentToDelete) {
     const error: ErrorMessage = { message: "Appointment doesn't exist" };
@@ -588,10 +597,25 @@ export const removeAppointment: RequestHandler = async (req, res) => {
 
   if (
     token.role === Roles.Patient &&
-    req.session.uid !== appointmentToDelete.patient.toString()
+    (
+      appointmentToDelete.patient as unknown as { user: User }
+    ).user._id.toString() !== req.session.uid
   ) {
     const error: ErrorMessage = { message: "Unauthorized to do this" };
     res.status(401).json(error);
+    return;
+  }
+
+  if (
+    token.role === Roles.Patient &&
+    !dayjs()
+      .add(2, "day")
+      .isSameOrBefore(dayjs(appointmentToDelete.dateTimeScheduled))
+  ) {
+    const error: ErrorMessage = {
+      message: "Cancelling should be at least two days in advance.",
+    };
+    res.status(400).json(error);
     return;
   }
 
