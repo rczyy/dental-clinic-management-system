@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
-import { FiSearch } from "react-icons/fi";
+import { FiPlus, FiSearch } from "react-icons/fi";
 import { useAdminStore } from "../store/admin";
 import { DesktopDatePicker } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
 import { useGetAppointments } from "../hooks/appointment";
 import { AppointmentDataRow } from "../components/Table/AppointmentDataRow";
 import { useGetMe } from "../hooks/user";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 interface Props {}
 
@@ -53,8 +53,16 @@ export const AppointmentList = (_: Props): JSX.Element => {
         sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
       } mx-auto transition-[max-width]`}
     >
-      <header>
+      <header className="flex justify-between items-end mb-4 gap-8">
         <h1 className="text-2xl md:text-3xl font-bold">Appointments</h1>
+        <Link
+          to="/set-appointment"
+          role="button"
+          className="btn btn-primary w-full max-w-[12rem] min-h-[2.5rem] h-10 px-2 text-white normal-case gap-2"
+        >
+          <FiPlus className="w-4 h-4" />
+          Add an Appointment
+        </Link>
       </header>
       <div className="flex flex-wrap justify-between items-center gap-2">
         <div className="flex gap-6">
