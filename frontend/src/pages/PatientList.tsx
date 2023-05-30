@@ -5,10 +5,13 @@ import PatientDataRow from "../components/Table/PatientDataRow";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import { Link, Navigate } from "react-router-dom";
 import { useGetMe } from "../hooks/user";
+import { useAdminStore } from "../store/admin";
 
 type Props = {};
 
 const PatientList = (props: Props) => {
+  const sidebar = useAdminStore((state) => state.sidebar);
+
   const { data: me } = useGetMe();
   const { data: patients } = useGetPatients();
   const [searchFilter, setSearchFilter] = useState<string>("");
@@ -40,7 +43,11 @@ const PatientList = (props: Props) => {
   if (!me || me.role === "Patient") return <Navigate to="/" />;
 
   return (
-    <main className={`flex flex-col gap-4 max-w-screen-2xl m-auto`}>
+    <main
+      className={`flex flex-col gap-4 ${
+        sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
+      } m-auto`}
+    >
       <header className="flex justify-between items-end mb-4 gap-8">
         <h1 className="font-bold text-2xl md:text-3xl">Patient List</h1>
         <Link

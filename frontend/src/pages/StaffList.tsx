@@ -6,10 +6,13 @@ import { useGetStaffs } from "../hooks/staff";
 import StaffDataRow from "../components/Table/StaffDataRow";
 import SelectDropdown from "../components/Form/SelectDropdown";
 import { useGetMe } from "../hooks/user";
+import { useAdminStore } from "../store/admin";
 
 type Props = {};
 
 const StaffList = (props: Props) => {
+  const sidebar = useAdminStore((state) => state.sidebar);
+
   const roles = [
     { value: "", label: "All" },
     { value: "Manager", label: "Manager" },
@@ -82,7 +85,11 @@ const StaffList = (props: Props) => {
   if (!me || me.role === "Patient") return <Navigate to="/" />;
 
   return (
-    <main className={`flex flex-col gap-4 max-w-screen-2xl m-auto`}>
+    <main
+      className={`flex flex-col gap-4 ${
+        sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
+      } m-auto`}
+    >
       <header className="flex justify-between items-end mb-4 gap-8">
         <h1 className="font-bold text-2xl md:text-3xl">Staff List</h1>
         <Link

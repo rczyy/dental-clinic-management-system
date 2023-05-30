@@ -6,10 +6,12 @@ import { useGetServices } from "../hooks/service";
 import SelectDropdown from "../components/Form/SelectDropdown";
 import ServiceDataRow from "../components/Table/ServiceDataRow";
 import { useGetMe } from "../hooks/user";
+import { useAdminStore } from "../store/admin";
 
 type Props = {};
 
 const ServiceList = (props: Props) => {
+  const sidebar = useAdminStore((state) => state.sidebar);
   const categories = [
     { value: "", label: "All" },
     { value: "First Appointment", label: "First Appointment" },
@@ -88,7 +90,11 @@ const ServiceList = (props: Props) => {
   if (!me || me.role === "Patient") return <Navigate to="/" />;
 
   return (
-    <main className={`flex flex-col gap-4 max-w-screen-2xl m-auto`}>
+    <main
+      className={`flex flex-col gap-4 ${
+        sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
+      } m-auto`}
+    >
       <header className="flex justify-between items-end mb-4 gap-8">
         <h1 className="font-bold text-2xl md:text-3xl">Service List</h1>
         <Link
