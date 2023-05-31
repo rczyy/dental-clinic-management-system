@@ -4,6 +4,7 @@ import {
   getAttendance,
   getMyAttendance,
   editAttendance,
+  removeAttendance,
   logTimeIn,
   logTimeOut,
 } from "../controllers/attendance";
@@ -16,6 +17,7 @@ router
 router
   .post("/time-in", checkAuth, logTimeIn)
   .post("/time-out", checkAuth, logTimeOut);
-router.patch("/edit/:attendanceID", checkAuth, editAttendance);
+  router.patch("/edit/:attendanceID", checkAuth, editAttendance);
+router.delete("/remove/:attendanceID", checkAuth, removeAttendance);
 
 export default router;

@@ -32,6 +32,42 @@ export const getAttendance: RequestHandler = async (req, res) => {
   res.status(201).json(attendance);
 };
 
+export const getMyAttendance: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (
+    token.role !== Roles.Admin &&
+    token.role !== Roles.Manager &&
+    token.role !== Roles.Dentist &&
+    token.role !== Roles.Assistant &&
+    token.role !== Roles.FrontDesk
+  ) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const existingStaff = await Staff.findOne({ user: req.session.uid });
+
+  if (!existingStaff) {
+    const error: FormError = {
+      formErrors: ["Staff does not exist"],
+    };
+
+    res.status(401).json(error);
+    return;
+  }
+
+  const myAttendance = await Attendance.find({ staff: existingStaff._id });
+  res.status(201).json(myAttendance);
+};
+
 export const editAttendance: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
@@ -82,7 +118,8 @@ export const editAttendance: RequestHandler = async (req, res) => {
 
   res.status(201).json(editedAttendance);
 };
-export const getMyAttendance: RequestHandler = async (req, res) => {
+
+export const removeAttendance: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
   if ("message" in token) {
@@ -103,19 +140,26 @@ export const getMyAttendance: RequestHandler = async (req, res) => {
     return;
   }
 
-  const existingStaff = await Staff.findOne({ user: req.session.uid });
+  const { attendanceID } = req.params;
 
-  if (!existingStaff) {
-    const error: FormError = {
-      formErrors: ["Staff does not exist"],
-    };
-
-    res.status(401).json(error);
+  if (!isValidObjectId(attendanceID)) {
+    const error: ErrorMessage = { message: "Invalid attendance ID" };
+    res.status(400).json(error);
     return;
   }
 
-  const myAttendance = await Attendance.find({ staff: existingStaff._id });
-  res.status(201).json(myAttendance);
+  const deletedAttendance = await Attendance.findByIdAndDelete(attendanceID);
+
+  if (!deletedAttendance) {
+    const error: ErrorMessage = { message: "Attendance doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  res.status(200).json({
+    _id: deletedAttendance._id,
+    message: "Successfully deleted the attendance",
+  });
 };
 
 export const logTimeIn: RequestHandler = async (req, res) => {
