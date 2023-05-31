@@ -212,6 +212,7 @@ interface AppointmentResponse {
   service: ServiceResponse;
   dateTimeScheduled: string;
   dateTimeFinished: string;
+  isFinished: boolean;
 }
 
 interface DentistNamesResponse {

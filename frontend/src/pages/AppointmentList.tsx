@@ -85,7 +85,7 @@ export const AppointmentList = (_: Props): JSX.Element => {
                 className="checkbox checkbox-primary checkbox-sm checked:bg-base-300"
                 onChange={(e) => setPastFilter(e.target.checked)}
               />
-              <span className="label-text">Include Past</span>
+              <span className="label-text">Include Finished Appointments</span>
             </label>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addAppointment,
+  finishAppointment,
   getAppointments,
   getDentistAppointments,
   getPatientAppointments,
@@ -57,6 +58,17 @@ export const useGetPatientAppointments = ({
   return useQuery<AppointmentResponse[], ErrorMessageResponse>({
     queryKey: ["appointments", patient],
     queryFn: () => getPatientAppointments({ patient, date }),
+  });
+};
+
+export const useFinishAppointment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<AppointmentResponse, ErrorMessageResponse, string>({
+    mutationFn: finishAppointment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+    },
   });
 };
 

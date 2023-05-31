@@ -18,6 +18,10 @@ const appointmentSchema = new Schema<Appointment>({
   },
   dateTimeScheduled: { type: Date, required: true },
   dateTimeFinished: { type: Date, required: true },
+  isFinished: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export default model<Appointment>("Appointment", appointmentSchema);
