@@ -95,9 +95,16 @@ export const loginUser: RequestHandler = async (req, res) => {
     return;
   }
 
-  const samePassword = existingUser.password
-    ? await compare(password, existingUser.password)
-    : false;
+  if (!existingUser.password) {
+    const error: FormError = {
+      formErrors: ["Can't log in. Try logging in with google."],
+    };
+
+    res.status(401).json(error);
+    return;
+  }
+
+  const samePassword = await compare(password, existingUser.password);
 
   if (!samePassword) {
     const error: FormError = {
