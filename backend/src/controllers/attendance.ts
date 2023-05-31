@@ -227,6 +227,7 @@ export const logTimeIn: RequestHandler = async (req, res) => {
   }
   const attendance = new Attendance({
     timeIn,
+    timeOut: "",
     date: dateToday,
     staff: existingStaff._id,
   });
@@ -290,7 +291,7 @@ export const logTimeOut: RequestHandler = async (req, res) => {
     staff: existingStaff._id,
   });
 
-  if (existingLog && !existingLog.timeIn) {
+  if ( !existingLog || (existingLog && !existingLog.timeIn)) {
     const error: FormError = {
       formErrors: ["Not timed in yet"],
     };

@@ -4,7 +4,7 @@ import {
   useLogTimeIn,
   useLogTimeOut,
 } from "../hooks/attendance";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import AttendanceDataRow from "../components/Table/AttendanceDataRow";
 import { toast } from "react-toastify";
@@ -15,10 +15,12 @@ type Props = {};
 const MyAttendance = (props: Props) => {
   const sidebar = useAdminStore((state) => state.sidebar);
   const [dateFilter, setDateFilter] = useState<dayjs.Dayjs | null>(null);
+  const [attendanceSort, setAttendanceSort] = useState<"asc" | "desc">();
+  const [isTimedIn, setIsTimedIn] = useState(false);
+  const [isTimedOut, setIsTimedOut] = useState(false);
   const { mutate: logTimeIn } = useLogTimeIn();
   const { mutate: logTimeOut } = useLogTimeOut();
   const { data } = useGetMyAttendance();
-  const [attendanceSort, setAttendanceSort] = useState<"asc" | "desc">();
 
   const filteredAttendance =
     data &&
@@ -47,20 +49,25 @@ const MyAttendance = (props: Props) => {
         return true;
       });
   const dateToday = new Date().setHours(0, 0, 0, 0);
-  const isAlreadyTimedIn =
-    data &&
-    data.find(
-      (attendance) =>
-        dayjs(attendance.timeIn).format("DD/MM/YYYY") ===
-        dayjs(dateToday).format("DD/MM/YYYY")
-    );
-  const isAlreadyTimedOut =
-    data &&
-    data.find(
-      (attendance) =>
-        dayjs(attendance.timeOut).format("DD/MM/YYYY") ===
-        dayjs(dateToday).format("DD/MM/YYYY")
-    );
+
+  useEffect(() => {
+    if (data) {
+      setIsTimedIn(
+        data.some(
+          (attendance) =>
+            dayjs(attendance.timeIn).format("DD/MM/YYYY") ===
+            dayjs(dateToday).format("DD/MM/YYYY")
+        )
+      );
+      setIsTimedOut(
+        data.some(
+          (attendance) =>
+            dayjs(attendance.timeOut).format("DD/MM/YYYY") ===
+            dayjs(dateToday).format("DD/MM/YYYY")
+        )
+      );
+    }
+  }, [data]);
   const timeInClick = () => {
     logTimeIn(dayjs().format(), {
       onError: (error) => toast.error(`${error.response.data.formErrors}`),
@@ -98,7 +105,7 @@ const MyAttendance = (props: Props) => {
               onClick={timeInClick}
               role="button"
               className="btn btn-primary max-w-[10rem] min-h-[2.5rem] h-10 w-[6rem] px-2 text-white normal-case gap-2"
-              disabled={isAlreadyTimedIn ? true : false}
+              disabled={isTimedIn}
             >
               Time In
             </button>
@@ -106,7 +113,7 @@ const MyAttendance = (props: Props) => {
               onClick={timeOutClick}
               role="button"
               className="btn btn-primary max-w-[10rem] min-h-[2.5rem] h-10 w-[6rem] px-2 text-white normal-case gap-2"
-              disabled={isAlreadyTimedOut ? true : false}
+              disabled={isTimedOut || !isTimedIn}
             >
               Time Out
             </button>
@@ -148,7 +155,7 @@ const MyAttendance = (props: Props) => {
             ) : (
               <tr className="[&>*]:bg-transparent">
                 <td colSpan={5} className="py-8 text-2xl text-center font-bold">
-                  No appointments to show
+                  No attendance records to show
                 </td>
               </tr>
             )}
