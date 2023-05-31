@@ -32,6 +32,16 @@ export const editAttendance = async (data: AttendanceFormValues, id: string) => 
   return res.data;
 };
 
+export const removeAttendance = async (id: string) => {
+  const res = await axios.delete(`${URL}/attendance/remove/${id}`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
+  return res.data;
+};
+
 export const logTimeIn = async (timeIn: string) => {
   const res = await axios.post<AttendanceResponse>(
     `${URL}/attendance/time-in`,

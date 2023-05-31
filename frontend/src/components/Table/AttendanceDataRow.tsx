@@ -1,13 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
-import { FiClock, FiEdit2, FiMoreHorizontal, FiTrash } from "react-icons/fi";
+import { FiClock, FiEdit2, FiMoreVertical, FiTrash } from "react-icons/fi";
 import { z } from "zod";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useEditAttendance } from "../../hooks/attendance";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useEditAttendance, useRemoveAttendance } from "../../hooks/attendance";
 import { Dispatch, SetStateAction, useState } from "react";
 import { GrFormClose } from "react-icons/gr";
 import FormInput from "../Form/FormInput";
-import { AiOutlineMedicineBox } from "react-icons/ai";
 
 type Props = {
   attendance: AttendanceResponse;
@@ -35,7 +34,7 @@ const AttendanceDataRow = ({ attendance, showAllDetails }: Props) => {
                   tabIndex={0}
                   className="w-8 h-8 p-2 mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
                 >
-                  <FiMoreHorizontal />
+                  <FiMoreVertical />
                 </label>
                 <ul
                   tabIndex={0}
@@ -54,34 +53,48 @@ const AttendanceDataRow = ({ attendance, showAllDetails }: Props) => {
                 </ul>
               </div>
             </th>
-            <td className="font-medium text-sm">
+            <td className="!bg-base-300 pr-0">
+              <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
+                <img
+                  className="h-full object-cover"
+                  src={attendance.staff.user.avatar}
+                />
+              </figure>
+            </td>
+            <td className="font-medium text-sm text-center">
               {attendance.staff.user.name.firstName}{" "}
               {attendance.staff.user.name.lastName}
             </td>
           </>
         )}
-        <td className="font-medium text-sm">
+        <td className="font-medium text-sm text-center">
           {dayjs(attendance.date).format("MMMM D, YYYY")}
         </td>
-        <td className="font-medium text-sm">
+        <td className="font-medium text-sm text-center">
           {dayjs(attendance.timeIn).format("h:mm:ss A")}
         </td>
-        <td className="font-medium text-sm">
+        <td className="font-medium text-sm text-center">
           {attendance.timeOut &&
             `${dayjs(attendance.timeOut).format("h:mm:ss A")}`}
         </td>
       </tr>
       {isEditModalVisible && (
-        <EditAttendance
+        <EditAttendanceModal
           attendance={attendance}
           setIsEditModalVisible={setIsEditModalVisible}
+        />
+      )}
+      {isDeleteModalVisible && (
+        <RemoveAttendanceModal
+          attendance={attendance}
+          setIsDeleteModalVisible={setIsDeleteModalVisible}
         />
       )}
     </>
   );
 };
 
-const EditAttendance = ({
+const EditAttendanceModal = ({
   attendance,
   setIsEditModalVisible,
 }: EditAttendanceProps) => {
@@ -167,6 +180,60 @@ const EditAttendance = ({
             </p>
           </div>
         </form>
+      </section>
+    </div>
+  );
+};
+
+const RemoveAttendanceModal = ({
+  attendance,
+  setIsDeleteModalVisible,
+}: DeleteAttendanceProps) => {
+  const { mutate: removeAttendance, error: removeAttendanceError } =
+    useRemoveAttendance(attendance._id);
+  const handleDelete = () => {
+    removeAttendance(attendance._id, {
+      onSuccess: () => setIsDeleteModalVisible(false),
+    });
+  };
+  return (
+    <div
+      className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsDeleteModalVisible(false);
+      }}
+    >
+      <section className="flex flex-col gap-2 bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
+        <header className="flex justify-between items-center mx-2 py-3">
+          <h1 className="text-2xl font-bold">Delete Attendance Record</h1>
+          <GrFormClose
+            className="hover: cursor-pointer w-5 h-5"
+            onClick={() => setIsDeleteModalVisible(false)}
+          />
+        </header>
+        <div className="flex flex-col mx-2 py-3">
+          <p>You are about to permanently delete an attendance record.</p>
+          <p>Are you sure?</p>
+        </div>
+        <div className="flex gap-3 justify-end mx-2 py-3">
+          <button
+            className="btn"
+            onClick={() => setIsDeleteModalVisible(false)}
+          >
+            No
+          </button>
+          <button
+            className="btn btn-error"
+            onClick={() => {
+              handleDelete();
+            }}
+          >
+            Yes
+          </button>
+        </div>
+        <p className="px-2 text-xs text-error text-center">
+          {removeAttendanceError && removeAttendanceError.response.data.message}
+        </p>
       </section>
     </div>
   );

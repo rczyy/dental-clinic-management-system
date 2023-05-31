@@ -5,6 +5,7 @@ import {
   editAttendance,
   logTimeIn,
   logTimeOut,
+  removeAttendance,
 } from "../axios/attendance";
 
 export const useGetAttendance = () => {
@@ -29,6 +30,16 @@ export const useEditAttendance = () => {
     { data: AttendanceFormValues; id: string }
   >({
     mutationFn: ({ data, id }) => editAttendance(data, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["attendance"]);
+    },
+  });
+};
+
+export const useRemoveAttendance = (id: string) => {
+  const queryClient = useQueryClient();
+  return useMutation<AttendanceResponse, ErrorMessageResponse, string>({
+    mutationFn: () => removeAttendance(id),
     onSuccess: () => {
       queryClient.invalidateQueries(["attendance"]);
     },
