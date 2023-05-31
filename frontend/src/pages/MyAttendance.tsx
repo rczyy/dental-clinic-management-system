@@ -8,13 +8,18 @@ import { useState } from "react";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import AttendanceDataRow from "../components/Table/AttendanceDataRow";
 import { toast } from "react-toastify";
+import { useAdminStore } from "../store/admin";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
 
 type Props = {};
 const MyAttendance = (props: Props) => {
+  const sidebar = useAdminStore((state) => state.sidebar);
+  const [dateFilter, setDateFilter] = useState<dayjs.Dayjs | null>(null);
   const { mutate: logTimeIn } = useLogTimeIn();
   const { mutate: logTimeOut } = useLogTimeOut();
   const { data } = useGetMyAttendance();
   const [attendanceSort, setAttendanceSort] = useState<"asc" | "desc">();
+
   const filteredAttendance =
     data &&
     data
@@ -32,22 +37,29 @@ const MyAttendance = (props: Props) => {
             : -1
           : 0;
       })
-      .filter((attendance) => attendance.date);
-
+      .filter((attendance) => {
+        if (dateFilter) {
+          return (
+            dayjs(attendance.date).format("DD/MM/YYYY") ===
+            dayjs(dateFilter).format("DD/MM/YYYY")
+          );
+        }
+        return true;
+      });
   const dateToday = new Date().setHours(0, 0, 0, 0);
   const isAlreadyTimedIn =
-    filteredAttendance &&
-    filteredAttendance.find(
+    data &&
+    data.find(
       (attendance) =>
-        dayjs(attendance.date).format() === dayjs(dateToday).format() &&
-        attendance.timeIn
+        dayjs(attendance.timeIn).format("DD/MM/YYYY") ===
+        dayjs(dateToday).format("DD/MM/YYYY")
     );
   const isAlreadyTimedOut =
-    filteredAttendance &&
-    filteredAttendance.find(
+    data &&
+    data.find(
       (attendance) =>
-        dayjs(attendance.date).format() === dayjs(dateToday).format() &&
-        attendance.timeOut
+        dayjs(attendance.timeOut).format("DD/MM/YYYY") ===
+        dayjs(dateToday).format("DD/MM/YYYY")
     );
   const timeInClick = () => {
     logTimeIn(dayjs().format(), {
@@ -60,9 +72,26 @@ const MyAttendance = (props: Props) => {
     });
   };
   return (
-    <main className="flex flex-col gap-4">
+    <main
+      className={`flex flex-col gap-4 ${
+        sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
+      } mx-auto transition-[max-width]`}
+    >
       <header className="flex justify-between">
-        <h1 className="font-bold text-2xl md:text-3xl">My Attendance</h1>
+        <div className="flex flex-col gap-8">
+          <h1 className="font-bold text-2xl md:text-3xl">My Attendance</h1>
+          <DesktopDatePicker
+            label="Select date"
+            className="w-36 sm:w-44"
+            defaultValue={dateFilter}
+            onChange={(date) => setDateFilter(date)}
+            slotProps={{
+              actionBar: {
+                actions: ["clear"],
+              },
+            }}
+          />
+        </div>
         <div className="flex flex-col gap-1">
           <div className="flex gap-2">
             <button
@@ -88,7 +117,7 @@ const MyAttendance = (props: Props) => {
         <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
           <thead>
             <tr className="[&>*]:bg-base-300 border-b border-base-200">
-              <th
+              <td
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
                   setAttendanceSort((val) => (val === "asc" ? "desc" : "asc"))
@@ -102,20 +131,27 @@ const MyAttendance = (props: Props) => {
                     <AiFillCaretUp className="w-2.5 h-2.5" />
                   ) : null}
                 </div>
-              </th>
+              </td>
               <th className="text-primary normal-case text-center">Time In</th>
               <th className="text-primary normal-case text-center">Time Out</th>
             </tr>
           </thead>
           <tbody>
-            {filteredAttendance &&
+            {filteredAttendance && filteredAttendance.length > 0 ? (
               filteredAttendance.map((attendance) => (
                 <AttendanceDataRow
                   key={attendance._id}
                   attendance={attendance}
                   showAllDetails={false}
                 />
-              ))}
+              ))
+            ) : (
+              <tr className="[&>*]:bg-transparent">
+                <td colSpan={5} className="py-8 text-2xl text-center font-bold">
+                  No appointments to show
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
