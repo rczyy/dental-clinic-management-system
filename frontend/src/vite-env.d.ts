@@ -220,7 +220,18 @@ interface DentistNamesResponse {
     firstName: string;
     lastName: string;
   };
+  avatar: string;
 }
+
+interface PatientNamesResponse {
+  _id: string;
+  name: {
+    firstName: string;
+    lastName: string;
+  };
+  avatar: string;
+}
+
 interface FormErrorResponse {
   response: {
     data: FormError;
@@ -244,6 +255,7 @@ interface AppointmentZodFormValues {
   serviceCategory: string;
   service: string;
   dentist: string;
+  patient: string;
   date: string;
   time: string;
 }

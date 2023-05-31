@@ -85,17 +85,30 @@ export const addAppointment: RequestHandler = async (req, res) => {
     return;
   }
 
-  const appointmentSchema = z.object({
-    dentist: z.string({ required_error: "Dentist id is required" }),
-    patient: z.string({ required_error: "Patient is required" }),
-    service: z.string({ required_error: "Service is required" }),
-    dateTimeScheduled: z.string({
-      required_error: "Date and time scheduled is required",
-    }),
-    dateTimeFinished: z.string({
-      required_error: "Date and time finished is required",
-    }),
-  });
+  const appointmentSchema = z
+    .object({
+      dentist: z.string({ required_error: "Dentist is required" }),
+      patient: z.string({ required_error: "Patient is required" }),
+      service: z.string({ required_error: "Service is required" }),
+      dateTimeScheduled: z.string({
+        required_error: "Date and time scheduled is required",
+      }),
+      dateTimeFinished: z.string({
+        required_error: "Date and time finished is required",
+      }),
+    })
+    .refine(({ dentist }) => isValidObjectId(dentist), {
+      message: "Invalid dentist user ID",
+      path: ["dentist"],
+    })
+    .refine(({ patient }) => isValidObjectId(patient), {
+      message: "Invalid patient user ID",
+      path: ["patient"],
+    })
+    .refine(({ service }) => isValidObjectId(service), {
+      message: "Invalid service ID",
+      path: ["service"],
+    });
 
   type body = z.infer<typeof appointmentSchema>;
 

@@ -29,7 +29,15 @@ const Landing = (_: Props) => {
           </div>
           <div className="z-10">
             <Link
-              to={data ? (data.contactNo ? "/set-appointment" : "") : "/login"}
+              to={
+                data
+                  ? data.role === "Patient"
+                    ? data.contactNo
+                      ? "/set-appointment"
+                      : ""
+                    : "/set-appointment/staff"
+                  : "/login"
+              }
               className="btn btn-primary text-base-100"
               onClick={() => {
                 if (data && !data.contactNo) setIsAddMobileOpen(true);

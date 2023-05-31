@@ -1,20 +1,23 @@
 import { Schema, model } from "mongoose";
 
 const appointmentSchema = new Schema<Appointment>({
-    dentist: {
-        type: Schema.Types.ObjectId,
-        ref: "Dentist"
-    },
-    patient: {
-        type: Schema.Types.ObjectId,
-        ref: "Patient"
-    },
-    service: {
-        type: Schema.Types.ObjectId,
-        ref: "Service"
-    },
-    dateTimeScheduled: Date,
-    dateTimeFinished: Date,
-})
+  dentist: {
+    type: Schema.Types.ObjectId,
+    ref: "Dentist",
+    required: true,
+  },
+  patient: {
+    type: Schema.Types.ObjectId,
+    ref: "Patient",
+    required: true,
+  },
+  service: {
+    type: Schema.Types.ObjectId,
+    ref: "Service",
+    required: true,
+  },
+  dateTimeScheduled: { type: Date, required: true },
+  dateTimeFinished: { type: Date, required: true },
+});
 
-export default model<Appointment>("Appointment", appointmentSchema)
+export default model<Appointment>("Appointment", appointmentSchema);

@@ -56,7 +56,7 @@ export const AppointmentList = (_: Props): JSX.Element => {
       <header className="flex flex-wrap justify-between items-end mb-4 gap-8">
         <h1 className="text-2xl md:text-3xl font-bold">Appointments</h1>
         <Link
-          to="/set-appointment"
+          to={"/set-appointment/staff"}
           role="button"
           className="btn btn-primary w-full max-w-[12rem] min-h-[2.5rem] h-10 px-2 text-white normal-case gap-2"
         >

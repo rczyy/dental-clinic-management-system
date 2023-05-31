@@ -30,6 +30,7 @@ import { MyAppointments } from "./pages/MyAppointments";
 import { MySchedule } from "./pages/MySchedule";
 import { AppointmentList } from "./pages/AppointmentList";
 import { DentistsSchedule } from "./pages/DentistsSchedule";
+import StaffSetAppointment from "./pages/StaffSetAppointment";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -103,6 +104,10 @@ const router = createBrowserRouter([
       {
         path: "set-appointment",
         element: <SetAppointment />,
+      },
+      {
+        path: "set-appointment/staff",
+        element: <StaffSetAppointment />,
       },
       {
         path: "set-appointment/success",
