@@ -91,7 +91,7 @@ const StaffList = (props: Props) => {
       } m-auto transition-[max-width]`}
     >
       <header className="flex justify-between items-end mb-4 gap-8">
-        <h1 className="font-bold text-2xl md:text-3xl">Staffs</h1>
+        <h1 className="font-bold text-2xl md:text-3xl">Staff</h1>
         <Link
           to="/staff/register"
           role="button"
