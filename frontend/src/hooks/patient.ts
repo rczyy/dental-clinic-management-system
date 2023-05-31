@@ -1,6 +1,7 @@
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import {
   getPatient,
+  getPatientNames,
   getPatients,
   registerPatient,
   removePatient,
@@ -17,6 +18,10 @@ export const useGetPatient = (id: string) => {
       getPatient(id);
     },
   });
+};
+
+export const useGetPatientNames = () => {
+  return useQuery({ queryKey: ["patient-names"], queryFn: getPatientNames });
 };
 
 export const useRegisterPatient = () => {

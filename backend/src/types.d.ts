@@ -116,6 +116,7 @@ declare global {
     patient: Types.ObjectId;
     dentist: Types.ObjectId;
     service: Types.ObjectId;
+    isFinished: boolean;
   }
 
   interface Attendance {

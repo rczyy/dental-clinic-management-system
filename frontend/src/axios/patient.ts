@@ -19,6 +19,16 @@ export const getPatient = async (id: string) => {
   return res.data;
 };
 
+export const getPatientNames = async () => {
+  const res = await axios.get<PatientNamesResponse[]>(`${URL}/patient/names`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
+  return res.data;
+};
+
 export const registerPatient = async (form: SignupFormValues) => {
   const res = await axios.post<UserResponse>(`${URL}/patient/register`, form, {
     withCredentials: true,

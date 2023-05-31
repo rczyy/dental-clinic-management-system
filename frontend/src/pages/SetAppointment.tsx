@@ -294,6 +294,9 @@ const SetAppointment = (props: Props) => {
   if (!userData || (userData && !userData.contactNo))
     return <Navigate to="/" />;
 
+  if (userData.role !== "Patient")
+    return <Navigate to="/set-appointment/staff" />;
+
   return (
     <main className="flex items-center justify-center">
       <div className="flex flex-col gap-8 bg-base-300 max-w-screen-lg w-full min-h-[40rem] rounded-box border border-base-200 shadow">
@@ -472,8 +475,6 @@ const SetAppointment = (props: Props) => {
                           selectedId={selectedDentist}
                           key={dentist._id}
                           setSelectedDentist={setSelectedDentist}
-                          schedule="(Mon, Tue, Wed)"
-                          handleDisableSchedule={handleDisableSchedule}
                         />
                       );
                     })}

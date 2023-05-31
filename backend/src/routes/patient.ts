@@ -2,6 +2,7 @@ import { Router } from "express";
 import { checkAuth } from "../middlewares/checkAuth";
 import {
   getPatient,
+  getPatientNames,
   getPatients,
   registerPatient,
   removePatient,
@@ -9,7 +10,10 @@ import {
 
 const router = Router();
 
-router.get("/", checkAuth, getPatients).get("/:user", checkAuth, getPatient);
+router
+  .get("/", checkAuth, getPatients)
+  .get("/names", checkAuth, getPatientNames)
+  .get("/:user", checkAuth, getPatient);
 router.post("/register", registerPatient);
 router.delete("/remove/:user", checkAuth, removePatient);
 

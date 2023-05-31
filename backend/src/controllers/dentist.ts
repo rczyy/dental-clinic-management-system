@@ -32,14 +32,7 @@ export const getDentistNames: RequestHandler = async (req, res) => {
     return;
   }
 
-  if (
-    token.role !== Roles.Admin &&
-    token.role !== Roles.Manager &&
-    token.role !== Roles.Dentist &&
-    token.role !== Roles.Assistant &&
-    token.role !== Roles.FrontDesk &&
-    token.role !== Roles.Patient
-  ) {
+  if (!token.role) {
     const error: ErrorMessage = { message: "Unauthorized to do this" };
     res.status(401).json(error);
     return;
@@ -47,17 +40,21 @@ export const getDentistNames: RequestHandler = async (req, res) => {
 
   const dentists = await Dentist.find().populate({
     path: "staff",
-    populate: { path: "user", select: "name" },
+    populate: { path: "user" },
   });
 
   const response = dentists.map((dentist) => {
-    const { user } = dentist.staff as unknown as { user: Pick<User, "_id" | "name"> };
-    const { _id, name } = user
+    const { user } = dentist.staff as unknown as {
+      user: Pick<User, "_id" | "name" | "avatar">;
+    };
+
+    const { _id, name, avatar } = user;
 
     return {
       _id,
       name,
-    }
+      avatar,
+    };
   });
 
   res.status(200).json(response);

@@ -258,3 +258,39 @@ export const removePatient: RequestHandler = async (req, res) => {
     .status(200)
     .json({ _id: deletedUser._id, message: "Succesfully deleted the patient" });
 };
+
+export const getPatientNames: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (!token.role) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const patients = await Patient.find().populate({
+    path: "user",
+  });
+
+  const response = patients.map((patient) => {
+    const { user } = patient as unknown as {
+      user: Pick<User, "_id" | "name" | "avatar">;
+    };
+
+    const { _id, name, avatar } = user;
+
+    return {
+      _id,
+      name,
+      avatar,
+    };
+  });
+
+  res.status(200).json(response);
+};

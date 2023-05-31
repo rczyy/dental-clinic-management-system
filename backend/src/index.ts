@@ -17,6 +17,7 @@ import emailRoute from "./routes/email";
 import oauthRoute from "./routes/oauth";
 import appointmentRoute from "./routes/appointment"
 import attendanceRoute from "./routes/attendance"
+import dentistScheduleRoute from "./routes/dentistSchedule";
 
 const main = async () => {
   mongoose.set("strictQuery", false);
@@ -56,6 +57,7 @@ const main = async () => {
   app.use("/oauth", oauthRoute);
   app.use("/appointment", appointmentRoute);
   app.use("/attendance", attendanceRoute);
+  app.use("/dentist-schedule", dentistScheduleRoute);
 
   app.listen(port, () =>
     console.log(`Server listening to http://localhost:${port}`)

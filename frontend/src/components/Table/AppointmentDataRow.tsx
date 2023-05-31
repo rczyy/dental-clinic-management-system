@@ -2,8 +2,12 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { useGetMe } from "../../hooks/user";
-import { useRemoveAppointment } from "../../hooks/appointment";
+import {
+  useFinishAppointment,
+  useRemoveAppointment,
+} from "../../hooks/appointment";
 import { toast } from "react-toastify";
+import { AiOutlineCheck } from "react-icons/ai";
 
 interface Props {
   appointment: AppointmentResponse;
@@ -14,18 +18,29 @@ interface CancelAppointmentModalProps extends Props {
   setIsCancelModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface FinishAppointmentModalProps extends Props {
+  setIsFinishModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 export const AppointmentDataRow = ({
   appointment,
   showAllDetails,
 }: Props): JSX.Element => {
   const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
+  const [isFinishModalVisible, setIsFinishModalVisible] = useState(false);
 
   const { data: me } = useGetMe();
 
   return (
     <>
-      <tr className="[&>*]:bg-transparent">
-        <th className="!bg-base-300 w-10 p-1.5">
+      <tr
+        className={`${
+          dayjs(appointment.dateTimeFinished).isBefore(dayjs())
+            ? "[&>*]:bg-green-300/50 [&>*]:border-green-200/50"
+            : "[&>*]:bg-transparent"
+        }`}
+      >
+        <td className="w-10 p-1.5">
           <div className="flex dropdown dropdown-right">
             <label
               tabIndex={0}
@@ -42,9 +57,14 @@ export const AppointmentDataRow = ({
                   <FiTrash />
                 </a>
               </li>
+              <li onClick={() => setIsFinishModalVisible(true)}>
+                <a>
+                  <AiOutlineCheck />
+                </a>
+              </li>
             </ul>
           </div>
-        </th>
+        </td>
 
         <td className="font-semibold text-sm text-center">
           {dayjs(appointment.dateTimeScheduled).format("YYYY-MM-DD")}
@@ -112,6 +132,13 @@ export const AppointmentDataRow = ({
           setIsCancelModalVisible={setIsCancelModalVisible}
         />
       )}
+
+      {isFinishModalVisible && (
+        <FinishAppointmentModal
+          appointment={appointment}
+          setIsFinishModalVisible={setIsFinishModalVisible}
+        />
+      )}
     </>
   );
 };
@@ -159,6 +186,62 @@ const CancelAppointmentModal = ({
           </button>
           <button
             className="btn btn-error px-8 text-white hover:bg-red-700"
+            onClick={handleDelete}
+          >
+            Yes
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+const FinishAppointmentModal = ({
+  appointment,
+  setIsFinishModalVisible,
+}: FinishAppointmentModalProps) => {
+  const { mutate: finishAppointment } = useFinishAppointment();
+
+  const handleDelete = () => {
+    finishAppointment(appointment._id, {
+      onSuccess: () => {
+        setIsFinishModalVisible(false);
+        toast.success("Appointment set to done!");
+      },
+      onError: (err) => toast.error(err.response.data.message),
+    });
+  };
+
+  return (
+    <div
+      className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsFinishModalVisible(false);
+      }}
+    >
+      <section className="flex flex-col gap-2 bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
+        <header className="flex justify-between items-center mx-2 py-3">
+          <h1 className="text-2xl font-bold">Finish Appointment</h1>
+          <div>
+            <FiX
+              className="w-6 h-6 p-1 text-base-content rounded-full cursor-pointer transition hover:bg-base-200"
+              onClick={() => setIsFinishModalVisible(false)}
+            />
+          </div>
+        </header>
+        <div className="flex flex-col mx-2 py-3">
+          <p>You are about to set this appointment to done.</p>
+          <p>Are you sure?</p>
+        </div>
+        <div className="flex gap-3 justify-end mx-2 py-3">
+          <button
+            className="btn px-8"
+            onClick={() => setIsFinishModalVisible(false)}
+          >
+            No
+          </button>
+          <button
+            className="btn bg-green-600 px-8 text-white hover:bg-green-700"
             onClick={handleDelete}
           >
             Yes
