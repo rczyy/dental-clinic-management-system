@@ -60,7 +60,7 @@ const MyAttendance = (props: Props) => {
     });
   };
   return (
-    <div className="flex flex-col gap-4">
+    <main className="flex flex-col gap-4">
       <header className="flex justify-between">
         <h1 className="font-bold text-2xl md:text-3xl">My Attendance</h1>
         <div className="flex flex-col gap-1">
@@ -84,19 +84,17 @@ const MyAttendance = (props: Props) => {
           </div>
         </div>
       </header>
-      <div className="flex justify-end items-center"></div>
-      <div className="bg-base-300 py-4 pr-4 rounded-box overflow-x-auto">
+      <div className="bg-base-300 py-4 px-4 rounded-box overflow-x-auto">
         <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
           <thead>
             <tr className="[&>*]:bg-base-300 border-b border-base-200">
-              <th></th>
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
                   setAttendanceSort((val) => (val === "asc" ? "desc" : "asc"))
                 }
               >
-                <div className="flex items-center gap-1">
+                <div className="flex items-center justify-center gap-1">
                   <span>Date</span>
                   {attendanceSort === "asc" ? (
                     <AiFillCaretDown className="w-2.5 h-2.5" />
@@ -105,8 +103,8 @@ const MyAttendance = (props: Props) => {
                   ) : null}
                 </div>
               </th>
-              <th className="text-primary normal-case">Time In</th>
-              <th className="text-primary normal-case">Time Out</th>
+              <th className="text-primary normal-case text-center">Time In</th>
+              <th className="text-primary normal-case text-center">Time Out</th>
             </tr>
           </thead>
           <tbody>
@@ -115,12 +113,13 @@ const MyAttendance = (props: Props) => {
                 <AttendanceDataRow
                   key={attendance._id}
                   attendance={attendance}
+                  showAllDetails={false}
                 />
               ))}
           </tbody>
         </table>
       </div>
-    </div>
+    </main>
   );
 };
 export default MyAttendance;

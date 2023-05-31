@@ -1,14 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { useGetServices } from "../hooks/service";
 import SelectDropdown from "../components/Form/SelectDropdown";
 import ServiceDataRow from "../components/Table/ServiceDataRow";
+import { useGetMe } from "../hooks/user";
+import { useAdminStore } from "../store/admin";
 
 type Props = {};
 
 const ServiceList = (props: Props) => {
+  const sidebar = useAdminStore((state) => state.sidebar);
   const categories = [
     { value: "", label: "All" },
     { value: "First Appointment", label: "First Appointment" },
@@ -24,6 +27,7 @@ const ServiceList = (props: Props) => {
     { value: "Orthodontics (Braces)", label: "Orthodontics (Braces)" },
   ];
 
+  const { data: me } = useGetMe();
   const { data } = useGetServices();
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [categoryFilter, setCategoryFilter] = useState<string>("");
@@ -83,12 +87,18 @@ const ServiceList = (props: Props) => {
           service.category.toLowerCase().includes(categoryFilter.toLowerCase())
       );
 
+  if (!me || me.role === "Patient") return <Navigate to="/" />;
+
   return (
-    <div className="flex flex-col gap-4">
+    <main
+      className={`flex flex-col gap-4 ${
+        sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
+      } m-auto transition-[max-width]`}
+    >
       <header className="flex justify-between items-end mb-4 gap-8">
         <h1 className="font-bold text-2xl md:text-3xl">Service List</h1>
         <Link
-          to="/dashboard/services/add"
+          to="/services/add"
           role="button"
           className="btn btn-primary w-full max-w-[10rem] min-h-[2.5rem] h-10 px-2 text-white normal-case gap-2"
         >
@@ -121,14 +131,17 @@ const ServiceList = (props: Props) => {
         <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
           <thead>
             <tr className="[&>*]:bg-base-300 border-b border-base-200">
-              <th></th>
+              {filteredServices && filteredServices.length > 0 && (
+                <th className="min-w-[2.5rem] w-10"></th>
+              )}
+
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
                   setNameSort((val) => (val === "asc" ? "desc" : "asc"))
                 }
               >
-                <div className="flex items-center gap-1">
+                <div className="flex justify-center items-center gap-1">
                   <span>Service Name</span>
                   {nameSort === "asc" ? (
                     <AiFillCaretDown className="w-2.5 h-2.5" />
@@ -144,7 +157,7 @@ const ServiceList = (props: Props) => {
                   setCategorySort((val) => (val === "asc" ? "desc" : "asc"))
                 }
               >
-                <div className="flex items-center gap-1">
+                <div className="flex justify-center items-center gap-1">
                   <span>Category</span>
                   {categorySort === "asc" ? (
                     <AiFillCaretDown className="w-2.5 h-2.5" />
@@ -154,18 +167,31 @@ const ServiceList = (props: Props) => {
                 </div>
               </th>
 
-              <th className="text-primary normal-case">Estimated Time</th>
+              <th className="text-primary text-center normal-case">
+                Estimated Time
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredServices &&
-              filteredServices.map((service) => (
-                <ServiceDataRow key={service._id} service={service} />
+              (filteredServices.length > 0 ? (
+                filteredServices.map((service) => (
+                  <ServiceDataRow key={service._id} service={service} />
+                ))
+              ) : (
+                <tr className="[&>*]:bg-transparent">
+                  <td
+                    colSpan={3}
+                    className="py-8 text-2xl text-center font-bold"
+                  >
+                    No services to show
+                  </td>
+                </tr>
               ))}
           </tbody>
         </table>
       </div>
-    </div>
+    </main>
   );
 };
 export default ServiceList;

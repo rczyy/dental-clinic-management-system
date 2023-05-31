@@ -1,13 +1,15 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { rootApi } from "./root";
+
 const URL = import.meta.env.VITE_AXIOS_BASE_URL;
 
-export const appointmentApi = createApi({
-  reducerPath: "appointmentApi",
-  baseQuery: fetchBaseQuery({ baseUrl: `${URL}/appointment/` }),
+export const appointmentApi = rootApi.injectEndpoints({
   endpoints: (builder) => ({
-    getDentistAppointments: builder.query<AppointmentResponse[], {id: string, date: string}>({
+    getDentistAppointments: builder.query<
+      AppointmentResponse[],
+      { id: string; date: string }
+    >({
       query: (args) => ({
-        url: `get-dentist-appointments/${args.id}/?date=${args.date}`,
+        url: `${URL}/appointment/get-dentist-appointments/${args.id}/?date=${args.date}`,
         method: "GET",
         credentials: "include",
         headers: {
@@ -15,9 +17,12 @@ export const appointmentApi = createApi({
         },
       }),
     }),
-    getPatientAppointments: builder.query<AppointmentResponse[], {id: string, date: string}>({
+    getPatientAppointments: builder.query<
+      AppointmentResponse[],
+      { id: string; date: string }
+    >({
       query: (args) => ({
-        url: `get-patient-appointments/${args.id}/?date=${args.date}`,
+        url: `${URL}/appointment/get-patient-appointments/${args.id}/?date=${args.date}`,
         method: "GET",
         credentials: "include",
         headers: {

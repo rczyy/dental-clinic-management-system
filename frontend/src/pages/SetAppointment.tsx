@@ -10,11 +10,9 @@ import { RiServiceFill } from "react-icons/ri";
 import { FaTooth } from "react-icons/fa";
 import { IoCalendar } from "react-icons/io5";
 import { useGetMe } from "../hooks/user";
-import { getMe } from "../axios/user";
-import { QueryClient } from "@tanstack/react-query";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useAddAppointment } from "../hooks/appointment";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import DentistComponent from "../components/Appointment/DentistComponent";
 import dayjs, { Dayjs } from "dayjs";
@@ -22,14 +20,9 @@ import {
   useLazyGetDentistAppointmentsQuery,
   useLazyGetPatientAppointmentsQuery,
 } from "../redux/api/appointment";
+import { useGetDentistSchedule } from "../hooks/dentistSchedule";
 
 type Props = {};
-
-export const loader = (queryClient: QueryClient) => async () =>
-  await queryClient.ensureQueryData({
-    queryKey: ["me"],
-    queryFn: getMe,
-  });
 
 const schema = z.object({
   dentist: z
@@ -84,6 +77,13 @@ const SetAppointment = (props: Props) => {
   const [services, setServices] = useState<SelectOption[]>();
   const [selectedDentist, setSelectedDentist] = useState("");
   const [step, setStep] = useState<number>(1);
+  const [availableDates, setAvailableDates] = useState<string[]>([]);
+
+  const { data: dentistSchedule, refetch } = useGetDentistSchedule(
+    selectedDentist,
+    !!selectedDentist
+  );
+
   const {
     control,
     handleSubmit,
@@ -127,7 +127,7 @@ const SetAppointment = (props: Props) => {
 
     if (userData) {
       getPatientAppointments({
-        id: userData._id!,
+        id: userData._id,
         date: dayjs(watch("date")).format("YYYY-MM-DD"),
       });
     }
@@ -220,6 +220,22 @@ const SetAppointment = (props: Props) => {
     }
   }, [watch("serviceCategory")]);
 
+  useEffect(() => {
+    if (selectedDentist) {
+      refetch();
+    }
+  }, [selectedDentist]);
+
+  useEffect(() => {
+    if (dentistSchedule) {
+      setAvailableDates(
+        dentistSchedule.map((schedule) =>
+          dayjs(schedule.date).format("MM/DD/YYYY")
+        )
+      );
+    }
+  }, [dentistSchedule]);
+
   const getDentistName = () => {
     if (dentistData) {
       const dentistName = dentistData.find(
@@ -274,6 +290,9 @@ const SetAppointment = (props: Props) => {
       },
     });
   };
+
+  if (!userData || (userData && !userData.contactNo))
+    return <Navigate to="/" />;
 
   return (
     <main className="flex items-center justify-center">
@@ -511,6 +530,13 @@ const SetAppointment = (props: Props) => {
                             );
                           }}
                           value={value}
+                          disablePast
+                          shouldDisableDate={(day) =>
+                            dayjs(day).date() === dayjs().date() ||
+                            !availableDates.includes(
+                              dayjs(day).format("MM/DD/YYYY")
+                            )
+                          }
                         />
                       )}
                     />
@@ -619,7 +645,7 @@ const SetAppointment = (props: Props) => {
                             <div className="flex items-center gap-4">
                               <IoCalendar />
                               <span>
-                                {dayjs(watch("date")).format("MMMM/DD/YY")}
+                                {dayjs(watch("date")).format("MMMM DD, YYYY")}
                               </span>
                             </div>
                             <div className="flex items-center gap-4">

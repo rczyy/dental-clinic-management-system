@@ -28,7 +28,7 @@ export const VerifyEmail = (_: Props): JSX.Element => {
   }, [verifyUserData]);
 
   return (
-    <div className="flex flex-col justify-center flex-1 px-4 pt-16">
+    <main className="flex flex-col justify-center flex-1 px-4 pt-16">
       <div className="flex flex-col items-center bg-base-300 max-w-lg p-12 mx-auto my-4 gap-4 rounded-lg text-center">
         {verifyUserLoading ? (
           <AiOutlineLoading3Quarters className="w-16 h-16 text-primary animate-spin" />
@@ -103,6 +103,6 @@ export const VerifyEmail = (_: Props): JSX.Element => {
           </>
         )}
       </div>
-    </div>
+    </main>
   );
 };

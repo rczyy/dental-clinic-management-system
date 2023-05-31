@@ -1,4 +1,4 @@
-import { FiClock, FiEdit2, FiMoreHorizontal, FiTrash } from "react-icons/fi";
+import { FiClock, FiEdit2, FiMoreVertical, FiTrash } from "react-icons/fi";
 import { AiOutlineMedicineBox } from "react-icons/ai";
 import { GrFormClose } from "react-icons/gr";
 import { convertToTotalHoursAndMinutes } from "../../utilites/convertToTotalHoursAndMinutes";
@@ -27,13 +27,13 @@ const ServiceDataRow = ({ service }: Props) => {
   return (
     <>
       <tr className="[&>*]:bg-transparent">
-        <th className="!bg-base-300">
+        <th className="!bg-base-300 w-10 p-1.5">
           <div className="flex dropdown dropdown-right">
             <label
               tabIndex={0}
-              className="w-8 h-8 p-2 mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
+              className="w-full h-full mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
             >
-              <FiMoreHorizontal />
+              <FiMoreVertical className="w-full h-full p-1" />
             </label>
             <ul
               tabIndex={0}
@@ -52,13 +52,16 @@ const ServiceDataRow = ({ service }: Props) => {
             </ul>
           </div>
         </th>
+
         <td className="font-medium text-sm">
-          <div className="flex flex-col">
+          <div className="flex flex-col items-center">
             <span>{`${service.name}`}</span>
           </div>
         </td>
-        <td className="font-medium text-sm">{service.category}</td>
-        <td className="font-medium text-sm">
+
+        <td className="font-medium text-sm text-center">{service.category}</td>
+
+        <td className="font-medium text-sm text-center">
           {convertToTotalHoursAndMinutes(Number(service.estimatedTime))}
         </td>
       </tr>
@@ -137,7 +140,12 @@ const EditServiceModal = ({
     );
   };
   return (
-    <div className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25">
+    <div
+      className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsEditModalVisible(false);
+      }}
+    >
       <section className="bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
         <header className="flex justify-between items-center">
           <h1 className="text-2xl font-bold mx-2 py-3">Edit service</h1>
@@ -218,7 +226,12 @@ const DeleteServiceModal = ({
     });
   };
   return (
-    <div className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25">
+    <div
+      className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsDeleteModalVisible(false);
+      }}
+    >
       <section className="flex flex-col gap-2 bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
         <header className="flex justify-between items-center mx-2 py-3">
           <h1 className="text-2xl font-bold">Delete service</h1>
@@ -227,7 +240,7 @@ const DeleteServiceModal = ({
             onClick={() => setIsDeleteModalVisible(false)}
           />
         </header>
-        <div className="flex flex-col items-center mx-2 py-3">
+        <div className="flex flex-col mx-2 py-3">
           <p>You are about to permanently delete a service.</p>
           <p>Are you sure?</p>
         </div>

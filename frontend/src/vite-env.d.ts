@@ -64,6 +64,11 @@ interface ServiceFormValues {
   estimatedTime: string;
 }
 
+interface AttendanceFormValues {
+  timeIn: string;
+  timeOut: string;
+}
+
 interface SelectOption {
   _id?: string;
   value: string;
@@ -133,7 +138,7 @@ interface UserResponse {
   name: Name;
   address?: Address;
   email: string;
-  contactNo: string;
+  contactNo?: string;
   role:
     | "Admin"
     | "Manager"
@@ -168,7 +173,7 @@ interface ManagerResponse {
 
 interface DentistResponse {
   _id: string;
-  staff: string;
+  staff: StaffResponse;
 }
 
 interface FrontDeskResponse {
@@ -206,15 +211,10 @@ interface ErrorMessage {
   message: string;
 }
 interface AppointmentResponse {
-  _id?: string;
-  patient: string;
-  service: {
-    _id: string;
-    name: string;
-    estimatedTime: string;
-    category: string;
-  };
-  dentist: string;
+  _id: string;
+  dentist: DentistResponse;
+  patient: PatientResponse;
+  service: ServiceResponse;
   dateTimeScheduled: string;
   dateTimeFinished: string;
 }
@@ -267,4 +267,10 @@ interface AppointmentFormValues {
   dentist: string;
   dateTimeScheduled: string;
   dateTimeFinished: string;
+}
+
+interface DentistScheduleResponse {
+  _id: string;
+  dentist: DentistResponse;
+  date: Date;
 }

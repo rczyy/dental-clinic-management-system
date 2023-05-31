@@ -4,6 +4,7 @@ import { Roles } from "../constants";
 import Attendance from "../models/attendance";
 import { z } from "zod";
 import Staff from "../models/staff";
+import { isValidObjectId } from "mongoose";
 
 export const getAttendance: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -31,6 +32,56 @@ export const getAttendance: RequestHandler = async (req, res) => {
   res.status(201).json(attendance);
 };
 
+export const editAttendance: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (
+    token.role !== Roles.Admin &&
+    token.role !== Roles.Manager &&
+    token.role !== Roles.FrontDesk
+  ) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const dateSchema = z.object({
+    timeIn: z.string({ required_error: "Date and Time is required" }),
+    timeOut: z.string({ required_error: "Date and Time is required" }),
+  });
+
+  type body = z.infer<typeof dateSchema>;
+
+  const parse = dateSchema.safeParse(req.body);
+
+  if (!parse.success) {
+    res.status(400).json(parse.error.flatten());
+    return;
+  }
+
+  const { timeIn, timeOut }: body = req.body;
+
+  const { attendanceID } = req.params;
+
+  if (!isValidObjectId(attendanceID)) {
+    const error: ErrorMessage = { message: "Invalid service ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const editedAttendance = await Attendance.findByIdAndUpdate(attendanceID, {
+    timeIn,
+    timeOut,
+  });
+
+  res.status(201).json(editedAttendance);
+};
 export const getMyAttendance: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
@@ -195,6 +246,15 @@ export const logTimeOut: RequestHandler = async (req, res) => {
     staff: existingStaff._id,
   });
 
+  if (existingLog && !existingLog.timeIn) {
+    const error: FormError = {
+      formErrors: ["Not timed in yet"],
+    };
+
+    res.status(401).json(error);
+    return;
+  }
+
   if (existingLog && existingLog.timeOut) {
     const error: FormError = {
       formErrors: ["Already timed out"],
@@ -203,6 +263,7 @@ export const logTimeOut: RequestHandler = async (req, res) => {
     res.status(401).json(error);
     return;
   }
+
   const attendance = await Attendance.findOneAndUpdate(
     { date: dateToday, staff: existingStaff._id },
     {
@@ -210,6 +271,6 @@ export const logTimeOut: RequestHandler = async (req, res) => {
     },
     { new: true }
   );
-  console.log(dateToday);
+
   res.status(201).json(attendance);
 };

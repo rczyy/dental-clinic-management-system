@@ -1,8 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { FiEye, FiMoreHorizontal, FiTrash } from "react-icons/fi";
+import { FiEye, FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useRemovePatient } from "../../hooks/patient";
-import { GrFormClose } from "react-icons/gr";
 
 type Props = {
   patient: PatientResponse;
@@ -18,21 +17,19 @@ const PatientDataRow = ({ patient }: Props) => {
   return (
     <>
       <tr className="[&>*]:bg-transparent transition tracking-tight">
-        <th className="!bg-base-300">
+        <th className="!bg-base-300 w-10 p-1.5">
           <div className="flex dropdown dropdown-right">
             <label
               tabIndex={0}
-              className="w-8 h-8 p-2 mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
+              className="w-full h-full mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
             >
-              <FiMoreHorizontal />
+              <FiMoreVertical className="w-full h-full p-1" />
             </label>
             <ul
               tabIndex={0}
               className="dropdown-content menu flex-row flex-nowrap p-1 bg-base-100 text-sm border border-neutral rounded-lg shadow-lg translate-x-2 -translate-y-1/4"
             >
-              <li
-                onClick={() => navigate(`/profile/${patient.user._id}`)}
-              >
+              <li onClick={() => navigate(`/profile/${patient.user._id}`)}>
                 <a>
                   <FiEye />
                 </a>
@@ -45,23 +42,35 @@ const PatientDataRow = ({ patient }: Props) => {
             </ul>
           </div>
         </th>
+
+        <td className="!bg-base-300 pr-0">
+          <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
+            <img className="h-full object-cover" src={patient.user.avatar} />
+          </figure>
+        </td>
+
         <td className="font-medium text-sm">
-          <div className="flex flex-col">
+          <div className="flex flex-col items-center">
             <span>{`${patient.user.name.firstName} ${patient.user.name.lastName}`}</span>
             <span className="font-medium text-xs text-zinc-400">
               {patient.user.email}
             </span>
           </div>
         </td>
+
         <td className="font-medium text-sm">
-          <div className="flex flex-col">
+          <div className="flex flex-col items-center">
             {patient.user.address ? (
               <>
                 <span>
-                  {`${patient.user.address.street} ${patient.user.address.barangay}`}
+                  {`${patient.user.address.street || ""} ${
+                    patient.user.address.barangay || ""
+                  }`}
                 </span>
                 <span className="font-medium text-xs text-zinc-400">
-                  {`${patient.user.address.city}, ${patient.user.address.province}`}
+                  {`${patient.user.address.city || ""} ${
+                    patient.user.address.province || ""
+                  }`}
                 </span>
               </>
             ) : (
@@ -69,8 +78,12 @@ const PatientDataRow = ({ patient }: Props) => {
             )}
           </div>
         </td>
-        <td className="font-medium text-sm">{patient.user.contactNo}</td>
+
+        <td className="font-medium text-sm text-center">
+          {patient.user.contactNo}
+        </td>
       </tr>
+
       {isDeleteModalVisible && (
         <RemoveUserModal
           patient={patient}
@@ -85,37 +98,43 @@ const RemoveUserModal = ({
   patient,
   setIsDeleteModalVisible,
 }: RemovePatientProps) => {
-  const { mutate: removePatient, error: removePatientError } = useRemovePatient(
-    patient.user._id
-  );
+  const { mutate: removePatient, error: removePatientError } =
+    useRemovePatient();
   const handleDelete = () => {
     removePatient(patient.user._id, {
       onSuccess: () => setIsDeleteModalVisible(false),
     });
   };
   return (
-    <div className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25">
+    <div
+      className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsDeleteModalVisible(false);
+      }}
+    >
       <section className="flex flex-col gap-2 bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
         <header className="flex justify-between items-center mx-2 py-3">
           <h1 className="text-2xl font-bold">Remove Patient</h1>
-          <GrFormClose
-            className="hover: cursor-pointer w-5 h-5"
-            onClick={() => setIsDeleteModalVisible(false)}
-          />
+          <div>
+            <FiX
+              className="w-6 h-6 p-1 text-base-content rounded-full cursor-pointer transition hover:bg-base-200"
+              onClick={() => setIsDeleteModalVisible(false)}
+            />
+          </div>
         </header>
-        <div className="flex flex-col items-center mx-2 py-3">
+        <div className="flex flex-col mx-2 py-3">
           <p>You are about to permanently remove a patient.</p>
           <p>Are you sure?</p>
         </div>
         <div className="flex gap-3 justify-end mx-2 py-3">
           <button
-            className="btn"
+            className="btn px-8"
             onClick={() => setIsDeleteModalVisible(false)}
           >
             No
           </button>
           <button
-            className="btn btn-error"
+            className="btn btn-error px-8 text-white hover:bg-red-700"
             onClick={() => {
               handleDelete();
             }}
@@ -130,4 +149,5 @@ const RemoveUserModal = ({
     </div>
   );
 };
+
 export default PatientDataRow;

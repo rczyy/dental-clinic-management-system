@@ -1,14 +1,13 @@
 import "./styles.css";
 import ReactDOM from "react-dom/client";
 import Root, { loader as appLoader } from "./layout/Root";
-import DashboardRoot from "./layout/DashboardRoot";
 import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
 import SetAppointment from "./pages/SetAppointment";
 import ServiceList from "./pages/ServiceList";
-import StaffList, { loader as staffLoader } from "./pages/StaffList";
-import PatientList, { loader as patientLoader } from "./pages/PatientList";
+import StaffList from "./pages/StaffList";
+import PatientList from "./pages/PatientList";
 import RegisterStaff from "./pages/RegisterStaff";
 import RegisterPatient from "./pages/RegisterPatient";
 import AddService from "./pages/AddService";
@@ -22,7 +21,6 @@ import Profile from "./pages/Profile";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ApiProvider } from "@reduxjs/toolkit/query/react";
-import { appointmentApi } from "./redux/api/appointment";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -30,6 +28,11 @@ import AppointmentSuccess from "./pages/AppointmentSuccess";
 import { addressApi } from "./redux/api/address";
 import MyAttendance from "./pages/MyAttendance";
 import StaffAttendance from "./pages/StaffAttendance";
+import { rootApi } from "./redux/api/root";
+import { MyAppointments } from "./pages/MyAppointments";
+import { MySchedule } from "./pages/MySchedule";
+import { AppointmentList } from "./pages/AppointmentList";
+import { DentistsSchedule } from "./pages/DentistsSchedule";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -77,48 +80,28 @@ const router = createBrowserRouter([
         element: <VerifyEmail />,
       },
       {
-        path: "dashboard",
-        element: <DashboardRoot />,
-        children: [
-          {
-            path: "patients",
-            element: <PatientList />,
-            loader: patientLoader(queryClient),
-          },
-          {
-            path: "staff",
-            element: <StaffList />,
-            loader: staffLoader(queryClient),
-          },
-          {
-            path: "services",
-            element: <ServiceList />,
-          },
-          {
-            path: "staff/register",
-            element: <RegisterStaff />,
-          },
-          {
-            path: "patient/register",
-            element: <RegisterPatient />,
-          },
-          {
-            path: "services/add",
-            element: <AddService />,
-          },
-          {
-            path: "attendance",
-            element: <MyAttendance />,
-          },
-          {
-            path: "staff-attendance",
-            element: <StaffAttendance />,
-          },
-        ],
+        path: "patients",
+        element: <PatientList />,
+      },
+      {
+        path: "staff",
+        element: <StaffList />,
       },
       {
         path: "services",
         element: <ServiceList />,
+      },
+      {
+        path: "staff/register",
+        element: <RegisterStaff />,
+      },
+      {
+        path: "patient/register",
+        element: <RegisterPatient />,
+      },
+      {
+        path: "services/add",
+        element: <AddService />,
       },
       {
         path: "set-appointment",
@@ -128,21 +111,43 @@ const router = createBrowserRouter([
         path: "set-appointment/success",
         element: <AppointmentSuccess />,
       },
+      {
+        path: "my-appointments",
+        element: <MyAppointments />,
+      },
+      {
+        path: "my-schedule",
+        element: <MySchedule />,
+      },
+      {
+        path: "appointments",
+        element: <AppointmentList />,
+      },
+      {
+        path: "dentists-schedule",
+        element: <DentistsSchedule />,
+      },
+      {
+        path: "attendance",
+        element: <MyAttendance />,
+      },
+      {
+        path: "staff-attendance",
+        element: <StaffAttendance />,
+      },
     ],
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <QueryClientProvider client={queryClient}>
-    <ApiProvider api={appointmentApi}>
-      <ApiProvider api={addressApi}>
-        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <RouterProvider router={router} />
-            <ReactQueryDevtools />
-          </LocalizationProvider>
-        </GoogleOAuthProvider>
-      </ApiProvider>
+    <ApiProvider api={rootApi}>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <RouterProvider router={router} />
+          <ReactQueryDevtools />
+        </LocalizationProvider>
+      </GoogleOAuthProvider>
     </ApiProvider>
   </QueryClientProvider>
 );

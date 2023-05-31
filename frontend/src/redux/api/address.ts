@@ -1,23 +1,22 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-const URL = "https://psgc.gitlab.io/api/";
+import { rootApi } from "./root";
 
-export const addressApi = createApi({
-  reducerPath: "addressApi",
-  baseQuery: fetchBaseQuery({ baseUrl: URL }),
+const URL = "https://psgc.gitlab.io/api";
+
+export const addressApi = rootApi.injectEndpoints({
   endpoints: (builder) => ({
     getRegions: builder.query<Region[], void>({
       query: () => ({
-        url: `regions`,
+        url: `${URL}/regions`,
         method: "GET",
       }),
     }),
     getProvinces: builder.query<Province[], string>({
       queryFn: async (regionCode, _, __, baseQuery) => {
         const provincesResult = await baseQuery(
-          `regions/${regionCode}/provinces`
+          `${URL}/regions/${regionCode}/provinces`
         );
         const districtsResult = await baseQuery(
-          `regions/${regionCode}/districts`
+          `${URL}/regions/${regionCode}/districts`
         );
 
         const provinces = provincesResult.data as Province[];
@@ -31,10 +30,10 @@ export const addressApi = createApi({
     getCities: builder.query<City[], string>({
       queryFn: async (provinceCode, _, __, baseQuery) => {
         const citiesFromProvincesResult = await baseQuery(
-          `provinces/${provinceCode}/cities-municipalities`
+          `${URL}/provinces/${provinceCode}/cities-municipalities`
         );
         const citiesFromDistrictsResult = await baseQuery(
-          `districts/${provinceCode}/cities-municipalities`
+          `${URL}/districts/${provinceCode}/cities-municipalities`
         );
 
         const citiesFromProvinces = citiesFromProvincesResult.data as City[];
@@ -51,7 +50,7 @@ export const addressApi = createApi({
     }),
     getBarangays: builder.query<Barangay[], string>({
       query: (cityCode) => ({
-        url: `https://psgc.gitlab.io/api/cities-municipalities/${cityCode}/barangays`,
+        url: `${URL}/cities-municipalities/${cityCode}/barangays`,
         method: "GET",
       }),
     }),

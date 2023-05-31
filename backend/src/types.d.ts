@@ -133,4 +133,10 @@ declare global {
     createdAt: Date;
     updatedAt: Date;
   }
+
+  interface DentistSchedule {
+    _id: Types.ObjectId;
+    dentist: Types.ObjectId;
+    date: Date;
+  }
 }

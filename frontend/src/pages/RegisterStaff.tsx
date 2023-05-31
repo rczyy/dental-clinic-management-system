@@ -20,6 +20,8 @@ import {
   useLazyGetCitiesQuery,
   useLazyGetProvincesQuery,
 } from "../redux/api/address";
+import { useGetMe } from "../hooks/user";
+import { Navigate } from "react-router-dom";
 
 type Props = {};
 
@@ -125,6 +127,7 @@ const RegisterStaff = (props: Props) => {
   const [selectedCity, setSelectedCity] = useState<City>();
   const [barangayOptions, setBarangayOptions] = useState<SelectOption[]>();
 
+  const { data: me } = useGetMe();
   const { mutate, isLoading, error } = useRegisterStaff();
 
   const { data: regions, isFetching: isRegionsLoading } = useGetRegionsQuery();
@@ -341,8 +344,10 @@ const RegisterStaff = (props: Props) => {
       );
   }, [barangays]);
 
+  if (!me || me.role === "Patient") return <Navigate to="/" />;
+
   return (
-    <div className="w-full h-full flex transition-all">
+    <main className="w-full h-full flex transition-all">
       <section className="bg-base-300 max-w-4xl w-full m-auto rounded-2xl shadow-md px-8 py-10 md:px-10 lg:px-16">
         <header className="flex justify-start">
           <h1 className="text-2xl font-bold mx-2 py-3">Add a new staff</h1>
@@ -398,7 +403,7 @@ const RegisterStaff = (props: Props) => {
               </div>
               <div>
                 <FormInput
-                  type="number"
+                  type="text"
                   label="contactNo"
                   placeholder="Contact Number"
                   register={register}
@@ -542,7 +547,7 @@ const RegisterStaff = (props: Props) => {
           </div>
         </form>
       </section>
-    </div>
+    </main>
   );
 };
 

@@ -1,22 +1,18 @@
-import { QueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
 import { FiPlus, FiSearch } from "react-icons/fi";
-import { getStaffs } from "../axios/staff";
 import { useGetStaffs } from "../hooks/staff";
 import StaffDataRow from "../components/Table/StaffDataRow";
 import SelectDropdown from "../components/Form/SelectDropdown";
+import { useGetMe } from "../hooks/user";
+import { useAdminStore } from "../store/admin";
 
 type Props = {};
 
-export const loader = (queryClient: QueryClient) => async () =>
-  await queryClient.ensureQueryData({
-    queryKey: ["staffs"],
-    queryFn: getStaffs,
-  });
-
 const StaffList = (props: Props) => {
+  const sidebar = useAdminStore((state) => state.sidebar);
+
   const roles = [
     { value: "", label: "All" },
     { value: "Manager", label: "Manager" },
@@ -24,15 +20,16 @@ const StaffList = (props: Props) => {
     { value: "Assistant", label: "Assistant Dentist" },
     { value: "Front Desk", label: "Front Desk" },
   ];
-  const { data } = useGetStaffs();
+  const { data: me } = useGetMe();
+  const { data: staffs } = useGetStaffs();
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [roleFilter, setRoleFilter] = useState<string>("");
   const [roleSort, setRoleSort] = useState<"asc" | "desc">();
   const [nameSort, setNameSort] = useState<"asc" | "desc">();
 
   const filteredStaffs =
-    data &&
-    data
+    staffs &&
+    staffs
       .sort((a, b) => {
         const roleA: string = a.user.role.toUpperCase();
         const roleB: string = b.user.role.toUpperCase();
@@ -79,18 +76,24 @@ const StaffList = (props: Props) => {
       })
       .filter(
         (staff) =>
-          (staff.user.name.firstName + staff.user.name.lastName)
+          `${staff.user.name.firstName} ${staff.user.name.lastName}`
             .toLowerCase()
             .includes(searchFilter.toLowerCase()) &&
           staff.user.role.includes(roleFilter)
       );
 
+  if (!me || me.role === "Patient") return <Navigate to="/" />;
+
   return (
-    <div className="flex flex-col gap-4">
+    <main
+      className={`flex flex-col gap-4 ${
+        sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
+      } m-auto transition-[max-width]`}
+    >
       <header className="flex justify-between items-end mb-4 gap-8">
-        <h1 className="font-bold text-2xl md:text-3xl">Staff List</h1>
+        <h1 className="font-bold text-2xl md:text-3xl">Staffs</h1>
         <Link
-          to="/dashboard/staff/register"
+          to="/staff/register"
           role="button"
           className="btn btn-primary w-full max-w-[10rem] min-h-[2.5rem] h-10 px-2 text-white normal-case gap-2"
         >
@@ -123,14 +126,17 @@ const StaffList = (props: Props) => {
         <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
           <thead>
             <tr className="[&>*]:bg-base-300 border-b border-base-200">
-              <th></th>
+              {filteredStaffs && filteredStaffs.length > 0 && (
+                <th className="min-w-[2.5rem] w-10"></th>
+              )}
+
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
                   setRoleSort((val) => (val === "asc" ? "desc" : "asc"))
                 }
               >
-                <div className="flex items-center gap-1">
+                <div className="flex justify-center items-center gap-1">
                   <span>Role</span>
                   {roleSort === "asc" ? (
                     <AiFillCaretDown className="w-2.5 h-2.5" />
@@ -139,13 +145,16 @@ const StaffList = (props: Props) => {
                   ) : null}
                 </div>
               </th>
+
+              <th></th>
+
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
                   setNameSort((val) => (val === "asc" ? "desc" : "asc"))
                 }
               >
-                <div className="flex items-center gap-1">
+                <div className="flex justify-center items-center gap-1">
                   <span>Name</span>
                   {nameSort === "asc" ? (
                     <AiFillCaretDown className="w-2.5 h-2.5" />
@@ -154,19 +163,34 @@ const StaffList = (props: Props) => {
                   ) : null}
                 </div>
               </th>
-              <th className="text-primary normal-case">Email</th>
-              <th className="text-primary normal-case">Contact No.</th>
+
+              <th className="text-primary text-center normal-case">Email</th>
+
+              <th className="text-primary text-center normal-case">
+                Contact No.
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredStaffs &&
-              filteredStaffs.map((staff) => (
-                <StaffDataRow key={staff._id} staff={staff} />
+              (filteredStaffs.length > 0 ? (
+                filteredStaffs.map((staff) => (
+                  <StaffDataRow key={staff._id} staff={staff} />
+                ))
+              ) : (
+                <tr className="[&>*]:bg-transparent">
+                  <td
+                    colSpan={4}
+                    className="py-8 text-2xl text-center font-bold"
+                  >
+                    No staffs registered
+                  </td>
+                </tr>
               ))}
           </tbody>
         </table>
       </div>
-    </div>
+    </main>
   );
 };
 

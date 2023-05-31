@@ -1,5 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getAttendance, getMyAttendance, logTimeIn, logTimeOut } from "../axios/attendance";
+import {
+  getAttendance,
+  getMyAttendance,
+  editAttendance,
+  logTimeIn,
+  logTimeOut,
+} from "../axios/attendance";
 
 export const useGetAttendance = () => {
   return useQuery<AttendanceResponse[], ErrorMessageResponse>({
@@ -15,6 +21,20 @@ export const useGetMyAttendance = () => {
   });
 };
 
+export const useEditAttendance = () => {
+  const queryClient = useQueryClient();
+  return useMutation<
+    AttendanceResponse,
+    ErrorMessageResponse,
+    { data: AttendanceFormValues; id: string }
+  >({
+    mutationFn: ({ data, id }) => editAttendance(data, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["attendance"]);
+    },
+  });
+};
+
 export const useLogTimeIn = () => {
   const queryClient = useQueryClient();
   return useMutation<AttendanceResponse, FormErrorResponse, string>({
@@ -24,9 +44,9 @@ export const useLogTimeIn = () => {
 };
 
 export const useLogTimeOut = () => {
-    const queryClient = useQueryClient();
-    return useMutation<AttendanceResponse, FormErrorResponse, string>({
-      mutationFn: (timeOut) => logTimeOut(timeOut),
-      onSuccess: () => queryClient.invalidateQueries(["myAttendance"]),
-    });
-  };
+  const queryClient = useQueryClient();
+  return useMutation<AttendanceResponse, FormErrorResponse, string>({
+    mutationFn: (timeOut) => logTimeOut(timeOut),
+    onSuccess: () => queryClient.invalidateQueries(["myAttendance"]),
+  });
+};

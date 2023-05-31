@@ -370,7 +370,7 @@ const Signup = (_: Props) => {
                       required
                     />
                     <FormInput
-                      type="number"
+                      type="text"
                       label="contactNo"
                       placeholder="Contact Number"
                       register={register}

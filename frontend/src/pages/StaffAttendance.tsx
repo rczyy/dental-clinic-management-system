@@ -36,22 +36,7 @@ const StaffAttendance = (props: Props) => {
         <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
           <thead>
             <tr className="[&>*]:bg-base-300 border-b border-base-200">
-                <td></td>
-              <th
-                className="text-primary normal-case cursor-pointer"
-                onClick={() =>
-                  setAttendanceSort((val) => (val === "asc" ? "desc" : "asc"))
-                }
-              >
-                <div className="flex items-center gap-1">
-                  <span>Date</span>
-                  {attendanceSort === "asc" ? (
-                    <AiFillCaretDown className="w-2.5 h-2.5" />
-                  ) : attendanceSort === "desc" ? (
-                    <AiFillCaretUp className="w-2.5 h-2.5" />
-                  ) : null}
-                </div>
-              </th>
+              <th></th>
               <th
                 className="text-primary normal-case cursor-pointer"
                 onClick={() =>
@@ -67,6 +52,21 @@ const StaffAttendance = (props: Props) => {
                   ) : null}
                 </div>
               </th>
+              <th
+                className="text-primary normal-case cursor-pointer"
+                onClick={() =>
+                  setAttendanceSort((val) => (val === "asc" ? "desc" : "asc"))
+                }
+              >
+                <div className="flex items-center gap-1">
+                  <span>Date</span>
+                  {attendanceSort === "asc" ? (
+                    <AiFillCaretDown className="w-2.5 h-2.5" />
+                  ) : attendanceSort === "desc" ? (
+                    <AiFillCaretUp className="w-2.5 h-2.5" />
+                  ) : null}
+                </div>
+              </th>
               <th className="text-primary normal-case">Time In</th>
               <th className="text-primary normal-case">Time Out</th>
             </tr>
@@ -77,6 +77,7 @@ const StaffAttendance = (props: Props) => {
                 <AttendanceDataRow
                   key={attendance._id}
                   attendance={attendance}
+                  showAllDetails={true}
                 />
               ))}
           </tbody>
@@ -85,4 +86,7 @@ const StaffAttendance = (props: Props) => {
     </div>
   );
 };
+const editStaffAttendance = () => {
+  
+}
 export default StaffAttendance;

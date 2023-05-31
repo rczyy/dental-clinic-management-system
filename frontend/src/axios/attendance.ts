@@ -22,6 +22,16 @@ export const getMyAttendance = async () => {
   return res.data;
 };
 
+export const editAttendance = async (data: AttendanceFormValues, id: string) => {
+  const res = await axios.patch<AttendanceResponse>(`${URL}/attendance/edit/${id}`, data, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
+  return res.data;
+};
+
 export const logTimeIn = async (timeIn: string) => {
   const res = await axios.post<AttendanceResponse>(
     `${URL}/attendance/time-in`,

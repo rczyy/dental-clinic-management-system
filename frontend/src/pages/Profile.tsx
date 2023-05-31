@@ -120,11 +120,19 @@ const schema = z.object({
 const Profile = () => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isEditAvatarModalVisible, setIsEditAvatarModalVisible] =
-  useState(false);
+    useState(false);
   const { userID } = useParams();
-  const { data: userData, isLoading } = useGetUser(userID  || "");
-  if(isLoading) return <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin m-auto" />
+  const { data: userData, isLoading } = useGetUser(userID || "");
+
+  if (isLoading)
+    return (
+      <main className="flex justify-center items-center">
+        <AiOutlineLoading3Quarters className="w-16 h-16 animate-spin m-auto" />
+      </main>
+    );
+
   if (!userData) return <Navigate to="/login" />;
+
   return (
     <>
       <main className="flex flex-col gap-4">
@@ -154,7 +162,7 @@ const Profile = () => {
                 )}
                 <img
                   src={userData.avatar}
-                  className="bg-base-300 rounded-full"
+                  className="w-[8rem] h-[8rem] bg-base-300 rounded-full object-cover"
                 ></img>
               </figure>
               <div className="flex flex-col items-center sm:items-start">
@@ -163,6 +171,9 @@ const Profile = () => {
                   {userData.name.lastName}
                 </span>
                 <span className="text-zinc-400 text-sm">{userData.email}</span>
+                <span className="my-2 font-semibold text-primary text-sm">
+                  {userData.role}
+                </span>
               </div>
             </div>
             <div className="px-2 py-4 border-t flex justify-between">
@@ -262,7 +273,7 @@ const EditProfileModal = ({
       firstName: userData.name.firstName,
       middleName: userData.name.middleName || "",
       lastName: userData.name.lastName,
-      contactNo: userData.contactNo.slice(3),
+      contactNo: userData.contactNo ? userData.contactNo.slice(3) : "",
       region: userData.address?.region || "",
       province: userData.address?.province || "",
       city: userData.address?.city || "",
@@ -458,7 +469,7 @@ const EditProfileModal = ({
               Logo={BsPerson}
             />
             <FormInput
-              type="number"
+              type="text"
               label="contactNo"
               placeholder="Contact Number"
               register={register}
