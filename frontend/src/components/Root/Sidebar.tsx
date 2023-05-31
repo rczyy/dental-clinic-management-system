@@ -73,7 +73,7 @@ const Sidebar = () => {
         <SidebarItem
           name="My Attendance"
           Icon={BiUserCheck}
-          route="/dashboard/attendance"
+          route="/attendance"
         />
       )}
 
