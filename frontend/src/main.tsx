@@ -28,6 +28,7 @@ import AppointmentSuccess from "./pages/AppointmentSuccess";
 import { rootApi } from "./redux/api/root";
 import { MyAppointments } from "./pages/MyAppointments";
 import { MySchedule } from "./pages/MySchedule";
+import { AppointmentList } from "./pages/AppointmentList";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -113,6 +114,10 @@ const router = createBrowserRouter([
       {
         path: "my-schedule",
         element: <MySchedule />,
+      },
+      {
+        path: "appointments",
+        element: <AppointmentList />,
       },
     ],
   },

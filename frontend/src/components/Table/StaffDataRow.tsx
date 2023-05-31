@@ -1,4 +1,4 @@
-import { FiEye, FiMoreHorizontal, FiTrash, FiX } from "react-icons/fi";
+import { FiEye, FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useRemoveStaff } from "../../hooks/staff";
 import { SetStateAction, useState } from "react";
@@ -19,13 +19,13 @@ const StaffDataRow = ({ staff }: Props) => {
   return (
     <>
       <tr className="[&>*]:bg-transparent whitespace-normal">
-        <th className="!bg-base-300">
+        <th className="!bg-base-300 w-10 p-1.5">
           <div className="flex dropdown dropdown-right">
             <label
               tabIndex={0}
-              className="w-8 h-8 p-2 mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
+              className="w-full h-full mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
             >
-              <FiMoreHorizontal />
+              <FiMoreVertical className="w-full h-full p-1" />
             </label>
             <ul
               tabIndex={0}
@@ -44,21 +44,48 @@ const StaffDataRow = ({ staff }: Props) => {
             </ul>
           </div>
         </th>
-        <td className="font-medium text-sm whitespace-normal">
+
+        <td className="font-medium text-sm text-center whitespace-normal">
           {staff.user.role}
         </td>
+
+        <td className="!bg-base-300 pr-0">
+          <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
+            <img className="h-full object-cover" src={staff.user.avatar} />
+          </figure>
+        </td>
+
         <td className="font-medium text-sm whitespace-normal">
-          <div className="flex flex-col">
+          <div className="flex flex-col items-center">
             <span>{`${staff.user.name.firstName} ${staff.user.name.lastName}`}</span>
             <span className="font-medium text-xs text-zinc-400">
               {staff.user.email}
             </span>
           </div>
         </td>
-        <td className="font-medium text-sm whitespace-normal">
-          {staff.user.email}
+
+        <td className="font-medium text-sm">
+          <div className="flex flex-col items-center">
+            {staff.user.address ? (
+              <>
+                <span>
+                  {`${staff.user.address.street || ""} ${
+                    staff.user.address.barangay || ""
+                  }`}
+                </span>
+                <span className="font-medium text-xs text-zinc-400">
+                  {`${staff.user.address.city || ""} ${
+                    staff.user.address.province || ""
+                  }`}
+                </span>
+              </>
+            ) : (
+              <span className="font-medium text-xs text-zinc-400">—</span>
+            )}
+          </div>
         </td>
-        <td className="font-medium text-sm whitespace-normal">
+
+        <td className="font-medium text-sm text-center whitespace-normal">
           {staff.user.contactNo}
         </td>
       </tr>
@@ -83,7 +110,12 @@ const RemoveUserModal = ({
     });
   };
   return (
-    <div className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25">
+    <div
+      className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsDeleteModalVisible(false);
+      }}
+    >
       <section className="flex flex-col gap-2 bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
         <header className="flex justify-between items-center mx-2 py-3">
           <h1 className="text-2xl font-bold">Remove Staff</h1>
