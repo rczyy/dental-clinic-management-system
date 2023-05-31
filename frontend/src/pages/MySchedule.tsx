@@ -1,58 +1,39 @@
-import { useLayoutEffect, useState } from "react";
-import { Calendar, DateObject } from "react-multi-date-picker";
-import DatePickerHeader from "react-multi-date-picker/plugins/date_picker_header";
 import { useGetDentistSchedule } from "../hooks/dentistSchedule";
 import { useGetMe } from "../hooks/user";
+import { Navigate } from "react-router-dom";
+import { DentistCalendar } from "../components/Dentist Schedule/DentistCalendar";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 type Props = {};
 
 export const MySchedule = (props: Props) => {
-  const [windowWidth, setWindowWidth] = useState(0);
-  const [value, setValue] = useState<DateObject | DateObject[] | null>(
-    new DateObject()
+  const { data: me } = useGetMe();
+  const { data: dentistSchedule, isLoading } = useGetDentistSchedule(
+    me?._id || "",
+    !!me
   );
 
-  const { data: me } = useGetMe();
-
-  const { data: dentistSchedule } = useGetDentistSchedule(me?._id || "", !!me);
-
-  useLayoutEffect(() => {
-    function updateWidth() {
-      setWindowWidth(window.innerWidth);
-    }
-
-    window.addEventListener("resize", updateWidth);
-
-    updateWidth();
-
-    return () => window.removeEventListener("resize", updateWidth);
-  }, []);
-
-  console.log(dentistSchedule);
+  if (me?.role !== "Dentist") return <Navigate to={"/"} />;
 
   return (
-    <main className="flex flex-col gap-8 max-w-screen-xl mx-auto">
-      <header>
-        <h1 className="text-2xl md:text-3xl font-bold">My Schedule</h1>
+    <main className="flex flex-col max-w-screen-xl mx-auto">
+      <header className="text-2xl md:text-3xl font-bold">
+        <h1>My Schedule</h1>
       </header>
-      <div className="flex justify-center z-0">
-        <Calendar
-          value={value}
-          onChange={setValue}
-          weekDays={["S", "M", "T", "W", "T", "F", "S"]}
-          numberOfMonths={
-            windowWidth < 640
-              ? 1
-              : windowWidth < 1024
-              ? 2
-              : windowWidth < 1280
-              ? 3
-              : 4
-          }
-          minDate={new Date()}
-          plugins={[<DatePickerHeader position="top" size="big" />]}
-          multiple
-        />
-      </div>
+
+      {!isLoading ? (
+        dentistSchedule && (
+          <DentistCalendar
+            dentistSchedule={dentistSchedule}
+            editable
+            hideName
+          />
+        )
+      ) : (
+        <div className="py-20">
+          <AiOutlineLoading3Quarters className="w-12 h-12 mx-auto text-primary animate-spin" />
+        </div>
+      )}
     </main>
   );
 };

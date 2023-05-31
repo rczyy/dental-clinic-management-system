@@ -258,6 +258,6 @@ interface AppointmentFormValues {
 
 interface DentistScheduleResponse {
   _id: string;
-  dentist: string;
+  dentist: DentistResponse;
   date: Date;
 }

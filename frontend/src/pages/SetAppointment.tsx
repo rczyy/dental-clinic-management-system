@@ -20,6 +20,7 @@ import {
   useLazyGetDentistAppointmentsQuery,
   useLazyGetPatientAppointmentsQuery,
 } from "../redux/api/appointment";
+import { useGetDentistSchedule } from "../hooks/dentistSchedule";
 
 type Props = {};
 
@@ -76,6 +77,13 @@ const SetAppointment = (props: Props) => {
   const [services, setServices] = useState<SelectOption[]>();
   const [selectedDentist, setSelectedDentist] = useState("");
   const [step, setStep] = useState<number>(1);
+  const [availableDates, setAvailableDates] = useState<string[]>([]);
+
+  const { data: dentistSchedule, refetch } = useGetDentistSchedule(
+    selectedDentist,
+    !!selectedDentist
+  );
+
   const {
     control,
     handleSubmit,
@@ -211,6 +219,22 @@ const SetAppointment = (props: Props) => {
       );
     }
   }, [watch("serviceCategory")]);
+
+  useEffect(() => {
+    if (selectedDentist) {
+      refetch();
+    }
+  }, [selectedDentist]);
+
+  useEffect(() => {
+    if (dentistSchedule) {
+      setAvailableDates(
+        dentistSchedule.map((schedule) =>
+          dayjs(schedule.date).format("MM/DD/YYYY")
+        )
+      );
+    }
+  }, [dentistSchedule]);
 
   const getDentistName = () => {
     if (dentistData) {
@@ -508,7 +532,10 @@ const SetAppointment = (props: Props) => {
                           value={value}
                           disablePast
                           shouldDisableDate={(day) =>
-                            dayjs(day).date() === dayjs().date()
+                            dayjs(day).date() === dayjs().date() ||
+                            !availableDates.includes(
+                              dayjs(day).format("MM/DD/YYYY")
+                            )
                           }
                         />
                       )}

@@ -46,21 +46,19 @@ const Sidebar = () => {
         <SidebarItem name="Billings" Icon={AiOutlineCreditCard} route="/" />
       )} */}
 
+      {data?.role !== "Patient" && (
+        <SidebarItem
+          name="Dentists' Schedules"
+          Icon={AiTwotoneCalendar}
+          route="/dentists-schedule"
+        />
+      )}
+
       {data?.role === "Dentist" && (
         <SidebarItem
           name="My Schedule"
           Icon={AiTwotoneCalendar}
           route="/my-schedule"
-        />
-      )}
-
-      {(data?.role === "Admin" ||
-        data?.role === "Manager" ||
-        data?.role === "Front Desk") && (
-        <SidebarItem
-          name="Dentists' Schedules"
-          Icon={AiTwotoneCalendar}
-          route="/"
         />
       )}
 

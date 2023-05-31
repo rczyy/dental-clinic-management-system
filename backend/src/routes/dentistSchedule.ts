@@ -1,15 +1,13 @@
 import { Router } from "express";
 import { checkAuth } from "../middlewares/checkAuth";
 import {
-  addDentistSchedule,
-  deleteDentistSchedule,
+  editDentistSchedule,
   getDentistSchedule,
 } from "../controllers/dentistSchedule";
 
 const router = Router();
 
-router.get("/:dentist", checkAuth, getDentistSchedule);
-router.post("/", checkAuth, addDentistSchedule);
-router.delete("/", checkAuth, deleteDentistSchedule);
+router.get("/", checkAuth, getDentistSchedule);
+router.put("/", checkAuth, editDentistSchedule);
 
 export default router;
