@@ -112,7 +112,7 @@ const PatientList = (props: Props) => {
               ) : (
                 <tr className="[&>*]:bg-transparent">
                   <td
-                    colSpan={3}
+                    colSpan={4}
                     className="py-8 text-2xl text-center font-bold"
                   >
                     No patients registered

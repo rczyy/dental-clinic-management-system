@@ -180,7 +180,7 @@ const StaffList = (props: Props) => {
               ) : (
                 <tr className="[&>*]:bg-transparent">
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="py-8 text-2xl text-center font-bold"
                   >
                     No staffs registered
