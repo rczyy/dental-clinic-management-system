@@ -46,7 +46,7 @@ const StaffAttendance = (props: Props) => {
       } mx-auto transition-[max-width]`}
     >
       <header className="flex justify-between">
-      <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8">
           <h1 className="font-bold text-2xl md:text-3xl">Staff Attendance</h1>
           <DesktopDatePicker
             label="Select date"
@@ -66,7 +66,7 @@ const StaffAttendance = (props: Props) => {
         <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
           <thead>
             <tr className="[&>*]:bg-base-300 border-b border-base-200">
-            {filteredAttendance && filteredAttendance.length > 0 && (
+              {filteredAttendance && filteredAttendance.length > 0 && (
                 <th className="min-w-[2.5rem] w-10"></th>
               )}
 
@@ -106,7 +106,7 @@ const StaffAttendance = (props: Props) => {
             </tr>
           </thead>
           <tbody>
-          {filteredAttendance && filteredAttendance.length > 0 ? (
+            {filteredAttendance && filteredAttendance.length > 0 ? (
               filteredAttendance.map((attendance) => (
                 <AttendanceDataRow
                   key={attendance._id}
@@ -117,7 +117,7 @@ const StaffAttendance = (props: Props) => {
             ) : (
               <tr className="[&>*]:bg-transparent">
                 <td colSpan={5} className="py-8 text-2xl text-center font-bold">
-                  No appointments to show
+                  No attendance records to show
                 </td>
               </tr>
             )}
