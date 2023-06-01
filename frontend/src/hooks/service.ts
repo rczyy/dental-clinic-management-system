@@ -33,8 +33,12 @@ export const useAddService = () => {
 
 export const useEditService = () => {
   const queryClient = useQueryClient();
-  return useMutation<ServiceResponse, ErrorMessageResponse, { data: ServiceFormValues, id: string}>({
-    mutationFn: ({data, id}) => editService(data, id),
+  return useMutation<
+    ServiceResponse,
+    FormErrorResponse | ErrorMessageResponse,
+    { data: ServiceFormValues; id: string }
+  >({
+    mutationFn: ({ data, id }) => editService(data, id),
     onSuccess: () => {
       queryClient.invalidateQueries(["services"]);
     },

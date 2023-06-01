@@ -9,6 +9,7 @@ import { useDeleteService, useEditService } from "../../hooks/service";
 import FormInput from "../Form/FormInput";
 import SelectDropdown from "../Form/SelectDropdown";
 import { Dispatch, SetStateAction, useState } from "react";
+import { toast } from "react-toastify";
 
 type Props = {
   service: ServiceResponse;
@@ -108,7 +109,8 @@ const EditServiceModal = ({
       .min(1, "Select a category"),
     estimatedTime: z
       .string({ required_error: "Estimated time is required" })
-      .min(1, "Estimated time is required"),
+      .min(1, "Estimated time is required")
+      .regex(/^[0-9]*$/, "Estimated time may only contain numbers"),
   });
 
   const {
@@ -126,16 +128,23 @@ const EditServiceModal = ({
     },
     resolver: zodResolver(schema),
   });
-  const { mutate: editService, error: editServiceError } = useEditService();
+  const { mutate: editService } = useEditService();
 
   const onSubmit: SubmitHandler<ServiceFormValues> = (data) => {
     editService(
       { data: data, id: service._id },
       {
         onSuccess: () => {
+          toast.success("Successfully updated the service");
           setIsEditModalVisible(false);
           reset();
         },
+        onError: (err) =>
+          toast.error(
+            "message" in err.response.data
+              ? err.response.data.message
+              : err.response.data.formErrors
+          ),
       }
     );
   };
@@ -203,9 +212,6 @@ const EditServiceModal = ({
             >
               Edit Service
             </button>
-            <p className="px-2 text-xs text-error text-center">
-              {editServiceError && editServiceError.response.data.message}
-            </p>
           </div>
         </form>
       </section>
@@ -217,12 +223,14 @@ const DeleteServiceModal = ({
   service,
   setIsDeleteModalVisible,
 }: DeleteServiceProps) => {
-  const { mutate: deleteService, error: deleteServiceError } = useDeleteService(
-    service._id
-  );
+  const { mutate: deleteService } = useDeleteService(service._id);
   const handleDelete = () => {
     deleteService(service._id, {
-      onSuccess: () => setIsDeleteModalVisible(false),
+      onSuccess: () => {
+        toast.success("Successfully deleted the service");
+        setIsDeleteModalVisible(false);
+      },
+      onError: (err) => toast.error(err.response.data.message),
     });
   };
   return (
@@ -260,9 +268,6 @@ const DeleteServiceModal = ({
             Yes
           </button>
         </div>
-        <p className="px-2 text-xs text-error text-center">
-          {deleteServiceError && deleteServiceError.response.data.message}
-        </p>
       </section>
     </td>
   );

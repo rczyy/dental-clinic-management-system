@@ -28,7 +28,9 @@ export const getStaffs: RequestHandler = async (req, res) => {
     return;
   }
 
-  const staffs = await Staff.find().populate("user", "-password");
+  const staffs = await Staff.find({ isDeleted: false })
+    .exists("isDeleted", false)
+    .populate("user", "-password");
 
   res.status(200).json(staffs);
 };
@@ -270,35 +272,74 @@ export const removeStaff: RequestHandler = async (req, res) => {
     return;
   }
 
-  const deletedStaff = await Staff.findOneAndDelete({ user });
+  const deletedStaff = await Staff.findOneAndUpdate(
+    { user },
+    {
+      $set: {
+        isDeleted: true,
+      },
+    }
+  );
 
-  if (!deletedStaff) {
+  if (!deletedStaff || deletedStaff.isDeleted) {
     const error: ErrorMessage = { message: "Staff doesn't exist" };
     res.status(400).json(error);
     return;
   }
 
-  const deletedUser = await User.findByIdAndDelete(user);
+  const deletedUser = await User.findByIdAndUpdate(user, {
+    $set: {
+      isDeleted: true,
+    },
+  });
 
-  if (!deletedUser) {
+  if (!deletedUser || deletedUser.isDeleted) {
     res.status(400).json({ message: "User doesn't exist" });
     return;
   }
 
   if (deletedUser.role === Roles.Manager) {
-    await Manager.findOneAndDelete({ staff: deletedStaff._id });
+    await Manager.findOneAndUpdate(
+      { staff: deletedStaff._id },
+      {
+        $set: {
+          isDeleted: true,
+        },
+      }
+    );
   }
 
   if (deletedUser.role === Roles.Assistant) {
-    await Assistant.findOneAndDelete({ staff: deletedStaff._id });
+    await Assistant.findOneAndUpdate(
+      { staff: deletedStaff._id },
+      {
+        $set: {
+          isDeleted: true,
+        },
+      }
+    );
   }
 
   if (deletedUser.role === Roles.Dentist) {
-    await Dentist.findOneAndDelete({ staff: deletedStaff._id });
+    await Dentist.findOneAndUpdate(
+      { staff: deletedStaff._id },
+      {
+        $set: {
+          isDeleted: true,
+        },
+      }
+    );
   }
 
   if (deletedUser.role === Roles.FrontDesk) {
-    await FrontDesk.findOneAndDelete({ staff: deletedStaff._id });
+    await FrontDesk.findOneAndUpdate(
+      { staff: deletedStaff._id },
+      {
+        $set: {
+          isDeleted: true,
+        },
+      }
+    );
   }
 
   res

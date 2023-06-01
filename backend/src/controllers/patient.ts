@@ -31,7 +31,9 @@ export const getPatients: RequestHandler = async (req, res) => {
     return;
   }
 
-  const patients = await Patient.find().populate("user", "-password");
+  const patients = await Patient.find({ isDeleted: false })
+    .exists("isDeleted", false)
+    .populate("user", "-password");
 
   res.status(200).json(patients);
 };
@@ -238,17 +240,28 @@ export const removePatient: RequestHandler = async (req, res) => {
     res.status(400).json(error);
     return;
   }
-  const deletedPatient = await Patient.findOneAndDelete({ user });
+  const deletedPatient = await Patient.findOneAndUpdate(
+    { user },
+    {
+      $set: {
+        isDeleted: true,
+      },
+    }
+  );
 
-  if (!deletedPatient) {
+  if (!deletedPatient || deletedPatient.isDeleted) {
     const error: ErrorMessage = { message: "Patient doesn't exist" };
     res.status(400).json(error);
     return;
   }
 
-  const deletedUser = await User.findByIdAndDelete(user);
+  const deletedUser = await User.findByIdAndUpdate(user, {
+    $set: {
+      isDeleted: true,
+    },
+  });
 
-  if (!deletedUser) {
+  if (!deletedUser || deletedUser.isDeleted) {
     const error: ErrorMessage = { message: "User doesn't exist" };
     res.status(400).json(error);
     return;

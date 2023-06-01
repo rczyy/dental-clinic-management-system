@@ -51,16 +51,19 @@ export const AppointmentDataRow = ({
             tabIndex={0}
             className="dropdown-content menu flex-row flex-nowrap p-1 bg-base-100 text-sm border border-neutral rounded-lg shadow-lg translate-x-2 -translate-y-1/4"
           >
-            <li onClick={() => setIsCancelModalVisible(true)}>
-              <a>
-                <FiTrash />
-              </a>
-            </li>
             <li onClick={() => setIsFinishModalVisible(true)}>
               <a>
                 <AiOutlineCheck />
               </a>
             </li>
+
+            {!dayjs(appointment.dateTimeFinished).isBefore(dayjs()) && (
+              <li onClick={() => setIsCancelModalVisible(true)}>
+                <a>
+                  <FiTrash />
+                </a>
+              </li>
+            )}
           </ul>
         </div>
       </td>

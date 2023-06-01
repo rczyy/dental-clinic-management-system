@@ -6,7 +6,10 @@ import { z } from "zod";
 import { isValidObjectId } from "mongoose";
 
 export const getServices: RequestHandler = async (_, res) => {
-  const services = await Service.find();
+  const services = await Service.find({ isDeleted: false }).exists(
+    "isDeleted",
+    false
+  );
 
   res.status(200).json(services);
 };
@@ -182,9 +185,13 @@ export const removeService: RequestHandler = async (req, res) => {
     return;
   }
 
-  const deletedService = await Service.findOneAndDelete({ _id: service });
+  const deletedService = await Service.findByIdAndUpdate(service, {
+    $set: {
+      isDeleted: true,
+    },
+  });
 
-  if (!deletedService) {
+  if (!deletedService || deletedService.isDeleted) {
     const error: ErrorMessage = { message: "Service doesn't exist" };
     res.status(400).json(error);
     return;

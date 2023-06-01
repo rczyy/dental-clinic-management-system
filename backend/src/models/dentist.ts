@@ -6,6 +6,10 @@ const dentistSchema = new Schema<Dentist>({
     ref: "Staff",
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export default model<Dentist>("Dentist", dentistSchema);

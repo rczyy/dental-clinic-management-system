@@ -6,6 +6,10 @@ const assistantSchema = new Schema<Assistant>({
     ref: "Staff",
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export default model<Assistant>("Assistant", assistantSchema);

@@ -6,6 +6,10 @@ const frontDeskSchema = new Schema<FrontDesk>({
     ref: "Staff",
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export default model<FrontDesk>("Front Desk", frontDeskSchema);

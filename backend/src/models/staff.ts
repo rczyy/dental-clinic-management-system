@@ -6,6 +6,10 @@ const staffSchema = new Schema<Staff>({
     ref: "User",
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export default model<Staff>("Staff", staffSchema);
