@@ -1,7 +1,7 @@
 import {
   // AiOutlineCreditCard,
   AiOutlineMedicineBox,
-  AiTwotoneCalendar,
+  AiTwotoneCalendar
 } from "react-icons/ai";
 import { BiCalendarCheck, BiUserCheck } from "react-icons/bi";
 // import { VscNote } from "react-icons/vsc";
@@ -10,6 +10,7 @@ import { IconType } from "react-icons/lib";
 import { Link } from "react-router-dom";
 import { useAdminStore } from "../../store/admin";
 import { useGetMe } from "../../hooks/user";
+import { GrDocumentText } from "react-icons/gr";
 
 type SidebarItemProps = {
   name: string;
@@ -68,7 +69,6 @@ const Sidebar = () => {
         route="/services"
       />
 
-
       {data?.role !== "Admin" && (
         <SidebarItem
           name="My Attendance"
@@ -84,6 +84,15 @@ const Sidebar = () => {
           name="Staff Attendance"
           Icon={BiUserCheck}
           route="/staff-attendance"
+        />
+      )}
+
+      {(data?.role === "Admin" ||
+        data?.role === "Manager") && (
+        <SidebarItem
+          name="Audit trail"
+          Icon={GrDocumentText}
+          route="/audit-trail"
         />
       )}
       {/* {(data?.role === "Admin" || data?.role === "Manager") && (
