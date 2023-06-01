@@ -208,6 +208,7 @@ export const editUser: RequestHandler = async (req, res) => {
         .regex(/(^\+639)\d{9}$/, "Invalid contact number")
         .optional(),
       role: z.nativeEnum(Roles).optional(),
+      verified: z.coerce.boolean().optional(),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords doesn't match",
@@ -232,6 +233,7 @@ export const editUser: RequestHandler = async (req, res) => {
     contactNo,
     password,
     role,
+    verified,
   } = req.body as z.infer<typeof userSchema>;
 
   const { file } = req;
@@ -279,6 +281,7 @@ export const editUser: RequestHandler = async (req, res) => {
       password: password && (await hash(password, 10)),
       role,
       avatar,
+      verified,
     },
     {
       new: true,

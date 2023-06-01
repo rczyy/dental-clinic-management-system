@@ -21,6 +21,7 @@ interface EditFormValues {
   barangay: string;
   street: string;
   contactNo: string;
+  verified: boolean;
 }
 
 interface LoginFormValues {
@@ -149,6 +150,7 @@ interface UserResponse {
   avatar: string;
   createdAt: Date;
   updatedAt: Date;
+  verified: boolean;
 }
 
 interface AdminResponse {

@@ -1,4 +1,4 @@
-import { useEditUser, useGetUser } from "../hooks/user";
+import { useEditUser, useGetMe, useGetUser } from "../hooks/user";
 import { z } from "zod";
 import {
   Dispatch,
@@ -115,6 +115,7 @@ const schema = z.object({
     .string({ required_error: "Contact number is required" })
     .min(1, "Contact number cannot be empty")
     .regex(/(^9)\d{9}$/, "Invalid contact number"),
+  verified: z.boolean(),
 });
 
 const Profile = () => {
@@ -251,6 +252,7 @@ const EditProfileModal = ({
   const [selectedCity, setSelectedCity] = useState<City>();
   const [barangayOptions, setBarangayOptions] = useState<SelectOption[]>();
 
+  const { data: me } = useGetMe();
   const { mutate: editUser, error: editUserError } = useEditUser();
 
   const { data: regions, isFetching: isRegionsLoading } = useGetRegionsQuery();
@@ -280,6 +282,7 @@ const EditProfileModal = ({
       barangay: userData.address?.barangay || "",
       street: userData.address?.street || "",
       role: userData.role,
+      verified: userData.verified,
     },
     resolver: zodResolver(schema),
   });
@@ -397,9 +400,14 @@ const EditProfileModal = ({
     Object.entries(data).forEach((entry) => {
       const [key, value] = entry;
 
-      if (value) {
+      if (value !== undefined) {
         if (key === "contactNo") {
           formData.append(key, "+63" + value);
+          return;
+        }
+
+        if (key === "verified") {
+          formData.append(key, value);
           return;
         }
 
@@ -478,13 +486,14 @@ const EditProfileModal = ({
               Logo={FiPhone}
             />
           </div>
+
           {isEditAddressOpen ? (
             <div className="flex flex-col gap-1">
               <div
-                className="ml-auto cursor-pointer"
+                className="ml-auto mb-2 rounded-full cursor-pointer transition duration-200 hover:bg-primary/25"
                 onClick={() => setIsEditAddressOpen(false)}
               >
-                <FiX className="w-8 h-8 p-2" />
+                <FiX className="w-8 h-8 p-2 text-primary" />
               </div>
               <div className="flex gap-1">
                 <div className="flex flex-col flex-1 gap-1">
@@ -582,10 +591,10 @@ const EditProfileModal = ({
           ) : (
             <div className="flex flex-col gap-1">
               <div
-                className="ml-auto cursor-pointer"
+                className="ml-auto mb-2 rounded-full cursor-pointer transition duration-200 hover:bg-primary/25"
                 onClick={() => setIsEditAddressOpen(true)}
               >
-                <FiEdit2 className="w-8 h-8 p-2" />
+                <FiEdit2 className="w-8 h-8 p-2 text-primary" />
               </div>
               <div className="flex gap-1">
                 <DisabledFormInput
@@ -626,6 +635,20 @@ const EditProfileModal = ({
                 value={userData.address?.street || ""}
                 Logo={BsHouseDoor}
               />
+            </div>
+          )}
+
+          {me && me.role !== "Patient" && (
+            <div className="flex mt-4">
+              <label className="label gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-primary checkbox-sm checked:bg-base-300"
+                  disabled={userData.verified}
+                  {...register("verified")}
+                />
+                <span className="label-text">Verify User</span>
+              </label>
             </div>
           )}
 
