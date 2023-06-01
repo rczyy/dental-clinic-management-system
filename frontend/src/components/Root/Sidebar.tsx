@@ -25,7 +25,7 @@ const Sidebar = () => {
     <div
       className={`fixed lg:sticky inset-0 lg:top-0 flex flex-col bg-base-100/95 min-h-screen ${
         sidebar ? "max-w-xs border-r" : "max-w-0 border-none"
-      } min-w-0 w-full pt-20 border-r-neutral shadow-2xl lg:shadow z-20 transition-all overflow-hidden`}
+      } min-w-0 w-full pt-20 border-r-neutral shadow-2xl lg:shadow z-20 transition-[max-width] overflow-hidden`}
     >
       {(data?.role === "Admin" || data?.role === "Manager") && (
         <SidebarItem name="Staff" Icon={CgUserList} route="/staff" />
@@ -67,7 +67,6 @@ const Sidebar = () => {
         Icon={AiOutlineMedicineBox}
         route="/services"
       />
-
 
       {data?.role !== "Admin" && (
         <SidebarItem
