@@ -40,7 +40,7 @@ const Landing = (_: Props) => {
                     : "/set-appointment/staff"
                   : "/login"
               }
-              className="btn btn-primary text-base-100"
+              className="btn btn-primary"
               onClick={() => {
                 if (data && !data.contactNo) setIsAddMobileOpen(true);
                 if (data && !data.verified) setIsVerifyUserOpen(true);
@@ -52,12 +52,14 @@ const Landing = (_: Props) => {
           <div className="absolute w-full h-full bg-black bg-opacity-70"></div>
         </section>
 
-        <section className="flex flex-col justify-center gap-12 px-4 py-20">
-          <div className="flex flex-col items-center justify-center gap-2">
+        <section className="flex flex-col justify-center gap-12 max-w-6xl mx-auto px-4 py-20">
+          <div className="flex flex-col items-center justify-center gap-8">
             <h2 className="text-5xl text-center font-semibold">Our Services</h2>
-            <p className="text-zinc-400 text-sm text-center">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eveniet,
-              labore. Repellat, voluptatem?
+            <p className="text-zinc-500 text-lg text-center font-light">
+              At AT Dental Home, we are dedicated to providing personalized,
+              high-quality dental services in a warm and welcoming environment.
+              We prioritize patient education, preventive care, and the latest
+              advancements in dentistry to deliver exceptional results.
             </p>
           </div>
 
