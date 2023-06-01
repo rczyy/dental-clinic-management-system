@@ -7,11 +7,13 @@ import { Link } from "react-router-dom";
 import { AddMobileNumber } from "../components/Modal/AddMobileNumber";
 import { useState } from "react";
 import { ServiceAccordion } from "../components/Services/ServiceAccordion";
+import { VerifyEmail } from "../components/Modal/VerifyEmail";
 
 type Props = {};
 
 const Landing = (_: Props) => {
   const [isAddMobileOpen, setIsAddMobileOpen] = useState(true);
+  const [isVerifyUserOpen, setIsVerifyUserOpen] = useState(true);
 
   const { data } = useGetMe();
 
@@ -32,7 +34,7 @@ const Landing = (_: Props) => {
               to={
                 data
                   ? data.role === "Patient"
-                    ? data.contactNo
+                    ? data.contactNo && data.verified
                       ? "/set-appointment"
                       : ""
                     : "/set-appointment/staff"
@@ -41,6 +43,7 @@ const Landing = (_: Props) => {
               className="btn btn-primary text-base-100"
               onClick={() => {
                 if (data && !data.contactNo) setIsAddMobileOpen(true);
+                if (data && !data.verified) setIsVerifyUserOpen(true);
               }}
             >
               Book an appointment
@@ -79,6 +82,7 @@ const Landing = (_: Props) => {
           </div>
         </section>
       </div>
+
       {data && !data?.contactNo && isAddMobileOpen && (
         <div
           className="fixed inset-0 flex items-center justify-center bg-black/50 px-4 z-50"
@@ -87,6 +91,17 @@ const Landing = (_: Props) => {
           }}
         >
           <AddMobileNumber />
+        </div>
+      )}
+
+      {data && !data?.verified && isVerifyUserOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black/50 px-4 z-50"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setIsVerifyUserOpen(false);
+          }}
+        >
+          <VerifyEmail setIsVerifyUserOpen={setIsVerifyUserOpen} />
         </div>
       )}
     </>
