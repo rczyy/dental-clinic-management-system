@@ -287,3 +287,12 @@ interface DentistScheduleResponse {
   dentist: DentistResponse;
   date: Date;
 }
+
+interface LogResponse {
+  id?: string;
+  date: string;
+  type: string;
+  module: string;
+  email: string;
+  action: string;
+}
