@@ -132,7 +132,12 @@ const EditAttendanceModal = ({
   };
 
   return (
-    <div className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25">
+    <td
+      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsEditModalVisible(false);
+      }}
+    >
       <section className="bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
         <header className="flex justify-between items-center">
           <h1 className="text-2xl font-bold mx-2 py-3">
@@ -181,7 +186,7 @@ const EditAttendanceModal = ({
           </div>
         </form>
       </section>
-    </div>
+    </td>
   );
 };
 
@@ -197,8 +202,8 @@ const RemoveAttendanceModal = ({
     });
   };
   return (
-    <div
-      className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
+    <td
+      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) setIsDeleteModalVisible(false);
       }}
@@ -235,7 +240,7 @@ const RemoveAttendanceModal = ({
           {removeAttendanceError && removeAttendanceError.response.data.message}
         </p>
       </section>
-    </div>
+    </td>
   );
 };
 export default AttendanceDataRow;

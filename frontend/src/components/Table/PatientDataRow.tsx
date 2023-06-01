@@ -15,74 +15,72 @@ const PatientDataRow = ({ patient }: Props) => {
   const navigate = useNavigate();
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   return (
-    <>
-      <tr className="[&>*]:bg-transparent transition tracking-tight">
-        <th className="!bg-base-300 w-10 p-1.5">
-          <div className="flex dropdown dropdown-right">
-            <label
-              tabIndex={0}
-              className="w-full h-full mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
-            >
-              <FiMoreVertical className="w-full h-full p-1" />
-            </label>
-            <ul
-              tabIndex={0}
-              className="dropdown-content menu flex-row flex-nowrap p-1 bg-base-100 text-sm border border-neutral rounded-lg shadow-lg translate-x-2 -translate-y-1/4"
-            >
-              <li onClick={() => navigate(`/profile/${patient.user._id}`)}>
-                <a>
-                  <FiEye />
-                </a>
-              </li>
-              <li onClick={() => setIsDeleteModalVisible(true)}>
-                <a>
-                  <FiTrash />
-                </a>
-              </li>
-            </ul>
-          </div>
-        </th>
+    <tr className="[&>*]:bg-transparent transition tracking-tight">
+      <th className="!bg-base-300 w-10 p-1.5">
+        <div className="flex dropdown dropdown-right">
+          <label
+            tabIndex={0}
+            className="w-full h-full mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
+          >
+            <FiMoreVertical className="w-full h-full p-1" />
+          </label>
+          <ul
+            tabIndex={0}
+            className="dropdown-content menu flex-row flex-nowrap p-1 bg-base-100 text-sm border border-neutral rounded-lg shadow-lg translate-x-2 -translate-y-1/4"
+          >
+            <li onClick={() => navigate(`/profile/${patient.user._id}`)}>
+              <a>
+                <FiEye />
+              </a>
+            </li>
+            <li onClick={() => setIsDeleteModalVisible(true)}>
+              <a>
+                <FiTrash />
+              </a>
+            </li>
+          </ul>
+        </div>
+      </th>
 
-        <td className="!bg-base-300 pr-0">
-          <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
-            <img className="h-full object-cover" src={patient.user.avatar} />
-          </figure>
-        </td>
+      <td className="!bg-base-300 pr-0">
+        <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
+          <img className="h-full object-cover" src={patient.user.avatar} />
+        </figure>
+      </td>
 
-        <td className="font-medium text-sm">
-          <div className="flex flex-col items-center">
-            <span>{`${patient.user.name.firstName} ${patient.user.name.lastName}`}</span>
-            <span className="font-medium text-xs text-zinc-400">
-              {patient.user.email}
-            </span>
-          </div>
-        </td>
+      <td className="font-medium text-sm">
+        <div className="flex flex-col items-center">
+          <span>{`${patient.user.name.firstName} ${patient.user.name.lastName}`}</span>
+          <span className="font-medium text-xs text-zinc-400">
+            {patient.user.email}
+          </span>
+        </div>
+      </td>
 
-        <td className="font-medium text-sm">
-          <div className="flex flex-col items-center">
-            {patient.user.address ? (
-              <>
-                <span>
-                  {`${patient.user.address.street || ""} ${
-                    patient.user.address.barangay || ""
-                  }`}
-                </span>
-                <span className="font-medium text-xs text-zinc-400">
-                  {`${patient.user.address.city || ""} ${
-                    patient.user.address.province || ""
-                  }`}
-                </span>
-              </>
-            ) : (
-              <span className="font-medium text-xs text-zinc-400">—</span>
-            )}
-          </div>
-        </td>
+      <td className="font-medium text-sm">
+        <div className="flex flex-col items-center">
+          {patient.user.address ? (
+            <>
+              <span>
+                {`${patient.user.address.street || ""} ${
+                  patient.user.address.barangay || ""
+                }`}
+              </span>
+              <span className="font-medium text-xs text-zinc-400">
+                {`${patient.user.address.city || ""} ${
+                  patient.user.address.province || ""
+                }`}
+              </span>
+            </>
+          ) : (
+            <span className="font-medium text-xs text-zinc-400">—</span>
+          )}
+        </div>
+      </td>
 
-        <td className="font-medium text-sm text-center">
-          {patient.user.contactNo}
-        </td>
-      </tr>
+      <td className="font-medium text-sm text-center">
+        {patient.user.contactNo}
+      </td>
 
       {isDeleteModalVisible && (
         <RemoveUserModal
@@ -90,7 +88,7 @@ const PatientDataRow = ({ patient }: Props) => {
           setIsDeleteModalVisible={setIsDeleteModalVisible}
         />
       )}
-    </>
+    </tr>
   );
 };
 
@@ -106,8 +104,8 @@ const RemoveUserModal = ({
     });
   };
   return (
-    <div
-      className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
+    <td
+      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) setIsDeleteModalVisible(false);
       }}
@@ -146,7 +144,7 @@ const RemoveUserModal = ({
           {removePatientError && removePatientError.response.data.message}
         </p>
       </section>
-    </div>
+    </td>
   );
 };
 

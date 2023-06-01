@@ -32,99 +32,97 @@ export const AppointmentDataRow = ({
   const { data: me } = useGetMe();
 
   return (
-    <>
-      <tr
-        className={`${
-          dayjs(appointment.dateTimeFinished).isBefore(dayjs())
-            ? "[&>*]:bg-green-300/50 [&>*]:border-green-200/50"
-            : "[&>*]:bg-transparent"
-        }`}
-      >
-        <td className="w-10 p-1.5">
-          <div className="flex dropdown dropdown-right">
-            <label
-              tabIndex={0}
-              className="w-full h-full mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
-            >
-              <FiMoreVertical className="w-full h-full p-1" />
-            </label>
-            <ul
-              tabIndex={0}
-              className="dropdown-content menu flex-row flex-nowrap p-1 bg-base-100 text-sm border border-neutral rounded-lg shadow-lg translate-x-2 -translate-y-1/4"
-            >
-              <li onClick={() => setIsCancelModalVisible(true)}>
-                <a>
-                  <FiTrash />
-                </a>
-              </li>
-              <li onClick={() => setIsFinishModalVisible(true)}>
-                <a>
-                  <AiOutlineCheck />
-                </a>
-              </li>
-            </ul>
-          </div>
-        </td>
+    <tr
+      className={`${
+        dayjs(appointment.dateTimeFinished).isBefore(dayjs())
+          ? "[&>*]:bg-green-300/50 [&>*]:border-green-200/50"
+          : "[&>*]:bg-transparent"
+      }`}
+    >
+      <td className="w-10 p-1.5">
+        <div className="flex dropdown dropdown-right">
+          <label
+            tabIndex={0}
+            className="w-full h-full mx-auto rounded-full cursor-pointer transition hover:bg-base-100"
+          >
+            <FiMoreVertical className="w-full h-full p-1" />
+          </label>
+          <ul
+            tabIndex={0}
+            className="dropdown-content menu flex-row flex-nowrap p-1 bg-base-100 text-sm border border-neutral rounded-lg shadow-lg translate-x-2 -translate-y-1/4"
+          >
+            <li onClick={() => setIsCancelModalVisible(true)}>
+              <a>
+                <FiTrash />
+              </a>
+            </li>
+            <li onClick={() => setIsFinishModalVisible(true)}>
+              <a>
+                <AiOutlineCheck />
+              </a>
+            </li>
+          </ul>
+        </div>
+      </td>
 
-        <td className="font-semibold text-sm text-center">
-          {dayjs(appointment.dateTimeScheduled).format("YYYY-MM-DD")}
-        </td>
+      <td className="font-semibold text-sm text-center">
+        {dayjs(appointment.dateTimeScheduled).format("YYYY-MM-DD")}
+      </td>
 
-        <td>
-          <div className="flex flex-col items-center">
-            <span className="text-sm font-medium">
-              {dayjs(appointment.dateTimeScheduled).format("h:mm A")}
+      <td>
+        <div className="flex flex-col items-center">
+          <span className="text-sm font-medium">
+            {dayjs(appointment.dateTimeScheduled).format("h:mm A")}
+          </span>
+          <span className="text-xs text-zinc-400">
+            {dayjs(appointment.dateTimeFinished).format("h:mm A")}
+          </span>
+        </div>
+      </td>
+
+      {me && (me.role === "Patient" || showAllDetails) && (
+        <>
+          <td className="pr-0">
+            <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
+              <img
+                className="h-full object-cover"
+                src={appointment.dentist.staff.user.avatar}
+              />
+            </figure>
+          </td>
+
+          <td className="font-semibold text-sm text-center">
+            <span>
+              {appointment.dentist.staff.user.name.firstName}{" "}
+              {appointment.dentist.staff.user.name.lastName}
             </span>
-            <span className="text-xs text-zinc-400">
-              {dayjs(appointment.dateTimeFinished).format("h:mm A")}
+          </td>
+        </>
+      )}
+
+      {me && (me.role === "Dentist" || showAllDetails) && (
+        <>
+          <td className="pr-0">
+            <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
+              <img
+                className="h-full object-cover"
+                src={appointment.patient.user.avatar}
+              />
+            </figure>
+          </td>
+
+          <td className="font-semibold text-sm text-center">
+            <span>
+              {appointment.patient.user.name.firstName}{" "}
+              {appointment.patient.user.name.lastName}
             </span>
-          </div>
-        </td>
+          </td>
+        </>
+      )}
 
-        {me && (me.role === "Patient" || showAllDetails) && (
-          <>
-            <td className="pr-0">
-              <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
-                <img
-                  className="h-full object-cover"
-                  src={appointment.dentist.staff.user.avatar}
-                />
-              </figure>
-            </td>
-
-            <td className="font-semibold text-sm text-center">
-              <span>
-                {appointment.dentist.staff.user.name.firstName}{" "}
-                {appointment.dentist.staff.user.name.lastName}
-              </span>
-            </td>
-          </>
-        )}
-
-        {me && (me.role === "Dentist" || showAllDetails) && (
-          <>
-            <td className="pr-0">
-              <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
-                <img
-                  className="h-full object-cover"
-                  src={appointment.patient.user.avatar}
-                />
-              </figure>
-            </td>
-
-            <td className="font-semibold text-sm text-center">
-              <span>
-                {appointment.patient.user.name.firstName}{" "}
-                {appointment.patient.user.name.lastName}
-              </span>
-            </td>
-          </>
-        )}
-
-        <td className="font-medium text-sm text-center">
-          {appointment.service.name}
-        </td>
-      </tr>
+      <td className="font-medium text-sm text-center">
+        {appointment.service.name}
+      </td>
 
       {isCancelModalVisible && (
         <CancelAppointmentModal
@@ -139,7 +137,7 @@ export const AppointmentDataRow = ({
           setIsFinishModalVisible={setIsFinishModalVisible}
         />
       )}
-    </>
+    </tr>
   );
 };
 
@@ -157,8 +155,8 @@ const CancelAppointmentModal = ({
   };
 
   return (
-    <div
-      className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
+    <td
+      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) setIsCancelModalVisible(false);
       }}
@@ -192,7 +190,7 @@ const CancelAppointmentModal = ({
           </button>
         </div>
       </section>
-    </div>
+    </td>
   );
 };
 
@@ -213,8 +211,8 @@ const FinishAppointmentModal = ({
   };
 
   return (
-    <div
-      className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
+    <td
+      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) setIsFinishModalVisible(false);
       }}
@@ -248,6 +246,6 @@ const FinishAppointmentModal = ({
           </button>
         </div>
       </section>
-    </div>
+    </td>
   );
 };
