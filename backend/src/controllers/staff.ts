@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { isValidObjectId } from "mongoose";
 import { z } from "zod";
-import { Roles } from "../constants";
+import { LogModule, LogType, Roles } from "../constants";
 import { verifyToken } from "../utilities/verifyToken";
 import User from "../models/user";
 import Staff from "../models/staff";
@@ -12,6 +12,7 @@ import FrontDesk from "../models/frontDesk";
 import { sendEmail } from "../utilities/sendEmail";
 import { changePasswordStaff } from "../templates/changePasswordStaff";
 import jwt from "jsonwebtoken";
+import { addLog } from "../utilities/addLog";
 
 export const getStaffs: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -194,6 +195,14 @@ export const registerStaff: RequestHandler = async (req, res) => {
     user: user._id,
   });
 
+  await addLog(
+    req.session.uid!,
+    LogModule[0],
+    LogType[0],
+    user,
+    user.role
+  );
+
   await user.save();
   await staff.save();
 
@@ -300,6 +309,16 @@ export const removeStaff: RequestHandler = async (req, res) => {
   if (deletedUser.role === Roles.FrontDesk) {
     await FrontDesk.findOneAndDelete({ staff: deletedStaff._id });
   }
+
+  console.log(deletedUser)
+
+  await addLog(
+    req.session.uid!,
+    LogModule[0],
+    LogType[2],
+    { name: deletedUser.name, email: deletedUser.email },
+    deletedUser.role
+  );
 
   res
     .status(200)
