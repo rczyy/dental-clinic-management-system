@@ -2,6 +2,8 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { FiEye, FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useRemovePatient } from "../../hooks/patient";
+import { toast } from "react-toastify";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 type Props = {
   patient: PatientResponse;
@@ -96,11 +98,14 @@ const RemoveUserModal = ({
   patient,
   setIsDeleteModalVisible,
 }: RemovePatientProps) => {
-  const { mutate: removePatient, error: removePatientError } =
-    useRemovePatient();
+  const { mutate: removePatient, isLoading } = useRemovePatient();
   const handleDelete = () => {
     removePatient(patient.user._id, {
-      onSuccess: () => setIsDeleteModalVisible(false),
+      onSuccess: () => {
+        toast.success("Successfully deleted the patient");
+        setIsDeleteModalVisible(false);
+      },
+      onError: (err) => toast.error(err.response.data.message),
     });
   };
   return (
@@ -132,17 +137,17 @@ const RemoveUserModal = ({
             No
           </button>
           <button
-            className="btn btn-error px-8 text-white hover:bg-red-700"
+            className="btn btn-error gap-4 px-8 text-white hover:bg-red-700"
             onClick={() => {
               handleDelete();
             }}
           >
-            Yes
+            Yes{" "}
+            {isLoading && (
+              <AiOutlineLoading3Quarters className="text-lg animate-spin" />
+            )}
           </button>
         </div>
-        <p className="px-2 text-xs text-error text-center">
-          {removePatientError && removePatientError.response.data.message}
-        </p>
       </section>
     </td>
   );

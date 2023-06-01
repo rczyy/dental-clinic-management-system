@@ -2,6 +2,8 @@ import { FiEye, FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useRemoveStaff } from "../../hooks/staff";
 import { SetStateAction, useState } from "react";
+import { toast } from "react-toastify";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 type Props = {
   staff: StaffResponse;
@@ -102,10 +104,14 @@ const RemoveUserModal = ({
   staff,
   setIsDeleteModalVisible,
 }: RemoveStaffProps) => {
-  const { mutate: removeStaff, error: removeStaffError } = useRemoveStaff();
+  const { mutate: removeStaff, isLoading } = useRemoveStaff();
   const handleDelete = () => {
     removeStaff(staff.user._id, {
-      onSuccess: () => setIsDeleteModalVisible(false),
+      onSuccess: () => {
+        toast.success("Successfully deleted the staff");
+        setIsDeleteModalVisible(false);
+      },
+      onError: (err) => toast.error(err.response.data.message),
     });
   };
   return (
@@ -137,17 +143,17 @@ const RemoveUserModal = ({
             No
           </button>
           <button
-            className="btn btn-error px-8 text-white hover:bg-red-700"
+            className="btn btn-error gap-4 px-8 text-white hover:bg-red-700"
             onClick={() => {
               handleDelete();
             }}
           >
-            Yes
+            Yes{" "}
+            {isLoading && (
+              <AiOutlineLoading3Quarters className="text-lg animate-spin" />
+            )}
           </button>
         </div>
-        <p className="px-2 text-xs text-error text-center">
-          {removeStaffError && removeStaffError.response.data.message}
-        </p>
       </section>
     </td>
   );
