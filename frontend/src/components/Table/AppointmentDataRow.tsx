@@ -107,7 +107,7 @@ export const AppointmentDataRow = ({
               <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
                 <img
                   className="h-full object-cover"
-                  src={appointment.dentist.staff.user.avatar}
+                  src={appointment.patient.user.avatar}
                 />
               </figure>
             </td>
