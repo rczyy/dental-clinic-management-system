@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { Roles, ServiceCategory } from "./constants";
-
+import { Dayjs } from "dayjs";
 declare module "express-session" {
   interface SessionData {
     uid: string;
@@ -126,7 +126,7 @@ declare global {
     date: Date;
     staff: Types.ObjectId;
   }
-  
+
   interface EmailRequest {
     _id: Types.ObjectId;
     token?: string;
@@ -139,5 +139,12 @@ declare global {
     _id: Types.ObjectId;
     dentist: Types.ObjectId;
     date: Date;
+  }
+  interface Log {
+    date: Dayjs;
+    module: string;
+    user: Types.ObjectId;
+    type: string;
+    action: string;
   }
 }
