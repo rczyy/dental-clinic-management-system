@@ -307,7 +307,7 @@ const StaffSetAppointment = (props: Props) => {
     });
   };
 
-  if (!userData || (userData && !userData.contactNo))
+  if (!userData || !userData.contactNo || userData.role === "Patient")
     return <Navigate to="/" />;
 
   return (
