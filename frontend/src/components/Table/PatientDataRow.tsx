@@ -82,7 +82,7 @@ const PatientDataRow = ({ patient }: Props) => {
           <span>{`${patient.user.name.firstName} ${patient.user.name.lastName}`}</span>
           <span
             className={`font-medium text-xs ${
-              patient.isDeleted ? "text-zinc-500" : "text-zinc-400"
+              patient.isDeleted ? "text-base-content/75" : "text-zinc-400"
             }`}
           >
             {patient.user.email}
@@ -101,7 +101,7 @@ const PatientDataRow = ({ patient }: Props) => {
               </span>
               <span
                 className={`font-medium text-xs ${
-                  patient.isDeleted ? "text-zinc-500" : "text-zinc-400"
+                  patient.isDeleted ? "text-base-content/75" : "text-zinc-400"
                 }`}
               >
                 {`${patient.user.address.city || ""} ${
@@ -227,7 +227,7 @@ const RecoverUserModal = ({
           </div>
         </header>
         <div className="flex flex-col mx-2 py-3">
-          <p>You are about to permanently recover a patient.</p>
+          <p>You are about to recover a patient.</p>
           <p>Are you sure?</p>
         </div>
         <div className="flex gap-3 justify-end mx-2 py-3">
