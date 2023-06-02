@@ -62,6 +62,7 @@ export const useRemovePatient = () => {
     mutationFn: removePatient,
     onSuccess: () => {
       queryClient.invalidateQueries(["patients"]);
+      queryClient.invalidateQueries(["deleted-patients"]);
     },
   });
 };
