@@ -286,6 +286,12 @@ export const editUser: RequestHandler = async (req, res) => {
     }
   ).select("-password");
 
+  
+  if (!updatedUser) {
+    res.status(400).send({ message: "User does not exist" });
+    return;
+  }
+  
   await addLog(
     req.session.uid!,
     LogModule[0],
@@ -293,12 +299,7 @@ export const editUser: RequestHandler = async (req, res) => {
     updatedUser,
     updatedUser.role
   );
-
-  if (!updatedUser) {
-    res.status(400).send({ message: "User does not exist" });
-    return;
-  }
-
+  
   res.status(200).send(updatedUser);
 };
 
