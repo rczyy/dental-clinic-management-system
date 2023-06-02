@@ -1,76 +1,12 @@
 import AuditTrailDataRow from "../components/Table/AuditTrailDataRow";
+import { useGetLogs } from "../hooks/logs";
 import { useAdminStore } from "../store/admin";
 
 type Props = {};
 
 const AuditTrail = (props: Props) => {
   const sidebar = useAdminStore((state) => state.sidebar);
-  const logData: LogResponse[] = [
-    {
-      date: new Date().toDateString(),
-      type: "Create",
-      module: "Appointment",
-      email: "johndoe@gmail.com",
-      action:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus sed quas explicabo repellat temporibus."
-    },
-    {
-        date: new Date().toDateString(),
-        type: "Create",
-        module: "Appointment",
-        email: "johndoe@gmail.com",
-        action:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus sed quas explicabo repellat temporibus."
-      },
-      {
-        date: new Date().toDateString(),
-        type: "Create",
-        module: "Appointment",
-        email: "johndoe@gmail.com",
-        action:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus sed quas explicabo repellat temporibus."
-      },
-      {
-        date: new Date().toDateString(),
-        type: "Create",
-        module: "Appointment",
-        email: "johndoe@gmail.com",
-        action:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus sed quas explicabo repellat temporibus."
-      },
-    {
-      date: new Date().toDateString(),
-      type: "Update",
-      module: "Service",
-      email: "johndoe@gmail.com",
-      action:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus sed quas explicabo repellat temporibus."
-    },
-    {
-      date: new Date().toDateString(),
-      type: "Delete",
-      module: "Dentist's schedule",
-      email: "johndoe@gmail.com",
-      action:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus sed quas explicabo repellat temporibus."
-    },
-    {
-      date: new Date().toDateString(),
-      type: "Update",
-      module: "User",
-      email: "johndoe@gmail.com",
-      action:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus sed quas explicabo repellat temporibus."
-    },
-    {
-      date: new Date().toDateString(),
-      type: "Create",
-      module: "Attendance",
-      email: "johndoe@gmail.com",
-      action:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus sed quas explicabo repellat temporibus."
-    }
-  ];
+  const { data: logData } = useGetLogs();
 
   return (
     <main
@@ -94,10 +30,8 @@ const AuditTrail = (props: Props) => {
             </tr>
           </thead>
           <tbody>
-            {logData.length > 0 ? (
-              logData.map((log) => {
-                return <AuditTrailDataRow logData={log} />;
-              })
+            {logData && logData.length > 0 ? (
+              logData.map((log) => <AuditTrailDataRow logData={log} />)
             ) : (
               <tr className="[&>*]:bg-transparent">
                 <td colSpan={5} className="py-8 text-2xl text-center font-bold">
