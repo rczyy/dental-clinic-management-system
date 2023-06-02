@@ -157,7 +157,7 @@ const RemoveUserModal = ({
         if (e.target === e.currentTarget) setIsDeleteModalVisible(false);
       }}
     >
-      <section className="flex flex-col gap-2 bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
+      <section className="flex flex-col gap-2 bg-base-300 max-w-md w-full rounded-2xl shadow-md px-8 py-10">
         <header className="flex justify-between items-center mx-2 py-3">
           <h1 className="text-2xl font-bold">Remove Patient</h1>
           <div>
@@ -216,7 +216,7 @@ const RecoverUserModal = ({
         if (e.target === e.currentTarget) setIsRecoverModalVisible(false);
       }}
     >
-      <section className="flex flex-col gap-2 bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
+      <section className="flex flex-col gap-2 bg-base-300 max-w-md w-full rounded-2xl shadow-md px-8 py-10">
         <header className="flex justify-between items-center mx-2 py-3">
           <h1 className="text-2xl font-bold">Recover Patient</h1>
           <div>
