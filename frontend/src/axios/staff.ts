@@ -12,6 +12,16 @@ export const getStaffs = async () => {
   return res.data;
 };
 
+export const getDeletedStaffs = async () => {
+  const res = await axios.get<StaffResponse[]>(`${URL}/staff/deleted`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
+  return res.data;
+};
+
 export const getStaff = async (id: string) => {
   const res = await axios.get<StaffResponse>(`${URL}/staff/${id}`, {
     withCredentials: true,
@@ -29,6 +39,20 @@ export const registerStaff = async (form: StaffSignupFormValues) => {
       Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
     },
   });
+  return res.data;
+};
+
+export const recoverStaff = async (userId: string) => {
+  const res = await axios.put<UserResponse>(
+    `${URL}/staff/recover/${userId}`,
+    null,
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+      },
+    }
+  );
   return res.data;
 };
 
