@@ -12,6 +12,16 @@ export const getAttendance = async () => {
   return res.data;
 };
 
+export const getAttendanceToday = async () => {
+  const res = await axios.get<AttendanceResponse[]>(`${URL}/attendance/today`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
+  return res.data;
+};
+
 export const getMyAttendance = async () => {
   const res = await axios.get<AttendanceResponse[]>(`${URL}/attendance/me`, {
     withCredentials: true,

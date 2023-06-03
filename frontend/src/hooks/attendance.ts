@@ -6,12 +6,20 @@ import {
   logTimeIn,
   logTimeOut,
   removeAttendance,
+  getAttendanceToday,
 } from "../axios/attendance";
 
 export const useGetAttendance = () => {
   return useQuery<AttendanceResponse[], ErrorMessageResponse>({
     queryKey: ["attendance"],
     queryFn: getAttendance,
+  });
+};
+
+export const useGetAttendanceToday = () => {
+  return useQuery<AttendanceResponse[], ErrorMessageResponse>({
+    queryKey: ["attendanceToday"],
+    queryFn: getAttendanceToday,
   });
 };
 
@@ -32,6 +40,7 @@ export const useEditAttendance = () => {
     mutationFn: ({ data, id }) => editAttendance(data, id),
     onSuccess: () => {
       queryClient.invalidateQueries(["attendance"]);
+      queryClient.invalidateQueries(["attendanceToday"]);
     },
   });
 };
@@ -42,13 +51,14 @@ export const useRemoveAttendance = (id: string) => {
     mutationFn: () => removeAttendance(id),
     onSuccess: () => {
       queryClient.invalidateQueries(["attendance"]);
+      queryClient.invalidateQueries(["attendanceToday"]);
     },
   });
 };
 
 export const useLogTimeIn = () => {
   const queryClient = useQueryClient();
-  return useMutation<AttendanceResponse, FormErrorResponse, string>({
+  return useMutation<AttendanceResponse, ErrorMessageResponse, string>({
     mutationFn: (timeIn) => logTimeIn(timeIn),
     onSuccess: () => queryClient.invalidateQueries(["myAttendance"]),
   });
@@ -56,7 +66,7 @@ export const useLogTimeIn = () => {
 
 export const useLogTimeOut = () => {
   const queryClient = useQueryClient();
-  return useMutation<AttendanceResponse, FormErrorResponse, string>({
+  return useMutation<AttendanceResponse, ErrorMessageResponse, string>({
     mutationFn: (timeOut) => logTimeOut(timeOut),
     onSuccess: () => queryClient.invalidateQueries(["myAttendance"]),
   });
