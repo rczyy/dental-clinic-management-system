@@ -1,10 +1,11 @@
 import { RequestHandler } from "express";
 import { verifyToken } from "../utilities/verifyToken";
-import { Roles } from "../constants";
+import { LogModule, LogType, Roles } from "../constants";
 import Attendance from "../models/attendance";
 import { z } from "zod";
 import Staff from "../models/staff";
 import { isValidObjectId } from "mongoose";
+import { addLog } from "../utilities/addLog";
 
 export const getAttendance: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -27,7 +28,7 @@ export const getAttendance: RequestHandler = async (req, res) => {
 
   const attendance = await Attendance.find().populate({
     path: "staff",
-    populate: { path: "user" },
+    populate: { path: "user" }
   });
   res.status(201).json(attendance);
 };
@@ -57,7 +58,7 @@ export const getMyAttendance: RequestHandler = async (req, res) => {
 
   if (!existingStaff) {
     const error: FormError = {
-      formErrors: ["Staff does not exist"],
+      formErrors: ["Staff does not exist"]
     };
 
     res.status(401).json(error);
@@ -89,7 +90,7 @@ export const editAttendance: RequestHandler = async (req, res) => {
 
   const dateSchema = z.object({
     timeIn: z.string({ required_error: "Date and Time is required" }),
-    timeOut: z.string({ required_error: "Date and Time is required" }),
+    timeOut: z.string({ required_error: "Date and Time is required" })
   });
 
   type body = z.infer<typeof dateSchema>;
@@ -111,10 +112,22 @@ export const editAttendance: RequestHandler = async (req, res) => {
     return;
   }
 
-  const editedAttendance = await Attendance.findByIdAndUpdate(attendanceID, {
-    timeIn,
-    timeOut,
-  });
+  const editedAttendance = await Attendance.findByIdAndUpdate(
+    attendanceID,
+    {
+      timeIn,
+      timeOut
+    },
+    { new: true }
+  );
+
+  if (!editedAttendance) {
+    const error: ErrorMessage = { message: "Attendance doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  await addLog(req.session.uid!, LogModule[4], LogType[1], editedAttendance);
 
   res.status(201).json(editedAttendance);
 };
@@ -158,7 +171,7 @@ export const removeAttendance: RequestHandler = async (req, res) => {
 
   res.status(200).json({
     _id: deletedAttendance._id,
-    message: "Successfully deleted the attendance",
+    message: "Successfully deleted the attendance"
   });
 };
 
@@ -184,7 +197,7 @@ export const logTimeIn: RequestHandler = async (req, res) => {
   }
 
   const dateSchema = z.object({
-    timeIn: z.string({ required_error: "Date and Time is required" }),
+    timeIn: z.string({ required_error: "Date and Time is required" })
   });
 
   type body = z.infer<typeof dateSchema>;
@@ -205,7 +218,7 @@ export const logTimeIn: RequestHandler = async (req, res) => {
 
   if (!existingStaff) {
     const error: FormError = {
-      formErrors: ["Staff does not exist"],
+      formErrors: ["Staff does not exist"]
     };
 
     res.status(401).json(error);
@@ -214,12 +227,12 @@ export const logTimeIn: RequestHandler = async (req, res) => {
 
   const existingLog = await Attendance.findOne({
     date: dateToday,
-    staff: existingStaff._id,
+    staff: existingStaff._id
   });
 
   if (existingLog && existingLog.timeIn) {
     const error: FormError = {
-      formErrors: ["Already timed in"],
+      formErrors: ["Already timed in"]
     };
 
     res.status(401).json(error);
@@ -229,8 +242,10 @@ export const logTimeIn: RequestHandler = async (req, res) => {
     timeIn,
     timeOut: "",
     date: dateToday,
-    staff: existingStaff._id,
+    staff: existingStaff._id
   });
+
+  await addLog(req.session.uid!, LogModule[3], LogType[1], attendance);
 
   await attendance.save();
   res.status(201).json(attendance);
@@ -258,7 +273,7 @@ export const logTimeOut: RequestHandler = async (req, res) => {
   }
 
   const dateSchema = z.object({
-    timeOut: z.string({ required_error: "Date and Time is required" }),
+    timeOut: z.string({ required_error: "Date and Time is required" })
   });
 
   type body = z.infer<typeof dateSchema>;
@@ -279,7 +294,7 @@ export const logTimeOut: RequestHandler = async (req, res) => {
 
   if (!existingStaff) {
     const error: FormError = {
-      formErrors: ["Staff does not exist"],
+      formErrors: ["Staff does not exist"]
     };
 
     res.status(401).json(error);
@@ -288,12 +303,12 @@ export const logTimeOut: RequestHandler = async (req, res) => {
 
   const existingLog = await Attendance.findOne({
     date: dateToday,
-    staff: existingStaff._id,
+    staff: existingStaff._id
   });
 
-  if ( !existingLog || (existingLog && !existingLog.timeIn)) {
+  if (!existingLog || (existingLog && !existingLog.timeIn)) {
     const error: FormError = {
-      formErrors: ["Not timed in yet"],
+      formErrors: ["Not timed in yet"]
     };
 
     res.status(401).json(error);
@@ -302,7 +317,7 @@ export const logTimeOut: RequestHandler = async (req, res) => {
 
   if (existingLog && existingLog.timeOut) {
     const error: FormError = {
-      formErrors: ["Already timed out"],
+      formErrors: ["Already timed out"]
     };
 
     res.status(401).json(error);
@@ -312,10 +327,21 @@ export const logTimeOut: RequestHandler = async (req, res) => {
   const attendance = await Attendance.findOneAndUpdate(
     { date: dateToday, staff: existingStaff._id },
     {
-      timeOut,
+      timeOut
     },
     { new: true }
   );
+
+  if (!attendance) {
+    const error: FormError = {
+      formErrors: ["Attendance does not exist"]
+    };
+
+    res.status(401).json(error);
+    return;
+  }
+
+  await addLog(req.session.uid!, LogModule[3], LogType[1], attendance);
 
   res.status(201).json(attendance);
 };
