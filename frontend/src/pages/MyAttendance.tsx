@@ -48,7 +48,7 @@ const MyAttendance = (props: Props) => {
         }
         return true;
       });
-  const dateToday = new Date().setHours(0, 0, 0, 0);
+  const dateToday = dayjs().startOf("D");
 
   useEffect(() => {
     if (data) {
@@ -70,12 +70,12 @@ const MyAttendance = (props: Props) => {
   }, [data]);
   const timeInClick = () => {
     logTimeIn(dayjs().format(), {
-      onError: (error) => toast.error(`${error.response.data.formErrors}`),
+      onError: (error) => toast.error(`${error.response.data.message}`),
     });
   };
   const timeOutClick = () => {
     logTimeOut(dayjs().format(), {
-      onError: (error) => toast.error(`${error.response.data.formErrors}`),
+      onError: (error) => toast.error(`${error.response.data.message}`),
     });
   };
   return (
