@@ -67,7 +67,7 @@ interface ServiceFormValues {
 
 interface AttendanceFormValues {
   timeIn: string;
-  timeOut: string;
+  timeOut?: string | undefined;
 }
 
 interface SelectOption {
