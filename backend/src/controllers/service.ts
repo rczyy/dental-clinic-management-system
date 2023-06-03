@@ -152,7 +152,7 @@ export const editService: RequestHandler = async (req, res) => {
     return;
   }
   
-  await addLog(req.session.uid!, LogModule[4], LogType[0], editedService);
+  await addLog(req.session.uid!, LogModule[4], LogType[1], editedService);
 
   res.status(200).json(service);
 };
@@ -193,7 +193,7 @@ export const removeService: RequestHandler = async (req, res) => {
     return;
   }
 
-  await addLog(req.session.uid!, LogModule[4], LogType[0], deletedService);
+  await addLog(req.session.uid!, LogModule[4], LogType[2], deletedService);
 
   res.status(200).json({
     _id: deletedService._id,
