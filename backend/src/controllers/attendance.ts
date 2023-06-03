@@ -154,10 +154,11 @@ export const editAttendance: RequestHandler = async (req, res) => {
   const { timeIn, timeOut }: body = req.body;
 
   if (timeOut && timeIn > timeOut) {
-    const error: ErrorMessage = {
-      message: "Time Out must be later than Time In",
+    const error: FormError = {
+      formErrors: ["Time Out must be later than Time In"],
     };
-    res.status(400).json(error);
+
+    res.status(401).json(error);
     return;
   }
   const selectedAttendance = await Attendance.findById(attendanceID);
@@ -167,9 +168,7 @@ export const editAttendance: RequestHandler = async (req, res) => {
     res.status(400).json(error);
     return;
   }
-  const formattedDate = dayjs(`${selectedAttendance.date}`).format(
-    "YYYY-MM-DD"
-  );
+  const formattedDate = dayjs(selectedAttendance.date).format("YYYY-MM-DD");
 
   const editedAttendance = await Attendance.findByIdAndUpdate(
     attendanceID,
@@ -329,8 +328,8 @@ export const logTimeOut: RequestHandler = async (req, res) => {
     return;
   }
 
-  const formattedTimeIn = dayjs(`${existingLog.timeIn}`).format("h:mm:ss A");
-  const formattedTimeOut = dayjs(`${timeOut}`).format("h:mm:ss A");
+  const formattedTimeIn = dayjs(existingLog.timeIn).format("h:mm:ss A");
+  const formattedTimeOut = dayjs(timeOut).format("h:mm:ss A");
 
   if (formattedTimeIn > formattedTimeOut) {
     const error: ErrorMessage = {
