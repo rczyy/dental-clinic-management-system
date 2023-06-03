@@ -18,7 +18,10 @@ export const getLogs: RequestHandler = async (req, res) => {
     return;
   }
 
-  const logs = await Log.find();
+  const logs = await Log.find().populate({
+    path: "user",
+    select: "email role name"
+  });
 
   res.status(200).json(logs);
 };
