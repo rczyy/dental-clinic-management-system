@@ -15,7 +15,7 @@ type Props = {
 
 const AuditTrailDataRow = ({ logData }: Props) => {
   return (
-    <tr className="[&>*]:bg-base-300 [&>*]:py-2 [&>*]:px-4 border-b border-base-200 text-xs md:text-sm">
+    <tr className="[&>*]:bg-base-300 [&>*]:py-2 [&>*]:px-4 tracking-tight border-b border-base-200 text-xs md:text-sm">
       <td className="hidden" />
       <td>
         <span className="font-semibold">
@@ -39,7 +39,7 @@ const AuditTrailDataRow = ({ logData }: Props) => {
         )}
         <span>{logData.module}</span>
       </td>
-      <td className="text-slate-400 italic">{logData.email}</td>
+      <td className="text-slate-400 italic">{logData.user.email}</td>
       <td
         className={`flex items-center gap-2 border-none ${
           logData.type.toUpperCase() === "UPDATE"
@@ -68,7 +68,7 @@ const AuditTrailDataRow = ({ logData }: Props) => {
           )
         )}
       </td>
-      <td className="tracking-tight max-w-3xl truncate">{logData.action}</td>
+      <td className="max-w-3xl text-xs truncate">{logData.action}</td>
     </tr>
   );
 };

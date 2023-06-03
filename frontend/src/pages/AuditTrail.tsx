@@ -31,7 +31,7 @@ const AuditTrail = (props: Props) => {
           </thead>
           <tbody>
             {logData && logData.length > 0 ? (
-              logData.map((log) => <AuditTrailDataRow logData={log} />)
+              logData.map((log) => <AuditTrailDataRow logData={log} key={log._id} />)
             ) : (
               <tr className="[&>*]:bg-transparent">
                 <td colSpan={5} className="py-8 text-2xl text-center font-bold">
