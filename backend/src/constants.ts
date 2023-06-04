@@ -25,7 +25,7 @@ export const LogModule = [
   "SERVICE"
 ] as const;
 
-export const LogType = ["CREATE", "UPDATE", "DELETE"] as const;
+export const LogType = ["CREATE", "UPDATE", "DELETE", "RECOVER"] as const;
 
 export const HOST_URL =
   process.env.NODE_ENV === "development" ? "http://localhost:5173" : "";
