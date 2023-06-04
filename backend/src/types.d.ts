@@ -148,4 +148,15 @@ declare global {
     dentist: Types.ObjectId;
     date: Date;
   }
+
+  interface Notification {
+    _id: Types.ObjectId;
+    description: string;
+    type: "Appointment";
+    isRead: boolean;
+    to: Types.ObjectId;
+    from: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+  }
 }
