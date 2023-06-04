@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
+import {
+  AiFillCaretDown,
+  AiFillCaretUp,
+  AiOutlineLoading3Quarters,
+} from "react-icons/ai";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { useGetDeletedStaffs, useGetStaffs } from "../hooks/staff";
 import StaffDataRow from "../components/Table/StaffDataRow";
@@ -21,8 +25,9 @@ const StaffList = (props: Props) => {
     { value: "Front Desk", label: "Front Desk" },
   ];
   const { data: me } = useGetMe();
-  const { data: staffs } = useGetStaffs();
-  const { data: deletedStaffs } = useGetDeletedStaffs();
+  const { data: staffs, isLoading: staffsLoading } = useGetStaffs();
+  const { data: deletedStaffs, isLoading: deletedStaffsLoading } =
+    useGetDeletedStaffs();
 
   const [seeDeletedStaff, setSeeDeletedStaff] = useState<boolean>(false);
 
@@ -279,6 +284,14 @@ const StaffList = (props: Props) => {
                       </td>
                     </tr>
                   ))}
+
+                {deletedStaffsLoading && (
+                  <tr className="[&>*]:bg-transparent">
+                    <td colSpan={8}>
+                      <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -371,6 +384,14 @@ const StaffList = (props: Props) => {
                   </td>
                 </tr>
               ))}
+
+            {staffsLoading && (
+              <tr className="[&>*]:bg-transparent">
+                <td colSpan={8}>
+                  <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

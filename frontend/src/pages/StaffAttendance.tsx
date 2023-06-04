@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useGetAttendance } from "../hooks/attendance";
-import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
+import {
+  AiFillCaretDown,
+  AiFillCaretUp,
+  AiOutlineLoading3Quarters,
+} from "react-icons/ai";
 import AttendanceDataRow from "../components/Table/AttendanceDataRow";
 import { useAdminStore } from "../store/admin";
 import dayjs from "dayjs";
@@ -9,7 +13,7 @@ import { DesktopDatePicker } from "@mui/x-date-pickers";
 type Props = {};
 const StaffAttendance = (props: Props) => {
   const sidebar = useAdminStore((state) => state.sidebar);
-  const { data } = useGetAttendance();
+  const { data, isLoading: attendanceLoading } = useGetAttendance();
   const [dateFilter, setDateFilter] = useState<dayjs.Dayjs | null>(null);
   const [attendanceSort, setAttendanceSort] = useState<"asc" | "desc">();
   const [nameSort, setNameSort] = useState<"asc" | "desc">();
@@ -106,18 +110,30 @@ const StaffAttendance = (props: Props) => {
             </tr>
           </thead>
           <tbody>
-            {filteredAttendance && filteredAttendance.length > 0 ? (
-              filteredAttendance.map((attendance) => (
-                <AttendanceDataRow
-                  key={attendance._id}
-                  attendance={attendance}
-                  showAllDetails={true}
-                />
-              ))
-            ) : (
+            {filteredAttendance &&
+              (filteredAttendance.length > 0 ? (
+                filteredAttendance.map((attendance) => (
+                  <AttendanceDataRow
+                    key={attendance._id}
+                    attendance={attendance}
+                    showAllDetails={true}
+                  />
+                ))
+              ) : (
+                <tr className="[&>*]:bg-transparent">
+                  <td
+                    colSpan={5}
+                    className="py-8 text-2xl text-center font-bold"
+                  >
+                    No attendance records to show
+                  </td>
+                </tr>
+              ))}
+
+            {attendanceLoading && (
               <tr className="[&>*]:bg-transparent">
-                <td colSpan={5} className="py-8 text-2xl text-center font-bold">
-                  No attendance records to show
+                <td colSpan={8}>
+                  <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
                 </td>
               </tr>
             )}

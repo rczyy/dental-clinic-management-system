@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
+import {
+  AiFillCaretDown,
+  AiFillCaretUp,
+  AiOutlineLoading3Quarters,
+} from "react-icons/ai";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { useGetDeletedServices, useGetServices } from "../hooks/service";
 import SelectDropdown from "../components/Form/SelectDropdown";
@@ -28,8 +32,9 @@ const ServiceList = (props: Props) => {
   ];
 
   const { data: me } = useGetMe();
-  const { data } = useGetServices();
-  const { data: deletedServices } = useGetDeletedServices();
+  const { data, isLoading: servicesLoading } = useGetServices();
+  const { data: deletedServices, isLoading: deletedServicesLoading } =
+    useGetDeletedServices();
 
   const [seeDeletedService, setSeeDeletedService] = useState<boolean>(false);
 
@@ -283,6 +288,14 @@ const ServiceList = (props: Props) => {
                       </td>
                     </tr>
                   ))}
+
+                {deletedServicesLoading && (
+                  <tr className="[&>*]:bg-transparent">
+                    <td colSpan={8}>
+                      <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -371,6 +384,14 @@ const ServiceList = (props: Props) => {
                   </td>
                 </tr>
               ))}
+
+            {servicesLoading && (
+              <tr className="[&>*]:bg-transparent">
+                <td colSpan={8}>
+                  <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
