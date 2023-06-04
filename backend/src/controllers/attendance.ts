@@ -55,7 +55,7 @@ export const getAttendanceToday: RequestHandler = async (req, res) => {
     res.status(401).json(error);
     return;
   }
-  const dateToday = dayjs().startOf("D").format();
+  const dateToday = dayjs().startOf("D").format("YYYY-MM-DD");
   const attendanceToday = await Attendance.find({
     date: dateToday,
   }).populate({
@@ -248,7 +248,7 @@ export const logTimeIn: RequestHandler = async (req, res) => {
   }
 
   const timeIn = dayjs().format();
-  const dateToday = dayjs().format("YYYY-MM-DD");
+  const dateToday = dayjs().startOf("D").format("YYYY-MM-DD");
 
   const existingStaff = await Staff.findOne({ user: req.session.uid });
 
