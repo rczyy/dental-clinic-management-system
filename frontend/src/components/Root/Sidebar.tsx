@@ -7,6 +7,7 @@ import { BiCalendarCheck, BiUserCheck } from "react-icons/bi";
 // import { VscNote } from "react-icons/vsc";
 import { CgUserList } from "react-icons/cg";
 import { IconType } from "react-icons/lib";
+import {MdOutlineSpaceDashboard} from "react-icons/md"
 import { Link } from "react-router-dom";
 import { useAdminStore } from "../../store/admin";
 import { useGetMe } from "../../hooks/user";
@@ -26,8 +27,9 @@ const Sidebar = () => {
     <div
       className={`fixed lg:sticky inset-0 lg:top-0 flex flex-col bg-base-100/95 min-h-screen ${
         sidebar ? "max-w-xs border-r" : "max-w-0 border-none"
-      } min-w-0 w-full pt-20 border-r-neutral shadow-2xl lg:shadow z-20 transition-all overflow-hidden`}
+      } min-w-0 w-full pt-20 border-r-neutral shadow-2xl lg:shadow z-20 transition-[max-width] overflow-hidden`}
     >
+      <SidebarItem name="Dashboard" Icon={MdOutlineSpaceDashboard} route="/dashboard" />
       {(data?.role === "Admin" || data?.role === "Manager") && (
         <SidebarItem name="Staff" Icon={CgUserList} route="/staff" />
       )}

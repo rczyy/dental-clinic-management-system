@@ -7,7 +7,26 @@ import { isValidObjectId } from "mongoose";
 import { addLog } from "../utilities/addLog";
 
 export const getServices: RequestHandler = async (_, res) => {
-  const services = await Service.find();
+  const services = await Service.find({ isDeleted: false });
+
+  res.status(200).json(services);
+};
+export const getDeletedServices: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const services = await Service.find({ isDeleted: true });
 
   res.status(200).json(services);
 };
@@ -156,6 +175,43 @@ export const editService: RequestHandler = async (req, res) => {
 
   res.status(200).json(service);
 };
+export const recoverService: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const { service } = req.params;
+
+  if (!isValidObjectId(service)) {
+    const error: ErrorMessage = { message: "Invalid service ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const recoveredService = await Service.findByIdAndUpdate(service, {
+    $set: {
+      isDeleted: false,
+    },
+  });
+
+  if (!recoveredService) {
+    const error: ErrorMessage = { message: "Service doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  res.status(200).send(recoveredService);
+};
 export const removeService: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
@@ -185,9 +241,13 @@ export const removeService: RequestHandler = async (req, res) => {
     return;
   }
 
-  const deletedService = await Service.findByIdAndDelete(service);
+  const deletedService = await Service.findByIdAndUpdate(service, {
+    $set: {
+      isDeleted: true,
+    },
+  });
 
-  if (!deletedService) {
+  if (!deletedService || deletedService.isDeleted) {
     const error: ErrorMessage = { message: "Service doesn't exist" };
     res.status(400).json(error);
     return;

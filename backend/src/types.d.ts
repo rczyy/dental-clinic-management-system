@@ -65,6 +65,7 @@ declare global {
     avatar: string;
     createdAt: Date;
     updatedAt: Date;
+    isDeleted: boolean;
   }
 
   interface Admin {
@@ -75,31 +76,37 @@ declare global {
   interface Staff {
     _id: Types.ObjectId;
     user: Types.ObjectId;
+    isDeleted: boolean;
   }
 
   interface Patient {
     _id: Types.ObjectId;
     user: Types.ObjectId;
+    isDeleted: boolean;
   }
 
   interface Manager {
     _id: Types.ObjectId;
     staff: Types.ObjectId;
+    isDeleted: boolean;
   }
 
   interface Dentist {
     _id: Types.ObjectId;
     staff: Types.ObjectId;
+    isDeleted: boolean;
   }
 
   interface FrontDesk {
     _id: Types.ObjectId;
     staff: Types.ObjectId;
+    isDeleted: boolean;
   }
 
   interface Assistant {
     _id: Types.ObjectId;
     staff: Types.ObjectId;
+    isDeleted: boolean;
   }
 
   interface Service {
@@ -107,6 +114,7 @@ declare global {
     category: ServiceCategory;
     name: string;
     estimatedTime: string;
+    isDeleted: boolean;
   }
 
   interface Appointment {

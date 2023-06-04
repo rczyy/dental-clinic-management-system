@@ -7,11 +7,13 @@ import { Link } from "react-router-dom";
 import { AddMobileNumber } from "../components/Modal/AddMobileNumber";
 import { useState } from "react";
 import { ServiceAccordion } from "../components/Services/ServiceAccordion";
+import { VerifyEmail } from "../components/Modal/VerifyEmail";
 
 type Props = {};
 
 const Landing = (_: Props) => {
   const [isAddMobileOpen, setIsAddMobileOpen] = useState(true);
+  const [isVerifyUserOpen, setIsVerifyUserOpen] = useState(true);
 
   const { data } = useGetMe();
 
@@ -32,15 +34,16 @@ const Landing = (_: Props) => {
               to={
                 data
                   ? data.role === "Patient"
-                    ? data.contactNo
+                    ? data.contactNo && data.verified
                       ? "/set-appointment"
                       : ""
                     : "/set-appointment/staff"
                   : "/login"
               }
-              className="btn btn-primary text-base-100"
+              className="btn btn-primary"
               onClick={() => {
                 if (data && !data.contactNo) setIsAddMobileOpen(true);
+                if (data && !data.verified) setIsVerifyUserOpen(true);
               }}
             >
               Book an appointment
@@ -49,12 +52,14 @@ const Landing = (_: Props) => {
           <div className="absolute w-full h-full bg-black bg-opacity-70"></div>
         </section>
 
-        <section className="flex flex-col justify-center gap-12 px-4 py-20">
-          <div className="flex flex-col items-center justify-center gap-2">
+        <section className="flex flex-col justify-center gap-12 max-w-6xl mx-auto px-4 py-20">
+          <div className="flex flex-col items-center justify-center gap-8">
             <h2 className="text-5xl text-center font-semibold">Our Services</h2>
-            <p className="text-zinc-400 text-sm text-center">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eveniet,
-              labore. Repellat, voluptatem?
+            <p className="text-zinc-500 text-lg text-center font-light">
+              At AT Dental Home, we are dedicated to providing personalized,
+              high-quality dental services in a warm and welcoming environment.
+              We prioritize patient education, preventive care, and the latest
+              advancements in dentistry to deliver exceptional results.
             </p>
           </div>
 
@@ -79,6 +84,7 @@ const Landing = (_: Props) => {
           </div>
         </section>
       </div>
+
       {data && !data?.contactNo && isAddMobileOpen && (
         <div
           className="fixed inset-0 flex items-center justify-center bg-black/50 px-4 z-50"
@@ -87,6 +93,17 @@ const Landing = (_: Props) => {
           }}
         >
           <AddMobileNumber />
+        </div>
+      )}
+
+      {data && !data?.verified && isVerifyUserOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black/50 px-4 z-50"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setIsVerifyUserOpen(false);
+          }}
+        >
+          <VerifyEmail setIsVerifyUserOpen={setIsVerifyUserOpen} />
         </div>
       )}
     </>

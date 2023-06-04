@@ -7,12 +7,14 @@ import {
   removeAttendance,
   logTimeIn,
   logTimeOut,
+  getAttendanceToday,
 } from "../controllers/attendance";
 
 const router = Router();
 
 router
   .get("/", checkAuth, getAttendance)
+  .get("/today", checkAuth, getAttendanceToday)
   .get("/me", checkAuth, getMyAttendance);
 router
   .post("/time-in", checkAuth, logTimeIn)

@@ -6,6 +6,10 @@ const patientSchema = new Schema<Patient>({
     ref: "User",
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export default model<Patient>("Patient", patientSchema);

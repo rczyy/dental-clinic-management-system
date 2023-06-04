@@ -6,6 +6,10 @@ const managerSchema = new Schema<Manager>({
     ref: "Staff",
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export default model<Manager>("Manager", managerSchema);

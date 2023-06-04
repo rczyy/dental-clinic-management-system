@@ -29,7 +29,33 @@ export const getStaffs: RequestHandler = async (req, res) => {
     return;
   }
 
-  const staffs = await Staff.find().populate("user", "-password");
+  const staffs = await Staff.find({ isDeleted: false }).populate(
+    "user",
+    "-password"
+  );
+
+  res.status(200).json(staffs);
+};
+
+export const getDeletedStaffs: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const staffs = await Staff.find({ isDeleted: true }).populate(
+    "user",
+    "-password"
+  );
 
   res.status(200).json(staffs);
 };
@@ -256,6 +282,65 @@ export const registerStaff: RequestHandler = async (req, res) => {
   res.status(201).json(user);
 };
 
+export const recoverStaff: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const { user } = req.params;
+
+  if (!isValidObjectId(user)) {
+    const error: ErrorMessage = { message: "Invalid user ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const recoveredStaff = await Staff.findOneAndUpdate(
+    { user },
+    {
+      $set: {
+        isDeleted: false,
+      },
+    }
+  );
+
+  if (!recoveredStaff) {
+    const error: ErrorMessage = { message: "Staff doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const recoveredUser = await User.findByIdAndUpdate(
+    user,
+    {
+      $set: {
+        isDeleted: false,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!recoveredUser) {
+    const error: ErrorMessage = { message: "User doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  res.status(200).send(recoveredUser);
+};
+
 export const removeStaff: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
@@ -279,35 +364,74 @@ export const removeStaff: RequestHandler = async (req, res) => {
     return;
   }
 
-  const deletedStaff = await Staff.findOneAndDelete({ user });
+  const deletedStaff = await Staff.findOneAndUpdate(
+    { user },
+    {
+      $set: {
+        isDeleted: true,
+      },
+    }
+  );
 
-  if (!deletedStaff) {
+  if (!deletedStaff || deletedStaff.isDeleted) {
     const error: ErrorMessage = { message: "Staff doesn't exist" };
     res.status(400).json(error);
     return;
   }
 
-  const deletedUser = await User.findByIdAndDelete(user);
+  const deletedUser = await User.findByIdAndUpdate(user, {
+    $set: {
+      isDeleted: true,
+    },
+  });
 
-  if (!deletedUser) {
+  if (!deletedUser || deletedUser.isDeleted) {
     res.status(400).json({ message: "User doesn't exist" });
     return;
   }
 
   if (deletedUser.role === Roles.Manager) {
-    await Manager.findOneAndDelete({ staff: deletedStaff._id });
+    await Manager.findOneAndUpdate(
+      { staff: deletedStaff._id },
+      {
+        $set: {
+          isDeleted: true,
+        },
+      }
+    );
   }
 
   if (deletedUser.role === Roles.Assistant) {
-    await Assistant.findOneAndDelete({ staff: deletedStaff._id });
+    await Assistant.findOneAndUpdate(
+      { staff: deletedStaff._id },
+      {
+        $set: {
+          isDeleted: true,
+        },
+      }
+    );
   }
 
   if (deletedUser.role === Roles.Dentist) {
-    await Dentist.findOneAndDelete({ staff: deletedStaff._id });
+    await Dentist.findOneAndUpdate(
+      { staff: deletedStaff._id },
+      {
+        $set: {
+          isDeleted: true,
+        },
+      }
+    );
   }
 
   if (deletedUser.role === Roles.FrontDesk) {
-    await FrontDesk.findOneAndDelete({ staff: deletedStaff._id });
+    await FrontDesk.findOneAndUpdate(
+      { staff: deletedStaff._id },
+      {
+        $set: {
+          isDeleted: true,
+        },
+      }
+    );
   }
 
   console.log(deletedUser)

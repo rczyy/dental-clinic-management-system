@@ -6,9 +6,9 @@ const attendanceSchema = new Schema<Attendance>({
     ref: "Staff",
     required: true,
   },
-  timeIn: Date,
-  timeOut: Date,
-  date: Date,
+  timeIn: { type: Date, required: true },
+  timeOut: { type: Date, required: false },
+  date: { type: Date, required: true },
 });
 
-export default model<Attendance>("Attendance", attendanceSchema)
+export default model<Attendance>("Attendance", attendanceSchema);

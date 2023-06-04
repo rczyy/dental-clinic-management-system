@@ -4,10 +4,13 @@ import { useGetMe } from "../hooks/user";
 import { Navigate } from "react-router-dom";
 import { DentistCalendar } from "../components/Dentist Schedule/DentistCalendar";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useAdminStore } from "../store/admin";
 
 type Props = {};
 
 export const DentistsSchedule = (props: Props) => {
+  const sidebar = useAdminStore((state) => state.sidebar);
+
   const [dentistSchedules, setDentistSchedules] = useState<
     DentistScheduleResponse[][]
   >([]);
@@ -34,7 +37,11 @@ export const DentistsSchedule = (props: Props) => {
   if (me?.role === "Patient") return <Navigate to={"/"} />;
 
   return (
-    <main className="flex flex-col gap-8 max-w-screen-xl mx-auto">
+    <main
+      className={`flex flex-col gap-8 ${
+        sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
+      } mx-auto transition-[max-width]`}
+    >
       <header className="text-2xl md:text-3xl font-bold">
         <h1>Dentists' Schedule</h1>
       </header>

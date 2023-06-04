@@ -72,6 +72,10 @@ const userSchema = new Schema<User>(
       default:
         "https://at-dental-home-bucket.s3.ap-southeast-1.amazonaws.com/avatars/blank-profile-picture.png",
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

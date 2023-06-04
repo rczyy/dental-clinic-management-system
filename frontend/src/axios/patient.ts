@@ -12,6 +12,16 @@ export const getPatients = async () => {
   return res.data;
 };
 
+export const getDeletedPatients = async () => {
+  const res = await axios.get<PatientResponse[]>(`${URL}/patient/deleted`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
+  return res.data;
+};
+
 export const getPatient = async (id: string) => {
   const res = await axios.get<PatientResponse>(`${URL}/patient/${id}`, {
     withCredentials: true,
@@ -33,6 +43,20 @@ export const registerPatient = async (form: SignupFormValues) => {
   const res = await axios.post<UserResponse>(`${URL}/patient/register`, form, {
     withCredentials: true,
   });
+  return res.data;
+};
+
+export const recoverPatient = async (userId: string) => {
+  const res = await axios.put<UserResponse>(
+    `${URL}/patient/recover/${userId}`,
+    null,
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+      },
+    }
+  );
   return res.data;
 };
 

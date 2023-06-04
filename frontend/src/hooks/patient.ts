@@ -1,14 +1,23 @@
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import {
+  getDeletedPatients,
   getPatient,
   getPatientNames,
   getPatients,
+  recoverPatient,
   registerPatient,
   removePatient,
 } from "../axios/patient";
 
 export const useGetPatients = () => {
   return useQuery({ queryKey: ["patients"], queryFn: getPatients });
+};
+
+export const useGetDeletedPatients = () => {
+  return useQuery({
+    queryKey: ["deleted-patients"],
+    queryFn: getDeletedPatients,
+  });
 };
 
 export const useGetPatient = (id: string) => {
@@ -36,12 +45,24 @@ export const useRegisterPatient = () => {
   });
 };
 
+export const useRecoverPatient = () => {
+  const queryClient = useQueryClient();
+  return useMutation<UserResponse, ErrorMessageResponse, string>({
+    mutationFn: recoverPatient,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["patients"]);
+      queryClient.invalidateQueries(["deleted-patients"]);
+    },
+  });
+};
+
 export const useRemovePatient = () => {
   const queryClient = useQueryClient();
   return useMutation<DeleteResponse, ErrorMessageResponse, string>({
     mutationFn: removePatient,
     onSuccess: () => {
       queryClient.invalidateQueries(["patients"]);
+      queryClient.invalidateQueries(["deleted-patients"]);
     },
   });
 };

@@ -21,6 +21,7 @@ interface EditFormValues {
   barangay: string;
   street: string;
   contactNo: string;
+  verified: boolean;
 }
 
 interface LoginFormValues {
@@ -66,7 +67,7 @@ interface ServiceFormValues {
 
 interface AttendanceFormValues {
   timeIn: string;
-  timeOut: string;
+  timeOut?: string | undefined;
 }
 
 interface SelectOption {
@@ -149,6 +150,7 @@ interface UserResponse {
   avatar: string;
   createdAt: Date;
   updatedAt: Date;
+  verified: boolean;
 }
 
 interface AdminResponse {
@@ -159,31 +161,37 @@ interface AdminResponse {
 interface StaffResponse {
   _id: string;
   user: UserResponse;
+  isDeleted: boolean;
 }
 
 interface PatientResponse {
   _id: string;
   user: UserResponse;
+  isDeleted: boolean;
 }
 
 interface ManagerResponse {
   _id: string;
-  staff: string;
+  staff: StaffResponse;
+  isDeleted: boolean;
 }
 
 interface DentistResponse {
   _id: string;
   staff: StaffResponse;
+  isDeleted: boolean;
 }
 
 interface FrontDeskResponse {
   _id: string;
-  staff: string;
+  staff: StaffResponse;
+  isDeleted: boolean;
 }
 
 interface AssistantResponse {
   _id: string;
-  staff: string;
+  staff: StaffResponse;
+  isDeleted: boolean;
 }
 
 interface MessageResponse {
@@ -255,6 +263,7 @@ interface ServiceResponse {
   category: ServiceCategory;
   name: string;
   estimatedTime: string;
+  isDeleted: boolean;
 }
 
 interface AttendanceResponse {

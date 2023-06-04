@@ -74,8 +74,9 @@ const AttendanceDataRow = ({ attendance, showAllDetails }: Props) => {
           {dayjs(attendance.timeIn).format("h:mm:ss A")}
         </td>
         <td className="font-medium text-sm text-center">
-          {attendance.timeOut &&
-            `${dayjs(attendance.timeOut).format("h:mm:ss A")}`}
+          {attendance.timeOut !== null
+            ? dayjs(attendance.timeOut).format("h:mm:ss A")
+            : "Not timed out yet"}
         </td>
       </tr>
       {isEditModalVisible && (
@@ -99,10 +100,9 @@ const EditAttendanceModal = ({
   setIsEditModalVisible,
 }: EditAttendanceProps) => {
   const schema = z.object({
-    timeIn: z.string({ required_error: "Date and Time is required" }),
-    timeOut: z.string({ required_error: "Date and Time is required" }),
+    timeIn: z.string({ required_error: "Time In is required" }),
+    timeOut: z.string().optional(),
   });
-
   const {
     register,
     handleSubmit,
@@ -112,16 +112,24 @@ const EditAttendanceModal = ({
   } = useForm<AttendanceFormValues>({
     defaultValues: {
       timeIn: dayjs(attendance.timeIn).format("h:mm:ss A"),
-      timeOut: dayjs(attendance.timeOut).format("h:mm:ss A"),
+      timeOut:
+        attendance.timeOut !== null
+          ? dayjs(attendance.timeOut).format("h:mm:ss A")
+          : "",
     },
     resolver: zodResolver(schema),
   });
   const { mutate: editAttendance, error: editAttendanceError } =
     useEditAttendance();
-
   const onSubmit: SubmitHandler<AttendanceFormValues> = (data) => {
     editAttendance(
-      { data: data, id: attendance._id },
+      {
+        data: {
+          ...data,
+          timeOut: data.timeOut !== "" ? data.timeOut : undefined,
+        },
+        id: attendance._id,
+      },
       {
         onSuccess: () => {
           setIsEditModalVisible(false);
@@ -132,7 +140,12 @@ const EditAttendanceModal = ({
   };
 
   return (
-    <div className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25">
+    <td
+      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsEditModalVisible(false);
+      }}
+    >
       <section className="bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
         <header className="flex justify-between items-center">
           <h1 className="text-2xl font-bold mx-2 py-3">
@@ -163,7 +176,7 @@ const EditAttendanceModal = ({
               label="timeOut"
               placeholder="Time Out"
               register={register}
-              value={watch("timeOut")}
+              value={watch("timeOut") || ""}
               error={errors.timeOut?.message}
               Logo={FiClock}
             />
@@ -173,7 +186,7 @@ const EditAttendanceModal = ({
               type="submit"
               className="btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 w-full sm:w-48 px-8 mt-8"
             >
-              Edit Service
+              Edit Attendance
             </button>
             <p className="px-2 text-xs text-error text-center">
               {editAttendanceError && editAttendanceError.response.data.message}
@@ -181,7 +194,7 @@ const EditAttendanceModal = ({
           </div>
         </form>
       </section>
-    </div>
+    </td>
   );
 };
 
@@ -197,8 +210,8 @@ const RemoveAttendanceModal = ({
     });
   };
   return (
-    <div
-      className="fixed flex items-center justify-center inset-0 bg-black z-30 bg-opacity-25"
+    <td
+      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) setIsDeleteModalVisible(false);
       }}
@@ -235,7 +248,7 @@ const RemoveAttendanceModal = ({
           {removeAttendanceError && removeAttendanceError.response.data.message}
         </p>
       </section>
-    </div>
+    </td>
   );
 };
 export default AttendanceDataRow;

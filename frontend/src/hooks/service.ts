@@ -5,12 +5,21 @@ import {
   addService,
   editService,
   deleteService,
+  getDeletedServices,
+  recoverService,
 } from "../axios/service";
 
 export const useGetServices = () => {
   return useQuery<ServiceResponse[], ErrorMessageResponse>({
     queryKey: ["services"],
     queryFn: getServices,
+  });
+};
+
+export const useGetDeletedServices = () => {
+  return useQuery({
+    queryKey: ["deleted-services"],
+    queryFn: getDeletedServices,
   });
 };
 
@@ -33,10 +42,25 @@ export const useAddService = () => {
 
 export const useEditService = () => {
   const queryClient = useQueryClient();
-  return useMutation<ServiceResponse, ErrorMessageResponse, { data: ServiceFormValues, id: string}>({
-    mutationFn: ({data, id}) => editService(data, id),
+  return useMutation<
+    ServiceResponse,
+    FormErrorResponse | ErrorMessageResponse,
+    { data: ServiceFormValues; id: string }
+  >({
+    mutationFn: ({ data, id }) => editService(data, id),
     onSuccess: () => {
       queryClient.invalidateQueries(["services"]);
+    },
+  });
+};
+
+export const useRecoverService = () => {
+  const queryClient = useQueryClient();
+  return useMutation<ServiceResponse, ErrorMessageResponse, string>({
+    mutationFn: recoverService,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["services"]);
+      queryClient.invalidateQueries(["deleted-services"]);
     },
   });
 };
@@ -47,6 +71,7 @@ export const useDeleteService = (id: string) => {
     mutationFn: () => deleteService(id),
     onSuccess: () => {
       queryClient.invalidateQueries(["services"]);
+      queryClient.invalidateQueries(["deleted-services"]);
     },
   });
 };

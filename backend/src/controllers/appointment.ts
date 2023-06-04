@@ -686,6 +686,14 @@ export const removeAppointment: RequestHandler = async (req, res) => {
     return;
   }
 
+  if (dayjs(appointmentToDelete.dateTimeFinished).isBefore(dayjs())) {
+    const error: ErrorMessage = {
+      message: "Can't remove an appointment that is already finished",
+    };
+    res.status(400).json(error);
+    return;
+  }
+
   if (
     token.role === Roles.Patient &&
     (

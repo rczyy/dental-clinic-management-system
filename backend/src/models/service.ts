@@ -23,6 +23,10 @@ const serviceSchema = new Schema<Service>({
     ],
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export default model<Service>("Service", serviceSchema);
