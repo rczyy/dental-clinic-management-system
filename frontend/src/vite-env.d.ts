@@ -314,3 +314,8 @@ interface NotificationBody {
   to: string;
   from: string;
 }
+
+interface BillingFormValues {
+  notes: string;
+  price: string;
+}

@@ -159,4 +159,12 @@ declare global {
     createdAt: Date;
     updatedAt: Date;
   }
+
+  interface Bill {
+    _id: Types.ObjectId;
+    appointment: Types.ObjectId;
+    notes?: string;
+    price: number;
+    isDeleted: boolean;
+  }
 }

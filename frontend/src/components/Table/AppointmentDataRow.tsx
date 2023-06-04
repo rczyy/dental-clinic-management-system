@@ -8,6 +8,10 @@ import {
 } from "../../hooks/appointment";
 import { toast } from "react-toastify";
 import { AiOutlineCheck } from "react-icons/ai";
+import FormInput from "../Form/FormInput";
+import { z } from "zod";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface Props {
   appointment: AppointmentResponse;
@@ -201,28 +205,43 @@ const FinishAppointmentModal = ({
   appointment,
   setIsFinishModalVisible,
 }: FinishAppointmentModalProps) => {
-  const { mutate: finishAppointment } = useFinishAppointment();
+  const schema = z.object({
+    notes: z.string({ required_error: "Notes is required" }),
+    price: z.coerce
+      .number({ required_error: "Price is required" })
+      .positive("Price must be a positive number")
+      .finite("Infinite price are not allowed"),
+  });
 
-  const handleDelete = () => {
-    finishAppointment(appointment._id, {
-      onSuccess: () => {
-        setIsFinishModalVisible(false);
-        toast.success("Appointment set to done!");
-      },
-      onError: (err) => toast.error(err.response.data.message),
-    });
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<BillingFormValues>({
+    defaultValues: {
+      notes: "",
+      price: "",
+    },
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit: SubmitHandler<BillingFormValues> = (data) => {
+    reset();
+    console.log(data);
   };
 
   return (
     <td
-      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
+      className="fixed flex items-center justify-center inset-0 z-50 !bg-black !bg-opacity-25"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) setIsFinishModalVisible(false);
       }}
     >
-      <section className="flex flex-col gap-2 bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
+      <section className="flex flex-col gap-2 bg-base-300 max-w-xl w-full rounded-2xl shadow-md px-8 py-10">
         <header className="flex justify-between items-center mx-2 py-3">
-          <h1 className="text-2xl font-bold">Finish Appointment</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">Bill Appointment</h1>
           <div>
             <FiX
               className="w-6 h-6 p-1 text-base-content rounded-full cursor-pointer transition hover:bg-base-200"
@@ -230,24 +249,41 @@ const FinishAppointmentModal = ({
             />
           </div>
         </header>
-        <div className="flex flex-col mx-2 py-3">
-          <p>You are about to set this appointment to done.</p>
-          <p>Are you sure?</p>
-        </div>
-        <div className="flex gap-3 justify-end mx-2 py-3">
-          <button
-            className="btn px-8"
-            onClick={() => setIsFinishModalVisible(false)}
-          >
-            No
-          </button>
-          <button
-            className="btn bg-green-600 px-8 text-white hover:bg-green-700"
-            onClick={handleDelete}
-          >
-            Yes
-          </button>
-        </div>
+        <form
+          className="flex flex-col mx-2 gap-4"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <textarea
+            rows={4}
+            placeholder="Notes"
+            className={`p-4 border rounded-md outline-none resize-none placeholder:text-sm ${
+              watch("notes") && "border-primary"
+            }`}
+            {...register("notes")}
+          />
+
+          <FormInput
+            type="number"
+            label="price"
+            placeholder="Price"
+            value={watch("price")}
+            register={register}
+            error={errors.price && errors.price.message}
+          />
+
+          <div className="flex gap-3 justify-end mx-2 py-3">
+            <button
+              type="button"
+              className="btn px-8"
+              onClick={() => setIsFinishModalVisible(false)}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary px-8 text-white">
+              Bill
+            </button>
+          </div>
+        </form>
       </section>
     </td>
   );
