@@ -5,13 +5,57 @@ import { DesktopDatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import AuditTrailDataRow from "../components/Table/AuditTrailDataRow";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import SelectDropdown from "../components/Form/SelectDropdown";
 
 type Props = {};
 
 const AuditTrail = (props: Props) => {
   const sidebar = useAdminStore((state) => state.sidebar);
-  const [getLogs, { data: logData, isFetching }] = useLazyGetLogsQuery();
+  const [getLogs, { data, isFetching, isLoading }] = useLazyGetLogsQuery();
   const [datePickerValue, setDatePickerValue] = useState<Dayjs | null>(dayjs());
+  const [logData, setLogData] = useState<LogResponse[]>();
+  const [moduleFilter, setModuleFilter] = useState<string>("Module");
+  const [typeFilter, setTypeFilter] = useState<string>("Type");
+
+  const module = [
+    { value: "USER", label: "USER" },
+    { value: "APPOINTMENT", label: "APPOINTMENT" },
+    { value: "DENTIST'S SCHEDULE", label: "DENTIST'S SCHEDULE" },
+    { value: "ATTENDANCE", label: "ATTENDANCE" },
+    { value: "SERVICE", label: "SERVICE" }
+  ];
+
+  const type = [
+    { value: "CREATE", label: "CREATE" },
+    { value: "UPDATE", label: "UPDATE" },
+    { value: "DELETE", label: "DELETE" }
+  ];
+
+  useEffect(() => {
+    setLogData(data);
+
+    if (typeFilter !== "Type" && moduleFilter !== "Module") {
+      setLogData(
+        data?.filter(
+          (log) =>
+            log.type.toUpperCase() === typeFilter.toUpperCase() &&
+            log.module.toUpperCase() === moduleFilter.toUpperCase()
+        )
+      );
+    } else if (typeFilter !== "Type") {
+      setLogData(
+        data?.filter(
+          (log) => log.type.toUpperCase() === typeFilter.toUpperCase()
+        )
+      );
+    } else if (moduleFilter !== "Module") {
+      setLogData(
+        data?.filter(
+          (log) => log.module.toUpperCase() === moduleFilter.toUpperCase()
+        )
+      );
+    }
+  }, [typeFilter, moduleFilter, datePickerValue, data]);
 
   useEffect(() => {
     datePickerValue
@@ -28,7 +72,7 @@ const AuditTrail = (props: Props) => {
       <header className="text-2xl md:text-3xl font-bold">
         <h1>Logs</h1>
       </header>
-      <div className="flex flex-wrap justify-between items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <div className="flex gap-6">
           <DesktopDatePicker
             label="Select date"
@@ -40,6 +84,26 @@ const AuditTrail = (props: Props) => {
             }}
             defaultValue={dayjs()}
             onChange={(date: Dayjs | null) => setDatePickerValue(date)}
+          />
+        </div>
+        <div className="w-48">
+          <SelectDropdown
+            placeholder={moduleFilter != "" ? moduleFilter : "Module"}
+            options={module}
+            isClearable={true}
+            onChange={(newValue) =>
+              setModuleFilter(newValue ? newValue.value : "")
+            }
+          />
+        </div>
+        <div className="w-48">
+          <SelectDropdown
+            placeholder={typeFilter != "" ? typeFilter : "Type"}
+            options={type}
+            isClearable={true}
+            onChange={(newValue) =>
+              setTypeFilter(newValue ? newValue.value : "")
+            }
           />
         </div>
       </div>
@@ -56,26 +120,24 @@ const AuditTrail = (props: Props) => {
             </tr>
           </thead>
           <tbody>
-            {!isFetching ? (
-              logData && logData.length > 0 ? (
-                logData.map((log) => (
-                  <AuditTrailDataRow logData={log} key={log._id} />
-                ))
-              ) : (
-                <tr className="[&>*]:bg-transparent">
+            {logData && logData.length > 0 ? (
+              logData.map((log) => (
+                <AuditTrailDataRow logData={log} key={log._id} />
+              ))
+            ) : (
+              <tr className="[&>*]:bg-transparent">
+                {isFetching ? (
+                  <td colSpan={5} className="py-8">
+                    <AiOutlineLoading3Quarters className="animate-spin w-full" />
+                  </td>
+                ) : (
                   <td
                     colSpan={5}
                     className="py-8 text-2xl text-center font-bold"
                   >
                     No logs to show
                   </td>
-                </tr>
-              )
-            ) : (
-              <tr className="[&>*]:bg-transparent">
-                <td colSpan={5} className="py-8">
-                  <AiOutlineLoading3Quarters className="animate-spin w-full"/>
-                </td>
+                )}
               </tr>
             )}
           </tbody>
