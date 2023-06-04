@@ -42,14 +42,16 @@ const AuditTrailDataRow = ({ logData }: Props) => {
       <td className="text-slate-400 italic">{logData.user.email}</td>
       <td
         className={`flex items-center gap-2 border-none ${
-          logData.type.toUpperCase() === "UPDATE"
+          logData.type.toUpperCase() === "UPDATE" ||
+          logData.type.toUpperCase() === "RECOVER"
             ? "text-yellow-500"
             : logData.type.toUpperCase() === "CREATE"
             ? "text-green-500"
             : logData.type.toUpperCase() === "DELETE" && "text-red-500"
         }`}
       >
-        {logData.type.toUpperCase() === "UPDATE" ? (
+        {logData.type.toUpperCase() === "UPDATE" ||
+        logData.type.toUpperCase() === "RECOVER" ? (
           <>
             <AiFillInfoCircle className="text-xl self-center" />
             <span>Update</span>
