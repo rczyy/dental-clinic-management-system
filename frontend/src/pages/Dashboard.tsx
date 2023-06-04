@@ -14,8 +14,8 @@ const Dashboard = (props: Props) => {
       <header className="flex flex-col w-full md:flex-row justify-between mb-4 gap-8">
         <h1 className="text-2xl md:text-3xl font-bold">Dashboard</h1>
         <div className="flex flex-col gap-4 md:flex-row">
-          <Stat title="Patients Registered" value="3000" />
-          <Stat title="Staffs Registered" value="3000" />
+          <Stat title="Patients Registered"/>
+          <Stat title="Staffs Registered" />
         </div>
       </header>
       <div className="flex flex-col text-md gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
