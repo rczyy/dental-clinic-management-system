@@ -9,6 +9,16 @@ export const getServices = async () => {
   return res.data;
 };
 
+export const getDeletedServices = async () => {
+  const res = await axios.get<ServiceResponse[]>(`${URL}/service/deleted`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
+  return res.data;
+};
+
 export const getService = async (id: string) => {
   const res = await axios.get<ServiceResponse>(`${URL}/service/${id}`, {
     withCredentials: true,
@@ -27,12 +37,30 @@ export const addService = async (data: ServiceFormValues) => {
 };
 
 export const editService = async (data: ServiceFormValues, id: string) => {
-  const res = await axios.patch<ServiceResponse>(`${URL}/service/edit/${id}`, data, {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
-    },
-  });
+  const res = await axios.patch<ServiceResponse>(
+    `${URL}/service/edit/${id}`,
+    data,
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+      },
+    }
+  );
+  return res.data;
+};
+
+export const recoverService = async (service: string) => {
+  const res = await axios.put<ServiceResponse>(
+    `${URL}/service/recover/${service}`,
+    null,
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+      },
+    }
+  );
   return res.data;
 };
 

@@ -161,31 +161,37 @@ interface AdminResponse {
 interface StaffResponse {
   _id: string;
   user: UserResponse;
+  isDeleted: boolean;
 }
 
 interface PatientResponse {
   _id: string;
   user: UserResponse;
+  isDeleted: boolean;
 }
 
 interface ManagerResponse {
   _id: string;
-  staff: string;
+  staff: StaffResponse;
+  isDeleted: boolean;
 }
 
 interface DentistResponse {
   _id: string;
   staff: StaffResponse;
+  isDeleted: boolean;
 }
 
 interface FrontDeskResponse {
   _id: string;
-  staff: string;
+  staff: StaffResponse;
+  isDeleted: boolean;
 }
 
 interface AssistantResponse {
   _id: string;
-  staff: string;
+  staff: StaffResponse;
+  isDeleted: boolean;
 }
 
 interface MessageResponse {
@@ -257,6 +263,7 @@ interface ServiceResponse {
   category: ServiceCategory;
   name: string;
   estimatedTime: string;
+  isDeleted: boolean;
 }
 
 interface AttendanceResponse {

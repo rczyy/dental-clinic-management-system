@@ -1,15 +1,24 @@
-import { FiClock, FiEdit2, FiMoreVertical, FiTrash } from "react-icons/fi";
-import { AiOutlineMedicineBox } from "react-icons/ai";
+import { FiClock, FiEdit2, FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
+import {
+  AiOutlineLoading3Quarters,
+  AiOutlineMedicineBox,
+} from "react-icons/ai";
 import { GrFormClose } from "react-icons/gr";
 import { convertToTotalHoursAndMinutes } from "../../utilites/convertToTotalHoursAndMinutes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useDeleteService, useEditService } from "../../hooks/service";
+import {
+  useDeleteService,
+  useEditService,
+  useRecoverService,
+} from "../../hooks/service";
 import FormInput from "../Form/FormInput";
 import SelectDropdown from "../Form/SelectDropdown";
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "react-toastify";
+import { useGetMe } from "../../hooks/user";
+import { IoArrowUndoOutline } from "react-icons/io5";
 
 type Props = {
   service: ServiceResponse;
@@ -22,12 +31,25 @@ type DeleteServiceProps = {
   service: ServiceResponse;
   setIsDeleteModalVisible: Dispatch<SetStateAction<boolean>>;
 };
+type RecoverServiceProps = {
+  service: ServiceResponse;
+  setIsRecoverModalVisible: React.Dispatch<SetStateAction<boolean>>;
+};
+
 const ServiceDataRow = ({ service }: Props) => {
+  const { data: me } = useGetMe();
+
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [isRecoverModalVisible, setIsRecoverModalVisible] = useState(false);
+
   return (
-    <tr className="[&>*]:bg-transparent">
-      <th className="!bg-base-300 w-10 p-1.5">
+    <tr
+      className={`${
+        service.isDeleted ? "[&>*]:bg-red-300/75" : "[&>*]:bg-transparent"
+      } transition tracking-tight`}
+    >
+      <th className="w-10 p-1.5">
         <div className="flex dropdown dropdown-right">
           <label
             tabIndex={0}
@@ -39,16 +61,29 @@ const ServiceDataRow = ({ service }: Props) => {
             tabIndex={0}
             className="dropdown-content menu flex-row flex-nowrap p-1 bg-base-100 text-sm border border-neutral rounded-lg shadow-lg translate-x-2 -translate-y-1/4"
           >
-            <li onClick={() => setIsEditModalVisible(true)}>
-              <a>
-                <FiEdit2 />
-              </a>
-            </li>
-            <li onClick={() => setIsDeleteModalVisible(true)}>
-              <a>
-                <FiTrash />
-              </a>
-            </li>
+            {!service.isDeleted ? (
+              <>
+                <li onClick={() => setIsEditModalVisible(true)}>
+                  <a>
+                    <FiEdit2 />
+                  </a>
+                </li>
+                <li onClick={() => setIsDeleteModalVisible(true)}>
+                  <a>
+                    <FiTrash />
+                  </a>
+                </li>
+              </>
+            ) : (
+              me &&
+              (me.role === "Admin" || me.role === "Manager") && (
+                <li onClick={() => setIsRecoverModalVisible(true)}>
+                  <a>
+                    <IoArrowUndoOutline />
+                  </a>
+                </li>
+              )
+            )}
           </ul>
         </div>
       </th>
@@ -76,6 +111,13 @@ const ServiceDataRow = ({ service }: Props) => {
         <DeleteServiceModal
           service={service}
           setIsDeleteModalVisible={setIsDeleteModalVisible}
+        />
+      )}
+
+      {isRecoverModalVisible && (
+        <RecoverServiceModal
+          service={service}
+          setIsRecoverModalVisible={setIsRecoverModalVisible}
         />
       )}
     </tr>
@@ -272,4 +314,64 @@ const DeleteServiceModal = ({
     </td>
   );
 };
+
+const RecoverServiceModal = ({
+  service,
+  setIsRecoverModalVisible,
+}: RecoverServiceProps) => {
+  const { mutate: recoverService, isLoading } = useRecoverService();
+  const handleRecover = () => {
+    recoverService(service._id, {
+      onSuccess: () => {
+        toast.success("Successfully recovered the service");
+        setIsRecoverModalVisible(false);
+      },
+      onError: (err) => toast.error(err.response.data.message),
+    });
+  };
+  return (
+    <td
+      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsRecoverModalVisible(false);
+      }}
+    >
+      <section className="flex flex-col gap-2 bg-base-300 max-w-md w-full rounded-2xl shadow-md px-8 py-10">
+        <header className="flex justify-between items-center mx-2 py-3">
+          <h1 className="text-2xl font-bold">Recover Service</h1>
+          <div>
+            <FiX
+              className="w-6 h-6 p-1 text-base-content rounded-full cursor-pointer transition hover:bg-base-200"
+              onClick={() => setIsRecoverModalVisible(false)}
+            />
+          </div>
+        </header>
+        <div className="flex flex-col mx-2 py-3">
+          <p>You are about to recover a service.</p>
+          <p>Are you sure?</p>
+        </div>
+        <div className="flex gap-3 justify-end mx-2 py-3">
+          <button
+            className="btn px-8"
+            onClick={() => setIsRecoverModalVisible(false)}
+          >
+            No
+          </button>
+          <button
+            className="btn bg-green-600 gap-4 px-8 text-white hover:bg-green-700"
+            onClick={() => {
+              handleRecover();
+            }}
+          >
+            Yes{" "}
+            {isLoading && (
+              <AiOutlineLoading3Quarters className="text-lg animate-spin" />
+            )}
+          </button>
+        </div>
+      </section>
+    </td>
+  );
+};
+
 export default ServiceDataRow;

@@ -31,11 +31,71 @@ export const getPatients: RequestHandler = async (req, res) => {
     return;
   }
 
-  const patients = await Patient.find({ isDeleted: false })
-    .exists("isDeleted", false)
-    .populate("user", "-password");
+  const patients = await Patient.find({ isDeleted: false }).populate(
+    "user",
+    "-password"
+  );
 
   res.status(200).json(patients);
+};
+
+export const getDeletedPatients: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role === Roles.Patient) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const patients = await Patient.find({ isDeleted: true }).populate(
+    "user",
+    "-password"
+  );
+
+  res.status(200).json(patients);
+};
+
+export const getPatientNames: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (!token.role) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const patients = await Patient.find().populate({
+    path: "user",
+  });
+
+  const response = patients.map((patient) => {
+    const { user } = patient as unknown as {
+      user: Pick<User, "_id" | "name" | "avatar">;
+    };
+
+    const { _id, name, avatar } = user;
+
+    return {
+      _id,
+      name,
+      avatar,
+    };
+  });
+
+  res.status(200).json(response);
 };
 
 export const getPatient: RequestHandler = async (req, res) => {
@@ -218,6 +278,65 @@ export const registerPatient: RequestHandler = async (req, res) => {
   res.status(201).json(user);
 };
 
+export const recoverPatient: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const { user } = req.params;
+
+  if (!isValidObjectId(user)) {
+    const error: ErrorMessage = { message: "Invalid user ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const recoveredPatient = await Patient.findOneAndUpdate(
+    { user },
+    {
+      $set: {
+        isDeleted: false,
+      },
+    }
+  );
+
+  if (!recoveredPatient) {
+    const error: ErrorMessage = { message: "Patient doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const recoveredUser = await User.findByIdAndUpdate(
+    user,
+    {
+      $set: {
+        isDeleted: false,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!recoveredUser) {
+    const error: ErrorMessage = { message: "User doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  res.status(200).send(recoveredUser);
+};
+
 export const removePatient: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
@@ -270,40 +389,4 @@ export const removePatient: RequestHandler = async (req, res) => {
   res
     .status(200)
     .json({ _id: deletedUser._id, message: "Succesfully deleted the patient" });
-};
-
-export const getPatientNames: RequestHandler = async (req, res) => {
-  const token = verifyToken(req.headers.authorization);
-
-  if ("message" in token) {
-    const error: ErrorMessage = { message: token.message };
-    res.status(401).json(error);
-    return;
-  }
-
-  if (!token.role) {
-    const error: ErrorMessage = { message: "Unauthorized to do this" };
-    res.status(401).json(error);
-    return;
-  }
-
-  const patients = await Patient.find().populate({
-    path: "user",
-  });
-
-  const response = patients.map((patient) => {
-    const { user } = patient as unknown as {
-      user: Pick<User, "_id" | "name" | "avatar">;
-    };
-
-    const { _id, name, avatar } = user;
-
-    return {
-      _id,
-      name,
-      avatar,
-    };
-  });
-
-  res.status(200).json(response);
 };
