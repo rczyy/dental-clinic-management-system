@@ -2,6 +2,7 @@ import { verifyToken } from "../utilities/verifyToken";
 import { Roles } from "../constants";
 import { RequestHandler } from "express";
 import Log from "../models/log";
+import dayjs from "dayjs";
 
 export const getLogs: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -18,10 +19,19 @@ export const getLogs: RequestHandler = async (req, res) => {
     return;
   }
 
-  const logs = await Log.find().populate({
+  const { date } = req.query;
+
+  const logs = await Log.find({
+    ...(date && {
+      date: {
+        $gte: dayjs(date.toString()),
+        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59")
+      }
+    })
+  }).populate({
     path: "user",
     select: "email role name"
   });
 
-  res.status(200).json(logs);
+  res.status(200).json(logs.reverse());
 };
