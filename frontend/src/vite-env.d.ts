@@ -296,3 +296,21 @@ interface DentistScheduleResponse {
   dentist: DentistResponse;
   date: Date;
 }
+
+interface NotificationResponse {
+  _id: string;
+  description: string;
+  type: "Appointment";
+  isRead: boolean;
+  to: UserResponse;
+  from: UserResponse;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface NotificationBody {
+  description: string;
+  type: "Appointment";
+  to: string;
+  from: string;
+}

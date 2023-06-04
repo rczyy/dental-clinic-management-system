@@ -6,15 +6,27 @@ import DarkModeToggle from "../Utilities/DarkModeToggle";
 import { useDetectClickOutside } from "react-detect-click-outside";
 import { useAdminStore } from "../../store/admin";
 import ATLogo from "../Utilities/ATLogo";
+import {
+  useGetNotifications,
+  useReadNotifications,
+} from "../../hooks/notification";
+import { FiBell } from "react-icons/fi";
+import { NotificationItem } from "../Notification/NotificationItem";
 
 type Props = {};
 
 const Navbar = (props: Props) => {
-  const toggleSidebar = useAdminStore((state) => state.toggleSidebar);
-  const [isOpen, setIsOpen] = useState(false);
-  const { data } = useGetMe();
-  const { mutate } = useLogout();
   const roles = ["Admin", "Manager", "Assistant", "Dentist", "Front Desk"];
+  const toggleSidebar = useAdminStore((state) => state.toggleSidebar);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+  const { data } = useGetMe();
+  const { data: notifications } = useGetNotifications();
+  const { mutate: readNotifications } = useReadNotifications();
+
+  const { mutate } = useLogout();
 
   const handleLogout: React.MouseEventHandler<HTMLSpanElement> = () => {
     mutate();
@@ -22,32 +34,34 @@ const Navbar = (props: Props) => {
   };
 
   const menuRef = useDetectClickOutside({
-    onTriggered: (e) => setIsOpen(false),
+    onTriggered: () => setIsOpen(false),
+  });
+
+  const notificationsRef = useDetectClickOutside({
+    onTriggered: () => setIsNotificationsOpen(false),
   });
 
   return (
-    <div className="navbar bg-base-100 min-h-16 border-b border-b-neutral shadow gap-8 2xl:gap-0 px-4 py-0 z-30 md:px-8 fixed">
+    <div className="navbar bg-base-100 min-h-16 border-b border-b-neutral shadow gap-2 2xl:gap-0 px-4 py-0 z-30 md:px-8 fixed">
       {data && roles.includes(data.role) && (
         <IoMenuOutline
           className="w-8 h-8 cursor-pointer"
           onClick={toggleSidebar}
         />
       )}
-
       <div className="flex justify-between gap-6 max-w-screen-xl w-full min-h-[inherit] m-auto relative">
-        <div>
-          <Link
-            to="/"
-            className="flex items-center font-bold -tracking-widest text-2xl cursor-pointer text-primary"
-          >
-            <ATLogo className="fill-primary" />
-            <span className="hidden sm:block">Dental Home</span>
-          </Link>
-        </div>
+        <Link
+          to="/"
+          className="flex items-center font-bold -tracking-widest text-2xl cursor-pointer text-primary"
+        >
+          <ATLogo className="fill-primary" />
+          <span className="hidden sm:block">Dental Home</span>
+        </Link>
 
         {data ? (
-          <div className="flex gap-4">
+          <div className="relative flex items-center gap-8 sm:mr-4">
             <DarkModeToggle className="flex items-center sm:hidden" />
+
             <div
               className="flex items-center sm:gap-3 cursor-pointer"
               onClick={() => {
@@ -69,10 +83,11 @@ const Navbar = (props: Props) => {
                   {data.email}
                 </p>
               </div>
+
               <div
-                className={`absolute top-16 -right-4 grid ${
+                className={`absolute top-[52px] -right-4 sm:right-0 grid ${
                   isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-                } w-screen sm:w-60 transition-[grid-template-rows]`}
+                } w-screen sm:w-96 transition-[grid-template-rows]`}
               >
                 <ul
                   className={`menu flex-nowrap bg-base-100 ${
@@ -92,6 +107,70 @@ const Navbar = (props: Props) => {
                   <li>
                     <span onClick={handleLogout}>Log out</span>
                   </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="indicator group" ref={notificationsRef}>
+              {notifications &&
+                notifications.filter((notification) => !notification.isRead)
+                  .length > 0 && (
+                  <span
+                    className="indicator-item badge badge-primary transition duration-200 cursor-pointer group-hover:bg-blue-500/90 group-hover:text-zinc-200"
+                    onClick={() => {
+                      setIsNotificationsOpen(!isNotificationsOpen);
+                      if (
+                        notifications.some(
+                          (notification) => !notification.isRead
+                        )
+                      ) {
+                        readNotifications(undefined);
+                      }
+                    }}
+                  >
+                    {
+                      notifications.filter(
+                        (notification) => !notification.isRead
+                      ).length
+                    }
+                  </span>
+                )}
+
+              <div
+                className="transition duration-200 cursor-pointer group-hover:text-zinc-400"
+                onClick={() => {
+                  setIsNotificationsOpen(!isNotificationsOpen);
+                  if (
+                    notifications?.some((notification) => !notification.isRead)
+                  ) {
+                    readNotifications(undefined);
+                  }
+                }}
+              >
+                <FiBell className="w-5 h-5" />
+              </div>
+
+              <div
+                className={`absolute top-[42px] -right-4 sm:right-0 grid ${
+                  isNotificationsOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                } w-screen sm:w-96 transition-[grid-template-rows]`}
+              >
+                <ul
+                  className={`menu flex-nowrap bg-base-100 ${
+                    isNotificationsOpen && "border border-base-200"
+                  } rounded-b-box text-sm shadow overflow-hidden`}
+                >
+                  <h3 className="px-4 pt-4 text-2xl font-bold">
+                    Notifications
+                  </h3>
+                  {notifications?.map((notification) => (
+                    <li>
+                      <NotificationItem
+                        key={notification._id}
+                        notification={notification}
+                      />
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
