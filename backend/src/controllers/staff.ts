@@ -338,6 +338,14 @@ export const recoverStaff: RequestHandler = async (req, res) => {
     return;
   }
 
+  await addLog(
+    req.session.uid!,
+    LogModule[0],
+    LogType[3],
+    recoveredUser,
+    recoveredUser.role
+  );
+
   res.status(200).send(recoveredUser);
 };
 

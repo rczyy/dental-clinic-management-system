@@ -58,10 +58,10 @@ export const getAttendanceToday: RequestHandler = async (req, res) => {
   }
   const dateToday = dayjs().startOf("D").format("YYYY-MM-DD");
   const attendanceToday = await Attendance.find({
-    date: dateToday,
+    date: dateToday
   }).populate({
     path: "staff",
-    populate: { path: "user" },
+    populate: { path: "user" }
   });
   res.status(201).json(attendanceToday);
 };
@@ -132,7 +132,7 @@ export const editAttendance: RequestHandler = async (req, res) => {
         /((1[0-2]|0?[1-9]):([0-5][0-9]):([0-5][0-9]) ?([AaPp][Mm]))/,
         "Invalid Time"
       )
-      .optional(),
+      .optional()
   });
 
   type body = z.infer<typeof dateSchema>;
@@ -156,7 +156,7 @@ export const editAttendance: RequestHandler = async (req, res) => {
 
   if (timeOut && timeIn > timeOut) {
     const error: FormError = {
-      formErrors: ["Time Out must be later than Time In"],
+      formErrors: ["Time Out must be later than Time In"]
     };
 
     res.status(401).json(error);
@@ -169,6 +169,7 @@ export const editAttendance: RequestHandler = async (req, res) => {
     res.status(400).json(error);
     return;
   }
+
   const formattedDate = dayjs(selectedAttendance.date).format("YYYY-MM-DD");
 
   const editedAttendance = await Attendance.findByIdAndUpdate(
@@ -178,10 +179,18 @@ export const editAttendance: RequestHandler = async (req, res) => {
       timeOut:
         (timeOut &&
           dayjs(`${formattedDate}T${timeOut}`, "YYYY-MM-DDTh:mm:ss A")) ||
-        null,
+        null
     },
     { new: true }
   );
+
+  if (!editedAttendance) {
+    const error: ErrorMessage = { message: "Attendance doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  await addLog(req.session.uid!, LogModule[3], LogType[1], editedAttendance);
 
   res.status(201).json(editedAttendance);
 };
@@ -220,6 +229,8 @@ export const removeAttendance: RequestHandler = async (req, res) => {
     res.status(400).json(error);
     return;
   }
+
+  await addLog(req.session.uid!, LogModule[3], LogType[2], deletedAttendance);
 
   res.status(200).json({
     _id: deletedAttendance._id,
@@ -336,7 +347,7 @@ export const logTimeOut: RequestHandler = async (req, res) => {
 
   if (formattedTimeIn > formattedTimeOut) {
     const error: ErrorMessage = {
-      message: "Time Out must be later than Time In",
+      message: "Time Out must be later than Time In"
     };
     res.status(400).json(error);
     return;

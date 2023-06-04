@@ -79,7 +79,7 @@ export const getPatientNames: RequestHandler = async (req, res) => {
   }
 
   const patients = await Patient.find().populate({
-    path: "user",
+    path: "user"
   });
 
   const response = patients.map((patient) => {
@@ -92,7 +92,7 @@ export const getPatientNames: RequestHandler = async (req, res) => {
     return {
       _id,
       name,
-      avatar,
+      avatar
     };
   });
 
@@ -308,8 +308,8 @@ export const recoverPatient: RequestHandler = async (req, res) => {
     { user },
     {
       $set: {
-        isDeleted: false,
-      },
+        isDeleted: false
+      }
     }
   );
 
@@ -323,11 +323,11 @@ export const recoverPatient: RequestHandler = async (req, res) => {
     user,
     {
       $set: {
-        isDeleted: false,
-      },
+        isDeleted: false
+      }
     },
     {
-      new: true,
+      new: true
     }
   );
 
@@ -336,6 +336,14 @@ export const recoverPatient: RequestHandler = async (req, res) => {
     res.status(400).json(error);
     return;
   }
+
+  await addLog(
+    req.session.uid!,
+    LogModule[0],
+    LogType[3],
+    recoveredUser,
+    "Patient"
+  );
 
   res.status(200).send(recoveredUser);
 };
@@ -366,8 +374,8 @@ export const removePatient: RequestHandler = async (req, res) => {
     { user },
     {
       $set: {
-        isDeleted: true,
-      },
+        isDeleted: true
+      }
     }
   );
 
@@ -379,8 +387,8 @@ export const removePatient: RequestHandler = async (req, res) => {
 
   const deletedUser = await User.findByIdAndUpdate(user, {
     $set: {
-      isDeleted: true,
-    },
+      isDeleted: true
+    }
   });
 
   if (!deletedUser || deletedUser.isDeleted) {
@@ -393,7 +401,7 @@ export const removePatient: RequestHandler = async (req, res) => {
     req.session.uid!,
     LogModule[0],
     LogType[2],
-    { name: deletedPatient.user.name, email: deletedPatient.user.email },
+    deletedUser,
     "Patient"
   );
 
