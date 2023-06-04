@@ -7,6 +7,7 @@ import { useGetAppointments } from "../hooks/appointment";
 import { AppointmentDataRow } from "../components/Table/AppointmentDataRow";
 import { useGetMe } from "../hooks/user";
 import { Link, Navigate } from "react-router-dom";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 interface Props {}
 
@@ -19,11 +20,14 @@ export const AppointmentList = (_: Props): JSX.Element => {
   const [pastFilter, setPastFilter] = useState<boolean>(false);
 
   const { data: me } = useGetMe();
-  const { data: appointments, refetch: refetchGetAppointments } =
-    useGetAppointments({
-      date: dateFilter ? dayjs(dateFilter).format("MM/DD/YYYY") : "",
-      includePast: pastFilter,
-    });
+  const {
+    data: appointments,
+    isLoading: appointmentsLoading,
+    refetch: refetchGetAppointments,
+  } = useGetAppointments({
+    date: dateFilter ? dayjs(dateFilter).format("MM/DD/YYYY") : "",
+    includePast: pastFilter,
+  });
 
   const filteredAppointments =
     appointments &&
@@ -154,6 +158,14 @@ export const AppointmentList = (_: Props): JSX.Element => {
                   </td>
                 </tr>
               ))}
+
+            {appointmentsLoading && (
+              <tr className="[&>*]:bg-transparent">
+                <td colSpan={8}>
+                  <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

@@ -5,7 +5,11 @@ import {
   useLogTimeOut,
 } from "../hooks/attendance";
 import { useEffect, useState } from "react";
-import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
+import {
+  AiFillCaretDown,
+  AiFillCaretUp,
+  AiOutlineLoading3Quarters,
+} from "react-icons/ai";
 import AttendanceDataRow from "../components/Table/AttendanceDataRow";
 import { toast } from "react-toastify";
 import { useAdminStore } from "../store/admin";
@@ -20,7 +24,7 @@ const MyAttendance = (props: Props) => {
   const [isTimedOut, setIsTimedOut] = useState(false);
   const { mutate: logTimeIn } = useLogTimeIn();
   const { mutate: logTimeOut } = useLogTimeOut();
-  const { data } = useGetMyAttendance();
+  const { data, isLoading: attendanceLoading } = useGetMyAttendance();
 
   const filteredAttendance =
     data &&
@@ -144,18 +148,30 @@ const MyAttendance = (props: Props) => {
             </tr>
           </thead>
           <tbody>
-            {filteredAttendance && filteredAttendance.length > 0 ? (
-              filteredAttendance.map((attendance) => (
-                <AttendanceDataRow
-                  key={attendance._id}
-                  attendance={attendance}
-                  showAllDetails={false}
-                />
-              ))
-            ) : (
+            {filteredAttendance &&
+              (filteredAttendance.length > 0 ? (
+                filteredAttendance.map((attendance) => (
+                  <AttendanceDataRow
+                    key={attendance._id}
+                    attendance={attendance}
+                    showAllDetails={false}
+                  />
+                ))
+              ) : (
+                <tr className="[&>*]:bg-transparent">
+                  <td
+                    colSpan={5}
+                    className="py-8 text-2xl text-center font-bold"
+                  >
+                    No attendance records to show
+                  </td>
+                </tr>
+              ))}
+
+            {attendanceLoading && (
               <tr className="[&>*]:bg-transparent">
-                <td colSpan={5} className="py-8 text-2xl text-center font-bold">
-                  No attendance records to show
+                <td colSpan={8}>
+                  <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
                 </td>
               </tr>
             )}

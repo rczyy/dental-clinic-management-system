@@ -11,6 +11,7 @@ export const useLoginWithGoogle = () => {
     mutationFn: loginWithGoogle,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["me"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 };

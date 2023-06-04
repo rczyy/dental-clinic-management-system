@@ -15,9 +15,10 @@ import staffRoute from "./routes/staff";
 import serviceRoute from "./routes/service";
 import emailRoute from "./routes/email";
 import oauthRoute from "./routes/oauth";
-import appointmentRoute from "./routes/appointment"
-import attendanceRoute from "./routes/attendance"
+import appointmentRoute from "./routes/appointment";
+import attendanceRoute from "./routes/attendance";
 import dentistScheduleRoute from "./routes/dentistSchedule";
+import notificationRoute from "./routes/notification";
 
 const main = async () => {
   mongoose.set("strictQuery", false);
@@ -58,6 +59,7 @@ const main = async () => {
   app.use("/appointment", appointmentRoute);
   app.use("/attendance", attendanceRoute);
   app.use("/dentist-schedule", dentistScheduleRoute);
+  app.use("/notification", notificationRoute);
 
   app.listen(port, () =>
     console.log(`Server listening to http://localhost:${port}`)

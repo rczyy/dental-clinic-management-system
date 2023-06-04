@@ -10,6 +10,7 @@ import {
   useGetDentistAppointments,
   useGetPatientAppointments,
 } from "../hooks/appointment";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 interface Props {}
 
@@ -20,7 +21,11 @@ export const MyAppointments = (_: Props): JSX.Element => {
   const [dateFilter, setDateFilter] = useState<dayjs.Dayjs | null>(null);
 
   const { data: me } = useGetMe();
-  const { data: appointments, refetch } = me
+  const {
+    data: appointments,
+    isLoading: appointmentsLoading,
+    refetch,
+  } = me
     ? me.role === "Patient"
       ? useGetPatientAppointments({
           patient: me._id,
@@ -30,7 +35,7 @@ export const MyAppointments = (_: Props): JSX.Element => {
           dentist: me._id,
           date: dateFilter ? dateFilter.format("MM/DD/YYYY") : "",
         })
-    : { data: [], refetch: () => [] };
+    : { data: [], isLoading: false, refetch: () => [] };
 
   const filteredAppointments =
     appointments &&
@@ -147,6 +152,14 @@ export const MyAppointments = (_: Props): JSX.Element => {
                   </td>
                 </tr>
               ))}
+
+            {appointmentsLoading && (
+              <tr className="[&>*]:bg-transparent">
+                <td colSpan={8}>
+                  <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

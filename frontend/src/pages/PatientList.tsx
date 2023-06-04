@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useGetDeletedPatients, useGetPatients } from "../hooks/patient";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import PatientDataRow from "../components/Table/PatientDataRow";
-import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
+import {
+  AiFillCaretDown,
+  AiFillCaretUp,
+  AiOutlineLoading3Quarters,
+} from "react-icons/ai";
 import { Link, Navigate } from "react-router-dom";
 import { useGetMe } from "../hooks/user";
 import { useAdminStore } from "../store/admin";
@@ -13,8 +17,9 @@ const PatientList = (props: Props) => {
   const sidebar = useAdminStore((state) => state.sidebar);
 
   const { data: me } = useGetMe();
-  const { data: patients } = useGetPatients();
-  const { data: deletedPatients } = useGetDeletedPatients();
+  const { data: patients, isLoading: patientsLoading } = useGetPatients();
+  const { data: deletedPatients, isLoading: deletedPatientsLoading } =
+    useGetDeletedPatients();
 
   const [seeDeletedPatients, setSeeDeletedPatients] = useState<boolean>(false);
   const [searchDeletedFilter, setSearchDeletedFilter] = useState<string>("");
@@ -172,6 +177,14 @@ const PatientList = (props: Props) => {
                       </td>
                     </tr>
                   ))}
+
+                {deletedPatientsLoading && (
+                  <tr className="[&>*]:bg-transparent">
+                    <td colSpan={8}>
+                      <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -238,6 +251,14 @@ const PatientList = (props: Props) => {
                   </td>
                 </tr>
               ))}
+
+            {patientsLoading && (
+              <tr className="[&>*]:bg-transparent">
+                <td colSpan={8}>
+                  <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
