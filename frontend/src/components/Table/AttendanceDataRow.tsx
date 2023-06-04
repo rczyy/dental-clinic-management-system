@@ -100,8 +100,20 @@ const EditAttendanceModal = ({
   setIsEditModalVisible,
 }: EditAttendanceProps) => {
   const schema = z.object({
-    timeIn: z.string({ required_error: "Time In is required" }),
-    timeOut: z.string().optional(),
+    timeIn: z
+      .string({ required_error: "Time In is required" })
+      .min(1, "Time In cannot be empty")
+      .regex(
+        /((1[0-2]|0?[1-9]):([0-5][0-9]):([0-5][0-9]) ?([AaPp][Mm]))/,
+        "Invalid Time"
+      ),
+    timeOut: z
+      .string()
+      .regex(
+        /((1[0-2]|0?[1-9]):([0-5][0-9]):([0-5][0-9]) ?([AaPp][Mm]))/,
+        "Invalid Time"
+      )
+      .optional(),
   });
   const {
     register,
@@ -138,7 +150,6 @@ const EditAttendanceModal = ({
       }
     );
   };
-
   return (
     <td
       className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
