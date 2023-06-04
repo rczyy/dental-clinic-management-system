@@ -7,8 +7,10 @@ import User from "../models/user";
 export const getNotifications: RequestHandler = async (req, res) => {
   const notifications = await Notification.find({
     to: req.session.uid,
-    isRead: false,
-  }).populate("from", "-password");
+  })
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .populate("from", "-password");
 
   res.status(200).send(notifications);
 };
