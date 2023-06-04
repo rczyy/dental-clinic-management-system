@@ -46,67 +46,28 @@ export const addLog = async (
   payload: object | string | Types.ObjectId,
   role = "User"
 ) => {
-  const prefix = `${
+  let action = `${
     type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()
-  }d`;
-  let action = "";
+  }d `;
 
-  if (module === LogModule[0]) { //USER MODULE LOGS
-    const {
-      name: { firstName, lastName },
-      email
-    } = payload as PatientPayload;
-
-    action = `${prefix} a ${role}: Name: ${firstName} ${lastName}, Email: ${email}`;
-  } else if (module === LogModule[1]) { //APPOINTMENT MODULE LOGS
-    const {
-      user: {
-        email: patientEmail,
-        name: { firstName: patientFirstName, lastName: patientLastName }
-      }
-    } = (await Patient.findById((payload as Appointment).patient).populate({
-      path: "user",
-      select: "name email"
-    })) as unknown as UserPayload;
-    const {
-      staff: {
-        user: {
-          email: dentistEmail,
-          name: { firstName: dentistFirstName, lastName: dentistLastName }
-        }
-      }
-    } = (await Dentist.findById((payload as Appointment).dentist).populate({
-      path: "staff",
-      populate: { path: "user", select: "name email" }
-    })) as unknown as StaffPayload;
-
-    action = `${prefix} an Appointment: 
-    Patient: ${patientFirstName} ${patientLastName} ${patientEmail}, 
-    Dentist: ${dentistFirstName} ${dentistLastName} ${dentistEmail}, 
-    Schedule: ${dayjs((payload as Appointment).dateTimeScheduled).format(
-      "MMM/DD/YY h:mm A"
-    )}`;
-  } else if (module === LogModule[2]) { //DENTIST'S SCHEDULE MODULE LOGS
-    const {
-      staff: {
-        user: {
-          email,
-          name: { firstName, lastName }
-        }
-      }
-    } = (await Dentist.findById(payload).populate({
-      path: "staff",
-      populate: { path: "user", select: "name email" }
-    })) as unknown as StaffPayload;
-
-    action = `${prefix} Dentist's schedule: ${firstName} ${lastName} ${email}`;
-  } else if (module === LogModule[3]) { //ATTENDANCE MODULE LOGS
-    //get staff
-    //destructure payload
-    action = `${prefix} an Attendance: Name: , Time in: , Time out: `;
-  } else if (module === LogModule[4]) { //SERVICE MODULE LOGS
-    const { category, estimatedTime, name } = payload as Service;
-    action = `${prefix} a Service: Name: ${name}, Estimated time: ${estimatedTime}mins Category: ${category}`;
+  switch (module) {
+    case LogModule[0]:
+      action += addUserLog(payload, role);
+      break;
+    case LogModule[1]:
+      action += await addAppointmentLog(payload);
+      break;
+    case LogModule[2]:
+      action += await addDentistScheduleLog(payload);
+      break;
+    case LogModule[3]:
+      action += await addAttendanceLog(payload);
+      break;
+    case LogModule[4]:
+      action += addServiceLog(payload);
+      break;
+    default:
+      action = "Error occurred";
   }
 
   console.log({
@@ -126,4 +87,89 @@ export const addLog = async (
   });
 
   await logToAdd.save();
+};
+
+export const addUserLog = (
+  payload: object | string | Types.ObjectId,
+  role: string
+) => {
+  const {
+    name: { firstName, lastName },
+    email
+  } = payload as PatientPayload;
+
+  return `a ${role}: Name: ${firstName} ${lastName}, Email: ${email}`;
+};
+
+export const addAppointmentLog = async (
+  payload: object | string | Types.ObjectId
+) => {
+  const {
+    user: {
+      email: patientEmail,
+      name: { firstName: patientFirstName, lastName: patientLastName }
+    }
+  } = (await Patient.findById((payload as Appointment).patient).populate({
+    path: "user",
+    select: "name email"
+  })) as unknown as UserPayload;
+  const {
+    staff: {
+      user: {
+        email: dentistEmail,
+        name: { firstName: dentistFirstName, lastName: dentistLastName }
+      }
+    }
+  } = (await Dentist.findById((payload as Appointment).dentist).populate({
+    path: "staff",
+    populate: { path: "user", select: "name email" }
+  })) as unknown as StaffPayload;
+
+  return `an Appointment: Patient: ${patientFirstName} ${patientLastName} ${patientEmail}, Dentist: ${dentistFirstName} ${dentistLastName} ${dentistEmail}, Schedule: ${dayjs(
+    (payload as Appointment).dateTimeScheduled
+  ).format("MMM/DD/YY h:mm A")}`;
+};
+
+export const addDentistScheduleLog = async (
+  payload: object | string | Types.ObjectId
+) => {
+  const {
+    staff: {
+      user: {
+        email,
+        name: { firstName, lastName }
+      }
+    }
+  } = (await Dentist.findById(payload).populate({
+    path: "staff",
+    populate: { path: "user", select: "name email" }
+  })) as unknown as StaffPayload;
+
+  return `Dentist's schedule: ${firstName} ${lastName} ${email}`;
+};
+
+export const addAttendanceLog = async (
+  payload: object | string | Types.ObjectId
+) => {
+  const { staff, timeIn, timeOut } = payload as unknown as Attendance;
+
+  const {
+    user: {
+      email,
+      name: { firstName, lastName }
+    }
+  } = (await Staff.findById(staff).populate({
+    path: "user",
+    select: "name email"
+  })) as unknown as UserPayload;
+  return `an Attendance: Name: ${firstName} ${lastName} Email: ${email}, Time in: ${dayjs(
+    timeIn
+  ).format("h:mm A")}, Time out: ${
+    timeOut !== null ? dayjs(timeOut).format("h:mm A") : ""
+  }`;
+};
+
+export const addServiceLog = (payload: object | string | Types.ObjectId) => {
+  const { category, estimatedTime, name } = payload as Service;
+  return `a Service: Name: ${name}, Estimated time: ${estimatedTime} (min) Category: ${category}`;
 };
