@@ -33,7 +33,6 @@ import { MyAppointments } from "./pages/MyAppointments";
 import { MySchedule } from "./pages/MySchedule";
 import { AppointmentList } from "./pages/AppointmentList";
 import { DentistsSchedule } from "./pages/DentistsSchedule";
-import StaffSetAppointment from "./pages/StaffSetAppointment";
 import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient({
