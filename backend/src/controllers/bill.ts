@@ -111,7 +111,34 @@ export const getDeletedBills: RequestHandler = async (req, res) => {
       },
     }),
     isDeleted: true,
-  });
+  })
+    .populate({
+      path: "appointment",
+      populate: {
+        path: "dentist",
+        populate: {
+          path: "staff",
+          populate: {
+            path: "user",
+          },
+        },
+      },
+    })
+    .populate({
+      path: "appointment",
+      populate: {
+        path: "patient",
+        populate: {
+          path: "user",
+        },
+      },
+    })
+    .populate({
+      path: "appointment",
+      populate: {
+        path: "service",
+      },
+    });
 
   res.status(200).send(bills);
 };
@@ -268,5 +295,33 @@ export const removeBill: RequestHandler = async (req, res) => {
     return;
   }
 
-  res.status(200).send("OK");
+  const paramsSchema = z
+    .object({
+      billId: z.string({ required_error: "Bill ID is required" }),
+    })
+    .refine(({ billId }) => isValidObjectId(billId), {
+      message: "Invalid bill ID",
+    });
+
+  const paramsParse = paramsSchema.safeParse(req.params);
+
+  if (!paramsParse.success) {
+    res.status(400).send(paramsParse.error.flatten());
+    return;
+  }
+
+  const { billId } = req.params as z.infer<typeof paramsSchema>;
+
+  const existingBill = await Bill.findById(billId);
+
+  if (!existingBill || existingBill.isDeleted) {
+    res.status(400).send({ message: "Bill does not exist" });
+    return;
+  }
+
+  existingBill.isDeleted = true;
+
+  await existingBill.save();
+
+  res.status(200).send(existingBill);
 };
