@@ -315,7 +315,16 @@ interface NotificationBody {
   from: string;
 }
 
-interface BillingFormValues {
+interface BillResponse {
+  _id: string;
+  appointment: AppointmentResponse;
+  notes?: string;
+  price: number;
+  isDeleted: boolean;
+}
+
+interface BillFormValues {
+  appointment: string;
   notes: string;
   price: string;
 }

@@ -2,16 +2,14 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { useGetMe } from "../../hooks/user";
-import {
-  useFinishAppointment,
-  useRemoveAppointment,
-} from "../../hooks/appointment";
+import { useRemoveAppointment } from "../../hooks/appointment";
 import { toast } from "react-toastify";
-import { AiOutlineCheck } from "react-icons/ai";
+import { AiOutlineCheck, AiOutlineLoading3Quarters } from "react-icons/ai";
 import FormInput from "../Form/FormInput";
 import { z } from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAddBill } from "../../hooks/bill";
 
 interface Props {
   appointment: AppointmentResponse;
@@ -22,8 +20,8 @@ interface CancelAppointmentModalProps extends Props {
   setIsCancelModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface FinishAppointmentModalProps extends Props {
-  setIsFinishModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+interface BillAppointmentModalProps extends Props {
+  setIsBillModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const AppointmentDataRow = ({
@@ -31,7 +29,7 @@ export const AppointmentDataRow = ({
   showAllDetails,
 }: Props): JSX.Element => {
   const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
-  const [isFinishModalVisible, setIsFinishModalVisible] = useState(false);
+  const [isBillModalVisible, setIsBillModalVisible] = useState(false);
 
   const { data: me } = useGetMe();
 
@@ -55,7 +53,7 @@ export const AppointmentDataRow = ({
             tabIndex={0}
             className="dropdown-content menu flex-row flex-nowrap p-1 bg-base-100 text-sm border border-neutral rounded-lg shadow-lg translate-x-2 -translate-y-1/4"
           >
-            <li onClick={() => setIsFinishModalVisible(true)}>
+            <li onClick={() => setIsBillModalVisible(true)}>
               <a>
                 <AiOutlineCheck />
               </a>
@@ -138,10 +136,10 @@ export const AppointmentDataRow = ({
         />
       )}
 
-      {isFinishModalVisible && (
-        <FinishAppointmentModal
+      {isBillModalVisible && (
+        <BillAppointmentModal
           appointment={appointment}
-          setIsFinishModalVisible={setIsFinishModalVisible}
+          setIsBillModalVisible={setIsBillModalVisible}
         />
       )}
     </tr>
@@ -201,11 +199,12 @@ const CancelAppointmentModal = ({
   );
 };
 
-const FinishAppointmentModal = ({
+const BillAppointmentModal = ({
   appointment,
-  setIsFinishModalVisible,
-}: FinishAppointmentModalProps) => {
+  setIsBillModalVisible,
+}: BillAppointmentModalProps) => {
   const schema = z.object({
+    appointment: z.string({ required_error: "Appointment is required" }),
     notes: z.string({ required_error: "Notes is required" }),
     price: z.coerce
       .number({ required_error: "Price is required" })
@@ -219,24 +218,39 @@ const FinishAppointmentModal = ({
     watch,
     reset,
     formState: { errors },
-  } = useForm<BillingFormValues>({
+  } = useForm<BillFormValues>({
     defaultValues: {
+      appointment: appointment._id,
       notes: "",
       price: "",
     },
     resolver: zodResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<BillingFormValues> = (data) => {
-    reset();
-    console.log(data);
+  const { mutate: addBill, isLoading: addBillLoading } = useAddBill();
+
+  const onSubmit: SubmitHandler<BillFormValues> = (data) => {
+    addBill(data, {
+      onSuccess: () => {
+        reset();
+        setIsBillModalVisible(false);
+        toast.success("Successfully billed the appointment");
+      },
+      onError: (err) => {
+        toast.error(
+          "message" in err.response.data
+            ? err.response.data.message
+            : err.response.data.fieldErrors[0]
+        );
+      },
+    });
   };
 
   return (
     <td
       className="fixed flex items-center justify-center inset-0 z-50 !bg-black !bg-opacity-25"
       onMouseDown={(e) => {
-        if (e.target === e.currentTarget) setIsFinishModalVisible(false);
+        if (e.target === e.currentTarget) setIsBillModalVisible(false);
       }}
     >
       <section className="flex flex-col gap-2 bg-base-300 max-w-xl w-full rounded-2xl shadow-md px-8 py-10">
@@ -245,7 +259,7 @@ const FinishAppointmentModal = ({
           <div>
             <FiX
               className="w-6 h-6 p-1 text-base-content rounded-full cursor-pointer transition hover:bg-base-200"
-              onClick={() => setIsFinishModalVisible(false)}
+              onClick={() => setIsBillModalVisible(false)}
             />
           </div>
         </header>
@@ -255,7 +269,7 @@ const FinishAppointmentModal = ({
         >
           <textarea
             rows={4}
-            placeholder="Notes"
+            placeholder="Notes (Optional)"
             className={`p-4 border rounded-md outline-none resize-none placeholder:text-sm ${
               watch("notes") && "border-primary"
             }`}
@@ -275,12 +289,15 @@ const FinishAppointmentModal = ({
             <button
               type="button"
               className="btn px-8"
-              onClick={() => setIsFinishModalVisible(false)}
+              onClick={() => setIsBillModalVisible(false)}
             >
               Cancel
             </button>
             <button type="submit" className="btn btn-primary px-8 text-white">
-              Bill
+              Bill{" "}
+              {addBillLoading && (
+                <AiOutlineLoading3Quarters className="w-4 h-4 ml-2 animate-spin" />
+              )}
             </button>
           </div>
         </form>
