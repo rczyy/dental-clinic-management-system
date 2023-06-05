@@ -366,6 +366,7 @@ const EditBillModal = ({ bill, setIsEditModalVisible }: EditBillProps) => {
             placeholder="Notes (Optional)"
             ref={(el) => {
               textAreaRef.current = el;
+              register("notes").ref(el);
               setTextAreaVisible(!!el);
             }}
           />
