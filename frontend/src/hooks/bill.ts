@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addBill, getBills, getDeletedBills } from "../axios/bill";
+import { addBill, editBill, getBills, getDeletedBills } from "../axios/bill";
 
 export const useGetBills = (date?: string) => {
   return useQuery<BillResponse[], ErrorMessageResponse>({
@@ -26,6 +26,20 @@ export const useAddBill = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["bills"]);
       queryClient.invalidateQueries(["appointments"]);
+    },
+  });
+};
+
+export const useEditBill = () => {
+  const queryClient = useQueryClient();
+  return useMutation<
+    BillResponse,
+    ErrorMessageResponse | FormErrorResponse,
+    { billId: string; bill: BillFormValues }
+  >({
+    mutationFn: editBill,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["bills"]);
     },
   });
 };

@@ -33,3 +33,19 @@ export const addBill = async (bill: BillFormValues) => {
   });
   return res.data;
 };
+
+export const editBill = async ({
+  billId,
+  bill,
+}: {
+  billId: string;
+  bill: BillFormValues;
+}) => {
+  const res = await axios.put<BillResponse>(`${URL}/bill/${billId}`, bill, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
+  return res.data;
+};

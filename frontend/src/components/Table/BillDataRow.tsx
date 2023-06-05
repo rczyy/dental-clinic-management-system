@@ -1,6 +1,13 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiEdit2, FiEye, FiMoreVertical, FiX } from "react-icons/fi";
+import { toast } from "react-toastify";
+import { z } from "zod";
+import { useEditBill } from "../../hooks/bill";
+import FormInput from "../Form/FormInput";
 
 type Props = {
   bill: BillResponse;
@@ -8,6 +15,10 @@ type Props = {
 
 type ViewBillProps = Props & {
   setIsViewModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+type EditBillProps = Props & {
+  setIsEditModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const BillDataRow = ({ bill }: Props): JSX.Element => {
@@ -99,6 +110,13 @@ export const BillDataRow = ({ bill }: Props): JSX.Element => {
           setIsViewModalVisible={setIsViewModalVisible}
         />
       )}
+
+      {isEditModalVisible && (
+        <EditBillModal
+          bill={bill}
+          setIsEditModalVisible={setIsEditModalVisible}
+        />
+      )}
     </tr>
   );
 };
@@ -107,6 +125,21 @@ const ViewBillModal = ({
   bill,
   setIsViewModalVisible,
 }: ViewBillProps): JSX.Element => {
+  const [textAreaVisible, setTextAreaVisible] = useState(false);
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "0px";
+
+      if (textAreaRef.current.scrollHeight >= 128) {
+        textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+      } else {
+        textAreaRef.current.style.height = `128px`;
+      }
+    }
+  }, [textAreaVisible, textAreaRef]);
+
   return (
     <td
       className="fixed flex items-center justify-center inset-0 !bg-black z-50 !bg-opacity-25"
@@ -114,7 +147,7 @@ const ViewBillModal = ({
         if (e.target === e.currentTarget) setIsViewModalVisible(false);
       }}
     >
-      <section className="flex flex-col gap-2 bg-base-300 max-w-xl w-full rounded-2xl shadow-md px-8 py-10">
+      <section className="flex flex-col gap-2 bg-base-300 max-w-xl max-h-[40rem] w-full rounded-2xl shadow-md px-8 py-10 overflow-y-auto">
         <header className="flex justify-between items-center mx-2 py-3">
           <h1 className="text-2xl font-bold">Bill details</h1>
           <div>
@@ -192,14 +225,144 @@ const ViewBillModal = ({
                 ₱ {Intl.NumberFormat("en-US").format(bill.price)}
               </td>
             </tr>
-
-            <tr>
-              <th className="font-bold">Notes</th>
-
-              <td>{bill.notes || "-"}</td>
-            </tr>
           </tbody>
         </table>
+
+        <div className="p-4">
+          <h3 className="font-bold mb-2">Notes</h3>
+          <textarea
+            ref={(el) => {
+              textAreaRef.current = el;
+              setTextAreaVisible(!!el);
+            }}
+            className="w-full px-3 py-2 rounded-md outline outline-1 outline-neutral text-sm resize-none"
+            value={bill.notes}
+            rows={1}
+            readOnly
+          />
+        </div>
+      </section>
+    </td>
+  );
+};
+
+const EditBillModal = ({ bill, setIsEditModalVisible }: EditBillProps) => {
+  const schema = z.object({
+    notes: z.string({ required_error: "Notes is required" }),
+    price: z.coerce
+      .number({ required_error: "Price is required" })
+      .positive("Price must be a positive number")
+      .finite("Infinite price are not allowed"),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<BillFormValues>({
+    defaultValues: {
+      notes: bill.notes || "",
+      price: bill.price.toString(),
+    },
+    resolver: zodResolver(schema),
+  });
+
+  const { mutate: editBill, isLoading: editBillLoading } = useEditBill();
+  const [textAreaVisible, setTextAreaVisible] = useState(false);
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const onSubmit: SubmitHandler<BillFormValues> = (data) => {
+    editBill(
+      { billId: bill._id, bill: data },
+      {
+        onSuccess: () => {
+          reset();
+          setIsEditModalVisible(false);
+          toast.success("Successfully updated the bill");
+        },
+        onError: (err) => {
+          toast.error(
+            "message" in err.response.data
+              ? err.response.data.message
+              : err.response.data.fieldErrors[0]
+          );
+        },
+      }
+    );
+  };
+
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "0px";
+
+      if (textAreaRef.current.scrollHeight >= 128) {
+        textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+      } else {
+        textAreaRef.current.style.height = `128px`;
+      }
+    }
+  }, [textAreaVisible, textAreaRef.current, textAreaRef.current?.value]);
+
+  return (
+    <td
+      className="fixed flex items-center justify-center inset-0 z-50 !bg-black !bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsEditModalVisible(false);
+      }}
+    >
+      <section className="flex flex-col gap-2 bg-base-300 max-w-xl max-h-[40rem] w-full rounded-2xl shadow-md px-8 py-10 overflow-y-auto">
+        <header className="flex justify-between items-center mx-2 py-3">
+          <h1 className="text-xl sm:text-2xl font-bold">Edit Bill</h1>
+          <div>
+            <FiX
+              className="w-6 h-6 p-1 text-base-content rounded-full cursor-pointer transition hover:bg-base-200"
+              onClick={() => setIsEditModalVisible(false)}
+            />
+          </div>
+        </header>
+        <form
+          className="flex flex-col mx-2 gap-4"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <textarea
+            {...register("notes")}
+            className={`p-4 outline outline-1 outline-neutral rounded-md resize-none placeholder:text-sm ${
+              watch("notes") && "outline-primary"
+            }`}
+            placeholder="Notes (Optional)"
+            ref={(el) => {
+              textAreaRef.current = el;
+              setTextAreaVisible(!!el);
+            }}
+          />
+
+          <FormInput
+            type="number"
+            label="price"
+            placeholder="Price"
+            value={watch("price")}
+            register={register}
+            error={errors.price && errors.price.message}
+          />
+
+          <div className="flex gap-3 justify-end mx-2 py-3">
+            <button
+              type="button"
+              className="btn px-8"
+              onClick={() => setIsEditModalVisible(false)}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary px-8 text-white">
+              Bill{" "}
+              {editBillLoading && (
+                <AiOutlineLoading3Quarters className="w-4 h-4 ml-2 animate-spin" />
+              )}
+            </button>
+          </div>
+        </form>
       </section>
     </td>
   );
