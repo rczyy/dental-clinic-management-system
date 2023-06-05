@@ -1,9 +1,10 @@
 import { RequestHandler } from "express";
 import { verifyToken } from "../utilities/verifyToken";
 import Service from "../models/service";
-import { Roles, ServiceCategory } from "../constants";
+import { LogModule, LogType, Roles, ServiceCategory } from "../constants";
 import { z } from "zod";
 import { isValidObjectId } from "mongoose";
+import { addLog } from "../utilities/addLog";
 
 export const getServices: RequestHandler = async (_, res) => {
   const services = await Service.find({ isDeleted: false });
@@ -68,7 +69,7 @@ export const addService: RequestHandler = async (req, res) => {
     estimatedTime: z
       .string({ required_error: "Estimated time is required" })
       .regex(/^[0-9]*$/, "Estimated time may only contain numbers"),
-    category: z.nativeEnum(ServiceCategory),
+    category: z.nativeEnum(ServiceCategory)
   });
 
   type body = z.infer<typeof userSchema>;
@@ -86,7 +87,7 @@ export const addService: RequestHandler = async (req, res) => {
 
   if (existingService) {
     const error: FormError = {
-      formErrors: ["Service already exists"],
+      formErrors: ["Service already exists"]
     };
 
     res.status(400).json(error);
@@ -96,8 +97,10 @@ export const addService: RequestHandler = async (req, res) => {
   const service = new Service({
     name,
     estimatedTime,
-    category,
+    category
   });
+
+  await addLog(req.session.uid!, LogModule[4], LogType[0], service);
 
   await service.save();
   res.status(201).json(service);
@@ -129,7 +132,7 @@ export const editService: RequestHandler = async (req, res) => {
       .string()
       .regex(/^[0-9]*$/, "Estimated time may only contain numbers")
       .optional(),
-    category: z.nativeEnum(ServiceCategory).optional(),
+    category: z.nativeEnum(ServiceCategory).optional()
   });
 
   type body = z.infer<typeof userSchema>;
@@ -150,14 +153,15 @@ export const editService: RequestHandler = async (req, res) => {
     return;
   }
 
-  const editedService = await Service.findOneAndUpdate(
-    {
-      _id: service,
-    },
+  const editedService = await Service.findByIdAndUpdate(
+    service,
     {
       name,
       estimatedTime,
-      category,
+      category
+    },
+    {
+      new: true
     }
   );
 
@@ -166,11 +170,10 @@ export const editService: RequestHandler = async (req, res) => {
     res.status(400).json(error);
     return;
   }
+  
+  await addLog(req.session.uid!, LogModule[4], LogType[1], editedService);
 
-  res.status(200).json({
-    _id: editedService._id,
-    message: "Successfully edited the service",
-  });
+  res.status(200).json(service);
 };
 export const recoverService: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -250,8 +253,10 @@ export const removeService: RequestHandler = async (req, res) => {
     return;
   }
 
+  await addLog(req.session.uid!, LogModule[4], LogType[2], deletedService);
+
   res.status(200).json({
     _id: deletedService._id,
-    message: "Succesfully deleted the service",
+    message: "Succesfully deleted the service"
   });
 };

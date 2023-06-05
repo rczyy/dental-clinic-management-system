@@ -18,6 +18,7 @@ import oauthRoute from "./routes/oauth";
 import appointmentRoute from "./routes/appointment";
 import attendanceRoute from "./routes/attendance";
 import dentistScheduleRoute from "./routes/dentistSchedule";
+import log from "./routes/log";
 import notificationRoute from "./routes/notification";
 
 const main = async () => {
@@ -40,8 +41,8 @@ const main = async () => {
       resave: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7,
-        secure: process.env.NODE_ENV === "production",
-      },
+        secure: process.env.NODE_ENV === "production"
+      }
     })
   );
 
@@ -59,6 +60,7 @@ const main = async () => {
   app.use("/appointment", appointmentRoute);
   app.use("/attendance", attendanceRoute);
   app.use("/dentist-schedule", dentistScheduleRoute);
+  app.use("/log", log);
   app.use("/notification", notificationRoute);
 
   app.listen(port, () =>

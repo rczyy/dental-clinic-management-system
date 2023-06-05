@@ -4,6 +4,8 @@ import { z } from "zod";
 import DentistSchedule from "../models/dentistSchedule";
 import Staff from "../models/staff";
 import Dentist from "../models/dentist";
+import { addLog } from "../utilities/addLog";
+import { LogModule, LogType } from "../constants";
 
 export const getDentistSchedule: RequestHandler = async (req, res) => {
   const querySchema = z
@@ -94,6 +96,14 @@ export const editDentistSchedule: RequestHandler = async (req, res) => {
         date,
       });
     })
+  );
+
+  await addLog(
+    req.session.uid!,
+    LogModule[2],
+    LogType[1],
+    newSchedules[0].dentist,
+    "Dentist"
   );
 
   res.status(200).send(newSchedules);

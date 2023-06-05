@@ -77,10 +77,10 @@ export const registerAdmin: RequestHandler = async (req, res) => {
       contactNo: z
         .string({ required_error: "Contact number is required" })
         .min(1, "Contact number cannot be empty")
-        .regex(/(^\+639)\d{9}$/, "Invalid contact number"),
+        .regex(/(^\+639)\d{9}$/, "Invalid contact number")
     })
     .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords doesn't match",
+      message: "Passwords doesn't match"
     });
 
   type body = z.infer<typeof userSchema>;
@@ -103,14 +103,14 @@ export const registerAdmin: RequestHandler = async (req, res) => {
     street,
     email,
     password,
-    contactNo,
+    contactNo
   }: body = req.body;
 
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
     const error: FormError = {
-      formErrors: ["User already exists"],
+      formErrors: ["User already exists"]
     };
 
     res.status(400).json(error);
@@ -123,24 +123,24 @@ export const registerAdmin: RequestHandler = async (req, res) => {
     name: {
       firstName,
       middleName,
-      lastName,
+      lastName
     },
     address: {
       region,
       province,
       city,
       barangay,
-      street,
+      street
     },
     email,
     password: hashedPassword,
     contactNo,
     role: Roles.Admin,
-    verified: true,
+    verified: true
   });
 
   const admin = new Admin({
-    user: user._id,
+    user: user._id
   });
 
   await user.save();
