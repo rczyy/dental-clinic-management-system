@@ -8,14 +8,22 @@ import {
 } from "react-icons/ai";
 import { BiCalendarCheck, BiUserCheck } from "react-icons/bi";
 import { CgUserList } from "react-icons/cg";
+import { useLogStore } from "../../store/logModal";
 
 type Props = {
   logData: LogResponse;
 };
 
 const AuditTrailDataRow = ({ logData }: Props) => {
+  const showModal = useLogStore((state) => state.showLogModal);
+
   return (
-    <tr className="[&>*]:bg-base-300 [&>*]:py-2 [&>*]:px-4 tracking-tight border-b border-base-200 text-xs md:text-sm">
+    <tr
+      className="[&>*]:bg-base-300 [&>*]:hover:bg-base-100 hover:bg-base-100 [&>*]:py-2 [&>*]:px-4 tracking-tight border-b border-base-200 text-xs md:text-sm cursor-pointer"
+      onClick={() => {
+        showModal(logData);
+      }}
+    >
       <td className="hidden" />
       <td>
         <span className="font-semibold">
