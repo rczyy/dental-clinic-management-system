@@ -15,7 +15,7 @@ import { BsPerson, BsHouseDoor } from "react-icons/bs";
 import FormInput from "../components/Form/FormInput";
 import SelectDropdown from "../components/Form/SelectDropdown";
 import { Navigate, useParams } from "react-router-dom";
-import { MdOutlineAddAPhoto } from "react-icons/md";
+import { MdOutlineAddAPhoto, MdOutlineMedicalServices } from "react-icons/md";
 import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import {
@@ -25,6 +25,8 @@ import {
   useLazyGetProvincesQuery,
 } from "../redux/api/address";
 import DisabledFormInput from "../components/Form/DisabledFormInput";
+import { useGetPatientBills } from "../hooks/bill";
+import dayjs from "dayjs";
 
 type EditModalProps = {
   userData: UserResponse;
@@ -123,7 +125,9 @@ const Profile = () => {
   const [isEditAvatarModalVisible, setIsEditAvatarModalVisible] =
     useState(false);
   const { userID } = useParams();
+  const { data: me } = useGetMe();
   const { data: userData, isLoading } = useGetUser(userID || "");
+  const { data: bills } = useGetPatientBills(userID || "");
 
   if (isLoading)
     return (
@@ -178,7 +182,7 @@ const Profile = () => {
               </div>
             </div>
             <div className="px-2 py-4 border-t flex justify-between">
-              <div className="flex flex-col gap-8">
+              <div className="flex flex-col gap-8 w-full">
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-3">
                     <FiMapPin className="text-primary" />
@@ -216,6 +220,74 @@ const Profile = () => {
                     {userData.contactNo}
                   </span>
                 </div>
+                {bills && bills.length > 0 && (
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                      <MdOutlineMedicalServices className="text-primary" />
+                      <span className="font-semibold text-primary">
+                        Services Done
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {bills
+                        .sort((a, b) =>
+                          dayjs(a.createdAt).isBefore(dayjs(b.createdAt))
+                            ? -1
+                            : 1
+                        )
+                        .map((bill) => (
+                          <article className="flex flex-col gap-8 p-4 border rounded-lg">
+                            <header className="flex justify-between items-center">
+                              <div>
+                                <h3 className="font-bold">
+                                  {bill.appointment.service.name}
+                                </h3>
+                                <p className="text-sm text-zinc-400">
+                                  {dayjs(
+                                    bill.appointment.dateTimeFinished
+                                  ).format("MMM DD, YYYY h:mm A")}
+                                </p>
+                              </div>
+                              {me &&
+                                (me.role === "Admin" ||
+                                  me.role === "Manager") && (
+                                  <p className="text-green-600 font-bold">
+                                    ₱{" "}
+                                    {Intl.NumberFormat("en-US").format(
+                                      bill.price
+                                    )}
+                                  </p>
+                                )}
+                            </header>
+                            <div className="flex flex-col gap-2">
+                              <h3 className="font-bold">Performed by:</h3>
+                              <div className="flex items-center gap-3">
+                                <figure className="w-10 h-10 rounded-full overflow-hidden">
+                                  <img
+                                    src={
+                                      bill.appointment.dentist.staff.user.avatar
+                                    }
+                                    alt="Dentist Avatar"
+                                  />
+                                </figure>
+                                <p className="font-semibold">
+                                  Dr.{" "}
+                                  {
+                                    bill.appointment.dentist.staff.user.name
+                                      .firstName
+                                  }{" "}
+                                  {
+                                    bill.appointment.dentist.staff.user.name
+                                      .lastName
+                                  }
+                                </p>
+                              </div>
+                            </div>
+                          </article>
+                        ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -34,15 +34,16 @@ import { MySchedule } from "./pages/MySchedule";
 import { AppointmentList } from "./pages/AppointmentList";
 import { DentistsSchedule } from "./pages/DentistsSchedule";
 import Dashboard from "./pages/Dashboard";
+import { BillList } from "./pages/BillList";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: false,
-      staleTime: 30000
-    }
-  }
+      staleTime: 30000,
+    },
+  },
 });
 
 const router = createBrowserRouter([
@@ -54,91 +55,91 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Landing />
+        element: <Landing />,
       },
       {
         path: "login",
-        element: <Login />
+        element: <Login />,
       },
       {
         path: "signup",
-        element: <Signup />
+        element: <Signup />,
       },
       {
         path: "profile/:userID",
-        element: <Profile />
+        element: <Profile />,
       },
       {
         path: "forgot-password",
-        element: <ForgotPassword />
+        element: <ForgotPassword />,
       },
       {
         path: "reset-password",
-        element: <ResetPassword />
+        element: <ResetPassword />,
       },
       {
         path: "verify-email",
-        element: <VerifyEmail />
+        element: <VerifyEmail />,
       },
       {
         path: "patients",
-        element: <PatientList />
+        element: <PatientList />,
       },
       {
         path: "staff",
-        element: <StaffList />
+        element: <StaffList />,
       },
       {
         path: "services",
-        element: <ServiceList />
+        element: <ServiceList />,
       },
       {
         path: "staff/register",
-        element: <RegisterStaff />
+        element: <RegisterStaff />,
       },
       {
         path: "patient/register",
-        element: <RegisterPatient />
+        element: <RegisterPatient />,
       },
       {
         path: "services/add",
-        element: <AddService />
+        element: <AddService />,
       },
       {
         path: "set-appointment",
-        element: <SetAppointment />
+        element: <SetAppointment />,
       },
       {
         path: "set-appointment/staff",
-        element: <StaffSetAppointment />
+        element: <StaffSetAppointment />,
       },
       {
         path: "set-appointment/success",
-        element: <AppointmentSuccess />
+        element: <AppointmentSuccess />,
       },
       {
         path: "my-appointments",
-        element: <MyAppointments />
+        element: <MyAppointments />,
       },
       {
         path: "my-schedule",
-        element: <MySchedule />
+        element: <MySchedule />,
       },
       {
         path: "appointments",
-        element: <AppointmentList />
+        element: <AppointmentList />,
       },
       {
         path: "dentists-schedule",
-        element: <DentistsSchedule />
+        element: <DentistsSchedule />,
       },
       {
         path: "attendance",
-        element: <MyAttendance />
+        element: <MyAttendance />,
       },
       {
         path: "staff-attendance",
-        element: <StaffAttendance />
+        element: <StaffAttendance />,
       },
       {
         path: "dashboard",
@@ -146,10 +147,14 @@ const router = createBrowserRouter([
       },
       {
         path: "audit-trail",
-        element: <AuditTrail />
-      }
-    ]
-  }
+        element: <AuditTrail />,
+      },
+      {
+        path: "bills",
+        element: <BillList />,
+      },
+    ],
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
