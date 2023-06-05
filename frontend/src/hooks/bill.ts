@@ -4,6 +4,7 @@ import {
   editBill,
   getBills,
   getDeletedBills,
+  getPatientBills,
   recoverBill,
   removeBill,
 } from "../axios/bill";
@@ -19,6 +20,13 @@ export const useGetDeletedBills = (date?: string) => {
   return useQuery<BillResponse[], ErrorMessageResponse>({
     queryKey: ["deleted-bills"],
     queryFn: () => getDeletedBills(date),
+  });
+};
+
+export const useGetPatientBills = (userId: string) => {
+  return useQuery<BillResponse[], ErrorMessageResponse>({
+    queryKey: ["bills", userId],
+    queryFn: () => getPatientBills(userId),
   });
 };
 
