@@ -21,6 +21,7 @@ import {
   useLazyGetPatientAppointmentsQuery,
 } from "../redux/api/appointment";
 import { useGetDentistSchedule } from "../hooks/dentistSchedule";
+import { useAddNotification } from "../hooks/notification";
 
 type Props = {};
 
@@ -53,6 +54,8 @@ const SetAppointment = (props: Props) => {
     useLazyGetPatientAppointmentsQuery();
 
   const { mutate, isLoading: addAppointmentLoading } = useAddAppointment();
+  const { mutate: addNotification } = useAddNotification();
+
   const [timeOptions, setTimeOptions] = useState([
     { value: "8:00 AM", label: "8:00 AM", isDisabled: false },
     { value: "8:30 AM", label: "8:30 AM", isDisabled: false },
@@ -286,6 +289,17 @@ const SetAppointment = (props: Props) => {
 
     mutate(appointmentData, {
       onSuccess: () => {
+        const scheduledDate = dayjs(dateTimeScheduled).format("dddd, DD MMM");
+        const scheduledTime = dayjs(dateTimeScheduled).format("hh:mm A");
+        const appointmentNotification = `scheduled an appointment for ${scheduledDate} at ${scheduledTime}.`;
+
+        addNotification({
+          description: appointmentNotification,
+          type: "Appointment",
+          to: dentist,
+          from: userData?._id || "",
+        });
+
         navigate("success");
       },
     });

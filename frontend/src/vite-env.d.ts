@@ -297,6 +297,7 @@ interface DentistScheduleResponse {
   date: Date;
 }
 
+
 interface LogResponse {
   _id?: string;
   date: string;
@@ -312,4 +313,22 @@ interface LogResponse {
     role: string;
   };
   action: string;
+}
+
+interface NotificationResponse {
+  _id: string;
+  description: string;
+  type: "Appointment";
+  isRead: boolean;
+  to: UserResponse;
+  from: UserResponse;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface NotificationBody {
+  description: string;
+  type: "Appointment";
+  to: string;
+  from: string;
 }

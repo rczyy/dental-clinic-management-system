@@ -148,11 +148,24 @@ declare global {
     dentist: Types.ObjectId;
     date: Date;
   }
+
   interface Log {
     date: Dayjs;
     module: string;
     user: Types.ObjectId;
     type: string;
     action: string;
+  }
+  
+  interface Notification {
+    _id: Types.ObjectId;
+    description: string;
+    type: "Appointment";
+    isRead: boolean;
+    to: Types.ObjectId;
+    from: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+
   }
 }

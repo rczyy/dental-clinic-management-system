@@ -154,10 +154,8 @@ export const editAttendance: RequestHandler = async (req, res) => {
 
   const { timeIn, timeOut }: body = req.body;
 
-  if (timeOut && timeIn > timeOut) {
-    const error: FormError = {
-      formErrors: ["Time Out must be later than Time In"]
-    };
+  if (timeOut && dayjs(`${timeIn}`, "hh:mm A") > dayjs(`${timeOut}`, "hh:mm A")) {
+    const error: ErrorMessage = { message: "Time Out must be later than Time In" };
 
     res.status(401).json(error);
     return;

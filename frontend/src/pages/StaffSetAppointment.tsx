@@ -23,6 +23,7 @@ import {
 import { useGetDentistSchedule } from "../hooks/dentistSchedule";
 import { useGetPatientNames } from "../hooks/patient";
 import { PatientComponent } from "../components/Appointment/PatientComponent";
+import { addNotification } from "../axios/notification";
 
 type Props = {};
 
@@ -302,6 +303,17 @@ const StaffSetAppointment = (props: Props) => {
 
     mutate(appointmentData, {
       onSuccess: () => {
+        const scheduledDate = dayjs(dateTimeScheduled).format("dddd, DD MMM");
+        const scheduledTime = dayjs(dateTimeScheduled).format("hh:mm A");
+        const appointmentNotification = `scheduled an appointment for ${scheduledDate} at ${scheduledTime}.`;
+
+        addNotification({
+          description: appointmentNotification,
+          type: "Appointment",
+          to: patient,
+          from: dentist,
+        });
+
         navigate("/set-appointment/success");
       },
     });
