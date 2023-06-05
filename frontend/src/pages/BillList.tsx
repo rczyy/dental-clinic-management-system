@@ -111,8 +111,11 @@ export const BillList = (_: Props): JSX.Element => {
         </div>
         <div className="text-end">
           <p className="text-zinc-400 text-sm">Total Sales</p>
-          <p className="text-3xl font-semibold">
-            ₱ {bills?.reduce((prev, curr) => prev + curr.price, 0)}
+          <p className="text-3xl font-bold">
+            ₱{" "}
+            {Intl.NumberFormat("en-US").format(
+              bills?.reduce((prev, curr) => prev + curr.price, 0) || 0
+            )}
           </p>
         </div>
       </header>
