@@ -22,7 +22,55 @@ export const getBills: RequestHandler = async (req, res) => {
     return;
   }
 
-  const bills = await Bill.find({ isDeleted: false });
+  const querySchema = z.object({
+    date: z.coerce.date().optional(),
+  });
+
+  const queryParse = querySchema.safeParse(req.query);
+
+  if (!queryParse.success) {
+    res.status(400).send(queryParse.error.flatten());
+    return;
+  }
+
+  const { date } = req.query;
+
+  const bills = await Bill.find({
+    ...(date && {
+      createdAt: {
+        $gte: dayjs(date.toString()),
+        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+      },
+    }),
+    isDeleted: false,
+  })
+    .populate({
+      path: "appointment",
+      populate: {
+        path: "dentist",
+        populate: {
+          path: "staff",
+          populate: {
+            path: "user",
+          },
+        },
+      },
+    })
+    .populate({
+      path: "appointment",
+      populate: {
+        path: "patient",
+        populate: {
+          path: "user",
+        },
+      },
+    })
+    .populate({
+      path: "appointment",
+      populate: {
+        path: "service",
+      },
+    });
 
   res.status(200).send(bills);
 };
@@ -42,7 +90,28 @@ export const getDeletedBills: RequestHandler = async (req, res) => {
     return;
   }
 
-  const bills = await Bill.find({ isDeleted: true });
+  const querySchema = z.object({
+    date: z.coerce.date().optional(),
+  });
+
+  const queryParse = querySchema.safeParse(req.query);
+
+  if (!queryParse.success) {
+    res.status(400).send(queryParse.error.flatten());
+    return;
+  }
+
+  const { date } = req.query;
+
+  const bills = await Bill.find({
+    ...(date && {
+      createdAt: {
+        $gte: dayjs(date.toString()),
+        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+      },
+    }),
+    isDeleted: true,
+  });
 
   res.status(200).send(bills);
 };
