@@ -204,7 +204,53 @@ export const editBill: RequestHandler = async (req, res) => {
     return;
   }
 
-  res.status(200).send("OK");
+  const paramsSchema = z
+    .object({
+      billId: z.string({ required_error: "Bill ID is required" }),
+    })
+    .refine(({ billId }) => isValidObjectId(billId), {
+      message: "Invalid bill ID",
+    });
+
+  const paramsParse = paramsSchema.safeParse(req.params);
+
+  if (!paramsParse.success) {
+    res.status(400).send(paramsParse.error.flatten());
+    return;
+  }
+
+  const schema = z.object({
+    notes: z.string().optional(),
+    price: z.coerce
+      .number()
+      .positive("Price must be a positive number")
+      .finite("Infinite price are not allowed")
+      .optional(),
+  });
+
+  const parse = schema.safeParse(req.body);
+
+  if (!parse.success) {
+    res.status(400).send(parse.error.flatten());
+    return;
+  }
+
+  const { billId } = req.params as z.infer<typeof paramsSchema>;
+  const { notes, price } = req.body as z.infer<typeof schema>;
+
+  const existingBill = await Bill.findById(billId);
+
+  if (!existingBill) {
+    res.status(400).send({ message: "Bill does not exist" });
+    return;
+  }
+
+  existingBill.notes = notes || existingBill.notes || "";
+  existingBill.price = price || existingBill.price;
+
+  await existingBill.save();
+
+  res.status(200).send(existingBill);
 };
 
 export const removeBill: RequestHandler = async (req, res) => {
