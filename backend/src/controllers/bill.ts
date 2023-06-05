@@ -267,7 +267,7 @@ export const editBill: RequestHandler = async (req, res) => {
 
   const existingBill = await Bill.findById(billId);
 
-  if (!existingBill) {
+  if (!existingBill || existingBill.isDeleted) {
     res.status(400).send({ message: "Bill does not exist" });
     return;
   }
