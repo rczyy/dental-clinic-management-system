@@ -4,6 +4,7 @@ import {
   editBill,
   getBills,
   getDeletedBills,
+  recoverBill,
   removeBill,
 } from "../axios/bill";
 
@@ -46,6 +47,21 @@ export const useEditBill = () => {
     mutationFn: editBill,
     onSuccess: () => {
       queryClient.invalidateQueries(["bills"]);
+    },
+  });
+};
+
+export const useRecoverBill = () => {
+  const queryClient = useQueryClient();
+  return useMutation<
+    BillResponse,
+    ErrorMessageResponse | FormErrorResponse,
+    string
+  >({
+    mutationFn: recoverBill,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["bills"]);
+      queryClient.invalidateQueries(["deleted-bills"]);
     },
   });
 };

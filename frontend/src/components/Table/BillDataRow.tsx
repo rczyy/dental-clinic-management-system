@@ -6,9 +6,10 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiEdit2, FiEye, FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { z } from "zod";
-import { useEditBill, useRemoveBill } from "../../hooks/bill";
+import { useEditBill, useRecoverBill, useRemoveBill } from "../../hooks/bill";
 import FormInput from "../Form/FormInput";
 import { useGetMe } from "../../hooks/user";
+import { IoArrowUndoOutline } from "react-icons/io5";
 
 type Props = {
   bill: BillResponse;
@@ -26,12 +27,17 @@ type RemoveBillProps = Props & {
   setIsRemoveModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+type RecoverBillProps = Props & {
+  setIsRecoverModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
 export const BillDataRow = ({ bill }: Props): JSX.Element => {
   const { data: me } = useGetMe();
 
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isRemoveModalVisible, setIsRemoveModalVisible] = useState(false);
+  const [isRecoverModalVisible, setIsRecoverModalVisible] = useState(false);
 
   return (
     <tr
@@ -57,7 +63,7 @@ export const BillDataRow = ({ bill }: Props): JSX.Element => {
               </a>
             </li>
 
-            {!bill.isDeleted && (
+            {!bill.isDeleted ? (
               <>
                 <li onClick={() => setIsEditModalVisible(true)}>
                   <a>
@@ -73,6 +79,15 @@ export const BillDataRow = ({ bill }: Props): JSX.Element => {
                   </li>
                 )}
               </>
+            ) : (
+              me &&
+              (me.role === "Admin" || me.role === "Manager") && (
+                <li onClick={() => setIsRecoverModalVisible(true)}>
+                  <a>
+                    <IoArrowUndoOutline />
+                  </a>
+                </li>
+              )
             )}
           </ul>
         </div>
@@ -147,6 +162,13 @@ export const BillDataRow = ({ bill }: Props): JSX.Element => {
         <RemoveBillModal
           bill={bill}
           setIsRemoveModalVisible={setIsRemoveModalVisible}
+        />
+      )}
+
+      {isRecoverModalVisible && (
+        <RecoverBillModal
+          bill={bill}
+          setIsRecoverModalVisible={setIsRecoverModalVisible}
         />
       )}
     </tr>
@@ -452,6 +474,70 @@ const RemoveBillModal = ({
             onClick={handleDelete}
           >
             Yes
+          </button>
+        </div>
+      </section>
+    </td>
+  );
+};
+
+const RecoverBillModal = ({
+  bill,
+  setIsRecoverModalVisible,
+}: RecoverBillProps) => {
+  const { mutate: recoverBill, isLoading } = useRecoverBill();
+  const handleRecover = () => {
+    recoverBill(bill._id, {
+      onSuccess: () => {
+        toast.success("Successfully recovered the bill");
+        setIsRecoverModalVisible(false);
+      },
+      onError: (err) =>
+        toast.error(
+          "message" in err.response.data
+            ? err.response.data.message
+            : err.response.data.fieldErrors[0]
+        ),
+    });
+  };
+  return (
+    <td
+      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsRecoverModalVisible(false);
+      }}
+    >
+      <section className="flex flex-col gap-2 bg-base-300 max-w-md w-full rounded-2xl shadow-md px-8 py-10">
+        <header className="flex justify-between items-center mx-2 py-3">
+          <h1 className="text-2xl font-bold">Recover Bill</h1>
+          <div>
+            <FiX
+              className="w-6 h-6 p-1 text-base-content rounded-full cursor-pointer transition hover:bg-base-200"
+              onClick={() => setIsRecoverModalVisible(false)}
+            />
+          </div>
+        </header>
+        <div className="flex flex-col mx-2 py-3">
+          <p>You are about to recover a bill.</p>
+          <p>Are you sure?</p>
+        </div>
+        <div className="flex gap-3 justify-end mx-2 py-3">
+          <button
+            className="btn px-8"
+            onClick={() => setIsRecoverModalVisible(false)}
+          >
+            No
+          </button>
+          <button
+            className="btn bg-green-600 gap-4 px-8 text-white hover:bg-green-700"
+            onClick={() => {
+              handleRecover();
+            }}
+          >
+            Yes{" "}
+            {isLoading && (
+              <AiOutlineLoading3Quarters className="text-lg animate-spin" />
+            )}
           </button>
         </div>
       </section>

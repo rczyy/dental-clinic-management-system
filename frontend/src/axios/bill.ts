@@ -55,6 +55,20 @@ export const editBill = async ({
   return res.data;
 };
 
+export const recoverBill = async (billId: string) => {
+  const res = await axios.put<BillResponse>(
+    `${URL}/bill/recover/${billId}`,
+    undefined,
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+      },
+    }
+  );
+  return res.data;
+};
+
 export const removeBill = async (billId: string) => {
   const res = await axios.delete<BillResponse>(`${URL}/bill/${billId}`, {
     withCredentials: true,
