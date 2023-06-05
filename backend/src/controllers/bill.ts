@@ -6,6 +6,7 @@ import Appointment from "../models/appointment";
 import { z } from "zod";
 import { isValidObjectId } from "mongoose";
 import dayjs from "dayjs";
+import Patient from "../models/patient";
 
 export const getBills: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -139,6 +140,105 @@ export const getDeletedBills: RequestHandler = async (req, res) => {
         path: "service",
       },
     });
+
+  res.status(200).send(bills);
+};
+
+export const getPatientBills: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (!token.role) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const paramsSchema = z
+    .object({
+      userId: z.string({ required_error: "User ID is required" }),
+    })
+    .refine(({ userId }) => isValidObjectId(userId), {
+      message: "Invalid user ID",
+    });
+
+  const paramsParse = paramsSchema.safeParse(req.params);
+
+  if (!paramsParse.success) {
+    res.status(400).send(paramsParse.error.flatten());
+    return;
+  }
+
+  const schema = z.object({
+    notes: z.string().optional(),
+    price: z.coerce
+      .number()
+      .positive("Price must be a positive number")
+      .finite("Infinite price are not allowed")
+      .optional(),
+  });
+
+  const parse = schema.safeParse(req.body);
+
+  if (!parse.success) {
+    res.status(400).send(parse.error.flatten());
+    return;
+  }
+
+  const { userId } = req.params as z.infer<typeof paramsSchema>;
+
+  const existingPatient = await Patient.findOne({ user: userId });
+
+  if (!existingPatient) {
+    res.status(400).send({ message: "Patient does not exist" });
+    return;
+  }
+
+  const patientFinishedAppointments = await Appointment.find({
+    patient: existingPatient._id,
+    isFinished: true,
+  });
+
+  const bills = await Promise.all(
+    patientFinishedAppointments.map(
+      async (appointment) =>
+        await Bill.findOne({
+          appointment: appointment._id,
+        })
+          .populate({
+            path: "appointment",
+            populate: {
+              path: "dentist",
+              populate: {
+                path: "staff",
+                populate: {
+                  path: "user",
+                },
+              },
+            },
+          })
+          .populate({
+            path: "appointment",
+            populate: {
+              path: "patient",
+              populate: {
+                path: "user",
+              },
+            },
+          })
+          .populate({
+            path: "appointment",
+            populate: {
+              path: "service",
+            },
+          })
+    )
+  );
 
   res.status(200).send(bills);
 };

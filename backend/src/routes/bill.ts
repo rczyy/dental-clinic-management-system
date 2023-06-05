@@ -5,6 +5,7 @@ import {
   editBill,
   getBills,
   getDeletedBills,
+  getPatientBills,
   recoverBill,
   removeBill,
 } from "../controllers/bill";
@@ -13,7 +14,8 @@ const router = Router();
 
 router
   .get("/", checkAuth, getBills)
-  .get("/deleted", checkAuth, getDeletedBills);
+  .get("/deleted", checkAuth, getDeletedBills)
+  .get("/:userId", checkAuth, getPatientBills);
 router.post("/", checkAuth, addBill);
 router.put("/:billId", checkAuth, editBill);
 router.put("/recover/:billId", checkAuth, recoverBill);
