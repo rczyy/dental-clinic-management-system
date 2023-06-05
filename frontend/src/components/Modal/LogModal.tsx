@@ -43,7 +43,7 @@ export const LogModal = () => {
           />
         </div>
         <table className="text-left text-sm">
-          <tbody className="[&>*]:border-b border-base-200 [&>*>*]:pr-2 [&>*>*]:py-2">
+          <tbody className="[&>*]:border-b [&>*]:border-base-200 [&>*>*]:pr-2 [&>*>*]:py-2">
             <tr>
               <th>Module</th>
 

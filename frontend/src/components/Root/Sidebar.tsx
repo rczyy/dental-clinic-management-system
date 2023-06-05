@@ -11,7 +11,7 @@ import {MdOutlineSpaceDashboard} from "react-icons/md"
 import { Link } from "react-router-dom";
 import { useAdminStore } from "../../store/admin";
 import { useGetMe } from "../../hooks/user";
-import { GrDocumentText } from "react-icons/gr";
+import { HiOutlineDocumentText } from "react-icons/hi";
 
 type SidebarItemProps = {
   name: string;
@@ -93,7 +93,7 @@ const Sidebar = () => {
         data?.role === "Manager") && (
         <SidebarItem
           name="Audit trail"
-          Icon={GrDocumentText}
+          Icon={HiOutlineDocumentText}
           route="/audit-trail"
         />
       )}
