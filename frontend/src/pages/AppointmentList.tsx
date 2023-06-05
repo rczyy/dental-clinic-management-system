@@ -151,7 +151,7 @@ export const AppointmentList = (_: Props): JSX.Element => {
               ) : (
                 <tr className="[&>*]:bg-transparent">
                   <td
-                    colSpan={5}
+                    colSpan={7}
                     className="py-8 text-2xl text-center font-bold"
                   >
                     No appointments to show
