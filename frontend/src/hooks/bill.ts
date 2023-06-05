@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addBill, getBills, getDeletedBills } from "../axios/bill";
 
-export const useGetBills = () => {
+export const useGetBills = (date?: string) => {
   return useQuery<BillResponse[], ErrorMessageResponse>({
     queryKey: ["bills"],
-    queryFn: getBills,
+    queryFn: () => getBills(date),
   });
 };
 

@@ -321,6 +321,8 @@ interface BillResponse {
   notes?: string;
   price: number;
   isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface BillFormValues {

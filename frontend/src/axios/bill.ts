@@ -2,8 +2,10 @@ import axios from "axios";
 
 const URL = import.meta.env.VITE_AXIOS_BASE_URL;
 
-export const getBills = async () => {
-  const res = await axios.get<BillResponse[]>(`${URL}/bill`, {
+export const getBills = async (date?: string) => {
+  const searchParams = new URLSearchParams({ ...(date && { date }) });
+
+  const res = await axios.get<BillResponse[]>(`${URL}/bill?${searchParams}`, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
