@@ -3,11 +3,12 @@ import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { FiEdit2, FiEye, FiMoreVertical, FiX } from "react-icons/fi";
+import { FiEdit2, FiEye, FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { z } from "zod";
-import { useEditBill } from "../../hooks/bill";
+import { useEditBill, useRemoveBill } from "../../hooks/bill";
 import FormInput from "../Form/FormInput";
+import { useGetMe } from "../../hooks/user";
 
 type Props = {
   bill: BillResponse;
@@ -21,12 +22,23 @@ type EditBillProps = Props & {
   setIsEditModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+type RemoveBillProps = Props & {
+  setIsRemoveModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
 export const BillDataRow = ({ bill }: Props): JSX.Element => {
+  const { data: me } = useGetMe();
+
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isRemoveModalVisible, setIsRemoveModalVisible] = useState(false);
 
   return (
-    <tr className="[&>*]:bg-transparent">
+    <tr
+      className={`${
+        bill.isDeleted ? "[&>*]:bg-red-300/75" : "[&>*]:bg-transparent"
+      } transition tracking-tight`}
+    >
       <td className="w-10 p-1.5">
         <div className="flex dropdown dropdown-right">
           <label
@@ -44,11 +56,24 @@ export const BillDataRow = ({ bill }: Props): JSX.Element => {
                 <FiEye />
               </a>
             </li>
-            <li onClick={() => setIsEditModalVisible(true)}>
-              <a>
-                <FiEdit2 />
-              </a>
-            </li>
+
+            {!bill.isDeleted && (
+              <>
+                <li onClick={() => setIsEditModalVisible(true)}>
+                  <a>
+                    <FiEdit2 />
+                  </a>
+                </li>
+
+                {me && (me.role === "Admin" || me.role === "Manager") && (
+                  <li onClick={() => setIsRemoveModalVisible(true)}>
+                    <a>
+                      <FiTrash />
+                    </a>
+                  </li>
+                )}
+              </>
+            )}
           </ul>
         </div>
       </td>
@@ -64,7 +89,7 @@ export const BillDataRow = ({ bill }: Props): JSX.Element => {
         </div>
       </td>
 
-      <td className="font-semibold text-xl text-center text-green-600">
+      <td className="font-bold text-lg text-center text-green-600">
         ₱ {Intl.NumberFormat("en-US").format(bill.price)}
       </td>
 
@@ -115,6 +140,13 @@ export const BillDataRow = ({ bill }: Props): JSX.Element => {
         <EditBillModal
           bill={bill}
           setIsEditModalVisible={setIsEditModalVisible}
+        />
+      )}
+
+      {isRemoveModalVisible && (
+        <RemoveBillModal
+          bill={bill}
+          setIsRemoveModalVisible={setIsRemoveModalVisible}
         />
       )}
     </tr>
@@ -363,6 +395,64 @@ const EditBillModal = ({ bill, setIsEditModalVisible }: EditBillProps) => {
             </button>
           </div>
         </form>
+      </section>
+    </td>
+  );
+};
+
+const RemoveBillModal = ({
+  bill,
+  setIsRemoveModalVisible,
+}: RemoveBillProps) => {
+  const { mutate: removeBill } = useRemoveBill();
+
+  const handleDelete = () => {
+    removeBill(bill._id, {
+      onSuccess: () => setIsRemoveModalVisible(false),
+      onError: (err) =>
+        toast.error(
+          "message" in err.response.data
+            ? err.response.data.message
+            : err.response.data.fieldErrors[0]
+        ),
+    });
+  };
+
+  return (
+    <td
+      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsRemoveModalVisible(false);
+      }}
+    >
+      <section className="flex flex-col gap-2 bg-base-300 max-w-md w-full rounded-2xl shadow-md px-8 py-10">
+        <header className="flex justify-between items-center mx-2 py-3">
+          <h1 className="text-2xl font-bold">Remove Bill</h1>
+          <div>
+            <FiX
+              className="w-6 h-6 p-1 text-base-content rounded-full cursor-pointer transition hover:bg-base-200"
+              onClick={() => setIsRemoveModalVisible(false)}
+            />
+          </div>
+        </header>
+        <div className="flex flex-col mx-2 py-3">
+          <p>You are about to remove this bill.</p>
+          <p>Are you sure?</p>
+        </div>
+        <div className="flex gap-3 justify-end mx-2 py-3">
+          <button
+            className="btn px-8"
+            onClick={() => setIsRemoveModalVisible(false)}
+          >
+            No
+          </button>
+          <button
+            className="btn btn-error px-8 text-white hover:bg-red-700"
+            onClick={handleDelete}
+          >
+            Yes
+          </button>
+        </div>
       </section>
     </td>
   );

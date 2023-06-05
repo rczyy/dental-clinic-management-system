@@ -14,13 +14,18 @@ export const getBills = async (date?: string) => {
   return res.data;
 };
 
-export const getDeletedBills = async () => {
-  const res = await axios.get<BillResponse[]>(`${URL}/bill/deleted`, {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
-    },
-  });
+export const getDeletedBills = async (date?: string) => {
+  const searchParams = new URLSearchParams({ ...(date && { date }) });
+
+  const res = await axios.get<BillResponse[]>(
+    `${URL}/bill/deleted?${searchParams}`,
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+      },
+    }
+  );
   return res.data;
 };
 
@@ -42,6 +47,16 @@ export const editBill = async ({
   bill: BillFormValues;
 }) => {
   const res = await axios.put<BillResponse>(`${URL}/bill/${billId}`, bill, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
+  return res.data;
+};
+
+export const removeBill = async (billId: string) => {
+  const res = await axios.delete<BillResponse>(`${URL}/bill/${billId}`, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,

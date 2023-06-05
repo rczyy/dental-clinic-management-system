@@ -1,5 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addBill, editBill, getBills, getDeletedBills } from "../axios/bill";
+import {
+  addBill,
+  editBill,
+  getBills,
+  getDeletedBills,
+  removeBill,
+} from "../axios/bill";
 
 export const useGetBills = (date?: string) => {
   return useQuery<BillResponse[], ErrorMessageResponse>({
@@ -8,10 +14,10 @@ export const useGetBills = (date?: string) => {
   });
 };
 
-export const useGetDeletedBills = () => {
+export const useGetDeletedBills = (date?: string) => {
   return useQuery<BillResponse[], ErrorMessageResponse>({
     queryKey: ["deleted-bills"],
-    queryFn: getDeletedBills,
+    queryFn: () => getDeletedBills(date),
   });
 };
 
@@ -40,6 +46,21 @@ export const useEditBill = () => {
     mutationFn: editBill,
     onSuccess: () => {
       queryClient.invalidateQueries(["bills"]);
+    },
+  });
+};
+
+export const useRemoveBill = () => {
+  const queryClient = useQueryClient();
+  return useMutation<
+    BillResponse,
+    ErrorMessageResponse | FormErrorResponse,
+    string
+  >({
+    mutationFn: removeBill,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["bills"]);
+      queryClient.invalidateQueries(["deleted-bills"]);
     },
   });
 };
