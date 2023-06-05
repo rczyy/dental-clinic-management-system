@@ -576,62 +576,6 @@ export const editAppointment: RequestHandler = async (req, res) => {
   });
 };
 
-export const finishAppointment: RequestHandler = async (req, res) => {
-  const token = verifyToken(req.headers.authorization);
-
-  if ("message" in token) {
-    const error: ErrorMessage = { message: token.message };
-    res.status(401).json(error);
-    return;
-  }
-
-  if (token.role === Roles.Patient) {
-    const error: ErrorMessage = { message: "Unauthorized to do this" };
-    res.status(401).json(error);
-    return;
-  }
-
-  const { appointmentId } = req.params;
-
-  if (!isValidObjectId(appointmentId)) {
-    const error: ErrorMessage = { message: "Invalid appointment ID" };
-    res.status(400).json(error);
-    return;
-  }
-
-  const existingAppointment = await Appointment.findById(appointmentId);
-
-  if (!existingAppointment) {
-    const error: ErrorMessage = { message: "Appointment does not exist" };
-    res.status(400).json(error);
-    return;
-  }
-
-  if (existingAppointment.isFinished) {
-    const error: ErrorMessage = { message: "Appointment is already finished" };
-    res.status(400).json(error);
-    return;
-  }
-
-  if (
-    new Date(existingAppointment.dateTimeScheduled).getTime() >
-    new Date().getTime()
-  ) {
-    const error: ErrorMessage = {
-      message: "Can't end an appointment that hasn't been started",
-    };
-    res.status(400).json(error);
-    return;
-  }
-
-  existingAppointment.dateTimeFinished = new Date();
-  existingAppointment.isFinished = true;
-
-  await existingAppointment.save();
-
-  res.status(200).send(existingAppointment);
-};
-
 export const removeAppointment: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
