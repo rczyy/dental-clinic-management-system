@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { useGetMe } from "../../hooks/user";
 import { useRemoveAppointment } from "../../hooks/appointment";
@@ -228,6 +228,8 @@ const BillAppointmentModal = ({
   });
 
   const { mutate: addBill, isLoading: addBillLoading } = useAddBill();
+  const [textAreaVisible, setTextAreaVisible] = useState(false);
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const onSubmit: SubmitHandler<BillFormValues> = (data) => {
     addBill(data, {
@@ -246,6 +248,18 @@ const BillAppointmentModal = ({
     });
   };
 
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "0px";
+
+      if (textAreaRef.current.scrollHeight >= 128) {
+        textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+      } else {
+        textAreaRef.current.style.height = `128px`;
+      }
+    }
+  }, [textAreaVisible, textAreaRef.current, textAreaRef.current?.value]);
+
   return (
     <td
       className="fixed flex items-center justify-center inset-0 z-50 !bg-black !bg-opacity-25"
@@ -253,7 +267,7 @@ const BillAppointmentModal = ({
         if (e.target === e.currentTarget) setIsBillModalVisible(false);
       }}
     >
-      <section className="flex flex-col gap-2 bg-base-300 max-w-xl w-full rounded-2xl shadow-md px-8 py-10">
+      <section className="flex flex-col gap-2 bg-base-300 max-w-xl max-h-[40rem] w-full rounded-2xl shadow-md px-8 py-10 overflow-y-auto">
         <header className="flex justify-between items-center mx-2 py-3">
           <h1 className="text-xl sm:text-2xl font-bold">Bill Appointment</h1>
           <div>
@@ -268,12 +282,15 @@ const BillAppointmentModal = ({
           onSubmit={handleSubmit(onSubmit)}
         >
           <textarea
-            rows={4}
-            placeholder="Notes (Optional)"
-            className={`p-4 border rounded-md outline-none resize-none placeholder:text-sm ${
-              watch("notes") && "border-primary"
-            }`}
             {...register("notes")}
+            className={`p-4 outline outline-1 outline-neutral rounded-md resize-none placeholder:text-sm ${
+              watch("notes") && "outline-primary"
+            }`}
+            placeholder="Notes (Optional)"
+            ref={(el) => {
+              textAreaRef.current = el;
+              setTextAreaVisible(!!el);
+            }}
           />
 
           <FormInput
