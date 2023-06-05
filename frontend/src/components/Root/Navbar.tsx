@@ -163,14 +163,21 @@ const Navbar = (props: Props) => {
                   <h3 className="px-4 pt-4 text-2xl font-bold">
                     Notifications
                   </h3>
-                  {notifications?.map((notification) => (
-                    <li>
-                      <NotificationItem
-                        key={notification._id}
-                        notification={notification}
-                      />
-                    </li>
-                  ))}
+                  {notifications &&
+                    (notifications.length > 0 ? (
+                      notifications?.map((notification) => (
+                        <li>
+                          <NotificationItem
+                            key={notification._id}
+                            notification={notification}
+                          />
+                        </li>
+                      ))
+                    ) : (
+                      <li className="mx-auto p-4 text-lg text-zinc-400">
+                        No notifications for today
+                      </li>
+                    ))}
                 </ul>
               </div>
             </div>
