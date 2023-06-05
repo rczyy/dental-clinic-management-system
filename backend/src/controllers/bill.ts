@@ -2,8 +2,10 @@ import { RequestHandler } from "express";
 import { verifyToken } from "../utilities/verifyToken";
 import { Roles } from "../constants";
 import Bill from "../models/bill";
+import Appointment from "../models/appointment";
 import { z } from "zod";
 import { isValidObjectId } from "mongoose";
+import dayjs from "dayjs";
 
 export const getBills: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -80,9 +82,37 @@ export const addBill: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { notes, price } = req.body as z.infer<typeof schema>;
+  const { appointment, notes, price } = req.body as z.infer<typeof schema>;
+
+  const existingAppointment = await Appointment.findById(appointment);
+
+  if (!existingAppointment) {
+    res.status(400).send({ message: "Appointment does not exist" });
+    return;
+  }
+
+  if (existingAppointment.isFinished) {
+    res.status(400).send({ message: "Appointment is already finished" });
+    return;
+  }
+
+  if (dayjs().isBefore(dayjs(existingAppointment.dateTimeScheduled))) {
+    const error: ErrorMessage = {
+      message: "Can't end an appointment that hasn't been started",
+    };
+    res.status(400).json(error);
+    return;
+  }
+
+  existingAppointment.dateTimeFinished = new Date();
+  existingAppointment.isFinished = true;
+
+  await existingAppointment.save().catch((err) => {
+    throw new Error(err);
+  });
 
   const newBill = await Bill.create({
+    appointment,
     notes,
     price,
   });
