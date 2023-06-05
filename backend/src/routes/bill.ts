@@ -5,6 +5,7 @@ import {
   editBill,
   getBills,
   getDeletedBills,
+  recoverBill,
   removeBill,
 } from "../controllers/bill";
 
@@ -15,6 +16,7 @@ router
   .get("/deleted", checkAuth, getDeletedBills);
 router.post("/", checkAuth, addBill);
 router.put("/:billId", checkAuth, editBill);
+router.put("/recover/:billId", checkAuth, recoverBill);
 router.delete("/:billId", checkAuth, removeBill);
 
 export default router;

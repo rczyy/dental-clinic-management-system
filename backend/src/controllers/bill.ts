@@ -275,6 +275,57 @@ export const editBill: RequestHandler = async (req, res) => {
   res.status(200).send(existingBill);
 };
 
+export const recoverBill: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role === Roles.Assistant || token.role === Roles.Patient) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const paramsSchema = z
+    .object({
+      billId: z.string({ required_error: "Bill ID is required" }),
+    })
+    .refine(({ billId }) => isValidObjectId(billId), {
+      message: "Invalid bill ID",
+    });
+
+  const paramsParse = paramsSchema.safeParse(req.params);
+
+  if (!paramsParse.success) {
+    res.status(400).send(paramsParse.error.flatten());
+    return;
+  }
+
+  const { billId } = req.params as z.infer<typeof paramsSchema>;
+
+  const existingBill = await Bill.findById(billId);
+
+  if (!existingBill) {
+    res.status(400).send({ message: "Bill does not exist" });
+    return;
+  }
+
+  if (!existingBill.isDeleted) {
+    res.status(400).send({ message: "Bill is not deleted" });
+    return;
+  }
+
+  existingBill.isDeleted = false;
+
+  await existingBill.save();
+
+  res.status(200).send(existingBill);
+};
+
 export const removeBill: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
 
