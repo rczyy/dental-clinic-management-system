@@ -41,6 +41,7 @@ export const useEditUser = () => {
   >({
     mutationFn: ({ data, id }) => editUser(data, id),
     onSuccess: ({ _id: id }) => {
+      queryClient.invalidateQueries(["me"]);
       queryClient.invalidateQueries(["users", id]);
     },
   });
