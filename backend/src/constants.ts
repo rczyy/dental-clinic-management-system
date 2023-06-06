@@ -22,7 +22,8 @@ export const LogModule = [
   "APPOINTMENT",
   "DENTIST'S SCHEDULE",
   "ATTENDANCE",
-  "SERVICE"
+  "SERVICE",
+  "BILLING"
 ] as const;
 
 export const LogType = ["CREATE", "UPDATE", "DELETE", "RECOVER", "VERIFY"] as const;

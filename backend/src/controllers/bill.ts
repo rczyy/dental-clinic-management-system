@@ -1,12 +1,13 @@
 import { RequestHandler } from "express";
 import { verifyToken } from "../utilities/verifyToken";
-import { Roles } from "../constants";
-import Bill from "../models/bill";
-import Appointment from "../models/appointment";
+import { LogModule, LogType, Roles } from "../constants";
 import { z } from "zod";
 import { isValidObjectId } from "mongoose";
+import { addLog } from "../utilities/addLog";
 import dayjs from "dayjs";
 import Patient from "../models/patient";
+import Bill from "../models/bill";
+import Appointment from "../models/appointment";
 
 export const getBills: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -308,6 +309,13 @@ export const addBill: RequestHandler = async (req, res) => {
     price,
   });
 
+  await addLog(
+    req.session.uid!,
+    LogModule[5],
+    LogType[0],
+    newBill,
+  );
+
   res.status(200).send(newBill);
 };
 
@@ -370,6 +378,13 @@ export const editBill: RequestHandler = async (req, res) => {
   existingBill.notes = notes || existingBill.notes || "";
   existingBill.price = price || existingBill.price;
 
+  await addLog(
+    req.session.uid!,
+    LogModule[5],
+    LogType[1],
+    existingBill,
+  );
+
   await existingBill.save();
 
   res.status(200).send(existingBill);
@@ -421,6 +436,13 @@ export const recoverBill: RequestHandler = async (req, res) => {
 
   existingBill.isDeleted = false;
 
+  await addLog(
+    req.session.uid!,
+    LogModule[5],
+    LogType[3],
+    existingBill,
+  );
+
   await existingBill.save();
 
   res.status(200).send(existingBill);
@@ -466,6 +488,13 @@ export const removeBill: RequestHandler = async (req, res) => {
   }
 
   existingBill.isDeleted = true;
+
+  await addLog(
+    req.session.uid!,
+    LogModule[5],
+    LogType[2],
+    existingBill,
+  );
 
   await existingBill.save();
 

@@ -5,6 +5,8 @@ import dayjs from "dayjs";
 import Patient from "../models/patient";
 import Dentist from "../models/dentist";
 import Staff from "../models/staff";
+import Appointment from "../models/appointment";
+import { commafy } from "./commafy";
 
 type StaffPayload = {
   staff: {
@@ -39,6 +41,19 @@ type PatientPayload = {
   email: string;
 };
 
+type AppointmentPayload = {
+  patient: {
+    user: {
+      name: {
+        firstName: string;
+        middleName: string;
+        lastName: string;
+      };
+      email: string;
+    };
+  };
+};
+
 export const addLog = async (
   user: Types.ObjectId | string,
   module: string,
@@ -69,6 +84,9 @@ export const addLog = async (
       break;
     case LogModule[4]:
       action += addServiceLog(payload);
+      break;
+    case LogModule[5]:
+      action += await addBillLog(payload);
       break;
     default:
       action = "Error occurred";
@@ -176,4 +194,22 @@ export const addAttendanceLog = async (
 export const addServiceLog = (payload: object | string | Types.ObjectId) => {
   const { category, estimatedTime, name } = payload as Service;
   return `a Service: Name: ${name}, Estimated time: ${estimatedTime} (min) Category: ${category}`;
+};
+
+export const addBillLog = async (payload: object | string | Types.ObjectId) => {
+  const bill = payload as unknown as Bill;
+  const {
+    patient: {
+      user: {
+        email,
+        name: { firstName, lastName }
+      }
+    }
+  } = (await Appointment.findById(bill.appointment).populate({
+    path: "patient",
+    populate: { path: "user", select: "name email" }
+  })) as unknown as AppointmentPayload;
+  return `a Bill: Patient: ${firstName} ${lastName}, Email: ${email}, Note: ${
+    bill.notes
+  }, Bill: ₱${commafy(bill.price.toFixed(2))}`;
 };
