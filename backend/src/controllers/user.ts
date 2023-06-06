@@ -354,6 +354,14 @@ export const verifyUser: RequestHandler = async (req, res) => {
     return;
   }
 
+  await addLog(
+    userToVerify._id,
+    LogModule[0],
+    LogType[4],
+    updatedUser,
+    updatedUser.role
+  );
+
   res.status(200).json({ message: "Account has been successfully verified" });
 };
 
