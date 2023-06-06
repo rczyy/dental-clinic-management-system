@@ -15,7 +15,7 @@ import {
   useGetRegionsQuery,
   useLazyGetBarangaysQuery,
   useLazyGetCitiesQuery,
-  useLazyGetProvincesQuery,
+  useLazyGetProvincesQuery
 } from "../redux/api/address";
 
 type Props = {};
@@ -106,10 +106,11 @@ const schema = z
     contactNo: z
       .string({ required_error: "Contact number is required" })
       .min(1, "Contact number cannot be empty")
-      .regex(/(^9)\d{9}$/, "Invalid contact number"),
+      .regex(/(^9)\d{9}$/, "Invalid contact number")
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords doesn't match",
+    path: ["confirmPassword"]
   });
 
 const Signup = (_: Props) => {
@@ -141,7 +142,7 @@ const Signup = (_: Props) => {
     watch,
     reset,
     trigger,
-    formState: { errors },
+    formState: { errors }
   } = useForm<SignupFormValues>({
     defaultValues: {
       firstName: "",
@@ -154,9 +155,9 @@ const Signup = (_: Props) => {
       street: "",
       email: "",
       password: "",
-      confirmPassword: "",
+      confirmPassword: ""
     },
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema)
   });
 
   const onSubmit: SubmitHandler<SignupFormValues> = (data) => {
@@ -170,7 +171,7 @@ const Signup = (_: Props) => {
       setRegionOptions(
         regions.map((region) => ({
           value: region.name,
-          label: region.name,
+          label: region.name
         }))
       );
   }, [regions]);
@@ -188,7 +189,7 @@ const Signup = (_: Props) => {
           ...formValues,
           province: "",
           city: "",
-          barangay: "",
+          barangay: ""
         }),
         { keepErrors: true }
       );
@@ -204,7 +205,7 @@ const Signup = (_: Props) => {
       setProvinceOptions(
         provinces.map((province) => ({
           value: province.name,
-          label: province.name,
+          label: province.name
         }))
       );
   }, [provinces]);
@@ -221,7 +222,7 @@ const Signup = (_: Props) => {
         (formValues) => ({
           ...formValues,
           city: "",
-          barangay: "",
+          barangay: ""
         }),
         { keepErrors: true }
       );
@@ -237,7 +238,7 @@ const Signup = (_: Props) => {
       setCityOptions(
         cities.map((city) => ({
           value: city.name,
-          label: city.name,
+          label: city.name
         }))
       );
   }, [cities]);
@@ -251,7 +252,7 @@ const Signup = (_: Props) => {
       reset(
         (formValues) => ({
           ...formValues,
-          barangay: "",
+          barangay: ""
         }),
         { keepErrors: true }
       );
@@ -267,7 +268,7 @@ const Signup = (_: Props) => {
       setBarangayOptions(
         barangays.map((barangay) => ({
           value: barangay.name,
-          label: barangay.name,
+          label: barangay.name
         }))
       );
   }, [barangays]);
@@ -389,7 +390,7 @@ const Signup = (_: Props) => {
                               "firstName",
                               "middleName",
                               "lastName",
-                              "contactNo",
+                              "contactNo"
                             ],
                             { shouldFocus: true }
                           )
@@ -511,7 +512,7 @@ const Signup = (_: Props) => {
                               "province",
                               "city",
                               "barangay",
-                              "street",
+                              "street"
                             ])
                           ) {
                             setStep(3);
