@@ -289,7 +289,7 @@ const ViewBillModal = ({
               textAreaRef.current = el;
               setTextAreaVisible(!!el);
             }}
-            className="w-full px-3 py-2 rounded-md outline outline-1 outline-neutral text-sm resize-none"
+            className="bg-base-200 w-full px-3 py-2 rounded-md outline outline-1 outline-neutral text-sm resize-none"
             value={bill.notes}
             rows={1}
             readOnly
@@ -382,7 +382,7 @@ const EditBillModal = ({ bill, setIsEditModalVisible }: EditBillProps) => {
         >
           <textarea
             {...register("notes")}
-            className={`p-4 outline outline-1 outline-neutral rounded-md resize-none placeholder:text-sm ${
+            className={`bg-base-300 p-4 outline outline-1 outline-neutral rounded-md resize-none placeholder:text-sm ${
               watch("notes") && "outline-primary"
             }`}
             placeholder="Notes (Optional)"
