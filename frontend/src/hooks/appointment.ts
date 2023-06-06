@@ -10,14 +10,14 @@ import {
 
 export const useGetAppointments = ({
   date,
-  includePast,
+  includeBilled,
 }: {
   date: string;
-  includePast: boolean;
+  includeBilled: boolean;
 }) => {
   return useQuery<AppointmentResponse[], ErrorMessageResponse>({
     queryKey: ["appointments"],
-    queryFn: () => getAppointments({ date, includePast }),
+    queryFn: () => getAppointments({ date, includeBilled }),
   });
 };
 
