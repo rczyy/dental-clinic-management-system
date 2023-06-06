@@ -53,7 +53,7 @@ export const AppointmentList = (_: Props): JSX.Element => {
 
   return (
     <main
-      className={`flex flex-col gap-8 ${
+      className={`flex flex-col gap-4 ${
         sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
       } mx-auto transition-[max-width]`}
     >

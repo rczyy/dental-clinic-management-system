@@ -25,7 +25,7 @@ const AttendanceDataRow = ({ attendance, showAllDetails }: Props) => {
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   return (
     <>
-      <tr className="[&>*]:bg-transparent border-y transition tracking-tight">
+      <tr className="[&>*]:bg-transparent transition tracking-tight">
         {showAllDetails && (
           <>
             <th className="!bg-base-300">

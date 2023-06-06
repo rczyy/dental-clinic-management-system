@@ -13,7 +13,7 @@ main {
 }
 
 ::-webkit-scrollbar {
-  @apply w-1 h-1;
+  @apply w-1 h-2;
 }
 
 ::-webkit-scrollbar-track {
@@ -25,7 +25,7 @@ main {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-black;
+  @apply bg-base-content;
 }
 
 input::-webkit-outer-spin-button,

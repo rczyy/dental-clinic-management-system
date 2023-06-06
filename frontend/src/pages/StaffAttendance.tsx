@@ -65,8 +65,7 @@ const StaffAttendance = (props: Props) => {
           />
         </div>
       </header>
-      <div className="flex justify-end items-center"></div>
-      <div className="bg-base-300 py-4 pr-4 rounded-box overflow-x-auto">
+      <div className="bg-base-300 pr-4 rounded-box overflow-x-auto">
         <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
           <thead>
             <tr className="[&>*]:bg-base-300 border-b border-base-200">

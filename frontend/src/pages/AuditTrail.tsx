@@ -70,11 +70,11 @@ const AuditTrail = (props: Props) => {
   return (
     <>
       <main
-        className={`flex flex-col gap-8 ${
+        className={`flex flex-col gap-4 ${
           sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
         } mx-auto transition-[max-width]`}
       >
-        <header className="text-2xl md:text-3xl font-bold">
+        <header className="text-2xl md:text-3xl font-bold mb-6">
           <h1>Logs</h1>
         </header>
         <div className="flex flex-wrap items-center gap-2">
@@ -112,7 +112,7 @@ const AuditTrail = (props: Props) => {
             />
           </div>
         </div>
-        <div className="overflow-x-auto my-4">
+        <div className="bg-base-300 rounded-box overflow-x-auto">
           <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
             <thead>
               <tr className="[&>*]:bg-base-300 border-b border-base-200">
@@ -127,10 +127,7 @@ const AuditTrail = (props: Props) => {
             <tbody>
               {logData && logData.length > 0 ? (
                 logData.map((log) => (
-                  <AuditTrailDataRow
-                    logData={log}
-                    key={log._id}
-                  />
+                  <AuditTrailDataRow logData={log} key={log._id} />
                 ))
               ) : (
                 <tr className="[&>*]:bg-transparent">
@@ -152,7 +149,7 @@ const AuditTrail = (props: Props) => {
           </table>
         </div>
       </main>
-      <LogModal/>
+      <LogModal />
     </>
   );
 };
