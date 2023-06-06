@@ -127,7 +127,10 @@ const Profile = () => {
   const { userID } = useParams();
   const { data: me } = useGetMe();
   const { data: userData, isLoading } = useGetUser(userID || "");
-  const { data: bills } = useGetPatientBills(userID || "");
+  const { data: bills } =
+    me && me.role === "Patient"
+      ? useGetPatientBills(userID || "")
+      : { data: [] };
 
   if (isLoading)
     return (
