@@ -287,6 +287,14 @@ export const addBill: RequestHandler = async (req, res) => {
     return;
   }
 
+  if (existingAppointment.isFinished) {
+    const error: ErrorMessage = {
+      message: "Appointment is already finished",
+    };
+    res.status(400).json(error);
+    return;
+  }
+
   if (dayjs().isBefore(dayjs(existingAppointment.dateTimeScheduled))) {
     const error: ErrorMessage = {
       message: "Can't end an appointment that hasn't been started",
