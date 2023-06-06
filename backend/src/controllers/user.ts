@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { z } from "zod";
 import { compare, hash } from "bcrypt";
-import { Roles } from "../constants";
+import { LogModule, LogType, Roles } from "../constants";
 import { verifyToken } from "../utilities/verifyToken";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
@@ -9,6 +9,7 @@ import { JwtPayload } from "jsonwebtoken";
 import EmailRequest from "../models/emailRequest";
 import { isValidObjectId } from "mongoose";
 import { imageUpload } from "../utilities/imageUpload";
+import { addLog } from "../utilities/addLog";
 
 export const getUsers: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -288,11 +289,20 @@ export const editUser: RequestHandler = async (req, res) => {
     }
   ).select("-password");
 
+  
   if (!updatedUser) {
     res.status(400).send({ message: "User does not exist" });
     return;
   }
-
+  
+  await addLog(
+    req.session.uid!,
+    LogModule[0],
+    LogType[1],
+    updatedUser,
+    updatedUser.role
+  );
+  
   res.status(200).send(updatedUser);
 };
 

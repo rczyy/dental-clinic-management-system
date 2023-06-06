@@ -2,13 +2,14 @@ import { RequestHandler } from "express";
 import { isValidObjectId } from "mongoose";
 import { z } from "zod";
 import { hash } from "bcrypt";
-import { Roles } from "../constants";
+import { LogModule, LogType, Roles } from "../constants";
 import { verifyToken } from "../utilities/verifyToken";
 import Patient from "../models/patient";
 import User from "../models/user";
 import { sendEmail } from "../utilities/sendEmail";
 import { emailVerification } from "../templates/emailVerification";
 import jwt from "jsonwebtoken";
+import { addLog } from "../utilities/addLog";
 
 export const getPatients: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -78,7 +79,7 @@ export const getPatientNames: RequestHandler = async (req, res) => {
   }
 
   const patients = await Patient.find().populate({
-    path: "user",
+    path: "user"
   });
 
   const response = patients.map((patient) => {
@@ -91,7 +92,7 @@ export const getPatientNames: RequestHandler = async (req, res) => {
     return {
       _id,
       name,
-      avatar,
+      avatar
     };
   });
 
@@ -183,10 +184,10 @@ export const registerPatient: RequestHandler = async (req, res) => {
       contactNo: z
         .string({ required_error: "Contact number is required" })
         .min(1, "Contact number cannot be empty")
-        .regex(/(^\+639)\d{9}$/, "Invalid contact number"),
+        .regex(/(^\+639)\d{9}$/, "Invalid contact number")
     })
     .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords doesn't match",
+      message: "Passwords doesn't match"
     });
 
   type body = z.infer<typeof userSchema>;
@@ -209,14 +210,14 @@ export const registerPatient: RequestHandler = async (req, res) => {
     street,
     email,
     contactNo,
-    password,
+    password
   }: body = req.body;
 
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
     const error: FormError = {
-      formErrors: ["User already exists"],
+      formErrors: ["User already exists"]
     };
 
     res.status(400).json(error);
@@ -229,25 +230,27 @@ export const registerPatient: RequestHandler = async (req, res) => {
     name: {
       firstName,
       middleName,
-      lastName,
+      lastName
     },
     address: {
       region,
       province,
       city,
       barangay,
-      street,
+      street
     },
     email,
     password: hashedPassword,
     contactNo,
     role: Roles.Patient,
-    verified: false,
+    verified: false
   });
 
   const patient = new Patient({
-    user: user._id,
+    user: user._id
   });
+
+  await addLog(req.session.uid!, LogModule[0], LogType[0], user, user.role);
 
   await user.save();
   await patient.save();
@@ -262,17 +265,17 @@ export const registerPatient: RequestHandler = async (req, res) => {
     Messages: [
       {
         From: {
-          Email: process.env.EMAIL_SENDER,
+          Email: process.env.EMAIL_SENDER
         },
         To: [
           {
-            Email: email,
-          },
+            Email: email
+          }
         ],
         Subject: "Verify your email address",
-        HTMLPart: emailVerification(firstName, emailVerificationToken),
-      },
-    ],
+        HTMLPart: emailVerification(firstName, emailVerificationToken)
+      }
+    ]
   });
 
   res.status(201).json(user);
@@ -305,8 +308,8 @@ export const recoverPatient: RequestHandler = async (req, res) => {
     { user },
     {
       $set: {
-        isDeleted: false,
-      },
+        isDeleted: false
+      }
     }
   );
 
@@ -320,11 +323,11 @@ export const recoverPatient: RequestHandler = async (req, res) => {
     user,
     {
       $set: {
-        isDeleted: false,
-      },
+        isDeleted: false
+      }
     },
     {
-      new: true,
+      new: true
     }
   );
 
@@ -333,6 +336,14 @@ export const recoverPatient: RequestHandler = async (req, res) => {
     res.status(400).json(error);
     return;
   }
+
+  await addLog(
+    req.session.uid!,
+    LogModule[0],
+    LogType[3],
+    recoveredUser,
+    "Patient"
+  );
 
   res.status(200).send(recoveredUser);
 };
@@ -363,8 +374,8 @@ export const removePatient: RequestHandler = async (req, res) => {
     { user },
     {
       $set: {
-        isDeleted: true,
-      },
+        isDeleted: true
+      }
     }
   );
 
@@ -376,8 +387,8 @@ export const removePatient: RequestHandler = async (req, res) => {
 
   const deletedUser = await User.findByIdAndUpdate(user, {
     $set: {
-      isDeleted: true,
-    },
+      isDeleted: true
+    }
   });
 
   if (!deletedUser || deletedUser.isDeleted) {
@@ -385,6 +396,14 @@ export const removePatient: RequestHandler = async (req, res) => {
     res.status(400).json(error);
     return;
   }
+
+  await addLog(
+    req.session.uid!,
+    LogModule[0],
+    LogType[2],
+    deletedUser,
+    "Patient"
+  );
 
   res
     .status(200)

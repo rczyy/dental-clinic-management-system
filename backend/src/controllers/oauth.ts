@@ -56,14 +56,14 @@ export const loginWithGoogle: RequestHandler = async (req, res) => {
   }
 
   const userInfo = decode(tokens.id_token) as GoogleJwtPayload;
-
+  console.log(userInfo)
   const existingUser = await User.findOne({ email: userInfo.email });
 
   if (!existingUser) {
     const user = new User({
       name: {
         firstName: userInfo.given_name,
-        lastName: userInfo.family_name,
+        lastName: userInfo.family_name || "asdasd",
       },
       email: userInfo.email,
       role: Roles.Patient,

@@ -297,6 +297,24 @@ interface DentistScheduleResponse {
   date: Date;
 }
 
+
+interface LogResponse {
+  _id?: string;
+  date: string;
+  type: string;
+  module: string;
+  user: {
+    email: string;
+    name: {
+      firstName: string;
+      middleName: string;
+      lastName: string;
+    };
+    role: string;
+  };
+  action: string;
+}
+
 interface NotificationResponse {
   _id: string;
   description: string;

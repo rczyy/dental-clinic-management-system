@@ -4,7 +4,7 @@ export enum Roles {
   Assistant = "Assistant",
   Dentist = "Dentist",
   FrontDesk = "Front Desk",
-  Patient = "Patient",
+  Patient = "Patient"
 }
 export enum ServiceCategory {
   FirstAppointment = "First Appointment",
@@ -14,8 +14,18 @@ export enum ServiceCategory {
   CrownsBridges = "Crowns and Bridges",
   Oral = "Oral Surgery or Extractions",
   Dentures = "Dentures",
-  Orthodontics = "Orthodontics (Braces)",
+  Orthodontics = "Orthodontics (Braces)"
 }
+
+export const LogModule = [
+  "USER",
+  "APPOINTMENT",
+  "DENTIST'S SCHEDULE",
+  "ATTENDANCE",
+  "SERVICE"
+] as const;
+
+export const LogType = ["CREATE", "UPDATE", "DELETE", "RECOVER"] as const;
 
 export const HOST_URL =
   process.env.NODE_ENV === "development" ? "http://localhost:5173" : "";
