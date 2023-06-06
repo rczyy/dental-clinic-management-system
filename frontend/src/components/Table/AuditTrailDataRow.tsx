@@ -6,7 +6,7 @@ import {
   AiFillCloseCircle,
   AiFillInfoCircle
 } from "react-icons/ai";
-import { BiCalendarCheck, BiUserCheck } from "react-icons/bi";
+import { BiCalendarCheck, BiReceipt, BiUserCheck } from "react-icons/bi";
 import { CgUserList } from "react-icons/cg";
 import { useLogStore } from "../../store/logModal";
 
@@ -42,9 +42,12 @@ const AuditTrailDataRow = ({ logData }: Props) => {
           <BiCalendarCheck />
         ) : logData.module.toUpperCase() === "ATTENDANCE" ? (
           <BiUserCheck />
+        ) : logData.module.toUpperCase() === "SERVICE" ? (
+          <AiOutlineMedicineBox />
         ) : (
-          logData.module.toUpperCase() === "SERVICE" && <AiOutlineMedicineBox />
+          logData.module.toUpperCase() === "BILLING" && <BiReceipt />
         )}
+
         <span>{logData.module}</span>
       </td>
       <td className="text-slate-400 italic">{logData.user.email}</td>

@@ -24,7 +24,8 @@ const AuditTrail = (props: Props) => {
     { value: "APPOINTMENT", label: "APPOINTMENT" },
     { value: "DENTIST'S SCHEDULE", label: "DENTIST'S SCHEDULE" },
     { value: "ATTENDANCE", label: "ATTENDANCE" },
-    { value: "SERVICE", label: "SERVICE" }
+    { value: "SERVICE", label: "SERVICE" },
+    { value: "BILLING", label: "BILLING" }
   ];
 
   const type = [
