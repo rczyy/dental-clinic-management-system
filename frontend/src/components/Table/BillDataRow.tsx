@@ -289,7 +289,7 @@ const ViewBillModal = ({
               textAreaRef.current = el;
               setTextAreaVisible(!!el);
             }}
-            className="bg-base-200 w-full px-3 py-2 rounded-md outline outline-1 outline-neutral text-sm resize-none"
+            className="bg-base-100 w-full px-3 py-2 rounded-md outline outline-1 outline-neutral text-sm resize-none"
             value={bill.notes}
             rows={1}
             readOnly
