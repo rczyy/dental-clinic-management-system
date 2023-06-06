@@ -32,7 +32,7 @@ export const getAppointments: RequestHandler = async (req, res) => {
 
   const querySchema = z.object({
     date: z.coerce.date().optional(),
-    includePast: z.coerce.boolean().optional(),
+    includeBilled: z.coerce.boolean().optional(),
   });
 
   const queryParse = querySchema.safeParse(req.query);
@@ -42,7 +42,7 @@ export const getAppointments: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { date, includePast } = req.query;
+  const { date, includeBilled } = req.query;
 
   const appointments = await Appointment.find({
     ...(date && {
@@ -51,10 +51,8 @@ export const getAppointments: RequestHandler = async (req, res) => {
         $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
       },
     }),
-    ...(includePast === "false" && {
-      dateTimeFinished: {
-        $gt: dayjs(),
-      },
+    ...(includeBilled === "false" && {
+      isFinished: false,
     }),
   })
     .populate({

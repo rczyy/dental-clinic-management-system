@@ -36,8 +36,10 @@ export const AppointmentDataRow = ({
   return (
     <tr
       className={`${
-        dayjs(appointment.dateTimeFinished).isBefore(dayjs())
+        appointment.isFinished
           ? "[&>*]:bg-green-300/50 [&>*]:border-green-200/50"
+          : dayjs(appointment.dateTimeFinished).isBefore(dayjs())
+          ? "[&>*]:bg-yellow-300/50"
           : "[&>*]:bg-transparent"
       }`}
     >
@@ -283,7 +285,7 @@ const BillAppointmentModal = ({
         >
           <textarea
             {...register("notes")}
-            className={`p-4 outline outline-1 outline-neutral rounded-md resize-none placeholder:text-sm ${
+            className={`bg-base-300 p-4 outline outline-1 outline-neutral rounded-md resize-none placeholder:text-sm ${
               watch("notes") && "outline-primary"
             }`}
             placeholder="Notes (Optional)"
