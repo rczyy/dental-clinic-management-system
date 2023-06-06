@@ -51,7 +51,8 @@ const AuditTrailDataRow = ({ logData }: Props) => {
       <td
         className={`flex items-center gap-2 border-none ${
           logData.type.toUpperCase() === "UPDATE" ||
-          logData.type.toUpperCase() === "RECOVER"
+          logData.type.toUpperCase() === "RECOVER" ||
+          logData.type.toUpperCase() === "VERIFY"
             ? "text-yellow-500"
             : logData.type.toUpperCase() === "CREATE"
             ? "text-green-500"
@@ -59,7 +60,8 @@ const AuditTrailDataRow = ({ logData }: Props) => {
         }`}
       >
         {logData.type.toUpperCase() === "UPDATE" ||
-        logData.type.toUpperCase() === "RECOVER" ? (
+        logData.type.toUpperCase() === "RECOVER" ||
+        logData.type.toUpperCase() === "VERIFY" ? (
           <>
             <AiFillInfoCircle className="text-xl self-center" />
             <span>Update</span>

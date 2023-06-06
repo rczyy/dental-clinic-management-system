@@ -47,8 +47,12 @@ export const addLog = async (
   role = "User"
 ) => {
   let action = `${
-    type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()
-  }d `;
+    type === "VERIFY"
+      ? "Verified"
+      : type === "RECOVER"
+      ? "Recovered"
+      : type.charAt(0).toUpperCase() + type.slice(1).toLowerCase() + "d"
+  } `;
 
   switch (module) {
     case LogModule[0]:
