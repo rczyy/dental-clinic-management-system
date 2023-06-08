@@ -38,7 +38,7 @@ export const getDentistNames: RequestHandler = async (req, res) => {
     return;
   }
 
-  const dentists = await Dentist.find().populate({
+  const dentists = await Dentist.find({ isDeleted: false }).populate({
     path: "staff",
     populate: { path: "user" },
   });
