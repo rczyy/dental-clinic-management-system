@@ -23,9 +23,10 @@ const Navbar = (props: Props) => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   const { data } = useGetMe();
-  const { data: notifications } = useGetNotifications();
+  const { data: notifications } = useGetNotifications(data !== null);
   const { mutate: readNotifications } = useReadNotifications();
 
+  console.log(data);
   const { mutate } = useLogout();
 
   const handleLogout: React.MouseEventHandler<HTMLSpanElement> = () => {

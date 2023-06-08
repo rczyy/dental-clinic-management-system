@@ -68,10 +68,14 @@ const StaffSetAppointment = (props: Props) => {
   const { data: dentistData } = useGetDentistNames();
   const { data: patientData } = useGetPatientNames();
 
-  const [getDentistAppointments, { data: dentistAppointments }] =
-    useLazyGetDentistAppointmentsQuery();
-  const [getPatientAppointments, { data: patientAppointments }] =
-    useLazyGetPatientAppointmentsQuery();
+  const [
+    getDentistAppointments,
+    { data: dentistAppointments, isLoading: dentistAppointmentsLoading },
+  ] = useLazyGetDentistAppointmentsQuery();
+  const [
+    getPatientAppointments,
+    { data: patientAppointments, isLoading: patientAppointmentsLoading },
+  ] = useLazyGetPatientAppointmentsQuery();
   const { mutate, isLoading: addAppointmentLoading } = useAddAppointment();
 
   const [timeOptions, setTimeOptions] = useState([
@@ -659,11 +663,19 @@ const StaffSetAppointment = (props: Props) => {
                           placeholder="Time"
                           onChange={(val) => onChange(val?.value)}
                           options={timeOptions}
-                          isLoading={!serviceCategories}
+                          isLoading={
+                            !serviceCategories ||
+                            patientAppointmentsLoading ||
+                            dentistAppointmentsLoading
+                          }
                           isOptionDisabled={(option) =>
                             option ? option.isDisabled : false
                           }
-                          isDisabled={!watch("date")}
+                          isDisabled={
+                            !watch("date") ||
+                            !patientAppointments ||
+                            !dentistAppointments
+                          }
                         />
                       )}
                     />

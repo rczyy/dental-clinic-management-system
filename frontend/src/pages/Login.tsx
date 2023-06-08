@@ -69,8 +69,8 @@ const Login = (props: Props) => {
             <header className="flex flex-col gap-4 text-center">
               <h1 className="text-3xl font-bold">Login</h1>
               <p className="text-xs text-zinc-400">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem,
-                sapiente.
+                Sign in to access your personalized account and avail our dental
+                services here at AT Dental Home.
               </p>
             </header>
             <form

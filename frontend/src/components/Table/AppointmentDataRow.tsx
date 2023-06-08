@@ -152,11 +152,15 @@ const CancelAppointmentModal = ({
   appointment,
   setIsCancelModalVisible,
 }: CancelAppointmentModalProps) => {
-  const { mutate: removeAppointment } = useRemoveAppointment();
+  const { mutate: removeAppointment, isLoading: removeAppointmentLoading } =
+    useRemoveAppointment();
 
   const handleDelete = () => {
     removeAppointment(appointment._id, {
-      onSuccess: () => setIsCancelModalVisible(false),
+      onSuccess: () => {
+        toast.success("Successfully canceled the appointment!");
+        setIsCancelModalVisible(false);
+      },
       onError: (err) => toast.error(err.response.data.message),
     });
   };
@@ -193,7 +197,10 @@ const CancelAppointmentModal = ({
             className="btn btn-error px-8 text-white hover:bg-red-700"
             onClick={handleDelete}
           >
-            Yes
+            Yes{" "}
+            {removeAppointmentLoading && (
+              <AiOutlineLoading3Quarters className="w-4 h-4 ml-2 animate-spin" />
+            )}
           </button>
         </div>
       </section>

@@ -80,24 +80,25 @@ export const getPatientNames: RequestHandler = async (req, res) => {
 
   const patients = await Patient.find({
     isDeleted: false,
-    verified: true,
   }).populate({
     path: "user",
   });
 
-  const response = patients.map((patient) => {
-    const { user } = patient as unknown as {
-      user: Pick<User, "_id" | "name" | "avatar">;
-    };
+  const response = patients
+    .filter((patient) => (patient.user as unknown as User).verified)
+    .map((patient) => {
+      const { user } = patient as unknown as {
+        user: Pick<User, "_id" | "name" | "avatar">;
+      };
 
-    const { _id, name, avatar } = user;
+      const { _id, name, avatar } = user;
 
-    return {
-      _id,
-      name,
-      avatar,
-    };
-  });
+      return {
+        _id,
+        name,
+        avatar,
+      };
+    });
 
   res.status(200).json(response);
 };

@@ -5,10 +5,11 @@ import {
   readNotifications,
 } from "../axios/notification";
 
-export const useGetNotifications = () => {
+export const useGetNotifications = (enabled: boolean) => {
   return useQuery<NotificationResponse[], ErrorMessageResponse>({
     queryKey: ["notifications"],
     queryFn: getNotifications,
+    enabled,
   });
 };
 
