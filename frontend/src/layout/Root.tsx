@@ -8,14 +8,6 @@ import Footer from "../components/Root/Footer";
 import Sidebar from "../components/Root/Sidebar";
 import "react-toastify/dist/ReactToastify.css";
 import { useGetMe } from "../hooks/user";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
-
-dayjs.tz.setDefault("Asia/Hong_Kong");
 
 type Props = {};
 
