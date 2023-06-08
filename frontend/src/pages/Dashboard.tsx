@@ -47,7 +47,7 @@ const Dashboard = (props: Props) => {
         <div className="bg-base-300 overflow-auto">
           <div>
             <div className="flex bg-primary items-center justify-between py-2 px-4 text-center rounded-t text-l font-medium">
-              Billing Analytics
+              Availed Services
             </div>
             <Analytics />
           </div>
