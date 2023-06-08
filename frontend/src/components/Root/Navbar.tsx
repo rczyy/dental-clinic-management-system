@@ -95,7 +95,7 @@ const Navbar = (props: Props) => {
                   } rounded-b-box text-sm shadow overflow-hidden`}
                 >
                   <li>
-                    <Link to={`/profile/${data._id}`}>Account settings</Link>
+                    <Link to={`/profile/${data._id}`}>Profile</Link>
                   </li>
 
                   {(data.role === "Patient" || data.role === "Dentist") && (
