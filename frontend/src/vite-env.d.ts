@@ -43,7 +43,7 @@ interface SignupFormValues {
   password: string;
   confirmPassword: string;
   contactNo: string;
-  verified?: boolean;
+  verified?: string;
 }
 
 interface StaffSignupFormValues {
