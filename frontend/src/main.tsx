@@ -23,7 +23,6 @@ import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ApiProvider } from "@reduxjs/toolkit/query/react";
@@ -163,7 +162,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <RouterProvider router={router} />
-          <ReactQueryDevtools />
         </LocalizationProvider>
       </GoogleOAuthProvider>
     </ApiProvider>
