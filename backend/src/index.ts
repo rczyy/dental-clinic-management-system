@@ -31,7 +31,7 @@ const main = async () => {
 
   app.use(
     cors({
-      origin: ["*"],
+      origin: "*",
       credentials: true,
     })
   );
