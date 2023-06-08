@@ -38,6 +38,8 @@ const main = async () => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
+  app.set("trust proxy", 1);
+
   app.use(
     session({
       store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
@@ -45,6 +47,7 @@ const main = async () => {
       name: "uid",
       saveUninitialized: false,
       resave: false,
+      proxy: process.env.NODE_ENV === "production",
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7,
         secure: process.env.NODE_ENV === "production",
