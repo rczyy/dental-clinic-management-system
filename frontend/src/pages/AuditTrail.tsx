@@ -7,10 +7,13 @@ import AuditTrailDataRow from "../components/Table/AuditTrailDataRow";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import SelectDropdown from "../components/Form/SelectDropdown";
 import { LogModal } from "../components/Modal/LogModal";
+import { useGetMe } from "../hooks/user";
+import { Navigate } from "react-router-dom";
 
 type Props = {};
 
 const AuditTrail = (props: Props) => {
+  const { data: me } = useGetMe();
   const sidebar = useAdminStore((state) => state.sidebar);
   const [getLogs, { data, isFetching }] = useLazyGetLogsQuery();
   const [datePickerValue, setDatePickerValue] = useState<Dayjs | null>(dayjs());
@@ -66,6 +69,8 @@ const AuditTrail = (props: Props) => {
       ? getLogs(datePickerValue.format("YYYY-MM-DD"))
       : getLogs("");
   }, [datePickerValue]);
+
+  if (!me || (me.role !== "Admin" && me.role !== "Manager")) return <Navigate to="/" />;
 
   return (
     <>

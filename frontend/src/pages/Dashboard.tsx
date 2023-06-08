@@ -82,7 +82,7 @@ const RecentActivity = () => {
               </thead>
               <tbody>
                 {logData && logData.length > 0 ? (
-                  logData.map((log) => (
+                  logData.map((log: LogResponse) => (
                     <AuditTrailDataRow logData={log} key={log._id} />
                   ))
                 ) : (
