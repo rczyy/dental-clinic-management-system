@@ -61,7 +61,7 @@ export const getUser: RequestHandler = async (req, res) => {
 };
 
 export const getMe: RequestHandler = async (req, res) => {
-  const me = await User.findById(req.session.uid);
+  const me = await User.findById(req.session.uid).select("-password");
 
   res.status(200).json(me);
 };
@@ -289,12 +289,11 @@ export const editUser: RequestHandler = async (req, res) => {
     }
   ).select("-password");
 
-  
   if (!updatedUser) {
     res.status(400).send({ message: "User does not exist" });
     return;
   }
-  
+
   await addLog(
     req.session.uid!,
     LogModule[0],
@@ -302,7 +301,7 @@ export const editUser: RequestHandler = async (req, res) => {
     updatedUser,
     updatedUser.role
   );
-  
+
   res.status(200).send(updatedUser);
 };
 
