@@ -187,6 +187,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
         .string({ required_error: "Contact number is required" })
         .min(1, "Contact number cannot be empty")
         .regex(/(^\+639)\d{9}$/, "Invalid contact number"),
+      verified: z.string().optional(),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords doesn't match",
@@ -213,6 +214,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
     email,
     contactNo,
     password,
+    verified,
   }: body = req.body;
 
   const existingUser = await User.findOne({ email });
@@ -245,7 +247,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
     password: hashedPassword,
     contactNo,
     role: Roles.Patient,
-    verified: false,
+    verified: verified === "true" ? true : false,
   });
 
   const patient = new Patient({
@@ -257,28 +259,30 @@ export const registerPatient: RequestHandler = async (req, res) => {
   await user.save();
   await patient.save();
 
-  const emailVerificationToken = jwt.sign(
-    { _id: user._id },
-    process.env.JWT_SECRET,
-    { expiresIn: "3d" }
-  );
+  if (verified === "true") {
+    const emailVerificationToken = jwt.sign(
+      { _id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "3d" }
+    );
 
-  await sendEmail({
-    Messages: [
-      {
-        From: {
-          Email: process.env.EMAIL_SENDER,
-        },
-        To: [
-          {
-            Email: email,
+    await sendEmail({
+      Messages: [
+        {
+          From: {
+            Email: process.env.EMAIL_SENDER,
           },
-        ],
-        Subject: "Verify your email address",
-        HTMLPart: emailVerification(firstName, emailVerificationToken),
-      },
-    ],
-  });
+          To: [
+            {
+              Email: email,
+            },
+          ],
+          Subject: "Verify your email address",
+          HTMLPart: emailVerification(firstName, emailVerificationToken),
+        },
+      ],
+    });
+  }
 
   res.status(201).json(user);
 };
