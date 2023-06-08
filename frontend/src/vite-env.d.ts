@@ -43,6 +43,7 @@ interface SignupFormValues {
   password: string;
   confirmPassword: string;
   contactNo: string;
+  verified?: boolean;
 }
 
 interface StaffSignupFormValues {
@@ -296,7 +297,6 @@ interface DentistScheduleResponse {
   dentist: DentistResponse;
   date: Date;
 }
-
 
 interface LogResponse {
   _id?: string;
