@@ -8,10 +8,12 @@ import { useLazyGetLogsQuery } from "../redux/api/logs";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { BiMinus, BiPlus } from "react-icons/bi";
+import { useGetMe } from "../hooks/user";
 
 type Props = {};
 const Dashboard = (props: Props) => {
   const sidebar = useAdminStore((state) => state.sidebar);
+  const { data: me } = useGetMe();
   return (
     <>
       <main
@@ -24,14 +26,18 @@ const Dashboard = (props: Props) => {
           <div>
             <div className="flex flex-col gap-4 md:flex-row">
               <Stat title="Patients Registered" />
-              <Stat title="Staffs Registered" />
+              {me && (me.role === "Admin" || me.role === "Manager") && (
+                <Stat title="Staffs Registered" />
+              )}
               <Stat title="Total Services Offered" />
               <Stat title="Appointments for the Week" />
             </div>
           </div>
         </header>
         <div className="flex flex-col text-md gap-4">
-          <RecentActivity />
+          {me && (me.role === "Admin" || me.role === "Manager") && (
+            <RecentActivity />
+          )}
           <div className="flex flex-col gap-4 md:flex-row">
             <Card title="Available Dentists" />
             <Card title="Appointments Set Today" />
