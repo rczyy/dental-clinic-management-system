@@ -6,7 +6,7 @@ import {
   AiOutlineMedicineBox,
   AiTwotoneCalendar
 } from "react-icons/ai";
-import { BiCalendarCheck, BiUserCheck } from "react-icons/bi";
+import { BiCalendarCheck, BiReceipt, BiUserCheck } from "react-icons/bi";
 import { CgUserList } from "react-icons/cg";
 import { useLogStore } from "../../store/logModal";
 
@@ -43,7 +43,7 @@ export const LogModal = () => {
           />
         </div>
         <table className="text-left text-sm">
-          <tbody className="[&>*]:border-b border-base-200 [&>*>*]:pr-2 [&>*>*]:py-2">
+          <tbody className="[&>*]:border-b [&>*]:border-base-200 [&>*>*]:pr-2 [&>*>*]:py-2">
             <tr>
               <th>Module</th>
 
@@ -56,10 +56,10 @@ export const LogModal = () => {
                   <BiCalendarCheck />
                 ) : logData.module.toUpperCase() === "ATTENDANCE" ? (
                   <BiUserCheck />
+                ) : logData.module.toUpperCase() === "SERVICE" ? (
+                  <AiOutlineMedicineBox />
                 ) : (
-                  logData.module.toUpperCase() === "SERVICE" && (
-                    <AiOutlineMedicineBox />
-                  )
+                  logData.module.toUpperCase() === "BILLING" && <BiReceipt />
                 )}
                 {logData.module}
               </td>

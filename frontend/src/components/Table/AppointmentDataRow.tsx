@@ -1,13 +1,15 @@
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { useGetMe } from "../../hooks/user";
-import {
-  useFinishAppointment,
-  useRemoveAppointment,
-} from "../../hooks/appointment";
+import { useRemoveAppointment } from "../../hooks/appointment";
 import { toast } from "react-toastify";
-import { AiOutlineCheck } from "react-icons/ai";
+import { AiOutlineCheck, AiOutlineLoading3Quarters } from "react-icons/ai";
+import FormInput from "../Form/FormInput";
+import { z } from "zod";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAddBill } from "../../hooks/bill";
 
 interface Props {
   appointment: AppointmentResponse;
@@ -18,8 +20,8 @@ interface CancelAppointmentModalProps extends Props {
   setIsCancelModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface FinishAppointmentModalProps extends Props {
-  setIsFinishModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+interface BillAppointmentModalProps extends Props {
+  setIsBillModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const AppointmentDataRow = ({
@@ -27,15 +29,17 @@ export const AppointmentDataRow = ({
   showAllDetails,
 }: Props): JSX.Element => {
   const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
-  const [isFinishModalVisible, setIsFinishModalVisible] = useState(false);
+  const [isBillModalVisible, setIsBillModalVisible] = useState(false);
 
   const { data: me } = useGetMe();
 
   return (
     <tr
       className={`${
-        dayjs(appointment.dateTimeFinished).isBefore(dayjs())
+        appointment.isFinished
           ? "[&>*]:bg-green-300/50 [&>*]:border-green-200/50"
+          : dayjs(appointment.dateTimeFinished).isBefore(dayjs())
+          ? "[&>*]:bg-yellow-300/50"
           : "[&>*]:bg-transparent"
       }`}
     >
@@ -51,7 +55,7 @@ export const AppointmentDataRow = ({
             tabIndex={0}
             className="dropdown-content menu flex-row flex-nowrap p-1 bg-base-100 text-sm border border-neutral rounded-lg shadow-lg translate-x-2 -translate-y-1/4"
           >
-            <li onClick={() => setIsFinishModalVisible(true)}>
+            <li onClick={() => setIsBillModalVisible(true)}>
               <a>
                 <AiOutlineCheck />
               </a>
@@ -134,10 +138,10 @@ export const AppointmentDataRow = ({
         />
       )}
 
-      {isFinishModalVisible && (
-        <FinishAppointmentModal
+      {isBillModalVisible && (
+        <BillAppointmentModal
           appointment={appointment}
-          setIsFinishModalVisible={setIsFinishModalVisible}
+          setIsBillModalVisible={setIsBillModalVisible}
         />
       )}
     </tr>
@@ -159,7 +163,7 @@ const CancelAppointmentModal = ({
 
   return (
     <td
-      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
+      className="fixed flex items-center justify-center inset-0 !bg-black z-50 !bg-opacity-25"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) setIsCancelModalVisible(false);
       }}
@@ -197,57 +201,126 @@ const CancelAppointmentModal = ({
   );
 };
 
-const FinishAppointmentModal = ({
+const BillAppointmentModal = ({
   appointment,
-  setIsFinishModalVisible,
-}: FinishAppointmentModalProps) => {
-  const { mutate: finishAppointment } = useFinishAppointment();
+  setIsBillModalVisible,
+}: BillAppointmentModalProps) => {
+  const schema = z.object({
+    appointment: z.string({ required_error: "Appointment is required" }),
+    notes: z.string({ required_error: "Notes is required" }),
+    price: z.coerce
+      .number({ required_error: "Price is required" })
+      .positive("Price must be a positive number")
+      .finite("Infinite price are not allowed"),
+  });
 
-  const handleDelete = () => {
-    finishAppointment(appointment._id, {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<BillFormValues>({
+    defaultValues: {
+      appointment: appointment._id,
+      notes: "",
+      price: "",
+    },
+    resolver: zodResolver(schema),
+  });
+
+  const { mutate: addBill, isLoading: addBillLoading } = useAddBill();
+  const [textAreaVisible, setTextAreaVisible] = useState(false);
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const onSubmit: SubmitHandler<BillFormValues> = (data) => {
+    addBill(data, {
       onSuccess: () => {
-        setIsFinishModalVisible(false);
-        toast.success("Appointment set to done!");
+        reset();
+        setIsBillModalVisible(false);
+        toast.success("Successfully billed the appointment");
       },
-      onError: (err) => toast.error(err.response.data.message),
+      onError: (err) => {
+        toast.error(
+          "message" in err.response.data
+            ? err.response.data.message
+            : err.response.data.fieldErrors[0]
+        );
+      },
     });
   };
 
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "0px";
+
+      if (textAreaRef.current.scrollHeight >= 128) {
+        textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+      } else {
+        textAreaRef.current.style.height = `128px`;
+      }
+    }
+  }, [textAreaVisible, textAreaRef.current, textAreaRef.current?.value]);
+
   return (
     <td
-      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
+      className="fixed flex items-center justify-center inset-0 z-50 !bg-black !bg-opacity-25"
       onMouseDown={(e) => {
-        if (e.target === e.currentTarget) setIsFinishModalVisible(false);
+        if (e.target === e.currentTarget) setIsBillModalVisible(false);
       }}
     >
-      <section className="flex flex-col gap-2 bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
+      <section className="flex flex-col gap-2 bg-base-300 max-w-xl max-h-[40rem] w-full rounded-2xl shadow-md px-8 py-10 overflow-y-auto">
         <header className="flex justify-between items-center mx-2 py-3">
-          <h1 className="text-2xl font-bold">Finish Appointment</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">Bill Appointment</h1>
           <div>
             <FiX
               className="w-6 h-6 p-1 text-base-content rounded-full cursor-pointer transition hover:bg-base-200"
-              onClick={() => setIsFinishModalVisible(false)}
+              onClick={() => setIsBillModalVisible(false)}
             />
           </div>
         </header>
-        <div className="flex flex-col mx-2 py-3">
-          <p>You are about to set this appointment to done.</p>
-          <p>Are you sure?</p>
-        </div>
-        <div className="flex gap-3 justify-end mx-2 py-3">
-          <button
-            className="btn px-8"
-            onClick={() => setIsFinishModalVisible(false)}
-          >
-            No
-          </button>
-          <button
-            className="btn bg-green-600 px-8 text-white hover:bg-green-700"
-            onClick={handleDelete}
-          >
-            Yes
-          </button>
-        </div>
+        <form
+          className="flex flex-col mx-2 gap-4"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <textarea
+            {...register("notes")}
+            className={`bg-base-300 p-4 outline outline-1 outline-neutral rounded-md resize-none placeholder:text-sm ${
+              watch("notes") && "outline-primary"
+            }`}
+            placeholder="Notes (Optional)"
+            ref={(el) => {
+              textAreaRef.current = el;
+              register("notes").ref(el);
+              setTextAreaVisible(!!el);
+            }}
+          />
+
+          <FormInput
+            type="number"
+            label="price"
+            placeholder="Price"
+            value={watch("price")}
+            register={register}
+            error={errors.price && errors.price.message}
+          />
+
+          <div className="flex gap-3 justify-end mx-2 py-3">
+            <button
+              type="button"
+              className="btn px-8"
+              onClick={() => setIsBillModalVisible(false)}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary px-8 text-white">
+              Bill{" "}
+              {addBillLoading && (
+                <AiOutlineLoading3Quarters className="w-4 h-4 ml-2 animate-spin" />
+              )}
+            </button>
+          </div>
+        </form>
       </section>
     </td>
   );

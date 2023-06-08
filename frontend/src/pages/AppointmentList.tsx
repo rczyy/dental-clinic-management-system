@@ -17,7 +17,7 @@ export const AppointmentList = (_: Props): JSX.Element => {
   const [searchDentistFilter, setSearchDentistFilter] = useState<string>("");
   const [searchPatientFilter, setSearchPatientFilter] = useState<string>("");
   const [dateFilter, setDateFilter] = useState<dayjs.Dayjs | null>(null);
-  const [pastFilter, setPastFilter] = useState<boolean>(false);
+  const [billedFilter, setBilledFilter] = useState<boolean>(false);
 
   const { data: me } = useGetMe();
   const {
@@ -26,7 +26,7 @@ export const AppointmentList = (_: Props): JSX.Element => {
     refetch: refetchGetAppointments,
   } = useGetAppointments({
     date: dateFilter ? dayjs(dateFilter).format("MM/DD/YYYY") : "",
-    includePast: pastFilter,
+    includeBilled: billedFilter,
   });
 
   const filteredAppointments =
@@ -47,13 +47,13 @@ export const AppointmentList = (_: Props): JSX.Element => {
 
   useEffect(() => {
     refetchGetAppointments();
-  }, [dateFilter, pastFilter]);
+  }, [dateFilter, billedFilter]);
 
   if (!me || me.role === "Patient") return <Navigate to={"/"} />;
 
   return (
     <main
-      className={`flex flex-col gap-8 ${
+      className={`flex flex-col gap-4 ${
         sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
       } mx-auto transition-[max-width]`}
     >
@@ -80,16 +80,15 @@ export const AppointmentList = (_: Props): JSX.Element => {
                 actions: ["clear"],
               },
             }}
-            disablePast={!pastFilter}
           />
           <div className="form-control">
             <label className="label gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 className="checkbox checkbox-primary checkbox-sm checked:bg-base-300"
-                onChange={(e) => setPastFilter(e.target.checked)}
+                onChange={(e) => setBilledFilter(e.target.checked)}
               />
-              <span className="label-text">Include Finished Appointments</span>
+              <span className="label-text">Include Billed Appointments</span>
             </label>
           </div>
         </div>
@@ -151,7 +150,7 @@ export const AppointmentList = (_: Props): JSX.Element => {
               ) : (
                 <tr className="[&>*]:bg-transparent">
                   <td
-                    colSpan={5}
+                    colSpan={7}
                     className="py-8 text-2xl text-center font-bold"
                   >
                     No appointments to show

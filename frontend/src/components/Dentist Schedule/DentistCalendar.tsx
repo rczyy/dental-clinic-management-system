@@ -41,12 +41,17 @@ export const DentistCalendar = ({
 
   return (
     <div className="flex flex-col gap-8 py-12">
-      <header className="flex justify-between items-center">
+      <header className="flex justify-between items-center mb-6">
         {!hideName && (
-          <h3 className="text-xl md:text-2xl font-semibold">
-            {dentistSchedule[0]?.dentist.staff.user.name.firstName}{" "}
-            {dentistSchedule[0]?.dentist.staff.user.name.lastName}
-          </h3>
+          <div className="flex items-center gap-4 mx-auto">
+            <figure className="w-16 h-16 rounded-full overflow-hidden">
+              <img src={dentistSchedule[0]?.dentist.staff.user.avatar} alt="" />
+            </figure>
+            <h3 className="text-xl md:text-2xl font-semibold">
+              {dentistSchedule[0]?.dentist.staff.user.name.firstName}{" "}
+              {dentistSchedule[0]?.dentist.staff.user.name.lastName}
+            </h3>
+          </div>
         )}
 
         {editable &&

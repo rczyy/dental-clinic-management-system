@@ -152,7 +152,7 @@ const RemoveUserModal = ({
   };
   return (
     <td
-      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
+      className="fixed flex items-center justify-center inset-0 !bg-black z-50 !bg-opacity-25"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) setIsDeleteModalVisible(false);
       }}
@@ -211,7 +211,7 @@ const RecoverUserModal = ({
   };
   return (
     <td
-      className="fixed flex items-center justify-center inset-0 !bg-black z-30 !bg-opacity-25"
+      className="fixed flex items-center justify-center inset-0 !bg-black z-50 !bg-opacity-25"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) setIsRecoverModalVisible(false);
       }}

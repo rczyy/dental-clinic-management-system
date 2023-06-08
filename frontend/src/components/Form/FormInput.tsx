@@ -44,6 +44,16 @@ const FormInput = ({
             ></div>
           </>
         )}
+        {label === "price" && (
+          <>
+            <span className="px-3">₱</span>
+            <div
+              className={
+                "w-[1px] h-6 " + (value ? "bg-primary" : "bg-zinc-300")
+              }
+            ></div>
+          </>
+        )}
         <div className="flex items-center relative w-full">
           <label
             htmlFor={label}

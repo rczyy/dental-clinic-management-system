@@ -332,3 +332,19 @@ interface NotificationBody {
   to: string;
   from: string;
 }
+
+interface BillResponse {
+  _id: string;
+  appointment: AppointmentResponse;
+  notes?: string;
+  price: number;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface BillFormValues {
+  appointment: string;
+  notes: string;
+  price: string;
+}

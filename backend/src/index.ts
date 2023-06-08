@@ -20,6 +20,7 @@ import attendanceRoute from "./routes/attendance";
 import dentistScheduleRoute from "./routes/dentistSchedule";
 import log from "./routes/log";
 import notificationRoute from "./routes/notification";
+import billRoute from "./routes/bill";
 
 const main = async () => {
   mongoose.set("strictQuery", false);
@@ -62,6 +63,7 @@ const main = async () => {
   app.use("/dentist-schedule", dentistScheduleRoute);
   app.use("/log", log);
   app.use("/notification", notificationRoute);
+  app.use("/bill", billRoute);
 
   app.listen(port, () =>
     console.log(`Server listening to http://localhost:${port}`)

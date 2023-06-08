@@ -111,69 +111,77 @@ const Navbar = (props: Props) => {
               </div>
             </div>
 
-            <div className="indicator group" ref={notificationsRef}>
-              {notifications &&
-                notifications.filter((notification) => !notification.isRead)
-                  .length > 0 && (
-                  <span
-                    className="indicator-item badge badge-primary transition duration-200 cursor-pointer group-hover:bg-blue-500/90 group-hover:text-zinc-200"
-                    onClick={() => {
-                      setIsNotificationsOpen(!isNotificationsOpen);
-                      if (
-                        notifications.some(
+            {(data.role === "Dentist" || data.role === "Patient") && (
+              <div className="indicator group" ref={notificationsRef}>
+                {notifications &&
+                  notifications.filter((notification) => !notification.isRead)
+                    .length > 0 && (
+                    <span
+                      className="indicator-item badge badge-primary transition duration-200 cursor-pointer group-hover:bg-blue-500/90 group-hover:text-zinc-200"
+                      onClick={() => {
+                        setIsNotificationsOpen(!isNotificationsOpen);
+                        if (
+                          notifications.some(
+                            (notification) => !notification.isRead
+                          )
+                        ) {
+                          readNotifications(undefined);
+                        }
+                      }}
+                    >
+                      {
+                        notifications.filter(
                           (notification) => !notification.isRead
-                        )
-                      ) {
-                        readNotifications(undefined);
+                        ).length
                       }
-                    }}
-                  >
-                    {
-                      notifications.filter(
+                    </span>
+                  )}
+
+                <div
+                  className="transition duration-200 cursor-pointer group-hover:text-zinc-400"
+                  onClick={() => {
+                    setIsNotificationsOpen(!isNotificationsOpen);
+                    if (
+                      notifications?.some(
                         (notification) => !notification.isRead
-                      ).length
+                      )
+                    ) {
+                      readNotifications(undefined);
                     }
-                  </span>
-                )}
-
-              <div
-                className="transition duration-200 cursor-pointer group-hover:text-zinc-400"
-                onClick={() => {
-                  setIsNotificationsOpen(!isNotificationsOpen);
-                  if (
-                    notifications?.some((notification) => !notification.isRead)
-                  ) {
-                    readNotifications(undefined);
-                  }
-                }}
-              >
-                <FiBell className="w-5 h-5" />
-              </div>
-
-              <div
-                className={`absolute top-[42px] -right-4 sm:right-0 grid ${
-                  isNotificationsOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-                } w-screen sm:w-96 transition-[grid-template-rows]`}
-              >
-                <ul
-                  className={`menu flex-nowrap bg-base-100 ${
-                    isNotificationsOpen && "border border-base-200"
-                  } rounded-b-box text-sm shadow overflow-hidden`}
+                  }}
                 >
-                  <h3 className="px-4 pt-4 text-2xl font-bold">
-                    Notifications
-                  </h3>
-                  {notifications?.map((notification) => (
-                    <li>
-                      <NotificationItem
-                        key={notification._id}
-                        notification={notification}
-                      />
-                    </li>
-                  ))}
-                </ul>
+                  <FiBell className="w-5 h-5" />
+                </div>
+
+                <div
+                  className={`absolute top-[42px] -right-4 sm:right-0 grid ${
+                    isNotificationsOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                  } w-screen sm:w-96 transition-[grid-template-rows]`}
+                >
+                  <ul
+                    className={`menu flex-nowrap bg-base-100 ${
+                      isNotificationsOpen && "border border-base-200"
+                    } rounded-b-box text-sm shadow overflow-hidden`}
+                  >
+                    <h3 className="px-4 pt-4 text-xl font-bold">
+                      Notifications
+                    </h3>
+                    {notifications &&
+                      (notifications.length > 0 ? (
+                        notifications.map((notification) => (
+                          <li key={notification._id}>
+                            <NotificationItem notification={notification} />
+                          </li>
+                        ))
+                      ) : (
+                        <li className="mx-auto p-4 text-lg text-zinc-400">
+                          No notifications for today
+                        </li>
+                      ))}
+                  </ul>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         ) : (
           <>

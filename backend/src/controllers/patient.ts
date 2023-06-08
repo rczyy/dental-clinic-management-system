@@ -250,7 +250,7 @@ export const registerPatient: RequestHandler = async (req, res) => {
     user: user._id
   });
 
-  await addLog(req.session.uid!, LogModule[0], LogType[0], user, user.role);
+  await addLog(user._id, LogModule[0], LogType[0], user, user.role);
 
   await user.save();
   await patient.save();

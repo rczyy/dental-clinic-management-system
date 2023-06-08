@@ -32,7 +32,7 @@ export const getAppointments: RequestHandler = async (req, res) => {
 
   const querySchema = z.object({
     date: z.coerce.date().optional(),
-    includePast: z.coerce.boolean().optional()
+    includeBilled: z.coerce.boolean().optional(),
   });
 
   const queryParse = querySchema.safeParse(req.query);
@@ -42,35 +42,33 @@ export const getAppointments: RequestHandler = async (req, res) => {
     return;
   }
 
-  const { date, includePast } = req.query;
+  const { date, includeBilled } = req.query;
 
   const appointments = await Appointment.find({
     ...(date && {
       dateTimeScheduled: {
         $gte: dayjs(date.toString()),
-        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59")
-      }
+        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+      },
     }),
-    ...(includePast === "false" && {
-      dateTimeFinished: {
-        $gt: dayjs()
-      }
-    })
+    ...(includeBilled === "false" && {
+      isFinished: false,
+    }),
   })
     .populate({
       path: "dentist",
       populate: {
         path: "staff",
         populate: {
-          path: "user"
-        }
-      }
+          path: "user",
+        },
+      },
     })
     .populate({
       path: "patient",
       populate: {
-        path: "user"
-      }
+        path: "user",
+      },
     })
     .populate({ path: "service" });
 
@@ -92,23 +90,23 @@ export const addAppointment: RequestHandler = async (req, res) => {
       patient: z.string({ required_error: "Patient is required" }),
       service: z.string({ required_error: "Service is required" }),
       dateTimeScheduled: z.string({
-        required_error: "Date and time scheduled is required"
+        required_error: "Date and time scheduled is required",
       }),
       dateTimeFinished: z.string({
-        required_error: "Date and time finished is required"
-      })
+        required_error: "Date and time finished is required",
+      }),
     })
     .refine(({ dentist }) => isValidObjectId(dentist), {
       message: "Invalid dentist user ID",
-      path: ["dentist"]
+      path: ["dentist"],
     })
     .refine(({ patient }) => isValidObjectId(patient), {
       message: "Invalid patient user ID",
-      path: ["patient"]
+      path: ["patient"],
     })
     .refine(({ service }) => isValidObjectId(service), {
       message: "Invalid service ID",
-      path: ["service"]
+      path: ["service"],
     });
 
   type body = z.infer<typeof appointmentSchema>;
@@ -125,7 +123,7 @@ export const addAppointment: RequestHandler = async (req, res) => {
     patient,
     service,
     dateTimeScheduled,
-    dateTimeFinished
+    dateTimeFinished,
   }: body = req.body;
 
   if (token.role === Roles.Patient && req.session.uid !== patient) {
@@ -182,10 +180,10 @@ export const addAppointment: RequestHandler = async (req, res) => {
   }
 
   const patientAppointmentDates = await Appointment.find({
-    patient: patientSelected._id
+    patient: patientSelected._id,
   }).select("dateTimeScheduled dateTimeFinished");
   const dentistAppointmentDates = await Appointment.find({
-    dentist: serviceSelected._id
+    dentist: serviceSelected._id,
   }).select("dateTimeScheduled dateTimeFinished");
 
   const allAppointments = patientAppointmentDates
@@ -245,15 +243,10 @@ export const addAppointment: RequestHandler = async (req, res) => {
     patient: patientSelected._id,
     service,
     dateTimeScheduled,
-    dateTimeFinished
+    dateTimeFinished,
   });
 
-  await addLog(
-    req.session.uid!,
-    LogModule[1],
-    LogType[0],
-    appointment
-  );
+  await addLog(req.session.uid!, LogModule[1], LogType[0], appointment);
 
   await appointment.save();
   res.status(201).json(appointment);
@@ -270,10 +263,10 @@ export const getDentistAppointments: RequestHandler = async (req, res) => {
 
   const paramsSchema = z
     .object({
-      dentist: z.string({ required_error: "User ID is required" })
+      dentist: z.string({ required_error: "User ID is required" }),
     })
     .refine(({ dentist }) => isValidObjectId(dentist), {
-      message: "Invalid user ID"
+      message: "Invalid user ID",
     });
 
   const paramsParse = paramsSchema.safeParse(req.params);
@@ -284,7 +277,7 @@ export const getDentistAppointments: RequestHandler = async (req, res) => {
   }
 
   const querySchema = z.object({
-    date: z.coerce.date().optional()
+    date: z.coerce.date().optional(),
   });
 
   const queryParse = querySchema.safeParse(req.query);
@@ -316,27 +309,27 @@ export const getDentistAppointments: RequestHandler = async (req, res) => {
     ...(date && {
       dateTimeScheduled: {
         $gte: dayjs(date.toString()),
-        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59")
-      }
+        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+      },
     }),
     dateTimeFinished: {
-      $gt: dayjs()
-    }
+      $gt: dayjs(),
+    },
   })
     .populate({
       path: "dentist",
       populate: {
         path: "staff",
         populate: {
-          path: "user"
-        }
-      }
+          path: "user",
+        },
+      },
     })
     .populate({
       path: "patient",
       populate: {
-        path: "user"
-      }
+        path: "user",
+      },
     })
     .populate({ path: "service" });
 
@@ -354,10 +347,10 @@ export const getPatientAppointments: RequestHandler = async (req, res) => {
 
   const paramsSchema = z
     .object({
-      patient: z.string({ required_error: "User ID is required" })
+      patient: z.string({ required_error: "User ID is required" }),
     })
     .refine(({ patient }) => isValidObjectId(patient), {
-      message: "Invalid user ID"
+      message: "Invalid user ID",
     });
 
   const paramsParse = paramsSchema.safeParse(req.params);
@@ -368,7 +361,7 @@ export const getPatientAppointments: RequestHandler = async (req, res) => {
   }
 
   const querySchema = z.object({
-    date: z.coerce.date().optional()
+    date: z.coerce.date().optional(),
   });
 
   const queryParse = querySchema.safeParse(req.query);
@@ -393,27 +386,27 @@ export const getPatientAppointments: RequestHandler = async (req, res) => {
     ...(date && {
       dateTimeScheduled: {
         $gte: dayjs(date.toString()),
-        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59")
-      }
+        $lt: dayjs(date.toString()).format("YYYY-MM-DDT23:59:59"),
+      },
     }),
     dateTimeFinished: {
-      $gt: dayjs()
-    }
+      $gt: dayjs(),
+    },
   })
     .populate({
       path: "dentist",
       populate: {
         path: "staff",
         populate: {
-          path: "user"
-        }
-      }
+          path: "user",
+        },
+      },
     })
     .populate({
       path: "patient",
       populate: {
-        path: "user"
-      }
+        path: "user",
+      },
     })
     .populate({ path: "service" });
 
@@ -434,11 +427,11 @@ export const editAppointment: RequestHandler = async (req, res) => {
     patient: z.string({ required_error: "Patient is required" }),
     service: z.string({ required_error: "Service is required" }),
     dateTimeScheduled: z.string({
-      required_error: "Date and time scheduled is required"
+      required_error: "Date and time scheduled is required",
     }),
     dateTimeFinished: z.string({
-      required_error: "Date and time finished is required"
-    })
+      required_error: "Date and time finished is required",
+    }),
   });
 
   type body = z.infer<typeof appointmentSchema>;
@@ -455,7 +448,7 @@ export const editAppointment: RequestHandler = async (req, res) => {
     patient,
     service,
     dateTimeScheduled,
-    dateTimeFinished
+    dateTimeFinished,
   }: body = req.body;
 
   const { appointmentId } = req.params;
@@ -569,7 +562,7 @@ export const editAppointment: RequestHandler = async (req, res) => {
     patient,
     service,
     dateTimeScheduled,
-    dateTimeFinished
+    dateTimeFinished,
   });
 
   if (!editedAppointment) {
@@ -578,80 +571,12 @@ export const editAppointment: RequestHandler = async (req, res) => {
     return;
   }
 
-  await addLog(
-    req.session.uid!,
-    LogModule[1],
-    LogType[1],
-    editedAppointment
-  );
+  await addLog(req.session.uid!, LogModule[1], LogType[1], editedAppointment);
 
   res.status(200).json({
     _id: editedAppointment._id,
-    message: "Successfully edited the Appointment"
+    message: "Successfully edited the appointment",
   });
-};
-
-export const finishAppointment: RequestHandler = async (req, res) => {
-  const token = verifyToken(req.headers.authorization);
-
-  if ("message" in token) {
-    const error: ErrorMessage = { message: token.message };
-    res.status(401).json(error);
-    return;
-  }
-
-  if (token.role === Roles.Patient) {
-    const error: ErrorMessage = { message: "Unauthorized to do this" };
-    res.status(401).json(error);
-    return;
-  }
-
-  const { appointmentId } = req.params;
-
-  if (!isValidObjectId(appointmentId)) {
-    const error: ErrorMessage = { message: "Invalid appointment ID" };
-    res.status(400).json(error);
-    return;
-  }
-
-  const existingAppointment = await Appointment.findById(appointmentId);
-
-  if (!existingAppointment) {
-    const error: ErrorMessage = { message: "Appointment does not exist" };
-    res.status(400).json(error);
-    return;
-  }
-
-  if (existingAppointment.isFinished) {
-    const error: ErrorMessage = { message: "Appointment is already finished" };
-    res.status(400).json(error);
-    return;
-  }
-
-  if (
-    new Date(existingAppointment.dateTimeScheduled).getTime() >
-    new Date().getTime()
-  ) {
-    const error: ErrorMessage = {
-      message: "Can't end an appointment that hasn't been started"
-    };
-    res.status(400).json(error);
-    return;
-  }
-
-  existingAppointment.dateTimeFinished = new Date();
-  existingAppointment.isFinished = true;
-
-  await addLog(
-    req.session.uid!,
-    LogModule[1],
-    LogType[1],
-    existingAppointment
-  );
-
-  await existingAppointment.save();
-
-  res.status(200).send(existingAppointment);
 };
 
 export const removeAppointment: RequestHandler = async (req, res) => {
@@ -676,8 +601,8 @@ export const removeAppointment: RequestHandler = async (req, res) => {
   ).populate({
     path: "patient",
     populate: {
-      path: "user"
-    }
+      path: "user",
+    },
   });
 
   if (!appointmentToDelete) {
@@ -712,7 +637,7 @@ export const removeAppointment: RequestHandler = async (req, res) => {
       .isSameOrBefore(dayjs(appointmentToDelete.dateTimeScheduled))
   ) {
     const error: ErrorMessage = {
-      message: "Cancelling should be at least two days in advance."
+      message: "Cancelling should be at least two days in advance.",
     };
     res.status(400).json(error);
     return;
@@ -726,15 +651,10 @@ export const removeAppointment: RequestHandler = async (req, res) => {
     return;
   }
 
-  await addLog(
-    req.session.uid!,
-    LogModule[1],
-    LogType[2],
-    deletedAppointment
-  );
+  await addLog(req.session.uid!, LogModule[1], LogType[2], deletedAppointment);
 
   res.status(200).json({
     _id: deletedAppointment._id,
-    message: "Succesfully deleted the appointment"
+    message: "Succesfully deleted the appointment",
   });
 };

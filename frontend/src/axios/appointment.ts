@@ -4,14 +4,16 @@ const URL = import.meta.env.VITE_AXIOS_BASE_URL;
 
 export const getAppointments = async ({
   date,
-  includePast,
+  includeBilled,
 }: {
   date: string;
-  includePast: boolean;
+  includeBilled: boolean;
 }) => {
   const searchParams = new URLSearchParams({
     ...(date && { date: date }),
-    ...(includePast !== undefined && { includePast: String(includePast) }),
+    ...(includeBilled !== undefined && {
+      includeBilled: String(includeBilled),
+    }),
   });
 
   const res = await axios.get<AppointmentResponse[]>(

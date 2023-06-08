@@ -1,17 +1,16 @@
 import {
-  // AiOutlineCreditCard,
   AiOutlineMedicineBox,
-  AiTwotoneCalendar
+  AiOutlineSchedule,
+  AiTwotoneCalendar,
 } from "react-icons/ai";
-import { BiCalendarCheck, BiUserCheck } from "react-icons/bi";
-// import { VscNote } from "react-icons/vsc";
+import { BiReceipt, BiUserCheck } from "react-icons/bi";
 import { CgUserList } from "react-icons/cg";
 import { IconType } from "react-icons/lib";
-import {MdOutlineSpaceDashboard} from "react-icons/md"
+import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { useAdminStore } from "../../store/admin";
 import { useGetMe } from "../../hooks/user";
-import { GrDocumentText } from "react-icons/gr";
+import { HiOutlineDocumentText } from "react-icons/hi";
 
 type SidebarItemProps = {
   name: string;
@@ -29,7 +28,11 @@ const Sidebar = () => {
         sidebar ? "max-w-xs border-r" : "max-w-0 border-none"
       } min-w-0 w-full pt-20 border-r-neutral shadow-2xl lg:shadow z-20 transition-[max-width] overflow-hidden`}
     >
-      <SidebarItem name="Dashboard" Icon={MdOutlineSpaceDashboard} route="/dashboard" />
+      <SidebarItem
+        name="Dashboard"
+        Icon={MdOutlineSpaceDashboard}
+        route="/dashboard"
+      />
       {(data?.role === "Admin" || data?.role === "Manager") && (
         <SidebarItem name="Staff" Icon={CgUserList} route="/staff" />
       )}
@@ -38,16 +41,16 @@ const Sidebar = () => {
 
       <SidebarItem
         name="Appointments"
-        Icon={BiCalendarCheck}
+        Icon={AiOutlineSchedule}
         route="/appointments"
       />
 
-      {/* {(data?.role === "Admin" ||
+      {(data?.role === "Admin" ||
         data?.role === "Manager" ||
         data?.role === "Dentist" ||
         data?.role === "Front Desk") && (
-        <SidebarItem name="Billings" Icon={AiOutlineCreditCard} route="/" />
-      )} */}
+        <SidebarItem name="Bills" Icon={BiReceipt} route="/bills" />
+      )}
 
       {data?.role !== "Patient" && (
         <SidebarItem
@@ -89,17 +92,13 @@ const Sidebar = () => {
         />
       )}
 
-      {(data?.role === "Admin" ||
-        data?.role === "Manager") && (
+      {(data?.role === "Admin" || data?.role === "Manager") && (
         <SidebarItem
           name="Audit trail"
-          Icon={GrDocumentText}
+          Icon={HiOutlineDocumentText}
           route="/audit-trail"
         />
       )}
-      {/* {(data?.role === "Admin" || data?.role === "Manager") && (
-          <SidebarItem name="Logs" Icon={VscNote} route="/" />
-        )} */}
     </div>
   );
 };
