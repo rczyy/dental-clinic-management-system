@@ -148,7 +148,7 @@ const RegisterPatient = (_: Props) => {
 
   const onSubmit: SubmitHandler<SignupFormValues> = (data) => {
     mutate(
-      { ...data, contactNo: "+63" + watch("contactNo"), verified: true },
+      { ...data, contactNo: "+63" + watch("contactNo"), verified: "true" },
       {
         onSuccess: (data) => {
           reset({
