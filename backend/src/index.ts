@@ -29,9 +29,16 @@ const main = async () => {
   const app = express();
   const port = process.env.PORT || 5000;
 
-  app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+  app.use(
+    cors({
+      origin: ["http://localhost:5173/", "https://atdentalhome.vercel.app"],
+      credentials: true,
+    })
+  );
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+
+  app.set("trust proxy", 1);
 
   app.use(
     session({
@@ -40,10 +47,12 @@ const main = async () => {
       name: "uid",
       saveUninitialized: false,
       resave: false,
+      proxy: process.env.NODE_ENV === "production",
       cookie: {
+        sameSite: "none",
         maxAge: 1000 * 60 * 60 * 24 * 7,
-        secure: process.env.NODE_ENV === "production"
-      }
+        secure: process.env.NODE_ENV === "production",
+      },
     })
   );
 

@@ -45,10 +45,11 @@ const PatientList = (props: Props) => {
             : -1
           : 0;
       })
-      .filter((patient) =>
-        `${patient.user.name.firstName} ${patient.user.name.lastName}`
-          .toLowerCase()
-          .includes(searchFilter.toLowerCase())
+      .filter(
+        (patient) =>
+          `${patient.user.name.firstName} ${patient.user.name.lastName}`
+            .toLowerCase()
+            .includes(searchFilter.toLowerCase()) && patient.user.verified
       );
 
   const filteredDeletedPatients =
@@ -68,10 +69,12 @@ const PatientList = (props: Props) => {
             : -1
           : 0;
       })
-      .filter((patient) =>
-        `${patient.user.name.firstName} ${patient.user.name.lastName}`
-          .toLowerCase()
-          .includes(searchDeletedFilter.toLowerCase())
+      .filter(
+        (patient) =>
+          `${patient.user.name.firstName} ${patient.user.name.lastName}`
+            .toLowerCase()
+            .includes(searchDeletedFilter.toLowerCase()) &&
+          patient.user.verified
       );
 
   if (!me || me.role === "Patient") return <Navigate to="/" />;

@@ -15,7 +15,7 @@ const Stat = ({ title }: Props) => {
   const { data: serviceData } = useGetServices();
   const { data: appointmentData } = useGetAppointments({
     date: "",
-    includePast: false,
+    includeBilled: false,
   });
   const weekFromToday = dayjs().add(7, "day").format();
   const appointmentsWeek =
