@@ -2,7 +2,6 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FiEdit2, FiCheck } from "react-icons/fi";
 import { DateObject, Calendar } from "react-multi-date-picker";
 import DatePanel from "react-multi-date-picker/plugins/date_panel";
-import DatePickerHeader from "react-multi-date-picker/plugins/date_picker_header";
 import { toast } from "react-toastify";
 import { useLayoutEffect, useState } from "react";
 import { useEditDentistSchedule } from "../../hooks/dentistSchedule";
@@ -127,7 +126,6 @@ export const DentistCalendar = ({
           }
           minDate={new Date()}
           plugins={[
-            <DatePickerHeader position="top" size="big" />,
             ...(isEditEnabled
               ? [
                   <DatePanel
