@@ -10,10 +10,10 @@ import { LogModule, LogType } from "../constants";
 export const getDentistSchedule: RequestHandler = async (req, res) => {
   const querySchema = z
     .object({
-      dentist: z.string({ required_error: "ID is required" }).optional(),
+      dentist: z.string({ required_error: "ID is required" }).optional()
     })
     .refine(({ dentist }) => (dentist ? isValidObjectId(dentist) : true), {
-      message: "Invalid User ID",
+      message: "Invalid User ID"
     });
 
   const queryParse = querySchema.safeParse(req.query);
@@ -41,10 +41,10 @@ export const getDentistSchedule: RequestHandler = async (req, res) => {
     }
 
     const schedules = await DentistSchedule.find({
-      dentist: existingDentist._id,
+      dentist: existingDentist._id
     }).populate({
       path: "dentist",
-      populate: { path: "staff", populate: { path: "user" } },
+      populate: { path: "staff", populate: { path: "user" } }
     });
 
     res.status(200).send(schedules);
@@ -53,7 +53,7 @@ export const getDentistSchedule: RequestHandler = async (req, res) => {
 
   const schedules = await DentistSchedule.find().populate({
     path: "dentist",
-    populate: { path: "staff", populate: { path: "user" } },
+    populate: { path: "staff", populate: { path: "user" } }
   });
 
   res.status(200).send(schedules);
@@ -61,7 +61,7 @@ export const getDentistSchedule: RequestHandler = async (req, res) => {
 
 export const editDentistSchedule: RequestHandler = async (req, res) => {
   const bodySchema = z.object({
-    dates: z.coerce.date({ required_error: "Date is required" }).array(),
+    dates: z.coerce.date({ required_error: "Date is required" }).array()
   });
 
   const bodyParse = bodySchema.safeParse(req.body);
@@ -93,10 +93,15 @@ export const editDentistSchedule: RequestHandler = async (req, res) => {
     dates.map(async (date) => {
       return await DentistSchedule.create({
         dentist: existingDentist._id,
-        date,
+        date
       });
     })
   );
+
+  if (!newSchedules[0]) {
+    res.status(400).send({ message: "No dentist schedule" });
+    return;
+  }
 
   await addLog(
     req.session.uid!,
