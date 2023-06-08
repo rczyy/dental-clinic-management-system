@@ -159,7 +159,7 @@ const StaffList = (props: Props) => {
         sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
       } m-auto transition-[max-width]`}
     >
-      <header className="flex justify-between items-end mb-4 gap-8">
+      <header className="flex flex-wrap justify-between items-end mb-4 gap-4">
         <div className="flex gap-8">
           <h1 className="font-bold text-2xl md:text-3xl">Staff</h1>
 

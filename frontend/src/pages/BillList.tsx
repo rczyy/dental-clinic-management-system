@@ -91,7 +91,7 @@ export const BillList = (_: Props): JSX.Element => {
         sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
       } mx-auto transition-[max-width]`}
     >
-      <header className="flex flex-wrap justify-between items-center mb-4 gap-8">
+      <header className="flex flex-wrap justify-between items-center mb-4 gap-2">
         <div className="flex gap-8">
           <h1 className="font-bold text-2xl md:text-3xl">Bills</h1>
 
@@ -109,7 +109,7 @@ export const BillList = (_: Props): JSX.Element => {
             </div>
           )}
         </div>
-        <div className="text-end">
+        <div className="sm:text-end">
           <p className="text-zinc-400 text-sm">Total Sales</p>
           <p className="text-3xl font-bold">
             ₱{" "}
