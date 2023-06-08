@@ -23,10 +23,11 @@ export const useGetDeletedBills = (date?: string) => {
   });
 };
 
-export const useGetPatientBills = (userId: string) => {
+export const useGetPatientBills = (userId: string, enabled?: boolean) => {
   return useQuery<BillResponse[], ErrorMessageResponse>({
     queryKey: ["bills", userId],
     queryFn: () => getPatientBills(userId),
+    ...(enabled !== undefined && { enabled }),
   });
 };
 

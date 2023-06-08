@@ -127,10 +127,10 @@ const Profile = () => {
   const { userID } = useParams();
   const { data: me } = useGetMe();
   const { data: userData, isLoading } = useGetUser(userID || "");
-  const { data: bills } =
-    me && me.role === "Patient"
-      ? useGetPatientBills(userID || "")
-      : { data: [] };
+  const { data: bills, isLoading: billsLoading } = useGetPatientBills(
+    (userData && userData._id) || "",
+    userData && userData.role === "Patient"
+  );
 
   if (isLoading)
     return (
@@ -223,7 +223,7 @@ const Profile = () => {
                     {userData.contactNo}
                   </span>
                 </div>
-                {bills && bills.length > 0 && (
+                {userData.role === "Patient" && (
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-3">
                       <MdOutlineMedicalServices className="text-primary" />
@@ -231,64 +231,84 @@ const Profile = () => {
                         Services Done
                       </span>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {bills
-                        .sort((a, b) =>
-                          dayjs(a.createdAt).isBefore(dayjs(b.createdAt))
-                            ? -1
-                            : 1
-                        )
-                        .map((bill) => (
-                          <article className="flex flex-col gap-8 p-4 border rounded-lg">
-                            <header className="flex justify-between items-center">
-                              <div>
-                                <h3 className="font-bold">
-                                  {bill.appointment.service.name}
-                                </h3>
-                                <p className="text-sm text-zinc-400">
-                                  {dayjs(
-                                    bill.appointment.dateTimeFinished
-                                  ).format("MMM DD, YYYY h:mm A")}
-                                </p>
-                              </div>
-                              {me &&
-                                (me.role === "Admin" ||
-                                  me.role === "Manager") && (
-                                  <p className="text-green-600 font-bold">
-                                    ₱{" "}
-                                    {Intl.NumberFormat("en-US").format(
-                                      bill.price
+                    {bills ? (
+                      bills.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {bills
+                            .sort((a, b) =>
+                              dayjs(a.createdAt).isBefore(dayjs(b.createdAt))
+                                ? -1
+                                : 1
+                            )
+                            .map((bill) => (
+                              <article
+                                key={bill._id}
+                                className="flex flex-col gap-8 p-4 border rounded-lg"
+                              >
+                                <header className="flex justify-between items-center">
+                                  <div>
+                                    <h3 className="font-bold">
+                                      {bill.appointment.service.name}
+                                    </h3>
+                                    <p className="text-sm text-zinc-400">
+                                      {dayjs(
+                                        bill.appointment.dateTimeFinished
+                                      ).format("MMM DD, YYYY h:mm A")}
+                                    </p>
+                                  </div>
+                                  {me &&
+                                    (me.role === "Admin" ||
+                                      me.role === "Manager") && (
+                                      <p className="text-green-600 font-bold">
+                                        ₱{" "}
+                                        {Intl.NumberFormat("en-US").format(
+                                          bill.price
+                                        )}
+                                      </p>
                                     )}
-                                  </p>
-                                )}
-                            </header>
-                            <div className="flex flex-col gap-2">
-                              <h3 className="font-bold">Performed by:</h3>
-                              <div className="flex items-center gap-3">
-                                <figure className="w-10 h-10 rounded-full overflow-hidden">
-                                  <img
-                                    src={
-                                      bill.appointment.dentist.staff.user.avatar
-                                    }
-                                    alt="Dentist Avatar"
-                                  />
-                                </figure>
-                                <p className="font-semibold">
-                                  Dr.{" "}
-                                  {
-                                    bill.appointment.dentist.staff.user.name
-                                      .firstName
-                                  }{" "}
-                                  {
-                                    bill.appointment.dentist.staff.user.name
-                                      .lastName
-                                  }
-                                </p>
-                              </div>
-                            </div>
-                          </article>
-                        ))}
-                    </div>
+                                </header>
+                                <div className="flex flex-col gap-2">
+                                  <h3 className="font-bold">Performed by:</h3>
+                                  <div className="flex items-center gap-3">
+                                    <figure className="w-10 h-10 rounded-full overflow-hidden">
+                                      <img
+                                        src={
+                                          bill.appointment.dentist.staff.user
+                                            .avatar
+                                        }
+                                        alt="Dentist Avatar"
+                                      />
+                                    </figure>
+                                    <p className="font-semibold">
+                                      Dr.{" "}
+                                      {
+                                        bill.appointment.dentist.staff.user.name
+                                          .firstName
+                                      }{" "}
+                                      {
+                                        bill.appointment.dentist.staff.user.name
+                                          .lastName
+                                      }
+                                    </p>
+                                  </div>
+                                </div>
+                              </article>
+                            ))}
+                        </div>
+                      ) : (
+                        <div>
+                          <h3 className="text-zinc-400">
+                            No services done yet
+                          </h3>
+                        </div>
+                      )
+                    ) : (
+                      billsLoading && (
+                        <div>
+                          <AiOutlineLoading3Quarters className="text-primary w-8 h-8 mx-auto animate-spin" />
+                        </div>
+                      )
+                    )}
                   </div>
                 )}
               </div>
