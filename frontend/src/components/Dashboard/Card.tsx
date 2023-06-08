@@ -34,7 +34,7 @@ const Card = ({ title }: Props) => {
       .map((schedule) => {
         return {
           dentist: schedule.dentist,
-          timeIn:
+          timeLog:
             attendanceToday &&
             attendanceToday.find(
               (attendance) =>
@@ -74,24 +74,28 @@ const Card = ({ title }: Props) => {
                 </thead>
                 <tbody>
                   {availableDentists && availableDentists.length > 0 ? (
-                    availableDentists.map((dentist) => (
-                      <tr
-                        key={dentist.dentist._id}
-                        className="[&>*]:bg-base-300 [&>*]:py-2 [&>*]:px-4 tracking-tight border-b border-base-200 text-xs md:text-sm"
-                      >
-                        <td>
-                          {dentist.dentist.staff.user.name.firstName}{" "}
-                          {dentist.dentist.staff.user.name.lastName}
-                        </td>
-                        <td>
-                          {dentist.timeIn
-                            ? `${dayjs(dentist.timeIn.timeIn).format(
-                                "h:mm:ss A"
-                              )}`
-                            : "Not timed in yet"}
-                        </td>
-                      </tr>
-                    ))
+                    availableDentists.map(
+                      (dentist) =>
+                        dentist.timeLog &&
+                        dentist.timeLog.timeOut === null && (
+                          <tr
+                            key={dentist.dentist._id}
+                            className="[&>*]:bg-base-300 [&>*]:py-2 [&>*]:px-4 tracking-tight border-b border-base-200 text-xs md:text-sm"
+                          >
+                            <td>
+                              {dentist.dentist.staff.user.name.firstName}{" "}
+                              {dentist.dentist.staff.user.name.lastName}
+                            </td>
+                            <td>
+                              {dentist.timeLog
+                                ? `${dayjs(dentist.timeLog.timeIn).format(
+                                    "h:mm:ss A"
+                                  )}`
+                                : "Not timed in yet"}
+                            </td>
+                          </tr>
+                        )
+                    )
                   ) : (
                     <tr className="[&>*]:bg-transparent">
                       {attendanceTodayIsFetching &&
