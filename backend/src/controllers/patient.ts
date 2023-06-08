@@ -78,7 +78,10 @@ export const getPatientNames: RequestHandler = async (req, res) => {
     return;
   }
 
-  const patients = await Patient.find({ isDeleted: false }).populate({
+  const patients = await Patient.find({
+    isDeleted: false,
+    verified: true,
+  }).populate({
     path: "user",
   });
 
