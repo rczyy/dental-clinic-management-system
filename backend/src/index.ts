@@ -49,6 +49,7 @@ const main = async () => {
       resave: false,
       proxy: process.env.NODE_ENV === "production",
       cookie: {
+        sameSite: "none",
         maxAge: 1000 * 60 * 60 * 24 * 7,
         secure: process.env.NODE_ENV === "production",
       },
