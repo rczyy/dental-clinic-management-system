@@ -29,7 +29,12 @@ const main = async () => {
   const app = express();
   const port = process.env.PORT || 5000;
 
-  app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+  app.use(
+    cors({
+      origin: ["http://localhost:5173", "https://atdentalhome.vercel.app/"],
+      credentials: true,
+    })
+  );
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
@@ -42,8 +47,8 @@ const main = async () => {
       resave: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7,
-        secure: process.env.NODE_ENV === "production"
-      }
+        secure: process.env.NODE_ENV === "production",
+      },
     })
   );
 
