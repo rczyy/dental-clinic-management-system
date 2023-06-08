@@ -163,7 +163,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <RouterProvider router={router} />
-          <ReactQueryDevtools />
         </LocalizationProvider>
       </GoogleOAuthProvider>
     </ApiProvider>
