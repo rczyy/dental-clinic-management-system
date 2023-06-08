@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { BiMinus, BiPlus } from "react-icons/bi";
 import { useGetMe } from "../hooks/user";
+import Analytics from "../components/Dashboard/Analytics";
 
 type Props = {};
 const Dashboard = (props: Props) => {
@@ -41,6 +42,14 @@ const Dashboard = (props: Props) => {
           <div className="flex flex-col gap-4 md:flex-row">
             <Card title="Available Dentists" />
             <Card title="Appointments Set Today" />
+          </div>
+        </div>
+        <div className="bg-base-300 overflow-auto">
+          <div>
+            <div className="flex bg-primary items-center justify-between py-2 px-4 text-center rounded-t text-l font-medium">
+              Billing Analytics
+            </div>
+            <Analytics />
           </div>
         </div>
       </main>
