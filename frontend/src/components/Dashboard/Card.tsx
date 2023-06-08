@@ -9,11 +9,17 @@ type Props = {
   title: string;
 };
 const Card = ({ title }: Props) => {
-  const dateToday = dayjs("2023-06-05", "YYYY-MM-DD").format("YYYY-MM-DD");
+  const dateToday = dayjs().format("YYYY-MM-DD");
   const { data: appointmentData, isFetching: appointmentIsFetching } =
     useGetAppointments({
-      date: dateToday,
-      includePast: false,
+      date: "",
+      includeBilled: false,
+    });
+  const appointmentsToday =
+    appointmentData &&
+    appointmentData.filter((appointment) => {
+      dayjs(appointment.dateTimeScheduled).format("YYYY-MM-DD") === dateToday &&
+        appointment.isFinished === false;
     });
   const { data: attendanceToday, isFetching: attendanceTodayIsFetching } =
     useGetAttendanceToday();
@@ -42,7 +48,7 @@ const Card = ({ title }: Props) => {
       className={
         "max-h-48 overflow-y-auto shadow-sm " && title === "Available Dentists"
           ? "md:flex-1"
-          : "md:flex-[2]"
+          : "md:flex-[2.04]"
       }
     >
       <div className="flex bg-primary items-center justify-between py-2 px-4 text-center rounded-t text-l font-medium">
@@ -71,7 +77,7 @@ const Card = ({ title }: Props) => {
                     availableDentists.map((dentist) => (
                       <tr
                         key={dentist.dentist._id}
-                        className="[&>*]:bg-base-300 [&>*]:hover:bg-base-100 hover:bg-base-100 [&>*]:py-2 [&>*]:px-4 tracking-tight border-b border-base-200 text-xs md:text-sm cursor-pointer"
+                        className="[&>*]:bg-base-300 [&>*]:py-2 [&>*]:px-4 tracking-tight border-b border-base-200 text-xs md:text-sm"
                       >
                         <td>
                           {dentist.dentist.staff.user.name.firstName}{" "}
@@ -118,15 +124,17 @@ const Card = ({ title }: Props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {appointmentData && appointmentData.length > 0 ? (
-                    appointmentData.map((appointment) => (
+                  {appointmentsToday && appointmentsToday.length > 0 ? (
+                    appointmentsToday.map((appointment) => (
                       <tr
                         key={appointment._id}
-                        className="[&>*]:bg-base-300 [&>*]:hover:bg-base-100 hover:bg-base-100 [&>*]:py-2 [&>*]:px-4 tracking-tight border-b border-base-200 text-xs md:text-sm cursor-pointer"
+                        className="[&>*]:bg-base-300 [&>*]:py-2 [&>*]:px-4 tracking-tight border-b border-base-200 text-xs md:text-sm"
                       >
                         <td>
                           {appointment.dateTimeScheduled &&
-                            `${dayjs(appointment.dateTimeScheduled).format("h:mm:ss A")}`}
+                            `${dayjs(appointment.dateTimeScheduled).format(
+                              "h:mm:ss A"
+                            )}`}
                         </td>
                         <td>{appointment.service.name}</td>
                         <td>
