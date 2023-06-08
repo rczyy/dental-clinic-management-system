@@ -31,7 +31,7 @@ const main = async () => {
 
   app.use(
     cors({
-      origin: ["http://localhost:5173/", "https://atdentalhome.vercel.app"],
+      origin: ["http://localhost:5173", "https://atdentalhome.vercel.app"],
       credentials: true,
     })
   );
