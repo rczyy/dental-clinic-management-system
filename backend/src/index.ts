@@ -22,6 +22,7 @@ import log from "./routes/log";
 import notificationRoute from "./routes/notification";
 import billRoute from "./routes/bill";
 import patientCondition from "./routes/patientCondition";
+import prescription from "./routes/prescription";
 
 const main = async () => {
   mongoose.set("strictQuery", false);
@@ -71,6 +72,7 @@ const main = async () => {
   app.use("/notification", notificationRoute);
   app.use("/bill", billRoute);
   app.use("/patient-condition", patientCondition);
+  app.use("/prescription", prescription);
 
   app.listen(port, () =>
     console.log(`Server listening to http://localhost:${port}`)
