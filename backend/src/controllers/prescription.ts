@@ -2,9 +2,10 @@ import { RequestHandler } from "express";
 import { verifyToken } from "../utilities/verifyToken";
 import { Roles } from "../constants";
 import { z } from "zod";
-import { Types, isValidObjectId } from "mongoose";
+import { isValidObjectId } from "mongoose";
 import Patient from "../models/patient";
 import Prescription from "../models/prescription";
+import User from "../models/user";
 
 export const getPrescriptions: RequestHandler = async (req, res) => {
   const params = z
@@ -35,12 +36,6 @@ export const getPrescriptions: RequestHandler = async (req, res) => {
     patient: patient._id,
   }).populate({
     path: "prescriber",
-    populate: {
-      path: "staff",
-      populate: {
-        path: "user",
-      },
-    },
   });
 
   res.status(200).send(prescriptions);
@@ -105,10 +100,21 @@ export const addPrescription: RequestHandler = async (req, res) => {
     return;
   }
 
+  const prescriber = await User.findById(req.session.uid);
+
+  if (
+    !prescriber ||
+    prescriber.isDeleted ||
+    (prescriber.role !== "Admin" && prescriber.role !== "Dentist")
+  ) {
+    res.status(400).send({ message: "Patient does not exist" });
+    return;
+  }
+
   const newPrescription = new Prescription();
 
   newPrescription.patient = patient._id;
-  newPrescription.prescriber = req.session.uid as unknown as Types.ObjectId;
+  newPrescription.prescriber = prescriber._id;
   newPrescription.name = name;
   newPrescription.dose = dose;
   newPrescription.frequency = frequency;

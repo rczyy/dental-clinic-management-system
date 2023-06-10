@@ -9,7 +9,7 @@ const prescriptionSchema = new Schema<Prescription>(
     },
     prescriber: {
       type: Schema.Types.ObjectId,
-      ref: "Dentist",
+      ref: "User",
       required: true,
     },
     name: {
