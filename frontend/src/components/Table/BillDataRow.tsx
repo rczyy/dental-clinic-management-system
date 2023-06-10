@@ -175,12 +175,13 @@ export const BillDataRow = ({ bill }: Props): JSX.Element => {
   );
 };
 
-const ViewBillModal = ({
+export const ViewBillModal = ({
   bill,
   setIsViewModalVisible,
 }: ViewBillProps): JSX.Element => {
   const [textAreaVisible, setTextAreaVisible] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+  const { data: me } = useGetMe();
 
   useEffect(() => {
     if (textAreaRef.current) {
@@ -272,13 +273,15 @@ const ViewBillModal = ({
               </td>
             </tr>
 
-            <tr>
-              <th className="font-bold">Price</th>
+            {me && me.role !== "Patient" && (
+              <tr>
+                <th className="font-bold">Price</th>
 
-              <td className="text-green-600 font-semibold">
-                ₱ {Intl.NumberFormat("en-US").format(bill.price)}
-              </td>
-            </tr>
+                <td className="text-green-600 font-semibold">
+                  ₱ {Intl.NumberFormat("en-US").format(bill.price)}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
 

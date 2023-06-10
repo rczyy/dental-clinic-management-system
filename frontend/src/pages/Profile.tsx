@@ -10,7 +10,15 @@ import {
 } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { FiCamera, FiEdit2, FiMapPin, FiPhone, FiX } from "react-icons/fi";
+import {
+  FiCamera,
+  FiEdit2,
+  FiEye,
+  FiMapPin,
+  FiMoreHorizontal,
+  FiPhone,
+  FiX,
+} from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
 import FormInput from "../components/Form/FormInput";
 import SelectDropdown from "../components/Form/SelectDropdown";
@@ -27,6 +35,7 @@ import {
 import DisabledFormInput from "../components/Form/DisabledFormInput";
 import { useGetPatientBills } from "../hooks/bill";
 import dayjs from "dayjs";
+import { ViewBillModal } from "../components/Table/BillDataRow";
 
 type EditModalProps = {
   userData: UserResponse;
@@ -121,6 +130,9 @@ const schema = z.object({
 });
 
 const Profile = () => {
+  const [isViewBillModalVisible, setIsViewBillModalVisible] = useState(false);
+  const [selectedBill, setSelectedBill] = useState<BillResponse>();
+
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isEditAvatarModalVisible, setIsEditAvatarModalVisible] =
     useState(false);
@@ -256,17 +268,45 @@ const Profile = () => {
                                       ).format("MMM DD, YYYY h:mm A")}
                                     </p>
                                   </div>
-                                  {me &&
-                                    (me.role === "Admin" ||
-                                      me.role === "Manager") && (
-                                      <p className="text-green-600 font-bold">
-                                        ₱{" "}
-                                        {Intl.NumberFormat("en-US").format(
-                                          bill.price
-                                        )}
-                                      </p>
-                                    )}
+
+                                  <div className="grid place-items-end">
+                                    <div className="dropdown dropdown-right">
+                                      <label tabIndex={0}>
+                                        <FiMoreHorizontal className="w-6 h-6 p-1 rounded-full cursor-pointer transition- hover:bg-base-200" />
+                                      </label>
+
+                                      <ul
+                                        tabIndex={0}
+                                        className="dropdown-content menu bg-base-100 border border-neutral rounded-lg shadow-lg"
+                                      >
+                                        <li
+                                          onClick={() => {
+                                            setIsViewBillModalVisible(
+                                              !isViewBillModalVisible
+                                            );
+                                            setSelectedBill(bill);
+                                          }}
+                                        >
+                                          <a>
+                                            <FiEye />
+                                          </a>
+                                        </li>
+                                      </ul>
+                                    </div>
+
+                                    {me &&
+                                      (me.role === "Admin" ||
+                                        me.role === "Manager") && (
+                                        <p className="text-green-600 font-bold">
+                                          ₱{" "}
+                                          {Intl.NumberFormat("en-US").format(
+                                            bill.price
+                                          )}
+                                        </p>
+                                      )}
+                                  </div>
                                 </header>
+
                                 <div className="flex flex-col gap-2">
                                   <h3 className="font-bold">Performed by:</h3>
                                   <div className="flex items-center gap-3">
@@ -329,6 +369,20 @@ const Profile = () => {
           userData={userData}
           setIsEditAvatarModalVisible={setIsEditAvatarModalVisible}
         />
+      )}
+
+      {isViewBillModalVisible && selectedBill && (
+        <table>
+          <tbody>
+            <tr>
+              <ViewBillModal
+                key={selectedBill._id}
+                bill={selectedBill}
+                setIsViewModalVisible={setIsViewBillModalVisible}
+              />
+            </tr>
+          </tbody>
+        </table>
       )}
     </>
   );
