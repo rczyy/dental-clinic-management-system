@@ -10,6 +10,7 @@ import { z } from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAddBill } from "../../hooks/bill";
+import { private_createTypography } from "@mui/material";
 
 interface Props {
   appointment: AppointmentResponse;
@@ -238,23 +239,27 @@ const BillAppointmentModal = ({
 
   const { mutate: addBill, isLoading: addBillLoading } = useAddBill();
   const [textAreaVisible, setTextAreaVisible] = useState(false);
+  const [isDiscounted, setIsDiscounted] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const onSubmit: SubmitHandler<BillFormValues> = (data) => {
-    addBill(data, {
-      onSuccess: () => {
-        reset();
-        setIsBillModalVisible(false);
-        toast.success("Successfully billed the appointment");
-      },
-      onError: (err) => {
-        toast.error(
-          "message" in err.response.data
-            ? err.response.data.message
-            : err.response.data.fieldErrors[0]
-        );
-      },
-    });
+    addBill(
+      { ...data, price: (+data.price * 0.8).toString() },
+      {
+        onSuccess: () => {
+          reset();
+          setIsBillModalVisible(false);
+          toast.success("Successfully billed the appointment");
+        },
+        onError: (err) => {
+          toast.error(
+            "message" in err.response.data
+              ? err.response.data.message
+              : err.response.data.fieldErrors[0]
+          );
+        },
+      }
+    );
   };
 
   useEffect(() => {
@@ -290,42 +295,56 @@ const BillAppointmentModal = ({
           className="flex flex-col mx-2 gap-4"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <textarea
-            {...register("notes")}
-            className={`bg-base-300 p-4 outline outline-1 outline-neutral rounded-md resize-none placeholder:text-sm ${
-              watch("notes") && "outline-primary"
-            }`}
-            placeholder="Notes (Optional)"
-            ref={(el) => {
-              textAreaRef.current = el;
-              register("notes").ref(el);
-              setTextAreaVisible(!!el);
-            }}
-          />
+          <div className="flex flex-col gap-2">
+            <textarea
+              {...register("notes")}
+              className={`bg-base-300 p-4 outline outline-1 outline-neutral rounded-md resize-none placeholder:text-sm ${
+                watch("notes") && "outline-primary"
+              }`}
+              placeholder="Notes (Optional)"
+              ref={(el) => {
+                textAreaRef.current = el;
+                register("notes").ref(el);
+                setTextAreaVisible(!!el);
+              }}
+            />
 
-          <FormInput
-            type="number"
-            label="price"
-            placeholder="Price"
-            value={watch("price")}
-            register={register}
-            error={errors.price && errors.price.message}
-          />
-
-          <div className="flex gap-3 justify-end mx-2 py-3">
-            <button
-              type="button"
-              className="btn px-8"
-              onClick={() => setIsBillModalVisible(false)}
-            >
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary px-8 text-white">
-              Bill{" "}
-              {addBillLoading && (
-                <AiOutlineLoading3Quarters className="w-4 h-4 ml-2 animate-spin" />
-              )}
-            </button>
+            <FormInput
+              type="number"
+              label="price"
+              placeholder="Price"
+              value={watch("price")}
+              register={register}
+              error={errors.price && errors.price.message}
+            />
+            <p className={isDiscounted ? "" : "invisible"}>
+              Discounted Price: ₱{+watch("price") * 0.8}
+            </p>
+          </div>
+          <div className="flex justify-between mr-2 py-3">
+            <label className="label gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-primary checkbox-sm checked:bg-base-300"
+                onChange={(e) => setIsDiscounted(e.target.checked)}
+              />
+              <span className="label-text">PWD/Senior Discount</span>
+            </label>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                className="btn px-8"
+                onClick={() => setIsBillModalVisible(false)}
+              >
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary px-8 text-white">
+                Bill{" "}
+                {addBillLoading && (
+                  <AiOutlineLoading3Quarters className="w-4 h-4 ml-2 animate-spin" />
+                )}
+              </button>
+            </div>
           </div>
         </form>
       </section>
