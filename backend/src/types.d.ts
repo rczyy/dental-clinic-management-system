@@ -156,7 +156,7 @@ declare global {
     type: string;
     action: string;
   }
-  
+
   interface Notification {
     _id: Types.ObjectId;
     description: string;
@@ -166,7 +166,6 @@ declare global {
     from: Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
-
   }
 
   interface Bill {
@@ -175,5 +174,23 @@ declare global {
     notes?: string;
     price: number;
     isDeleted: boolean;
+  }
+
+  interface PatientCondition {
+    _id: Types.ObjectId;
+    patient: Types.ObjectId;
+    condition: string;
+    conditionType: string;
+  }
+
+  interface Prescription {
+    _id: Types.ObjectId;
+    patient: Types.ObjectId;
+    prescriber: Types.ObjectId;
+    name: string;
+    dose: string;
+    frequency: string;
+    createdAt: Date;
+    updatedAt: Date;
   }
 }
