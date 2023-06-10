@@ -10,7 +10,6 @@ import { z } from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAddBill } from "../../hooks/bill";
-import { private_createTypography } from "@mui/material";
 
 interface Props {
   appointment: AppointmentResponse;
