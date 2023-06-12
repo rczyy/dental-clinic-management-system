@@ -141,7 +141,7 @@ const Profile = () => {
   const { data: userData, isLoading } = useGetUser(userID || "");
   const { data: bills, isLoading: billsLoading } = useGetPatientBills(
     (userData && userData._id) || "",
-    userData && userData.role === "Patient"
+    !!userData && userData.role === "Patient"
   );
 
   if (isLoading)
