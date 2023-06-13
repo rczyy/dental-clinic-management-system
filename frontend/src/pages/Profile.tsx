@@ -1,29 +1,14 @@
 import { useEditUser, useGetMe, useGetUser } from "../hooks/user";
 import { z } from "zod";
-import {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useLayoutEffect,
-  useState,
-  useRef,
-} from "react";
+import { Dispatch, SetStateAction, useEffect, useLayoutEffect, useState, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import {
-  FiCamera,
-  FiEdit2,
-  FiEye,
-  FiMapPin,
-  FiMoreHorizontal,
-  FiPhone,
-  FiX,
-} from "react-icons/fi";
+import { FiCamera, FiEdit2, FiMapPin, FiPhone, FiX } from "react-icons/fi";
 import { BsPerson, BsHouseDoor } from "react-icons/bs";
 import FormInput from "../components/Form/FormInput";
 import SelectDropdown from "../components/Form/SelectDropdown";
 import { Navigate, useParams } from "react-router-dom";
-import { MdOutlineAddAPhoto, MdOutlineMedicalServices } from "react-icons/md";
+import { MdOutlineAddAPhoto } from "react-icons/md";
 import { toast } from "react-toastify";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import {
@@ -34,8 +19,8 @@ import {
 } from "../redux/api/address";
 import DisabledFormInput from "../components/Form/DisabledFormInput";
 import { useGetPatientBills } from "../hooks/bill";
-import dayjs from "dayjs";
 import { ViewBillModal } from "../components/Table/BillDataRow";
+import { PatientSummary } from "../components/Profile/PatientSummary";
 
 type EditModalProps = {
   userData: UserResponse;
@@ -134,10 +119,8 @@ const Profile = () => {
   const [selectedBill, setSelectedBill] = useState<BillResponse>();
 
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [isEditAvatarModalVisible, setIsEditAvatarModalVisible] =
-    useState(false);
+  const [isEditAvatarModalVisible, setIsEditAvatarModalVisible] = useState(false);
   const { userID } = useParams();
-  const { data: me } = useGetMe();
   const { data: userData, isLoading } = useGetUser(userID || "");
   const { data: bills, isLoading: billsLoading } = useGetPatientBills(
     (userData && userData._id) || "",
@@ -170,10 +153,7 @@ const Profile = () => {
                 className={`relative max-w-[8rem] max-h-[8rem] w-full h-full m-auto sm:m-0 ${
                   userData.role !== "Patient" && "cursor-pointer"
                 } group`}
-                onClick={() =>
-                  userData.role !== "Patient" &&
-                  setIsEditAvatarModalVisible(true)
-                }
+                onClick={() => userData.role !== "Patient" && setIsEditAvatarModalVisible(true)}
               >
                 {userData.role !== "Patient" && (
                   <div className="absolute bottom-2 right-0 bg-black/75 rounded-full transition group-hover:bg-black/90">
@@ -187,13 +167,10 @@ const Profile = () => {
               </figure>
               <div className="flex flex-col items-center sm:items-start">
                 <span className="font-semibold">
-                  {userData.name.firstName} {userData.name.middleName}{" "}
-                  {userData.name.lastName}
+                  {userData.name.firstName} {userData.name.middleName} {userData.name.lastName}
                 </span>
                 <span className="text-zinc-400 text-sm">{userData.email}</span>
-                <span className="my-2 font-semibold text-primary text-sm">
-                  {userData.role}
-                </span>
+                <span className="my-2 font-semibold text-primary text-sm">{userData.role}</span>
               </div>
             </div>
             <div className="px-2 py-4 border-t flex justify-between">
@@ -227,129 +204,22 @@ const Profile = () => {
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-3">
                     <FiPhone className="text-primary" />
-                    <span className="font-semibold text-primary">
-                      Contact Number
-                    </span>
+                    <span className="font-semibold text-primary">Contact Number</span>
                   </div>
-                  <span className="text-sm text-zinc-400">
-                    {userData.contactNo}
+                  <span className="text-sm font-semibold">
+                    {userData.contactNo?.slice(0, 3)} {userData.contactNo?.slice(3, 6)}{" "}
+                    {userData.contactNo?.slice(6, 9)} {userData.contactNo?.slice(9)}
                   </span>
                 </div>
+
                 {userData.role === "Patient" && (
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-3">
-                      <MdOutlineMedicalServices className="text-primary" />
-                      <span className="font-semibold text-primary">
-                        Services Done
-                      </span>
-                    </div>
-                    {bills ? (
-                      bills.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {bills
-                            .sort((a, b) =>
-                              dayjs(a.createdAt).isBefore(dayjs(b.createdAt))
-                                ? -1
-                                : 1
-                            )
-                            .map((bill) => (
-                              <article
-                                key={bill._id}
-                                className="flex flex-col gap-8 p-4 border rounded-lg"
-                              >
-                                <header className="flex justify-between items-center">
-                                  <div>
-                                    <h3 className="font-bold">
-                                      {bill.appointment.service.name}
-                                    </h3>
-                                    <p className="text-sm text-zinc-400">
-                                      {dayjs(
-                                        bill.appointment.dateTimeFinished
-                                      ).format("MMM DD, YYYY h:mm A")}
-                                    </p>
-                                  </div>
-
-                                  <div className="grid place-items-end">
-                                    <div className="dropdown dropdown-right">
-                                      <label tabIndex={0}>
-                                        <FiMoreHorizontal className="w-6 h-6 p-1 rounded-full cursor-pointer transition- hover:bg-base-200" />
-                                      </label>
-
-                                      <ul
-                                        tabIndex={0}
-                                        className="dropdown-content menu bg-base-100 border border-neutral rounded-lg shadow-lg"
-                                      >
-                                        <li
-                                          onClick={() => {
-                                            setIsViewBillModalVisible(
-                                              !isViewBillModalVisible
-                                            );
-                                            setSelectedBill(bill);
-                                          }}
-                                        >
-                                          <a>
-                                            <FiEye />
-                                          </a>
-                                        </li>
-                                      </ul>
-                                    </div>
-
-                                    {me &&
-                                      (me.role === "Admin" ||
-                                        me.role === "Manager") && (
-                                        <p className="text-green-600 font-bold">
-                                          ₱{" "}
-                                          {Intl.NumberFormat("en-US").format(
-                                            bill.price
-                                          )}
-                                        </p>
-                                      )}
-                                  </div>
-                                </header>
-
-                                <div className="flex flex-col gap-2">
-                                  <h3 className="font-bold">Performed by:</h3>
-                                  <div className="flex items-center gap-3">
-                                    <figure className="w-10 h-10 rounded-full overflow-hidden">
-                                      <img
-                                        src={
-                                          bill.appointment.dentist.staff.user
-                                            .avatar
-                                        }
-                                        alt="Dentist Avatar"
-                                      />
-                                    </figure>
-                                    <p className="font-semibold">
-                                      Dr.{" "}
-                                      {
-                                        bill.appointment.dentist.staff.user.name
-                                          .firstName
-                                      }{" "}
-                                      {
-                                        bill.appointment.dentist.staff.user.name
-                                          .lastName
-                                      }
-                                    </p>
-                                  </div>
-                                </div>
-                              </article>
-                            ))}
-                        </div>
-                      ) : (
-                        <div>
-                          <h3 className="text-zinc-400">
-                            No services done yet
-                          </h3>
-                        </div>
-                      )
-                    ) : (
-                      billsLoading && (
-                        <div>
-                          <AiOutlineLoading3Quarters className="text-primary w-8 h-8 mx-auto animate-spin" />
-                        </div>
-                      )
-                    )}
-                  </div>
+                  <PatientSummary
+                    bills={bills}
+                    billsLoading={billsLoading}
+                    isViewBillModalVisible={isViewBillModalVisible}
+                    setIsViewBillModalVisible={setIsViewBillModalVisible}
+                    setSelectedBill={setSelectedBill}
+                  />
                 )}
               </div>
             </div>
@@ -358,10 +228,7 @@ const Profile = () => {
       </main>
 
       {isEditModalVisible && (
-        <EditProfileModal
-          userData={userData}
-          setIsEditModalVisible={setIsEditModalVisible}
-        />
+        <EditProfileModal userData={userData} setIsEditModalVisible={setIsEditModalVisible} />
       )}
 
       {isEditAvatarModalVisible && (
@@ -388,10 +255,7 @@ const Profile = () => {
   );
 };
 
-const EditProfileModal = ({
-  userData,
-  setIsEditModalVisible,
-}: EditModalProps) => {
+const EditProfileModal = ({ userData, setIsEditModalVisible }: EditModalProps) => {
   const [isEditAddressOpen, setIsEditAddressOpen] = useState(false);
   const [regionOptions, setRegionOptions] = useState<SelectOption[]>();
   const [selectedRegion, setSelectedRegion] = useState<Region>();
@@ -407,8 +271,7 @@ const EditProfileModal = ({
   const { data: regions, isFetching: isRegionsLoading } = useGetRegionsQuery();
   const [getProvinces, { data: provinces, isFetching: isProvincesLoading }] =
     useLazyGetProvincesQuery();
-  const [getCities, { data: cities, isFetching: isCitiesLoading }] =
-    useLazyGetCitiesQuery();
+  const [getCities, { data: cities, isFetching: isCitiesLoading }] = useLazyGetCitiesQuery();
   const [getBarangays, { data: barangays, isFetching: isBarangaysLoading }] =
     useLazyGetBarangaysQuery();
 
@@ -450,9 +313,7 @@ const EditProfileModal = ({
     if (regions && watch("region")) {
       setProvinceOptions([]);
 
-      setSelectedRegion(
-        regions.find((region) => region.name === watch("region"))
-      );
+      setSelectedRegion(regions.find((region) => region.name === watch("region")));
 
       reset(
         (formValues) => ({
@@ -484,9 +345,7 @@ const EditProfileModal = ({
     if (provinces && watch("province")) {
       setCityOptions([]);
 
-      setSelectedProvince(
-        provinces.find((province) => province.name === watch("province"))
-      );
+      setSelectedProvince(provinces.find((province) => province.name === watch("province")));
 
       reset(
         (formValues) => ({
@@ -588,15 +447,9 @@ const EditProfileModal = ({
       <section className="bg-base-300 max-w-4xl rounded-2xl shadow-md px-8 py-10">
         <header className="flex justify-between items-center">
           <h1 className="text-2xl font-bold mx-2 py-3">Edit Profile</h1>
-          <FiX
-            className="cursor-pointer w-10 h-5"
-            onClick={() => setIsEditModalVisible(false)}
-          />
+          <FiX className="cursor-pointer w-10 h-5" onClick={() => setIsEditModalVisible(false)} />
         </header>
-        <form
-          className="flex flex-col px-2 py-4 md:py-8 gap-2"
-          onSubmit={handleSubmit(onSubmit)}
-        >
+        <form className="flex flex-col px-2 py-4 md:py-8 gap-2" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col md:flex-row gap-1">
             <FormInput
               type="text"
@@ -660,9 +513,7 @@ const EditProfileModal = ({
                       />
                     )}
                   />
-                  <span className="text-xs text-error pl-1">
-                    {errors.region?.message}
-                  </span>
+                  <span className="text-xs text-error pl-1">{errors.region?.message}</span>
                 </div>
                 <div className="flex flex-col flex-1 gap-1">
                   <Controller
@@ -680,9 +531,7 @@ const EditProfileModal = ({
                       />
                     )}
                   />
-                  <span className="text-xs text-error pl-1">
-                    {errors.province?.message}
-                  </span>
+                  <span className="text-xs text-error pl-1">{errors.province?.message}</span>
                 </div>
               </div>
               <div className="flex gap-1">
@@ -702,9 +551,7 @@ const EditProfileModal = ({
                       />
                     )}
                   />
-                  <span className="text-xs text-error pl-1">
-                    {errors.city?.message}
-                  </span>
+                  <span className="text-xs text-error pl-1">{errors.city?.message}</span>
                 </div>
                 <div className="flex flex-col flex-1 gap-1">
                   <Controller
@@ -722,9 +569,7 @@ const EditProfileModal = ({
                       />
                     )}
                   />
-                  <span className="text-xs text-error pl-1">
-                    {errors.barangay?.message}
-                  </span>
+                  <span className="text-xs text-error pl-1">{errors.barangay?.message}</span>
                 </div>
               </div>
               <FormInput
@@ -818,13 +663,8 @@ const EditProfileModal = ({
   );
 };
 
-const EditAvatarModal = ({
-  userData,
-  setIsEditAvatarModalVisible,
-}: EditAvatarModalProps) => {
-  const [avatar, setAvatar] = useState<File | string | undefined>(
-    userData.avatar
-  );
+const EditAvatarModal = ({ userData, setIsEditAvatarModalVisible }: EditAvatarModalProps) => {
+  const [avatar, setAvatar] = useState<File | string | undefined>(userData.avatar);
   const imageRef = useRef<HTMLImageElement>(null);
   const imageLoadingRef = useRef<HTMLDivElement>(null);
 
@@ -929,11 +769,7 @@ const EditAvatarModal = ({
               <img
                 ref={imageRef}
                 className="w-full rounded-lg z-10"
-                src={
-                  typeof avatar === "string"
-                    ? avatar
-                    : URL.createObjectURL(avatar)
-                }
+                src={typeof avatar === "string" ? avatar : URL.createObjectURL(avatar)}
                 width={800}
                 height={800}
               />
@@ -971,9 +807,7 @@ const EditAvatarModal = ({
           <button
             type="submit"
             className="btn btn-primary text-white"
-            disabled={
-              !avatar || typeof avatar === "string" || isEditUserLoading
-            }
+            disabled={!avatar || typeof avatar === "string" || isEditUserLoading}
           >
             {!isEditUserLoading ? (
               "Save"
