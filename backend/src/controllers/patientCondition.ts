@@ -3,8 +3,24 @@ import { z } from "zod";
 import { isValidObjectId } from "mongoose";
 import Patient from "../models/patient";
 import PatientCondition from "../models/patientCondition";
+import { verifyToken } from "../utilities/verifyToken";
+import { Roles } from "../constants";
 
 export const getPatientConditions: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (!token.role) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
   const params = z
     .object({
       userId: z.string({ required_error: "User ID is required" }),
@@ -37,6 +53,20 @@ export const getPatientConditions: RequestHandler = async (req, res) => {
 };
 
 export const addPatientCondition: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role === Roles.Patient) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
   const params = z
     .object({
       userId: z.string({ required_error: "User ID is required" }),
@@ -90,6 +120,20 @@ export const addPatientCondition: RequestHandler = async (req, res) => {
 };
 
 export const editPatientCondition: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role === Roles.Patient) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
   const params = z
     .object({
       id: z.string({ required_error: "ID is required" }),
@@ -142,6 +186,20 @@ export const editPatientCondition: RequestHandler = async (req, res) => {
 };
 
 export const removePatientCondition: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role === Roles.Patient) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
   const params = z
     .object({
       id: z.string({ required_error: "ID is required" }),
