@@ -193,4 +193,13 @@ declare global {
     createdAt: Date;
     updatedAt: Date;
   }
+
+  interface PatientFile {
+    _id: Types.ObjectId;
+    patient: Types.ObjectId;
+    bill?: Types.ObjectId;
+    file: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }
 }
