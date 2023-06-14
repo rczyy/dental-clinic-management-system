@@ -141,13 +141,7 @@ interface UserResponse {
   address?: Address;
   email: string;
   contactNo?: string;
-  role:
-    | "Admin"
-    | "Manager"
-    | "Assistant"
-    | "Dentist"
-    | "Front Desk"
-    | "Patient";
+  role: "Admin" | "Manager" | "Assistant" | "Dentist" | "Front Desk" | "Patient";
   avatar: string;
   createdAt: Date;
   updatedAt: Date;
@@ -347,4 +341,22 @@ interface BillFormValues {
   appointment: string;
   notes: string;
   price: string;
+}
+
+interface PatientConditionResponse {
+  _id: string;
+  patient: string;
+  condition: string;
+  conditionType: string;
+}
+
+interface PrescriptionResponse {
+  _id: string;
+  patient: string;
+  prescriber: UserResponse;
+  name: string;
+  dose: string;
+  frequency: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
