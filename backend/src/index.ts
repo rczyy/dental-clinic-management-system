@@ -23,6 +23,7 @@ import notificationRoute from "./routes/notification";
 import billRoute from "./routes/bill";
 import patientCondition from "./routes/patientCondition";
 import prescription from "./routes/prescription";
+import patientFile from "./routes/patientFile";
 
 const main = async () => {
   mongoose.set("strictQuery", false);
@@ -73,10 +74,9 @@ const main = async () => {
   app.use("/bill", billRoute);
   app.use("/patient-condition", patientCondition);
   app.use("/prescription", prescription);
+  app.use("/patient-file", patientFile);
 
-  app.listen(port, () =>
-    console.log(`Server listening to http://localhost:${port}`)
-  );
+  app.listen(port, () => console.log(`Server listening to http://localhost:${port}`));
 };
 
 main();
