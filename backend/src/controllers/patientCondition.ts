@@ -89,6 +89,58 @@ export const addPatientCondition: RequestHandler = async (req, res) => {
   res.status(201).send(newPatientCondition);
 };
 
+export const editPatientCondition: RequestHandler = async (req, res) => {
+  const params = z
+    .object({
+      id: z.string({ required_error: "ID is required" }),
+    })
+    .refine(({ id }) => isValidObjectId(id), {
+      message: "Invalid ID",
+    });
+
+  const paramsParse = params.safeParse(req.params);
+
+  if (!paramsParse.success) {
+    res.status(400).send(paramsParse.error.flatten());
+    return;
+  }
+
+  const body = z.object({
+    condition: z
+      .string({ required_error: "Condition is required" })
+      .min(1, "Condition cannot be empty")
+      .optional(),
+    conditionType: z
+      .string({ required_error: "Condition Type is required" })
+      .min(1, "Condition Type cannot be empty")
+      .optional(),
+  });
+
+  const bodyParse = body.safeParse(req.body);
+
+  if (!bodyParse.success) {
+    res.status(400).send(bodyParse.error.flatten());
+    return;
+  }
+
+  const { id } = req.params as z.infer<typeof params>;
+  const { condition, conditionType } = req.body as z.infer<typeof body>;
+
+  const existingPatientCondition = await PatientCondition.findById(id);
+
+  if (!existingPatientCondition) {
+    res.status(400).send({ message: "Patient condition does not exist" });
+    return;
+  }
+
+  if (condition) existingPatientCondition.condition = condition;
+  if (conditionType) existingPatientCondition.conditionType = conditionType;
+
+  await existingPatientCondition.save().catch((e) => res.status(400).send(e));
+
+  res.status(200).send(existingPatientCondition);
+};
+
 export const removePatientCondition: RequestHandler = async (req, res) => {
   const params = z
     .object({
