@@ -199,6 +199,7 @@ declare global {
     patient: Types.ObjectId;
     bill?: Types.ObjectId;
     name: string;
+    size: number;
     file: string;
     createdAt: Date;
     updatedAt: Date;

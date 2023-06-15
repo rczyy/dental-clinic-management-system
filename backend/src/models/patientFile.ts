@@ -16,6 +16,10 @@ const patientFileSchema = new Schema<PatientFile>(
       type: String,
       required: true,
     },
+    size: {
+      type: Number,
+      required: true,
+    },
     file: {
       type: String,
       required: true,

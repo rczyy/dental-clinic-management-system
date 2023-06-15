@@ -134,6 +134,7 @@ export const addPatientFile: RequestHandler = async (req, res) => {
       try {
         const object = await fileUpload(folder, file);
         patientFile.name = file.originalname;
+        patientFile.size = file.size;
         patientFile.file = object.Location;
 
         await patientFile.save();
