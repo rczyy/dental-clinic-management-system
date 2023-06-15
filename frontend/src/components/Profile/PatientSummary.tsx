@@ -1,4 +1,5 @@
 import { Conditions } from "./Conditions";
+import { PatientFiles } from "./PatientFiles";
 import { Prescriptions } from "./Prescriptions";
 import { ServicesDone } from "./ServicesDone";
 
@@ -34,6 +35,8 @@ export const PatientSummary = ({
         setIsViewBillModalVisible={setIsViewBillModalVisible}
         setSelectedBill={setSelectedBill}
       />
+
+      <PatientFiles />
     </section>
   );
 };
