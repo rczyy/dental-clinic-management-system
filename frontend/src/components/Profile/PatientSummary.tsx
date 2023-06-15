@@ -1,3 +1,4 @@
+import { useGetMe } from "../../hooks/user";
 import { Conditions } from "./Conditions";
 import { PatientFiles } from "./PatientFiles";
 import { Prescriptions } from "./Prescriptions";
@@ -18,6 +19,7 @@ export const PatientSummary = ({
   setIsViewBillModalVisible,
   setSelectedBill,
 }: Props): JSX.Element => {
+  const { data: me } = useGetMe();
   return (
     <section className="flex flex-col gap-6 my-8">
       <header>
@@ -36,7 +38,7 @@ export const PatientSummary = ({
         setSelectedBill={setSelectedBill}
       />
 
-      <PatientFiles />
+      {me && me.role !== "Patient" && me.role !== "Assistant" && <PatientFiles />}
     </section>
   );
 };
