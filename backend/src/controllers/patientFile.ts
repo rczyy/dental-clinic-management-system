@@ -6,6 +6,7 @@ import { isValidObjectId } from "mongoose";
 import { PatientFile } from "../models/patientFile";
 import Patient from "../models/patient";
 import Bill from "../models/bill";
+import { fileUpload } from "../utilities/fileUpload";
 
 export const getPatientFiles: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -54,6 +55,7 @@ export const getPatientFiles: RequestHandler = async (req, res) => {
 
   const patientFiles = await PatientFile.find({
     patient: patient._id,
+    ...(bill && { bill }),
   });
 
   res.status(200).send(patientFiles);
@@ -108,17 +110,45 @@ export const addPatientFile: RequestHandler = async (req, res) => {
     const existingBill = await Bill.findById(bill);
 
     if (!existingBill) {
-      res.status(400).send({ message: "Patient does not exist" });
+      res.status(400).send({ message: "Bill does not exist" });
       return;
     }
   }
 
-  if (!req.files || req.files.length === 0) {
+  const { files } = req;
+
+  if (!files || files.length === 0) {
     res.status(400).send({ message: "File is required" });
     return;
   }
 
-  res.status(200).send(req.files);
+  const patientFiles = await Promise.all(
+    (files as Express.Multer.File[]).map(async (file) => {
+      const patientFile = new PatientFile();
+
+      patientFile.patient = patient._id;
+      if (bill) patientFile.bill = bill;
+
+      const folder = `patient-files/${patient._id}/`;
+
+      try {
+        const object = await fileUpload(folder, file);
+        patientFile.name = file.originalname;
+        patientFile.file = object.Location;
+
+        await patientFile.save();
+
+        return patientFile;
+      } catch (error) {
+        const err = error as Error;
+
+        res.status(400).send({ message: err.message });
+        return;
+      }
+    })
+  );
+
+  res.status(200).send(patientFiles);
 };
 
 export const removePatientFile: RequestHandler = async (req, res) => {
@@ -136,5 +166,31 @@ export const removePatientFile: RequestHandler = async (req, res) => {
     return;
   }
 
-  res.status(200).send("OK");
+  const params = z
+    .object({
+      id: z.string({ required_error: "User ID is required" }),
+    })
+    .refine(({ id }) => isValidObjectId(id), {
+      message: "Invalid ID",
+    });
+
+  const parse = params.safeParse(req.params);
+
+  if (!parse.success) {
+    res.status(400).send(parse.error.flatten());
+    return;
+  }
+
+  const { id } = req.params as z.infer<typeof params>;
+
+  const removedPatientFile = await PatientFile.findByIdAndDelete(id);
+
+  if (!removedPatientFile) {
+    res.status(400).send({ message: "Patient file does not exist" });
+    return;
+  }
+
+  res
+    .status(200)
+    .send({ message: "Successfully deleted patient file", id: removedPatientFile._id });
 };
