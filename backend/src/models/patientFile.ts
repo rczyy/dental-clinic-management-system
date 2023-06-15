@@ -12,6 +12,10 @@ const patientFileSchema = new Schema<PatientFile>(
       ref: "Bill",
       required: false,
     },
+    name: {
+      type: String,
+      required: true,
+    },
     file: {
       type: String,
       required: true,

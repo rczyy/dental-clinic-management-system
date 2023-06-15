@@ -198,6 +198,7 @@ declare global {
     _id: Types.ObjectId;
     patient: Types.ObjectId;
     bill?: Types.ObjectId;
+    name: string;
     file: string;
     createdAt: Date;
     updatedAt: Date;
