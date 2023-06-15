@@ -122,6 +122,7 @@ const Signup = (_: Props) => {
   const [cityOptions, setCityOptions] = useState<SelectOption[]>();
   const [selectedCity, setSelectedCity] = useState<City>();
   const [barangayOptions, setBarangayOptions] = useState<SelectOption[]>();
+  const [isAgreedToTerms, setIsAgreedToTerms] = useState(false);
 
   const { data } = useGetMe();
 
@@ -555,6 +556,25 @@ const Signup = (_: Props) => {
                       error={errors.confirmPassword?.message}
                       required
                     />
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        onChange={(e) => {
+                          setIsAgreedToTerms(e.target.checked);
+                        }}
+                      />
+                      <span className="text-xs">
+                        I have read and agree to the{" "}
+                        <Link to="/terms" className="text-primary underline">
+                          privacy policy
+                        </Link>{" "}
+                        and{" "}
+                        <Link to="/terms" className="text-primary underline">
+                          terms and conditions of service
+                        </Link>
+                        .
+                      </span>
+                    </div>
                     <div className="flex gap-2">
                       <button
                         type="button"
@@ -566,7 +586,7 @@ const Signup = (_: Props) => {
                       <button
                         type="submit"
                         className="btn btn-primary min-h-[2.5rem] h-10 flex-1 border-primary text-zinc-50 mt-8 mb-4"
-                        disabled={isLoading}
+                        disabled={isLoading || !isAgreedToTerms}
                       >
                         {isLoading ? (
                           <AiOutlineLoading3Quarters className="w-6 h-6 animate-spin" />

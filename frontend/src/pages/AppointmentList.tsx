@@ -18,6 +18,7 @@ export const AppointmentList = (_: Props): JSX.Element => {
   const [searchPatientFilter, setSearchPatientFilter] = useState<string>("");
   const [dateFilter, setDateFilter] = useState<dayjs.Dayjs | null>(null);
   const [billedFilter, setBilledFilter] = useState<boolean>(false);
+  const [isPastAppointments, setIsPastAppointments] = useState<boolean>(false);
 
   const { data: me } = useGetMe();
   const {
@@ -35,14 +36,16 @@ export const AppointmentList = (_: Props): JSX.Element => {
       .sort((a, b) =>
         dayjs(a.dateTimeScheduled).isBefore(dayjs(b.dateTimeScheduled)) ? -1 : 1
       )
-      .filter(
-        (appointment) =>
-          `${appointment.dentist.staff.user.name.firstName} ${appointment.dentist.staff.user.name.lastName}`
-            .toLowerCase()
-            .includes(searchDentistFilter.toLowerCase()) &&
-          `${appointment.patient.user.name.firstName} ${appointment.patient.user.name.lastName}`
-            .toLowerCase()
-            .includes(searchPatientFilter.toLowerCase())
+      .filter((appointment) =>
+        `${appointment.dentist.staff.user.name.firstName} ${appointment.dentist.staff.user.name.lastName}`
+          .toLowerCase()
+          .includes(searchDentistFilter.toLowerCase()) &&
+        `${appointment.patient.user.name.firstName} ${appointment.patient.user.name.lastName}`
+          .toLowerCase()
+          .includes(searchPatientFilter.toLowerCase()) &&
+        isPastAppointments
+          ? dayjs(appointment.dateTimeScheduled) < dayjs()
+          : dayjs(appointment.dateTimeScheduled) >= dayjs()
       );
 
   useEffect(() => {
@@ -114,59 +117,85 @@ export const AppointmentList = (_: Props): JSX.Element => {
           </div>
         </div>
       </div>
-      <div className="bg-base-300 rounded-box overflow-x-auto">
-        <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
-          <thead>
-            <tr className="[&>*]:bg-base-300 border-b border-base-200">
-              {filteredAppointments && filteredAppointments.length > 0 && (
-                <th className="min-w-[2.5rem] w-10"></th>
-              )}
+      <div>
+        <div className="tabs">
+        <span
+          className={`${
+            !isPastAppointments ? "font-extrabold" : "tab-active"
+          } tab tab-lg tab-lifted text-primary bg-base-300`}
+          onClick={() => setIsPastAppointments(false)}
+        >
+          Appointments
+        </span>
+        <span
+          className={`${
+            isPastAppointments ? "font-extrabold" : "tab-active"
+          } tab tab-lg tab-lifted text-primary bg-base-300`}
+          onClick={() => setIsPastAppointments(true)}
+        >
+          Past Appointments
+        </span>
+        </div>
+        <div className="bg-base-300 rounded-box rounded-tl-none overflow-x-auto">
+          <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
+            <thead>
+              <tr className="[&>*]:bg-base-300 border-b border-base-200">
+                {filteredAppointments && filteredAppointments.length > 0 && (
+                  <th className="min-w-[2.5rem] w-10"></th>
+                )}
 
-              <th className="text-primary text-center normal-case">Date</th>
+                <th className="text-primary text-center normal-case">Date</th>
 
-              <th className="text-primary text-center normal-case">Time</th>
+                <th className="text-primary text-center normal-case">Time</th>
 
-              <th></th>
+                <th></th>
 
-              <th className="text-primary text-center normal-case">Dentist</th>
+                <th className="text-primary text-center normal-case">
+                  Dentist
+                </th>
 
-              <th></th>
+                <th></th>
 
-              <th className="text-primary text-center normal-case">Patient</th>
+                <th className="text-primary text-center normal-case">
+                  Patient
+                </th>
 
-              <th className="text-primary text-center normal-case">Service</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredAppointments &&
-              (filteredAppointments.length > 0 ? (
-                filteredAppointments.map((appointment) => (
-                  <AppointmentDataRow
-                    key={appointment._id}
-                    appointment={appointment}
-                    showAllDetails
-                  />
-                ))
-              ) : (
+                <th className="text-primary text-center normal-case">
+                  Service
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredAppointments &&
+                (filteredAppointments.length > 0 ? (
+                  filteredAppointments.map((appointment) => (
+                    <AppointmentDataRow
+                      key={appointment._id}
+                      appointment={appointment}
+                      showAllDetails
+                    />
+                  ))
+                ) : (
+                  <tr className="[&>*]:bg-transparent">
+                    <td
+                      colSpan={7}
+                      className="py-8 text-2xl text-center font-bold"
+                    >
+                      No appointments to show
+                    </td>
+                  </tr>
+                ))}
+
+              {appointmentsLoading && (
                 <tr className="[&>*]:bg-transparent">
-                  <td
-                    colSpan={7}
-                    className="py-8 text-2xl text-center font-bold"
-                  >
-                    No appointments to show
+                  <td colSpan={8}>
+                    <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
                   </td>
                 </tr>
-              ))}
-
-            {appointmentsLoading && (
-              <tr className="[&>*]:bg-transparent">
-                <td colSpan={8}>
-                  <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </main>
   );

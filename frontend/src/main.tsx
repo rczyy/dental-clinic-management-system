@@ -34,6 +34,7 @@ import { AppointmentList } from "./pages/AppointmentList";
 import { DentistsSchedule } from "./pages/DentistsSchedule";
 import Dashboard from "./pages/Dashboard";
 import { BillList } from "./pages/BillList";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -151,6 +152,10 @@ const router = createBrowserRouter([
       {
         path: "bills",
         element: <BillList />,
+      },
+      {
+        path: "terms",
+        element: <Terms />,
       },
     ],
   },
