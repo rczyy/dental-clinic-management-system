@@ -360,3 +360,14 @@ interface PrescriptionResponse {
   createdAt: Date;
   updatedAt: Date;
 }
+
+interface PatientFileResponse {
+  _id: string;
+  patient: string;
+  bill?: BillResponse;
+  name: string;
+  size: number;
+  file: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
