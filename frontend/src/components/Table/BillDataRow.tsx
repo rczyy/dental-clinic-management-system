@@ -10,6 +10,8 @@ import { useEditBill, useRecoverBill, useRemoveBill } from "../../hooks/bill";
 import FormInput from "../Form/FormInput";
 import { useGetMe } from "../../hooks/user";
 import { IoArrowUndoOutline } from "react-icons/io5";
+import { PatientFileTable } from "./PatientFileTable";
+import { useGetPatientFiles } from "../../hooks/patientFile";
 
 type Props = {
   bill: BillResponse;
@@ -95,12 +97,8 @@ export const BillDataRow = ({ bill }: Props): JSX.Element => {
 
       <td className="text-sm text-center">
         <div>
-          <p className="font-semibold">
-            {dayjs(bill.createdAt).format("YYYY-MM-DD")}
-          </p>
-          <p className="text-zinc-400">
-            {dayjs(bill.createdAt).format("h:mm A")}
-          </p>
+          <p className="font-semibold">{dayjs(bill.createdAt).format("YYYY-MM-DD")}</p>
+          <p className="text-zinc-400">{dayjs(bill.createdAt).format("h:mm A")}</p>
         </div>
       </td>
 
@@ -108,16 +106,11 @@ export const BillDataRow = ({ bill }: Props): JSX.Element => {
         ₱ {Intl.NumberFormat("en-US").format(bill.price)}
       </td>
 
-      <td className="font-semibold text-sm text-center">
-        {bill.appointment.service.name}
-      </td>
+      <td className="font-semibold text-sm text-center">{bill.appointment.service.name}</td>
 
       <td className="pr-0">
         <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
-          <img
-            className="h-full object-cover"
-            src={bill.appointment.dentist.staff.user.avatar}
-          />
+          <img className="h-full object-cover" src={bill.appointment.dentist.staff.user.avatar} />
         </figure>
       </td>
 
@@ -130,10 +123,7 @@ export const BillDataRow = ({ bill }: Props): JSX.Element => {
 
       <td className="pr-0">
         <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
-          <img
-            className="h-full object-cover"
-            src={bill.appointment.patient.user.avatar}
-          />
+          <img className="h-full object-cover" src={bill.appointment.patient.user.avatar} />
         </figure>
       </td>
 
@@ -145,43 +135,32 @@ export const BillDataRow = ({ bill }: Props): JSX.Element => {
       </td>
 
       {isViewModalVisible && (
-        <ViewBillModal
-          bill={bill}
-          setIsViewModalVisible={setIsViewModalVisible}
-        />
+        <ViewBillModal bill={bill} setIsViewModalVisible={setIsViewModalVisible} />
       )}
 
       {isEditModalVisible && (
-        <EditBillModal
-          bill={bill}
-          setIsEditModalVisible={setIsEditModalVisible}
-        />
+        <EditBillModal bill={bill} setIsEditModalVisible={setIsEditModalVisible} />
       )}
 
       {isRemoveModalVisible && (
-        <RemoveBillModal
-          bill={bill}
-          setIsRemoveModalVisible={setIsRemoveModalVisible}
-        />
+        <RemoveBillModal bill={bill} setIsRemoveModalVisible={setIsRemoveModalVisible} />
       )}
 
       {isRecoverModalVisible && (
-        <RecoverBillModal
-          bill={bill}
-          setIsRecoverModalVisible={setIsRecoverModalVisible}
-        />
+        <RecoverBillModal bill={bill} setIsRecoverModalVisible={setIsRecoverModalVisible} />
       )}
     </tr>
   );
 };
 
-export const ViewBillModal = ({
-  bill,
-  setIsViewModalVisible,
-}: ViewBillProps): JSX.Element => {
+export const ViewBillModal = ({ bill, setIsViewModalVisible }: ViewBillProps): JSX.Element => {
   const [textAreaVisible, setTextAreaVisible] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
   const { data: me } = useGetMe();
+  const { data: files, isLoading: filesLoading } = useGetPatientFiles(
+    bill.appointment.patient.user._id,
+    bill._id
+  );
 
   useEffect(() => {
     if (textAreaRef.current) {
@@ -220,10 +199,7 @@ export const ViewBillModal = ({
 
               <td className="flex items-center gap-4">
                 <figure className="w-10 h-10 rounded-full overflow-hidden">
-                  <img
-                    src={bill.appointment.dentist.staff.user.avatar}
-                    alt="Dentist Avatar"
-                  />
+                  <img src={bill.appointment.dentist.staff.user.avatar} alt="Dentist Avatar" />
                 </figure>
                 <p className="font-semibold">
                   {bill.appointment.dentist.staff.user.name.firstName}{" "}
@@ -237,10 +213,7 @@ export const ViewBillModal = ({
 
               <td className="flex items-center gap-4">
                 <figure className="w-10 h-10 rounded-full overflow-hidden">
-                  <img
-                    src={bill.appointment.patient.user.avatar}
-                    alt="Dentist Avatar"
-                  />
+                  <img src={bill.appointment.patient.user.avatar} alt="Dentist Avatar" />
                 </figure>
                 <p className="font-semibold">
                   {bill.appointment.patient.user.name.firstName}{" "}
@@ -253,9 +226,7 @@ export const ViewBillModal = ({
               <th className="font-bold">Service</th>
 
               <td>
-                <p className="font-semibold">
-                  {bill.appointment.service.category}
-                </p>
+                <p className="font-semibold">{bill.appointment.service.category}</p>
                 <p className="text-sm">{bill.appointment.service.name}</p>
               </td>
             </tr>
@@ -264,12 +235,8 @@ export const ViewBillModal = ({
               <th className="font-bold">Date/Time</th>
 
               <td>
-                <p className="font-semibold">
-                  {dayjs(bill.createdAt).format("MMM DD, YYYY")}
-                </p>
-                <p className="text-sm text-zinc-400">
-                  {dayjs(bill.createdAt).format("h:mm A")}
-                </p>
+                <p className="font-semibold">{dayjs(bill.createdAt).format("MMM DD, YYYY")}</p>
+                <p className="text-sm text-zinc-400">{dayjs(bill.createdAt).format("h:mm A")}</p>
               </td>
             </tr>
 
@@ -298,6 +265,14 @@ export const ViewBillModal = ({
             readOnly
           />
         </div>
+
+        {files && files.length > 0 && me && me.role !== "Patient" && me.role !== "Assistant" && (
+          <div className="px-4">
+            <h3 className="font-bold mb-2">Files</h3>
+
+            <PatientFileTable files={files} filesLoading={filesLoading} />
+          </div>
+        )}
       </section>
     </td>
   );
@@ -379,10 +354,7 @@ const EditBillModal = ({ bill, setIsEditModalVisible }: EditBillProps) => {
             />
           </div>
         </header>
-        <form
-          className="flex flex-col mx-2 gap-4"
-          onSubmit={handleSubmit(onSubmit)}
-        >
+        <form className="flex flex-col mx-2 gap-4" onSubmit={handleSubmit(onSubmit)}>
           <textarea
             {...register("notes")}
             className={`bg-base-300 p-4 outline outline-1 outline-neutral rounded-md resize-none placeholder:text-sm ${
@@ -406,11 +378,7 @@ const EditBillModal = ({ bill, setIsEditModalVisible }: EditBillProps) => {
           />
 
           <div className="flex gap-3 justify-end mx-2 py-3">
-            <button
-              type="button"
-              className="btn px-8"
-              onClick={() => setIsEditModalVisible(false)}
-            >
+            <button type="button" className="btn px-8" onClick={() => setIsEditModalVisible(false)}>
               Cancel
             </button>
             <button type="submit" className="btn btn-primary px-8 text-white">
@@ -426,10 +394,7 @@ const EditBillModal = ({ bill, setIsEditModalVisible }: EditBillProps) => {
   );
 };
 
-const RemoveBillModal = ({
-  bill,
-  setIsRemoveModalVisible,
-}: RemoveBillProps) => {
+const RemoveBillModal = ({ bill, setIsRemoveModalVisible }: RemoveBillProps) => {
   const { mutate: removeBill } = useRemoveBill();
 
   const handleDelete = () => {
@@ -466,16 +431,10 @@ const RemoveBillModal = ({
           <p>Are you sure?</p>
         </div>
         <div className="flex gap-3 justify-end mx-2 py-3">
-          <button
-            className="btn px-8"
-            onClick={() => setIsRemoveModalVisible(false)}
-          >
+          <button className="btn px-8" onClick={() => setIsRemoveModalVisible(false)}>
             No
           </button>
-          <button
-            className="btn btn-error px-8 text-white hover:bg-red-700"
-            onClick={handleDelete}
-          >
+          <button className="btn btn-error px-8 text-white hover:bg-red-700" onClick={handleDelete}>
             Yes
           </button>
         </div>
@@ -484,10 +443,7 @@ const RemoveBillModal = ({
   );
 };
 
-const RecoverBillModal = ({
-  bill,
-  setIsRecoverModalVisible,
-}: RecoverBillProps) => {
+const RecoverBillModal = ({ bill, setIsRecoverModalVisible }: RecoverBillProps) => {
   const { mutate: recoverBill, isLoading } = useRecoverBill();
   const handleRecover = () => {
     recoverBill(bill._id, {
@@ -525,10 +481,7 @@ const RecoverBillModal = ({
           <p>Are you sure?</p>
         </div>
         <div className="flex gap-3 justify-end mx-2 py-3">
-          <button
-            className="btn px-8"
-            onClick={() => setIsRecoverModalVisible(false)}
-          >
+          <button className="btn px-8" onClick={() => setIsRecoverModalVisible(false)}>
             No
           </button>
           <button
@@ -537,10 +490,7 @@ const RecoverBillModal = ({
               handleRecover();
             }}
           >
-            Yes{" "}
-            {isLoading && (
-              <AiOutlineLoading3Quarters className="text-lg animate-spin" />
-            )}
+            Yes {isLoading && <AiOutlineLoading3Quarters className="text-lg animate-spin" />}
           </button>
         </div>
       </section>

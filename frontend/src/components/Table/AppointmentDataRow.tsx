@@ -10,6 +10,7 @@ import { z } from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAddBill } from "../../hooks/bill";
+import { useAddPatientFile } from "../../hooks/patientFile";
 
 interface Props {
   appointment: AppointmentResponse;
@@ -24,10 +25,7 @@ interface BillAppointmentModalProps extends Props {
   setIsBillModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const AppointmentDataRow = ({
-  appointment,
-  showAllDetails,
-}: Props): JSX.Element => {
+export const AppointmentDataRow = ({ appointment, showAllDetails }: Props): JSX.Element => {
   const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
   const [isBillModalVisible, setIsBillModalVisible] = useState(false);
 
@@ -91,10 +89,7 @@ export const AppointmentDataRow = ({
         <>
           <td className="pr-0">
             <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
-              <img
-                className="h-full object-cover"
-                src={appointment.dentist.staff.user.avatar}
-              />
+              <img className="h-full object-cover" src={appointment.dentist.staff.user.avatar} />
             </figure>
           </td>
 
@@ -111,25 +106,19 @@ export const AppointmentDataRow = ({
         <>
           <td className="pr-0">
             <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
-              <img
-                className="h-full object-cover"
-                src={appointment.patient.user.avatar}
-              />
+              <img className="h-full object-cover" src={appointment.patient.user.avatar} />
             </figure>
           </td>
 
           <td className="font-semibold text-sm text-center">
             <span>
-              {appointment.patient.user.name.firstName}{" "}
-              {appointment.patient.user.name.lastName}
+              {appointment.patient.user.name.firstName} {appointment.patient.user.name.lastName}
             </span>
           </td>
         </>
       )}
 
-      <td className="font-medium text-sm text-center">
-        {appointment.service.name}
-      </td>
+      <td className="font-medium text-sm text-center">{appointment.service.name}</td>
 
       {isCancelModalVisible && (
         <CancelAppointmentModal
@@ -152,8 +141,7 @@ const CancelAppointmentModal = ({
   appointment,
   setIsCancelModalVisible,
 }: CancelAppointmentModalProps) => {
-  const { mutate: removeAppointment, isLoading: removeAppointmentLoading } =
-    useRemoveAppointment();
+  const { mutate: removeAppointment, isLoading: removeAppointmentLoading } = useRemoveAppointment();
 
   const handleDelete = () => {
     removeAppointment(appointment._id, {
@@ -187,16 +175,10 @@ const CancelAppointmentModal = ({
           <p>Are you sure?</p>
         </div>
         <div className="flex gap-3 justify-end mx-2 py-3">
-          <button
-            className="btn px-8"
-            onClick={() => setIsCancelModalVisible(false)}
-          >
+          <button className="btn px-8" onClick={() => setIsCancelModalVisible(false)}>
             No
           </button>
-          <button
-            className="btn btn-error px-8 text-white hover:bg-red-700"
-            onClick={handleDelete}
-          >
+          <button className="btn btn-error px-8 text-white hover:bg-red-700" onClick={handleDelete}>
             Yes{" "}
             {removeAppointmentLoading && (
               <AiOutlineLoading3Quarters className="w-4 h-4 ml-2 animate-spin" />
@@ -225,7 +207,6 @@ const BillAppointmentModal = ({
     register,
     handleSubmit,
     watch,
-    reset,
     formState: { errors },
   } = useForm<BillFormValues>({
     defaultValues: {
@@ -236,20 +217,19 @@ const BillAppointmentModal = ({
     resolver: zodResolver(schema),
   });
 
-  const { mutate: addBill, isLoading: addBillLoading } = useAddBill();
+  const { mutateAsync: addBill, isLoading: addBillLoading } = useAddBill();
+  const { mutateAsync: addPatientFile, isLoading: addPatientFileLoading } = useAddPatientFile();
+
   const [textAreaVisible, setTextAreaVisible] = useState(false);
   const [isDiscounted, setIsDiscounted] = useState(false);
+  const [files, setFiles] = useState<FileList>();
+
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const onSubmit: SubmitHandler<BillFormValues> = (data) => {
-    addBill(
+  const onSubmit: SubmitHandler<BillFormValues> = async (data) => {
+    const bill = await addBill(
       { ...data, price: (+data.price * 0.8).toString() },
       {
-        onSuccess: () => {
-          reset();
-          setIsBillModalVisible(false);
-          toast.success("Successfully billed the appointment");
-        },
         onError: (err) => {
           toast.error(
             "message" in err.response.data
@@ -259,6 +239,32 @@ const BillAppointmentModal = ({
         },
       }
     );
+
+    const formData = new FormData();
+
+    formData.append("bill", bill._id);
+
+    if (files) {
+      for (const file of files) {
+        formData.append("file", file);
+      }
+    }
+
+    await addPatientFile(
+      { userId: appointment.patient.user._id, formData },
+      {
+        onError: (err) => {
+          toast.error(
+            "message" in err.response.data
+              ? err.response.data.message
+              : err.response.data.fieldErrors[0]
+          );
+        },
+      }
+    );
+
+    toast.success("Successfully billed the appointment");
+    setIsBillModalVisible(false);
   };
 
   useEffect(() => {
@@ -290,10 +296,7 @@ const BillAppointmentModal = ({
             />
           </div>
         </header>
-        <form
-          className="flex flex-col mx-2 gap-4"
-          onSubmit={handleSubmit(onSubmit)}
-        >
+        <form className="flex flex-col mx-2 gap-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-2">
             <textarea
               {...register("notes")}
@@ -320,6 +323,18 @@ const BillAppointmentModal = ({
               Discounted Price: ₱{+watch("price") * 0.8}
             </p>
           </div>
+
+          <input
+            type="file"
+            className="file-input file-input-bordered file-input-primary w-full max-w-xs outline-none"
+            multiple
+            onChange={(e) => {
+              if (e.target.files) {
+                setFiles(e.target.files);
+              }
+            }}
+          />
+
           <div className="flex justify-between mr-2 py-3">
             <label className="label gap-2 cursor-pointer">
               <input
@@ -339,7 +354,7 @@ const BillAppointmentModal = ({
               </button>
               <button type="submit" className="btn btn-primary px-8 text-white">
                 Bill{" "}
-                {addBillLoading && (
+                {(addBillLoading || addPatientFileLoading) && (
                   <AiOutlineLoading3Quarters className="w-4 h-4 ml-2 animate-spin" />
                 )}
               </button>
