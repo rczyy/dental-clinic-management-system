@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAddPatientFile, useGetPatientFiles } from "../../hooks/patientFile";
 import { PatientFileTable } from "../Table/PatientFileTable";
+import { toast } from "react-toastify";
 
 interface Props {}
 
@@ -70,7 +71,19 @@ const AddFileModal = ({ userId, setIsAddModalVisible }: AddPrescriptionModalProp
       }
     }
 
-    addPatientFile({ userId, formData }, { onSuccess: () => setIsAddModalVisible(false) });
+    addPatientFile(
+      { userId, formData },
+      {
+        onSuccess: () => setIsAddModalVisible(false),
+        onError: (err) => {
+          toast.error(
+            "message" in err.response.data
+              ? err.response.data.message
+              : err.response.data.fieldErrors[0]
+          );
+        },
+      }
+    );
   };
 
   return (
