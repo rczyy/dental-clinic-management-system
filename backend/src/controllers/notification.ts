@@ -37,7 +37,7 @@ export const addNotification: RequestHandler = async (req, res) => {
 
   const existingUser = await User.findById(to);
 
-  if (!existingUser) {
+  if (!existingUser || existingUser.isDeleted) {
     res.status(400).send({ message: "User does not exist" });
     return;
   }
