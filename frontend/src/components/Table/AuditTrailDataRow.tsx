@@ -63,9 +63,7 @@ const AuditTrailDataRow = ({ logData }: Props) => {
             : red.includes(logData.type.toUpperCase()) && "text-red-500"
         }`}
       >
-        {logData.type.toUpperCase() === "UPDATE" ||
-        logData.type.toUpperCase() === "RECOVER" ||
-        logData.type.toUpperCase() === "VERIFY" ? (
+        {logData.type.toUpperCase() === "UPDATE" ? (
           <>
             <AiFillInfoCircle className="text-xl self-center" />
             <span>Update</span>
@@ -79,6 +77,16 @@ const AuditTrailDataRow = ({ logData }: Props) => {
           <>
             <AiFillCloseCircle className="text-xl self-center" />
             <span>Delete</span>
+          </>
+        ) : logData.type.toUpperCase() === "VERIFY" ? (
+          <>
+            <AiFillCheckCircle className="text-xl self-center" />
+            <span>Verify</span>
+          </>
+        ) : logData.type.toUpperCase() === "RECOVER" ? (
+          <>
+            <AiFillCheckCircle className="text-xl self-center" />
+            <span>Recover</span>
           </>
         ) : logData.type.toUpperCase() === "UNBAN" ? (
           <>
