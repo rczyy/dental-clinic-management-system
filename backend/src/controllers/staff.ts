@@ -442,8 +442,6 @@ export const removeStaff: RequestHandler = async (req, res) => {
     );
   }
 
-  console.log(deletedUser)
-
   await addLog(
     req.session.uid!,
     LogModule[0],

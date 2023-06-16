@@ -472,8 +472,6 @@ export const banPatient: RequestHandler = async (req, res) => {
     return;
   }
 
-  console.log(bannedPatient);
-
   await addLog(
     req.session.uid!,
     LogModule[0],
