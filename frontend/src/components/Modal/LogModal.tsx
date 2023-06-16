@@ -15,6 +15,10 @@ export const LogModal = () => {
   const modalState = useLogStore((state) => state.logModal);
   const closeModal = useLogStore((state) => state.closeLogModal);
 
+  const green = ["CREATE", "UNBAN"];
+  const yellow = ["UPDATE", "RECOVER", "VERIFY"];
+  const red = ["DELETE", "BAN"];
+
   document.onkeydown = (e) => {
     if (e.key === "Escape") closeModal();
   };
@@ -80,21 +84,19 @@ export const LogModal = () => {
               <th>Type</th>
               <td
                 className={`flex items-center gap-1 border-none ${
-                  logData.type.toUpperCase() === "UPDATE" ||
-                  logData.type.toUpperCase() === "RECOVER"
+                  yellow.includes(logData.type.toUpperCase())
                     ? "text-yellow-500"
-                    : logData.type.toUpperCase() === "CREATE"
+                    : green.includes(logData.type.toUpperCase())
                     ? "text-green-500"
-                    : logData.type.toUpperCase() === "DELETE" && "text-red-500"
+                    : red.includes(logData.type.toUpperCase()) && "text-red-500"
                 }`}
               >
-                {logData.type.toUpperCase() === "UPDATE" ||
-                logData.type.toUpperCase() === "RECOVER" ? (
+                {yellow.includes(logData.type.toUpperCase()) ? (
                   <AiFillInfoCircle className="self-center" />
-                ) : logData.type.toUpperCase() === "CREATE" ? (
+                ) : green.includes(logData.type.toUpperCase()) ? (
                   <AiFillCheckCircle className="self-center" />
                 ) : (
-                  logData.type.toUpperCase() === "DELETE" && (
+                  red.includes(logData.type.toUpperCase()) && (
                     <AiFillCloseCircle className="self-center" />
                   )
                 )}
