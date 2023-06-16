@@ -66,6 +66,10 @@ export const addLog = async (
       ? "Verified"
       : type === "RECOVER"
       ? "Recovered"
+      : type === "BAN"
+      ? "Banned"
+      : type === "UNBAN"
+      ? "Unbanned"
       : type.charAt(0).toUpperCase() + type.slice(1).toLowerCase() + "d"
   } `;
 
@@ -113,7 +117,7 @@ export const addLog = async (
 
 export const addUserLog = (
   payload: object | string | Types.ObjectId,
-  role: string
+  role: string,
 ) => {
   const {
     name: { firstName, lastName },
