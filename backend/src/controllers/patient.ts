@@ -79,9 +79,9 @@ export const getPatientNames: RequestHandler = async (req, res) => {
   }
 
   const patients = await Patient.find({
-    isDeleted: false,
+    isDeleted: false
   }).populate({
-    path: "user",
+    path: "user"
   });
 
   const response = patients
@@ -96,7 +96,7 @@ export const getPatientNames: RequestHandler = async (req, res) => {
       return {
         _id,
         name,
-        avatar,
+        avatar
       };
     });
 
@@ -191,10 +191,10 @@ export const registerPatient: RequestHandler = async (req, res) => {
         .string({ required_error: "Contact number is required" })
         .min(1, "Contact number cannot be empty")
         .regex(/(^\+639)\d{9}$/, "Invalid contact number"),
-      verified: z.string().optional(),
+      verified: z.string().optional()
     })
     .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords doesn't match",
+      message: "Passwords doesn't match"
     });
 
   type body = z.infer<typeof userSchema>;
@@ -218,14 +218,14 @@ export const registerPatient: RequestHandler = async (req, res) => {
     email,
     contactNo,
     password,
-    verified,
+    verified
   }: body = req.body;
 
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
     const error: FormError = {
-      formErrors: ["User already exists"],
+      formErrors: ["User already exists"]
     };
 
     res.status(400).json(error);
@@ -238,24 +238,24 @@ export const registerPatient: RequestHandler = async (req, res) => {
     name: {
       firstName,
       middleName,
-      lastName,
+      lastName
     },
     address: {
       region,
       province,
       city,
       barangay,
-      street,
+      street
     },
     email,
     password: hashedPassword,
     contactNo,
     role: Roles.Patient,
-    verified: verified === "true" ? true : false,
+    verified: verified === "true" ? true : false
   });
 
   const patient = new Patient({
-    user: user._id,
+    user: user._id
   });
 
   await addLog(user._id, LogModule[0], LogType[0], user, user.role);
@@ -274,17 +274,17 @@ export const registerPatient: RequestHandler = async (req, res) => {
       Messages: [
         {
           From: {
-            Email: process.env.EMAIL_SENDER,
+            Email: process.env.EMAIL_SENDER
           },
           To: [
             {
-              Email: email,
-            },
+              Email: email
+            }
           ],
           Subject: "Verify your email address",
-          HTMLPart: emailVerification(firstName, emailVerificationToken),
-        },
-      ],
+          HTMLPart: emailVerification(firstName, emailVerificationToken)
+        }
+      ]
     });
   }
 
@@ -318,8 +318,8 @@ export const recoverPatient: RequestHandler = async (req, res) => {
     { user },
     {
       $set: {
-        isDeleted: false,
-      },
+        isDeleted: false
+      }
     }
   );
 
@@ -333,11 +333,11 @@ export const recoverPatient: RequestHandler = async (req, res) => {
     user,
     {
       $set: {
-        isDeleted: false,
-      },
+        isDeleted: false
+      }
     },
     {
-      new: true,
+      new: true
     }
   );
 
@@ -384,8 +384,8 @@ export const removePatient: RequestHandler = async (req, res) => {
     { user },
     {
       $set: {
-        isDeleted: true,
-      },
+        isDeleted: true
+      }
     }
   );
 
@@ -397,8 +397,8 @@ export const removePatient: RequestHandler = async (req, res) => {
 
   const deletedUser = await User.findByIdAndUpdate(user, {
     $set: {
-      isDeleted: true,
-    },
+      isDeleted: true
+    }
   });
 
   if (!deletedUser || deletedUser.isDeleted) {
@@ -418,4 +418,138 @@ export const removePatient: RequestHandler = async (req, res) => {
   res
     .status(200)
     .json({ _id: deletedUser._id, message: "Succesfully deleted the patient" });
+};
+
+export const banPatient: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const { patient } = req.params;
+
+  if (!isValidObjectId(patient)) {
+    const error: ErrorMessage = { message: "Invalid patient ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const patientToBan = await Patient.findById(patient).select("isBanned");
+
+  if (!patientToBan) {
+    const error: ErrorMessage = { message: "Patient doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  if (patientToBan.isBanned) {
+    const error: ErrorMessage = { message: "Patient is already banned" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const bannedPatient = await Patient.findOneAndUpdate(
+    { _id: patient },
+    {
+      $set: {
+        isBanned: true
+      }
+    }
+  ).populate("user");
+
+  if (!bannedPatient) {
+    const error: ErrorMessage = { message: "Patient doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  console.log(bannedPatient);
+
+  await addLog(
+    req.session.uid!,
+    LogModule[0],
+    LogType[5],
+    bannedPatient.user,
+    "Patient"
+  );
+
+  res.status(200).json({
+    _id: bannedPatient._id,
+    message: "Succesfully banned the patient"
+  });
+};
+
+export const unbanPatient: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role !== Roles.Admin && token.role !== Roles.Manager) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const { patient } = req.params;
+
+  if (!isValidObjectId(patient)) {
+    const error: ErrorMessage = { message: "Invalid patient ID" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const patientToUnban = await Patient.findById(patient).select("isBanned");
+
+  if (!patientToUnban) {
+    const error: ErrorMessage = { message: "Patient doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  if (!patientToUnban.isBanned) {
+    const error: ErrorMessage = { message: "Patient is not banned" };
+    res.status(400).json(error);
+    return;
+  }
+
+  const unbannedPatient = await Patient.findOneAndUpdate(
+    { _id: patient },
+    {
+      $set: {
+        isBanned: false
+      }
+    }
+  ).populate("user");
+
+  if (!unbannedPatient) {
+    const error: ErrorMessage = { message: "Patient doesn't exist" };
+    res.status(400).json(error);
+    return;
+  }
+
+  await addLog(
+    req.session.uid!,
+    LogModule[0],
+    LogType[6],
+    unbannedPatient.user,
+    "Patient"
+  );
+
+  res.status(200).json({
+    _id: unbannedPatient._id,
+    message: "Succesfully unbanned the patient"
+  });
 };
