@@ -2,7 +2,7 @@ type Props = {};
 const Terms = (props: Props) => {
   return (
     <main className="flex justify-center">
-      <div  className="prose prose-sm">
+      <div className="prose prose-sm">
         <header>
           <h1>Privacy Policy</h1>
         </header>
@@ -52,9 +52,9 @@ const Terms = (props: Props) => {
           <h2>Information Security</h2>
           <p>
             We take appropriate measures to ensure the security of your personal
-            information. We have implemented technical and
-            administrative safeguards to protect against unauthorized access,
-            alteration, disclosure, or destruction of your personal data.
+            information. We have implemented technical and administrative
+            safeguards to protect against unauthorized access, alteration,
+            disclosure, or destruction of your personal data.
           </p>
         </section>
 
@@ -111,9 +111,9 @@ const Terms = (props: Props) => {
         <section>
           <h2>Appointment Cancellation</h2>
           <p>
-            To cancel an appointment, you must notify us at least 2 days before
-            the scheduled appointment. Failure to provide sufficient notice may
-            result in a penalty fee or loss of future appointment privileges.
+            To cancel an appointment, you must cancel at least 2 days before the
+            scheduled appointment with a valid reaason. Failure to provide valid
+            reason may result in a temporary account ban.
           </p>
         </section>
 
