@@ -36,9 +36,7 @@ export const loginWithGoogle: RequestHandler = async (req, res) => {
   );
 
   const schema = z.object({
-    code: z
-      .string({ required_error: "Google code is required" })
-      .min(1, "Google code is required"),
+    code: z.string({ required_error: "Google code is required" }).min(1, "Google code is required"),
   });
 
   const parse = schema.safeParse(req.body);
@@ -59,7 +57,7 @@ export const loginWithGoogle: RequestHandler = async (req, res) => {
 
   const existingUser = await User.findOne({ email: userInfo.email });
 
-  if (!existingUser) {
+  if (!existingUser || existingUser.isDeleted) {
     const user = new User({
       name: {
         firstName: userInfo.given_name,

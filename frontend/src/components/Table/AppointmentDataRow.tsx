@@ -11,6 +11,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAddBill } from "../../hooks/bill";
 import { useAddPatientFile } from "../../hooks/patientFile";
+import { useAddNotification } from "../../hooks/notification";
 
 interface Props {
   appointment: AppointmentResponse;
@@ -153,14 +154,36 @@ const CancelAppointmentModal = ({
   appointment,
   setIsCancelModalVisible,
 }: CancelAppointmentModalProps) => {
-  const { mutate: removeAppointment, isLoading: removeAppointmentLoading } =
-    useRemoveAppointment();
+  const { data: me } = useGetMe();
+  const { mutate: removeAppointment, isLoading: removeAppointmentLoading } = useRemoveAppointment();
+  const { mutate: addNotification } = useAddNotification();
 
   const handleDelete = () => {
     removeAppointment(appointment._id, {
       onSuccess: () => {
         toast.success("Successfully canceled the appointment!");
         setIsCancelModalVisible(false);
+
+        const scheduledDate = dayjs(appointment.dateTimeScheduled).format("dddd, DD MMM");
+        const scheduledTime = dayjs(appointment.dateTimeScheduled).format("hh:mm A");
+
+        if (me) {
+          if (me.role === "Patient") {
+            addNotification({
+              from: me._id,
+              to: appointment.dentist.staff.user._id,
+              type: "Appointment",
+              description: `canceled the appointment set on ${scheduledDate} at ${scheduledTime}`,
+            });
+          } else {
+            addNotification({
+              from: me._id,
+              to: appointment.patient.user._id,
+              type: "Appointment",
+              description: `canceled the appointment set on ${scheduledDate} at ${scheduledTime}`,
+            });
+          }
+        }
       },
       onError: (err) => toast.error(err.response.data.message),
     });
