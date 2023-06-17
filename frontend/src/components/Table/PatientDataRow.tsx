@@ -1,9 +1,18 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { FiEye, FiMoreVertical, FiTrash, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { useRecoverPatient, useRemovePatient } from "../../hooks/patient";
+import {
+  useRemovePatient,
+  useRecoverPatient,
+  useBanPatient,
+  useUnbanPatient
+} from "../../hooks/patient";
 import { toast } from "react-toastify";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import {
+  AiOutlineCheckCircle,
+  AiOutlineCloseCircle,
+  AiOutlineLoading3Quarters
+} from "react-icons/ai";
 import { IoArrowUndoOutline } from "react-icons/io5";
 import { useGetMe } from "../../hooks/user";
 
@@ -21,6 +30,16 @@ type RecoverPatientProps = {
   setIsRecoverModalVisible: Dispatch<SetStateAction<boolean>>;
 };
 
+type BanPatientProps = {
+  patient: PatientResponse;
+  setIsBanModalVisible: Dispatch<SetStateAction<boolean>>;
+};
+
+type UnbanPatientProps = {
+  patient: PatientResponse;
+  setIsUnbanModalVisible: Dispatch<SetStateAction<boolean>>;
+};
+
 const PatientDataRow = ({ patient }: Props) => {
   const navigate = useNavigate();
 
@@ -28,6 +47,8 @@ const PatientDataRow = ({ patient }: Props) => {
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [isRecoverModalVisible, setIsRecoverModalVisible] = useState(false);
+  const [isBanModalVisible, setIsBanModalVisible] = useState(false);
+  const [isUnbanModalVisible, setIsUnbanModalVisible] = useState(false);
 
   return (
     <tr
@@ -64,6 +85,21 @@ const PatientDataRow = ({ patient }: Props) => {
                 <li onClick={() => setIsDeleteModalVisible(true)}>
                   <a>
                     <FiTrash />
+                  </a>
+                </li>
+              ))}
+            {me &&
+              (me.role === "Admin" || me.role === "Manager") &&
+              (patient.isBanned ? (
+                <li onClick={() => setIsUnbanModalVisible(true)}>
+                  <a>
+                    <AiOutlineCheckCircle />
+                  </a>
+                </li>
+              ) : (
+                <li onClick={() => setIsBanModalVisible(true)}>
+                  <a>
+                    <AiOutlineCloseCircle />
                   </a>
                 </li>
               ))}
@@ -132,13 +168,27 @@ const PatientDataRow = ({ patient }: Props) => {
           setIsRecoverModalVisible={setIsRecoverModalVisible}
         />
       )}
+
+      {isUnbanModalVisible && (
+        <UnbanUserModal
+          patient={patient}
+          setIsUnbanModalVisible={setIsUnbanModalVisible}
+        />
+      )}
+
+      {isBanModalVisible && (
+        <BanUserModal
+          patient={patient}
+          setIsBanModalVisible={setIsBanModalVisible}
+        />
+      )}
     </tr>
   );
 };
 
 const RemoveUserModal = ({
   patient,
-  setIsDeleteModalVisible,
+  setIsDeleteModalVisible
 }: RemovePatientProps) => {
   const { mutate: removePatient, isLoading } = useRemovePatient();
   const handleDelete = () => {
@@ -147,7 +197,7 @@ const RemoveUserModal = ({
         toast.success("Successfully deleted the patient");
         setIsDeleteModalVisible(false);
       },
-      onError: (err) => toast.error(err.response.data.message),
+      onError: (err) => toast.error(err.response.data.message)
     });
   };
   return (
@@ -168,7 +218,7 @@ const RemoveUserModal = ({
           </div>
         </header>
         <div className="flex flex-col mx-2 py-3">
-          <p>You are about to permanently remove a patient.</p>
+          <p>You are about to remove a patient.</p>
           <p>Are you sure?</p>
         </div>
         <div className="flex gap-3 justify-end mx-2 py-3">
@@ -197,7 +247,7 @@ const RemoveUserModal = ({
 
 const RecoverUserModal = ({
   patient,
-  setIsRecoverModalVisible,
+  setIsRecoverModalVisible
 }: RecoverPatientProps) => {
   const { mutate: recoverPatient, isLoading } = useRecoverPatient();
   const handleRecover = () => {
@@ -206,7 +256,7 @@ const RecoverUserModal = ({
         toast.success("Successfully recovered the patient");
         setIsRecoverModalVisible(false);
       },
-      onError: (err) => toast.error(err.response.data.message),
+      onError: (err) => toast.error(err.response.data.message)
     });
   };
   return (
@@ -241,6 +291,124 @@ const RecoverUserModal = ({
             className="btn bg-green-600 gap-4 px-8 text-white hover:bg-green-700"
             onClick={() => {
               handleRecover();
+            }}
+          >
+            Yes{" "}
+            {isLoading && (
+              <AiOutlineLoading3Quarters className="text-lg animate-spin" />
+            )}
+          </button>
+        </div>
+      </section>
+    </td>
+  );
+};
+
+const UnbanUserModal = ({
+  patient,
+  setIsUnbanModalVisible
+}: UnbanPatientProps) => {
+  const { mutate: unbanPatient, isLoading } = useUnbanPatient();
+  const handleUnban = () => {
+    unbanPatient(patient._id, {
+      onSuccess: () => {
+        toast.success("Successfully unbanned the patient");
+        setIsUnbanModalVisible(false);
+      },
+      onError: (err) => toast.error(err.response.data.message)
+    });
+  };
+  return (
+    <td
+      className="fixed flex items-center justify-center inset-0 !bg-black z-50 !bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsUnbanModalVisible(false);
+      }}
+    >
+      <section className="flex flex-col gap-2 bg-base-300 max-w-md w-full rounded-2xl shadow-md px-8 py-10">
+        <header className="flex justify-between items-center mx-2 py-3">
+          <h1 className="text-2xl font-bold">Unban Patient</h1>
+          <div>
+            <FiX
+              className="w-6 h-6 p-1 text-base-content rounded-full cursor-pointer transition hover:bg-base-200"
+              onClick={() => setIsUnbanModalVisible(false)}
+            />
+          </div>
+        </header>
+        <div className="flex flex-col mx-2 py-3">
+          <p>You are about to unban a patient.</p>
+          <p>Are you sure?</p>
+        </div>
+        <div className="flex gap-3 justify-end mx-2 py-3">
+          <button
+            className="btn px-8"
+            onClick={() => setIsUnbanModalVisible(false)}
+          >
+            No
+          </button>
+          <button
+            className="btn bg-green-600 gap-4 px-8 text-white hover:bg-green-700"
+            onClick={() => {
+              handleUnban();
+            }}
+          >
+            Yes{" "}
+            {isLoading && (
+              <AiOutlineLoading3Quarters className="text-lg animate-spin" />
+            )}
+          </button>
+        </div>
+      </section>
+    </td>
+  );
+};
+
+const BanUserModal = ({
+  patient,
+  setIsBanModalVisible
+}: BanPatientProps) => {
+  const { mutate: banPatient, isLoading } = useBanPatient();
+  const handleBan = () => {
+    banPatient(patient._id, {
+      onSuccess: () => {
+        toast.success("Successfully banned the patient");
+        setIsBanModalVisible(false);
+      },
+      onError: (err) => toast.error(err.response.data.message)
+    });
+  };
+  return (
+    <td
+      className="fixed flex items-center justify-center inset-0 !bg-black z-50 !bg-opacity-25"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) setIsBanModalVisible(false);
+      }}
+    >
+      <section className="flex flex-col gap-2 bg-base-300 max-w-md w-full rounded-2xl shadow-md px-8 py-10">
+        <header className="flex justify-between items-center mx-2 py-3">
+          <h1 className="text-2xl font-bold">Ban Patient</h1>
+          <div>
+            <FiX
+              className="w-6 h-6 p-1 text-base-content rounded-full cursor-pointer transition hover:bg-base-200"
+              onClick={() => setIsBanModalVisible(false)}
+            />
+          </div>
+        </header>
+        <div className="flex flex-col mx-2 py-3">
+          <p>You are about to ban a patient.</p>
+          <p>Are you sure?</p>
+        </div>
+        <div className="flex gap-3 justify-end mx-2 py-3">
+          <button
+            className="btn px-8"
+            onClick={() => setIsBanModalVisible(false)}
+          >
+            No
+          </button>
+          <button
+            className="btn btn-error gap-4 px-8 text-white hover:bg-red-700"
+            onClick={() => {
+              handleBan();
             }}
           >
             Yes{" "}

@@ -72,3 +72,31 @@ export const removePatient = async (id: string) => {
   );
   return res.data;
 };
+
+export const unbanPatient = async (patientId: string) => {
+  const res = await axios.put<UserResponse>(
+    `${URL}/patient/unban/${patientId}`,
+    null,
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+      },
+    }
+  );
+  return res.data;
+};
+
+export const banPatient = async (patientId: string) => {
+  const res = await axios.put<DeleteResponse>(
+    `${URL}/patient/ban/${patientId}`,
+    null,
+    {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+      },
+    }
+  );
+  return res.data;
+};
