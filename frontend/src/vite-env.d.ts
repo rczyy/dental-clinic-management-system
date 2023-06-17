@@ -170,6 +170,7 @@ interface PatientResponse {
   _id: string;
   user: UserResponse;
   isDeleted: boolean;
+  isBanned: boolean;
 }
 
 interface ManagerResponse {

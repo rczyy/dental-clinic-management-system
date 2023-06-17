@@ -10,6 +10,10 @@ const patientSchema = new Schema<Patient>({
     type: Boolean,
     default: false,
   },
+  isBanned: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export default model<Patient>("Patient", patientSchema);

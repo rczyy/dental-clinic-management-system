@@ -35,7 +35,10 @@ const AuditTrail = (props: Props) => {
     { value: "Type", label: "ALL" },
     { value: "CREATE", label: "CREATE" },
     { value: "UPDATE", label: "UPDATE" },
-    { value: "DELETE", label: "DELETE" }
+    { value: "DELETE", label: "DELETE" },
+    { value: "RECOVER", label: "RECOVER" },
+    { value: "BAN", label: "BAN" },
+    { value: "UNBAN", label: "UNBAN" }
   ];
 
   useEffect(() => {
@@ -70,7 +73,8 @@ const AuditTrail = (props: Props) => {
       : getLogs("");
   }, [datePickerValue]);
 
-  if (!me || (me.role !== "Admin" && me.role !== "Manager")) return <Navigate to="/" />;
+  if (!me || (me.role !== "Admin" && me.role !== "Manager"))
+    return <Navigate to="/" />;
 
   return (
     <>

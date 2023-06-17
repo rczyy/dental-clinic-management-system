@@ -83,6 +83,7 @@ declare global {
     _id: Types.ObjectId;
     user: Types.ObjectId;
     isDeleted: boolean;
+    isBanned: boolean;
   }
 
   interface Manager {

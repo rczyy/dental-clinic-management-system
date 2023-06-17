@@ -16,6 +16,9 @@ type Props = {
 
 const AuditTrailDataRow = ({ logData }: Props) => {
   const showModal = useLogStore((state) => state.showLogModal);
+  const green = ["CREATE", "UNBAN"];
+  const yellow = ["UPDATE", "RECOVER", "VERIFY"];
+  const red = ["DELETE", "BAN"];
 
   return (
     <tr
@@ -53,18 +56,14 @@ const AuditTrailDataRow = ({ logData }: Props) => {
       <td className="text-slate-400 italic">{logData.user.email}</td>
       <td
         className={`flex items-center gap-2 border-none ${
-          logData.type.toUpperCase() === "UPDATE" ||
-          logData.type.toUpperCase() === "RECOVER" ||
-          logData.type.toUpperCase() === "VERIFY"
+          yellow.includes(logData.type.toUpperCase())
             ? "text-yellow-500"
-            : logData.type.toUpperCase() === "CREATE"
+            : green.includes(logData.type.toUpperCase())
             ? "text-green-500"
-            : logData.type.toUpperCase() === "DELETE" && "text-red-500"
+            : red.includes(logData.type.toUpperCase()) && "text-red-500"
         }`}
       >
-        {logData.type.toUpperCase() === "UPDATE" ||
-        logData.type.toUpperCase() === "RECOVER" ||
-        logData.type.toUpperCase() === "VERIFY" ? (
+        {logData.type.toUpperCase() === "UPDATE" ? (
           <>
             <AiFillInfoCircle className="text-xl self-center" />
             <span>Update</span>
@@ -74,11 +73,31 @@ const AuditTrailDataRow = ({ logData }: Props) => {
             <AiFillCheckCircle className="text-xl self-center" />
             <span>Create</span>
           </>
+        ) : logData.type.toUpperCase() === "DELETE" ? (
+          <>
+            <AiFillCloseCircle className="text-xl self-center" />
+            <span>Delete</span>
+          </>
+        ) : logData.type.toUpperCase() === "VERIFY" ? (
+          <>
+            <AiFillCheckCircle className="text-xl self-center" />
+            <span>Verify</span>
+          </>
+        ) : logData.type.toUpperCase() === "RECOVER" ? (
+          <>
+            <AiFillCheckCircle className="text-xl self-center" />
+            <span>Recover</span>
+          </>
+        ) : logData.type.toUpperCase() === "UNBAN" ? (
+          <>
+            <AiFillCheckCircle className="text-xl self-center" />
+            <span>Unban</span>
+          </>
         ) : (
-          logData.type.toUpperCase() === "DELETE" && (
+          logData.type.toUpperCase() === "BAN" && (
             <>
               <AiFillCloseCircle className="text-xl self-center" />
-              <span>Delete</span>
+              <span>Ban</span>
             </>
           )
         )}
