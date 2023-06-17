@@ -25,7 +25,7 @@ const Stat = ({ title }: Props) => {
     );
   return (
     <div
-      className="flex-1 stat place-items-center md:place-items-start bg-primary rounded shadow-md pt-3 pb-0 px-0 hover:cursor-pointer"
+      className="text-zinc-100 flex-1 stat place-items-center md:place-items-start bg-primary rounded shadow-md pt-3 pb-0 px-0 hover:cursor-pointer"
       onClick={
         title === "Patients Registered"
           ? () => navigate("/patients")
@@ -36,7 +36,7 @@ const Stat = ({ title }: Props) => {
           : () => navigate("/appointments")
       }
     >
-      <div className="stat-value px-3">
+      <div className="stat-value px-3 text-zinc-100">
         {title === "Patients Registered"
           ? patientData && `${patientData.length}`
           : title === "Staffs Registered"

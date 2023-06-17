@@ -39,7 +39,7 @@ export const requestEmailVerification: RequestHandler = async (req, res) => {
 
   const user = await User.findById(decodedToken._id);
 
-  if (!user) {
+  if (!user || user.isDeleted) {
     res.status(400).json({ message: "User does not exist" });
     return;
   }
@@ -49,11 +49,9 @@ export const requestEmailVerification: RequestHandler = async (req, res) => {
     return;
   }
 
-  const emailVerificationToken = jwt.sign(
-    { _id: user._id },
-    process.env.JWT_SECRET,
-    { expiresIn: "3d" }
-  );
+  const emailVerificationToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "3d",
+  });
 
   await sendEmail({
     Messages: [
@@ -67,10 +65,7 @@ export const requestEmailVerification: RequestHandler = async (req, res) => {
           },
         ],
         Subject: "Verify your email address",
-        HTMLPart: emailVerification(
-          user.name.firstName,
-          emailVerificationToken
-        ),
+        HTMLPart: emailVerification(user.name.firstName, emailVerificationToken),
       },
     ],
   });
@@ -84,9 +79,7 @@ export const requestEmailVerification: RequestHandler = async (req, res) => {
 
 export const requestResetPassword: RequestHandler = async (req, res) => {
   const schema = z.object({
-    email: z
-      .string({ required_error: "Email is required" })
-      .email("Invalid Email"),
+    email: z.string({ required_error: "Email is required" }).email("Invalid Email"),
   });
 
   const parse = schema.safeParse(req.body);
@@ -104,31 +97,25 @@ export const requestResetPassword: RequestHandler = async (req, res) => {
     let emailRequestExpirationDate = new Date(existingEmailRequest.updatedAt);
 
     emailRequestExpirationDate = new Date(
-      emailRequestExpirationDate.setDate(
-        emailRequestExpirationDate.getDate() + 3
-      )
+      emailRequestExpirationDate.setDate(emailRequestExpirationDate.getDate() + 3)
     );
 
     if (emailRequestExpirationDate.getTime() > new Date().getTime()) {
-      res
-        .status(400)
-        .json({ message: "Can't request another reset password link yet" });
+      res.status(400).json({ message: "Can't request another reset password link yet" });
       return;
     }
   }
 
   const user = await User.findOne({ email });
 
-  if (!user) {
+  if (!user || user.isDeleted) {
     res.status(400).json({ message: "User does not exist" });
     return;
   }
 
-  const resetPasswordToken = jwt.sign(
-    { _id: user._id },
-    process.env.JWT_SECRET,
-    { expiresIn: "3d" }
-  );
+  const resetPasswordToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "3d",
+  });
 
   await sendEmail({
     Messages: [

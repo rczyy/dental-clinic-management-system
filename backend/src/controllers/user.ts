@@ -94,7 +94,7 @@ export const loginUser: RequestHandler = async (req, res) => {
 
   const { email, password }: body = req.body;
 
-  const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ email, isDeleted: false });
 
   if (!existingUser) {
     const error: FormError = {
@@ -317,13 +317,7 @@ export const editUser: RequestHandler = async (req, res) => {
     return;
   }
 
-  await addLog(
-    req.session.uid!,
-    LogModule[0],
-    LogType[1],
-    updatedUser,
-    updatedUser.role
-  );
+  await addLog(req.session.uid!, LogModule[0], LogType[1], updatedUser, updatedUser.role);
 
   res.status(200).send(updatedUser);
 };
@@ -353,7 +347,7 @@ export const verifyUser: RequestHandler = async (req, res) => {
 
   const userToVerify = await User.findById(decodedToken._id);
 
-  if (!userToVerify) {
+  if (!userToVerify || userToVerify.isDeleted) {
     res.status(400).json({ message: "User does not exist" });
     return;
   }
@@ -376,13 +370,7 @@ export const verifyUser: RequestHandler = async (req, res) => {
     return;
   }
 
-  await addLog(
-    userToVerify._id,
-    LogModule[0],
-    LogType[4],
-    updatedUser,
-    updatedUser.role
-  );
+  await addLog(userToVerify._id, LogModule[0], LogType[4], updatedUser, updatedUser.role);
 
   res.status(200).json({ message: "Account has been successfully verified" });
 };
@@ -390,9 +378,7 @@ export const verifyUser: RequestHandler = async (req, res) => {
 export const resetPasswordUser: RequestHandler = async (req, res) => {
   const schema = z
     .object({
-      token: z
-        .string({ required_error: "Token is required" })
-        .min(1, "Token cannot be empty"),
+      token: z.string({ required_error: "Token is required" }).min(1, "Token cannot be empty"),
       password: z
         .string({ required_error: "Password is required" })
         .min(6, "Password must be atleast 6 characters"),
@@ -433,7 +419,7 @@ export const resetPasswordUser: RequestHandler = async (req, res) => {
 
   const user = await User.findById(decodedToken._id);
 
-  if (!user) {
+  if (!user || user.isDeleted) {
     res.status(400).json({ message: "User does not exist" });
     return;
   }
@@ -459,7 +445,5 @@ export const resetPasswordUser: RequestHandler = async (req, res) => {
 };
 
 export const logoutUser: RequestHandler = (req, res) => {
-  req.session.destroy(() =>
-    res.status(200).json({ message: "Successfully logged out" })
-  );
+  req.session.destroy(() => res.status(200).json({ message: "Successfully logged out" }));
 };
