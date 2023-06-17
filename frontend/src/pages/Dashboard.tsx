@@ -46,9 +46,11 @@ const Dashboard = (props: Props) => {
               className="flex gap-2 items-center pr-2 text-primary hover:text-primary-focus hover:cursor-pointer"
               onClick={() => setIsGenerateModalVisible(true)}
             >
-              <span className="hidden md:block text-sm md:text-md font-medium">
-                Generate Reports
-              </span>
+              {me && (me.role === "Admin" || me.role === "Manager") && (
+                <span className="hidden md:block text-sm md:text-md font-medium">
+                  Generate Reports
+                </span>
+              )}
               <RiFileExcel2Line className="text-lg" />
             </div>
           </div>
