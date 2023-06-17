@@ -47,11 +47,13 @@ const Dashboard = (props: Props) => {
               onClick={() => setIsGenerateModalVisible(true)}
             >
               {me && (me.role === "Admin" || me.role === "Manager") && (
-                <span className="hidden md:block text-sm md:text-md font-medium">
-                  Generate Reports
-                </span>
+                <>
+                  <span className="hidden md:block text-sm md:text-md font-medium">
+                    Generate Reports
+                  </span>
+                  <RiFileExcel2Line className="text-lg" />
+                </>
               )}
-              <RiFileExcel2Line className="text-lg" />
             </div>
           </div>
           <div>
@@ -89,9 +91,13 @@ const Dashboard = (props: Props) => {
           </div>
         </div>
       </main>
-      {isGenerateModalVisible && (
-        <GenerateModal setIsGenerateModalVisible={setIsGenerateModalVisible} />
-      )}
+      {me &&
+        (me.role === "Admin" || me.role === "Manager") &&
+        isGenerateModalVisible && (
+          <GenerateModal
+            setIsGenerateModalVisible={setIsGenerateModalVisible}
+          />
+        )}
     </>
   );
 };
