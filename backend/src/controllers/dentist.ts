@@ -18,7 +18,10 @@ export const getDentists: RequestHandler = async (req, res) => {
     return;
   }
 
-  const dentists = await Dentist.find();
+  const dentists = await Dentist.find().populate({
+    path: "staff",
+    populate: {path: "user", select: "name"},
+  });
 
   res.status(200).json(dentists);
 };
