@@ -10,6 +10,7 @@ import EmailRequest from "../models/emailRequest";
 import { isValidObjectId } from "mongoose";
 import { imageUpload } from "../utilities/imageUpload";
 import { addLog } from "../utilities/addLog";
+import Patient from "../models/patient";
 
 export const getUsers: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -63,6 +64,14 @@ export const getUser: RequestHandler = async (req, res) => {
 export const getMe: RequestHandler = async (req, res) => {
   const me = await User.findById(req.session.uid).select("-password");
 
+  if (me && me.role === "Patient") {
+    const patient = await Patient.findOne({ user: me._id });
+    if (patient && patient.isBanned) {
+      req.session.destroy(() => res.status(200).send(null));
+      return;
+    }
+  }
+
   res.status(200).json(me);
 };
 
@@ -71,7 +80,7 @@ export const loginUser: RequestHandler = async (req, res) => {
     email: z
       .string({ required_error: "Email is required" })
       .email("Invalid email"),
-    password: z.string({ required_error: "Password is required" }),
+    password: z.string({ required_error: "Password is required" })
   });
 
   type body = z.infer<typeof userSchema>;
@@ -89,7 +98,7 @@ export const loginUser: RequestHandler = async (req, res) => {
 
   if (!existingUser) {
     const error: FormError = {
-      formErrors: ["Invalid credentials"],
+      formErrors: ["Invalid credentials"]
     };
 
     res.status(401).json(error);
@@ -98,7 +107,7 @@ export const loginUser: RequestHandler = async (req, res) => {
 
   if (!existingUser.password) {
     const error: FormError = {
-      formErrors: ["Can't log in. Try logging in with google."],
+      formErrors: ["Can't log in. Try logging in with google."]
     };
 
     res.status(401).json(error);
@@ -109,11 +118,25 @@ export const loginUser: RequestHandler = async (req, res) => {
 
   if (!samePassword) {
     const error: FormError = {
-      formErrors: ["Invalid credentials"],
+      formErrors: ["Invalid credentials"]
     };
 
     res.status(401).json(error);
     return;
+  }
+
+  if (existingUser.role === "Patient") {
+    const patient = await Patient.findOne({ user: existingUser._id });
+    if (patient && patient.isBanned) {
+      const error: FormError = {
+        formErrors: [
+          "Account is temporarily locked, please contact your administrator"
+        ]
+      };
+
+      res.status(401).json(error);
+      return;
+    }
   }
 
   req.session.uid = existingUser._id.toString();
@@ -127,7 +150,7 @@ export const editUser: RequestHandler = async (req, res) => {
     id: z
       .string({ required_error: "ID is required" })
       .min(1, "ID cannot be empty")
-      .refine((val) => isValidObjectId(val), { message: "Invalid ID" }),
+      .refine((val) => isValidObjectId(val), { message: "Invalid ID" })
   });
 
   const paramsParse = paramsSchema.safeParse(req.params);
@@ -209,10 +232,10 @@ export const editUser: RequestHandler = async (req, res) => {
         .regex(/(^\+639)\d{9}$/, "Invalid contact number")
         .optional(),
       role: z.nativeEnum(Roles).optional(),
-      verified: z.coerce.boolean().optional(),
+      verified: z.coerce.boolean().optional()
     })
     .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords doesn't match",
+      message: "Passwords doesn't match"
     });
 
   const userParse = userSchema.safeParse(req.body);
@@ -234,7 +257,7 @@ export const editUser: RequestHandler = async (req, res) => {
     contactNo,
     password,
     role,
-    verified,
+    verified
   } = req.body as z.infer<typeof userSchema>;
 
   const { file } = req;
@@ -276,16 +299,16 @@ export const editUser: RequestHandler = async (req, res) => {
         "address.province": province,
         "address.city": city,
         "address.barangay": barangay,
-        "address.street": street,
+        "address.street": street
       },
       contactNo,
       password: password && (await hash(password, 10)),
       role,
       avatar,
-      verified,
+      verified
     },
     {
-      new: true,
+      new: true
     }
   ).select("-password");
 
@@ -307,7 +330,7 @@ export const editUser: RequestHandler = async (req, res) => {
 
 export const verifyUser: RequestHandler = async (req, res) => {
   const schema = z.object({
-    token: z.string({ required_error: "Token is required" }),
+    token: z.string({ required_error: "Token is required" })
   });
 
   const parse = schema.safeParse(req.body);
@@ -343,7 +366,7 @@ export const verifyUser: RequestHandler = async (req, res) => {
   const updatedUser = await User.findByIdAndUpdate(
     userToVerify._id,
     {
-      verified: true,
+      verified: true
     },
     { new: true }
   );
@@ -373,10 +396,10 @@ export const resetPasswordUser: RequestHandler = async (req, res) => {
       password: z
         .string({ required_error: "Password is required" })
         .min(6, "Password must be atleast 6 characters"),
-      confirmPassword: z.string({ required_error: "Confirm your password" }),
+      confirmPassword: z.string({ required_error: "Confirm your password" })
     })
     .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords doesn't match",
+      message: "Passwords doesn't match"
     });
 
   const parse = schema.safeParse(req.body);
@@ -418,7 +441,7 @@ export const resetPasswordUser: RequestHandler = async (req, res) => {
   const updatedUser = await User.findByIdAndUpdate(
     user._id,
     {
-      password: await hash(password, 10),
+      password: await hash(password, 10)
     },
     { new: true }
   );
@@ -429,7 +452,7 @@ export const resetPasswordUser: RequestHandler = async (req, res) => {
   }
 
   await EmailRequest.create({
-    token,
+    token
   });
 
   res.status(200).json({ message: "Reset account password successful" });
