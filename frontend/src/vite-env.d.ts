@@ -71,6 +71,13 @@ interface AttendanceFormValues {
   timeOut?: string | undefined;
 }
 
+interface ReportFormValues {
+  dentist: string;
+  patient: string;
+  dateStart: string;
+  dateEnd: string;
+}
+
 interface SelectOption {
   _id?: string;
   value: string;
