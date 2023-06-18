@@ -1,4 +1,4 @@
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { AiOutlineFilePdf, AiOutlineLoading3Quarters } from "react-icons/ai";
 import Card from "../components/Dashboard/Card";
 import Stat from "../components/Dashboard/Stat";
 import { LogModal } from "../components/Modal/LogModal";
@@ -22,10 +22,14 @@ import FormInput from "../components/Form/FormInput";
 import { useGetBills } from "../hooks/bill";
 import { useGetDentists } from "../hooks/dentist";
 import { toast } from "react-toastify";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import Report from "../templates/Report";
+import { SiMicrosoftexcel } from "react-icons/si";
 
 type Props = {};
 type GenerateProps = {
   setIsGenerateModalVisible: Dispatch<SetStateAction<boolean>>;
+  generatedBy: UserResponse;
 };
 const Dashboard = (props: Props) => {
   const sidebar = useAdminStore((state) => state.sidebar);
@@ -96,6 +100,7 @@ const Dashboard = (props: Props) => {
         isGenerateModalVisible && (
           <GenerateModal
             setIsGenerateModalVisible={setIsGenerateModalVisible}
+            generatedBy={me}
           />
         )}
     </>
@@ -165,7 +170,10 @@ const RecentActivity = () => {
   );
 };
 
-const GenerateModal = ({ setIsGenerateModalVisible }: GenerateProps) => {
+const GenerateModal = ({
+  setIsGenerateModalVisible,
+  generatedBy
+}: GenerateProps) => {
   const schema = z
     .object({
       dentist: z.string().min(1, "Dentist cannot be empty").or(z.literal("")),
@@ -183,19 +191,19 @@ const GenerateModal = ({ setIsGenerateModalVisible }: GenerateProps) => {
         .regex(
           /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/,
           "Invalid Date"
-        ),
+        )
     })
     .superRefine((values, ctx) => {
       if (!values.dentist && !values.patient) {
         ctx.addIssue({
           message: "Either Dentist or Patient Name is required.",
           code: z.ZodIssueCode.custom,
-          path: ["dentist"],
+          path: ["dentist"]
         });
         ctx.addIssue({
           message: "Either Dentist or Patient Name is required.",
           code: z.ZodIssueCode.custom,
-          path: ["patient"],
+          path: ["patient"]
         });
       }
     });
@@ -205,24 +213,38 @@ const GenerateModal = ({ setIsGenerateModalVisible }: GenerateProps) => {
     handleSubmit,
     watch,
     reset,
-    formState: { errors },
+    formState: { errors }
   } = useForm<ReportFormValues>({
     defaultValues: {
       dentist: "",
       patient: "",
       dateStart: dayjs().subtract(7, "day").format("MM/DD/YYYY"),
-      dateEnd: dayjs().format("MM/DD/YYYY"),
+      dateEnd: dayjs().format("MM/DD/YYYY")
     },
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema)
   });
   const { data: billData } = useGetBills();
   const { data: dentistData, isLoading: isDentistLoading } = useGetDentists();
   const { data: patientData, isLoading: isPatientLoading } = useGetPatients();
+  const [rowData, setRowData] = useState({
+    rows: [
+      {
+        dentistName: "",
+        patientName: "",
+        service: "",
+        serviceCategory: "",
+        price: 0,
+        billingDate: ""
+      }
+    ],
+    dateStart: "",
+    dateEnd: ""
+  });
   const [dentistOptions, setDentistOptions] = useState<SelectOption[]>([
-    { value: "All", label: "All" },
+    { value: "All", label: "All" }
   ]);
   const [patientOptions, setPatientOptions] = useState<SelectOption[]>([
-    { value: "All", label: "All" },
+    { value: "All", label: "All" }
   ]);
   useEffect(() => {
     if (dentistData) {
@@ -234,9 +256,9 @@ const GenerateModal = ({ setIsGenerateModalVisible }: GenerateProps) => {
             label:
               dentist.staff.user.name.firstName +
               " " +
-              dentist.staff.user.name.lastName,
+              dentist.staff.user.name.lastName
           };
-        }),
+        })
       ]);
     }
     if (patientData) {
@@ -246,9 +268,9 @@ const GenerateModal = ({ setIsGenerateModalVisible }: GenerateProps) => {
           return {
             value: patient._id,
             label:
-              patient.user.name.firstName + " " + patient.user.name.lastName,
+              patient.user.name.firstName + " " + patient.user.name.lastName
           };
-        }),
+        })
       ]);
     }
   }, [dentistData, patientData]);
@@ -276,7 +298,6 @@ const GenerateModal = ({ setIsGenerateModalVisible }: GenerateProps) => {
             +dayjs(a.appointment.dateTimeScheduled) -
             +dayjs(b.appointment.dateTimeScheduled)
         );
-    console.log(filteredBills);
     if (filteredBills && filteredBills.length > 0) {
       const rows = filteredBills.map((row) => {
         return {
@@ -303,7 +324,7 @@ const GenerateModal = ({ setIsGenerateModalVisible }: GenerateProps) => {
             "MM-DD-YYYY"
           ),
           price: row.price,
-          billingDate: dayjs(row.createdAt).format("MM-DD-YYYY"),
+          billingDate: dayjs(row.createdAt).format("MM-DD-YYYY")
         };
       });
       const worksheet = XLSX.utils.json_to_sheet(rows);
@@ -321,11 +342,11 @@ const GenerateModal = ({ setIsGenerateModalVisible }: GenerateProps) => {
             "Date Scheduled",
             "Date Finished",
             "Price",
-            "Billing Date",
-          ],
+            "Billing Date"
+          ]
         ],
         {
-          origin: "A1",
+          origin: "A1"
         }
       );
 
@@ -346,6 +367,64 @@ const GenerateModal = ({ setIsGenerateModalVisible }: GenerateProps) => {
       toast.error("No reports for the data provided");
     }
   };
+
+  useEffect(() => {
+    const formData = watch();
+
+    const filteredBills =
+      billData &&
+      billData
+        .filter(
+          (bill) =>
+            (formData.dentist !== "All" && formData.patient !== "All"
+              ? bill.appointment.dentist._id === formData.dentist &&
+                bill.appointment.patient._id === formData.patient
+              : formData.dentist !== "All"
+              ? bill.appointment.dentist._id === formData.dentist
+              : formData.patient !== "All"
+              ? bill.appointment.patient._id === formData.patient
+              : formData.dentist && formData.patient) &&
+            dayjs(formData.dateStart).startOf("D") <=
+              dayjs(bill.appointment.dateTimeScheduled) &&
+            dayjs(formData.dateEnd).startOf("D") >=
+              dayjs(bill.appointment.dateTimeScheduled)
+        )
+        .sort(
+          (a, b) =>
+            +dayjs(a.appointment.dateTimeScheduled) -
+            +dayjs(b.appointment.dateTimeScheduled)
+        );
+    if (filteredBills && filteredBills.length > 0) {
+      const rows = filteredBills.map((row) => {
+        return {
+          dentistName:
+            row.appointment.dentist.staff.user.name.firstName +
+            (!row.appointment.dentist.staff.user.name.middleName
+              ? ""
+              : " " + row.appointment.dentist.staff.user.name.middleName) +
+            " " +
+            row.appointment.dentist.staff.user.name.lastName,
+          patientName:
+            row.appointment.patient.user.name.firstName +
+            (!row.appointment.patient.user.name.middleName
+              ? ""
+              : " " + row.appointment.patient.user.name.middleName) +
+            " " +
+            row.appointment.patient.user.name.lastName,
+          service: row.appointment.service.name,
+          serviceCategory: row.appointment.service.category,
+          price: row.price,
+          billingDate: dayjs(row.createdAt).format("MM-DD-YYYY")
+        };
+      });
+      setRowData({
+        rows,
+        dateStart: formData.dateStart,
+        dateEnd: formData.dateEnd
+      });
+    }
+  }, [watch()]);
+
   return (
     <td
       className="fixed flex items-center justify-center inset-0 !bg-black z-50 !bg-opacity-25"
@@ -431,9 +510,26 @@ const GenerateModal = ({ setIsGenerateModalVisible }: GenerateProps) => {
               />
             </div>
           </div>
-          <button className="m-auto btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 w-full md:w-48 mt-4">
-            Generate
+          <PDFDownloadLink
+            className="flex justify-center w-full"
+            document={<Report rowData={rowData} generatedBy={generatedBy} />}
+          >
+            <button
+              type="button"
+              className="m-auto btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 w-full flex items-center gap-2"
+            >
+              <AiOutlineFilePdf />
+              <span>Generate to PDF</span>
+            </button>
+          </PDFDownloadLink>
+          <button
+            type="submit"
+            className="m-auto btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 w-full flex items-center gap-2"
+          >
+            <SiMicrosoftexcel />
+            Generate to xlsx
           </button>
+
           {/* <p className="px-2 text-xs text-error text-center">
               {!filteredBills && editUserError.response.data.message}
             </p> */}
