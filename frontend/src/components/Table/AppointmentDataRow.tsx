@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAddBill } from "../../hooks/bill";
 import { useAddPatientFile } from "../../hooks/patientFile";
 import { useAddNotification } from "../../hooks/notification";
+import { calculateDiscount } from "../../utilites/calculateDiscount";
 
 interface Props {
   appointment: AppointmentResponse;
@@ -26,10 +27,7 @@ interface BillAppointmentModalProps extends Props {
   setIsBillModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const AppointmentDataRow = ({
-  appointment,
-  showAllDetails,
-}: Props): JSX.Element => {
+export const AppointmentDataRow = ({ appointment, showAllDetails }: Props): JSX.Element => {
   const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
   const [isBillModalVisible, setIsBillModalVisible] = useState(false);
 
@@ -93,10 +91,7 @@ export const AppointmentDataRow = ({
         <>
           <td className="pr-0">
             <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
-              <img
-                className="h-full object-cover"
-                src={appointment.dentist.staff.user.avatar}
-              />
+              <img className="h-full object-cover" src={appointment.dentist.staff.user.avatar} />
             </figure>
           </td>
 
@@ -113,25 +108,19 @@ export const AppointmentDataRow = ({
         <>
           <td className="pr-0">
             <figure className="w-12 h-12 ml-auto rounded-full overflow-hidden">
-              <img
-                className="h-full object-cover"
-                src={appointment.patient.user.avatar}
-              />
+              <img className="h-full object-cover" src={appointment.patient.user.avatar} />
             </figure>
           </td>
 
           <td className="font-semibold text-sm text-center">
             <span>
-              {appointment.patient.user.name.firstName}{" "}
-              {appointment.patient.user.name.lastName}
+              {appointment.patient.user.name.firstName} {appointment.patient.user.name.lastName}
             </span>
           </td>
         </>
       )}
 
-      <td className="font-medium text-sm text-center">
-        {appointment.service.name}
-      </td>
+      <td className="font-medium text-sm text-center">{appointment.service.name}</td>
 
       {isCancelModalVisible && (
         <CancelAppointmentModal
@@ -211,16 +200,10 @@ const CancelAppointmentModal = ({
           <p>Are you sure?</p>
         </div>
         <div className="flex gap-3 justify-end mx-2 py-3">
-          <button
-            className="btn px-8"
-            onClick={() => setIsCancelModalVisible(false)}
-          >
+          <button className="btn px-8" onClick={() => setIsCancelModalVisible(false)}>
             No
           </button>
-          <button
-            className="btn btn-error px-8 text-white hover:bg-red-700"
-            onClick={handleDelete}
-          >
+          <button className="btn btn-error px-8 text-white hover:bg-red-700" onClick={handleDelete}>
             Yes{" "}
             {removeAppointmentLoading && (
               <AiOutlineLoading3Quarters className="w-4 h-4 ml-2 animate-spin" />
@@ -243,25 +226,30 @@ const BillAppointmentModal = ({
       .number({ required_error: "Price is required" })
       .positive("Price must be a positive number")
       .finite("Infinite price are not allowed"),
+    discount: z.coerce
+      .number({ required_error: "Discount is required" })
+      .positive("Discount must be a positive number")
+      .finite("Infinite discount are not allowed"),
   });
 
   const {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
-  } = useForm<BillFormValues>({
+  } = useForm<BillFormValues & { discount: string }>({
     defaultValues: {
       appointment: appointment._id,
       notes: "",
       price: "",
+      discount: "20",
     },
     resolver: zodResolver(schema),
   });
 
   const { mutateAsync: addBill, isLoading: addBillLoading } = useAddBill();
-  const { mutateAsync: addPatientFile, isLoading: addPatientFileLoading } =
-    useAddPatientFile();
+  const { mutateAsync: addPatientFile, isLoading: addPatientFileLoading } = useAddPatientFile();
 
   const [textAreaVisible, setTextAreaVisible] = useState(false);
   const [isDiscounted, setIsDiscounted] = useState(false);
@@ -269,11 +257,16 @@ const BillAppointmentModal = ({
 
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const onSubmit: SubmitHandler<BillFormValues> = async (data) => {
+  const onSubmit: SubmitHandler<BillFormValues & { discount: string }> = async ({
+    discount,
+    ...data
+  }) => {
     const bill = await addBill(
       {
         ...data,
-        price: isDiscounted ? (+data.price * 0.8).toString() : data.price,
+        price: isDiscounted
+          ? calculateDiscount(Number(watch("price")), Number(watch("discount"))).toString()
+          : data.price,
       },
       {
         onError: (err) => {
@@ -325,6 +318,15 @@ const BillAppointmentModal = ({
     }
   }, [textAreaVisible, textAreaRef.current, textAreaRef.current?.value]);
 
+  useEffect(() => {
+    if (Number(watch("discount")) > 100) {
+      reset((data) => ({
+        ...data,
+        discount: "100",
+      }));
+    }
+  }, [watch("discount")]);
+
   return (
     <td
       className="fixed flex items-center justify-center inset-0 z-50 !bg-black !bg-opacity-25"
@@ -342,10 +344,7 @@ const BillAppointmentModal = ({
             />
           </div>
         </header>
-        <form
-          className="flex flex-col mx-2 gap-4"
-          onSubmit={handleSubmit(onSubmit)}
-        >
+        <form className="flex flex-col mx-2 gap-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-2">
             <textarea
               {...register("notes")}
@@ -368,8 +367,21 @@ const BillAppointmentModal = ({
               register={register}
               error={errors.price && errors.price.message}
             />
+
+            {isDiscounted && (
+              <FormInput
+                type="number"
+                label="discount"
+                placeholder="Discount (%)"
+                value={watch("discount")}
+                register={register}
+                error={errors.discount && errors.discount.message}
+              />
+            )}
+
             <p className={isDiscounted ? "" : "invisible"}>
-              Discounted Price: ₱{+watch("price") * 0.8}
+              Discounted Price: ₱
+              {calculateDiscount(Number(watch("price")), Number(watch("discount")))}
             </p>
           </div>
 
