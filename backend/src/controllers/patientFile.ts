@@ -56,7 +56,19 @@ export const getPatientFiles: RequestHandler = async (req, res) => {
   const patientFiles = await PatientFile.find({
     patient: patient._id,
     ...(bill && { bill }),
-  }).populate({ path: "bill", populate: { path: "appointment", populate: { path: "service" } } });
+  })
+    .populate({ path: "bill", populate: { path: "appointment", populate: { path: "service" } } })
+    .populate({
+      path: "bill",
+      populate: {
+        path: "appointment",
+        populate: { path: "dentist", populate: { path: "staff", populate: { path: "user" } } },
+      },
+    })
+    .populate({
+      path: "bill",
+      populate: { path: "appointment", populate: { path: "patient", populate: { path: "user" } } },
+    });
 
   res.status(200).send(patientFiles);
 };
