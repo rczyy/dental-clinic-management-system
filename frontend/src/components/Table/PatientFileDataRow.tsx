@@ -6,9 +6,11 @@ import { useGetMe } from "../../hooks/user";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useRemovePatientFile } from "../../hooks/patientFile";
 import { useQueryClient } from "@tanstack/react-query";
+import { ViewBillModal } from "./BillDataRow";
 
 interface Props {
   file: PatientFileResponse;
+  hideService: boolean;
 }
 
 interface DeletePatientFileModalProps {
@@ -17,10 +19,11 @@ interface DeletePatientFileModalProps {
   setIsDeleteModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const PatientFileDataRow = ({ file }: Props): JSX.Element => {
+export const PatientFileDataRow = ({ file, hideService }: Props): JSX.Element => {
   const { userID } = useParams();
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [isViewBillModalVisible, setIsViewBillModalVisible] = useState(false);
 
   const { data: me } = useGetMe();
 
@@ -37,7 +40,25 @@ export const PatientFileDataRow = ({ file }: Props): JSX.Element => {
           ? `${Math.ceil(file.size / bytesConversionToMB)} MB`
           : `${Math.ceil(file.size / bytesConversionToKB)} KB`}
       </td>
-      <td>{file.bill ? file.bill.appointment.service.name : "-"}</td>
+
+      {!hideService && (
+        <td>
+          {file.bill ? (
+            <span
+              className="text-primary cursor-pointer"
+              onClick={() => setIsViewBillModalVisible(!isViewBillModalVisible)}
+            >
+              {file.bill.appointment.service.name}
+            </span>
+          ) : (
+            "-"
+          )}
+        </td>
+      )}
+
+      {isViewBillModalVisible && file.bill && (
+        <ViewBillModal bill={file.bill} setIsViewModalVisible={setIsViewBillModalVisible} />
+      )}
       <td>{dayjs(file.createdAt).format("DD MMM YYYY")}</td>
 
       {(me?.role === "Admin" || me?.role === "Dentist") && (

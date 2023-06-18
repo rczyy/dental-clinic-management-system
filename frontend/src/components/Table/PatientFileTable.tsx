@@ -5,9 +5,10 @@ import { useGetMe } from "../../hooks/user";
 interface Props {
   files: PatientFileResponse[] | undefined;
   filesLoading: boolean;
+  hideService?: boolean;
 }
 
-export const PatientFileTable = ({ files, filesLoading }: Props): JSX.Element => {
+export const PatientFileTable = ({ files, filesLoading, hideService }: Props): JSX.Element => {
   const { data: me } = useGetMe();
 
   return (
@@ -17,7 +18,7 @@ export const PatientFileTable = ({ files, filesLoading }: Props): JSX.Element =>
           <tr>
             <td>Name</td>
             <td>Size</td>
-            <td>Bill Service</td>
+            {!hideService && <td>Bill Service</td>}
             <td>Uploaded On</td>
             {files && files.length > 0 && me?.role !== "Assistant" && me?.role !== "Patient" && (
               <td className="p-0"></td>
@@ -28,7 +29,9 @@ export const PatientFileTable = ({ files, filesLoading }: Props): JSX.Element =>
         <tbody className="[&_td]:border-neutral [&_td]:text-xs [&_td:first-child]:font-bold [&_td]:font-medium">
           {files ? (
             files.length > 0 ? (
-              files.map((file) => <PatientFileDataRow key={file._id} file={file} />)
+              files.map((file) => (
+                <PatientFileDataRow key={file._id} file={file} hideService={!!hideService} />
+              ))
             ) : (
               <tr>
                 <td className="text-zinc-400 text-center !font-medium" colSpan={5}>

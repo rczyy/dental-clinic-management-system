@@ -270,7 +270,7 @@ export const ViewBillModal = ({ bill, setIsViewModalVisible }: ViewBillProps): J
           <div className="px-4">
             <h3 className="font-bold mb-2">Files</h3>
 
-            <PatientFileTable files={files} filesLoading={filesLoading} />
+            <PatientFileTable files={files} filesLoading={filesLoading} hideService />
           </div>
         )}
       </section>
