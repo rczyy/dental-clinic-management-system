@@ -213,7 +213,8 @@ const GenerateModal = ({
     handleSubmit,
     watch,
     reset,
-    formState: { errors }
+    trigger,
+    formState: { errors, isValid }
   } = useForm<ReportFormValues>({
     defaultValues: {
       dentist: "",
@@ -423,10 +424,15 @@ const GenerateModal = ({
         dateEnd: formData.dateEnd
       });
     }
-  }, [watch()]);
+  }, [
+    watch("dateEnd"),
+    watch("dateStart"),
+    watch("patient"),
+    watch("dentist")
+  ]);
 
   return (
-    <td
+    <div
       className="fixed flex items-center justify-center inset-0 !bg-black z-50 !bg-opacity-25"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) setIsGenerateModalVisible(false);
@@ -451,7 +457,7 @@ const GenerateModal = ({
               <Controller
                 name="dentist"
                 control={control}
-                render={({ field: { onChange, value, ...field } }) => (
+                render={({ field: { onChange, value, ref, ...field } }) => (
                   <SelectDropdown
                     {...field}
                     value={value}
@@ -470,7 +476,7 @@ const GenerateModal = ({
               <Controller
                 name="patient"
                 control={control}
-                render={({ field: { onChange, value, ...field } }) => (
+                render={({ field: { onChange, value, ref, ...field } }) => (
                   <SelectDropdown
                     {...field}
                     value={value}
@@ -510,18 +516,30 @@ const GenerateModal = ({
               />
             </div>
           </div>
-          <PDFDownloadLink
-            className="flex justify-center w-full"
-            document={<Report rowData={rowData} generatedBy={generatedBy} />}
-          >
+          {isValid ? (
+            <PDFDownloadLink
+              className="flex justify-center w-full"
+              document={<Report rowData={rowData} generatedBy={generatedBy} />}
+            >
+              <button
+                type="button"
+                className="m-auto btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 w-full flex items-center gap-2"
+              >
+                <AiOutlineFilePdf />
+                <span>Generate to PDF</span>
+              </button>
+            </PDFDownloadLink>
+          ) : (
             <button
               type="button"
+              onClick={() => trigger()}
               className="m-auto btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 w-full flex items-center gap-2"
             >
               <AiOutlineFilePdf />
               <span>Generate to PDF</span>
             </button>
-          </PDFDownloadLink>
+          )}
+
           <button
             type="submit"
             className="m-auto btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 w-full flex items-center gap-2"
@@ -535,7 +553,7 @@ const GenerateModal = ({
             </p> */}
         </form>
       </section>
-    </td>
+    </div>
   );
 };
 export default Dashboard;
