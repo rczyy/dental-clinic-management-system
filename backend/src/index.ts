@@ -59,6 +59,7 @@ const main = async () => {
     })
   );
 
+  app.get("/health-check", (_, res) => res.sendStatus(200));
   app.use("/user", userRoute);
   app.use("/admin", adminRoute);
   app.use("/assistant", assistantRoute);
