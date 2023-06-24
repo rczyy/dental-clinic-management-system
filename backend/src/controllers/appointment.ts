@@ -124,6 +124,8 @@ export const addAppointment: RequestHandler = async (req, res) => {
 
   const { dentist, patient, service, dateTimeScheduled, dateTimeFinished }: body = req.body;
 
+  console.log(dateTimeScheduled);
+
   if (token.role === Roles.Patient && req.session.uid !== patient) {
     const error: ErrorMessage = { message: "Unauthorized to do this" };
     res.status(401).json(error);
@@ -211,13 +213,13 @@ export const addAppointment: RequestHandler = async (req, res) => {
       }
     }
 
-  if (new Date(dateTimeScheduled).getHours() < 8) {
+  if (dayjs(dateTimeScheduled).hour() < 8) {
     const error: ErrorMessage = { message: "Schedule is too early" };
     res.status(400).json(error);
     return;
   }
 
-  if (new Date(dateTimeFinished).getHours() > 6 + 12) {
+  if (dayjs(dateTimeFinished).hour() > 18) {
     const error: ErrorMessage = { message: "Schedule is too late" };
     res.status(400).json(error);
     return;
@@ -511,13 +513,13 @@ export const editAppointment: RequestHandler = async (req, res) => {
       }
     }
 
-  if (new Date(dateTimeScheduled).getHours() < 8) {
+  if (dayjs(dateTimeScheduled).hour() < 8) {
     const error: ErrorMessage = { message: "Schedule is too early" };
     res.status(400).json(error);
     return;
   }
 
-  if (new Date(dateTimeFinished).getHours() > 6 + 12) {
+  if (dayjs(dateTimeFinished).hour() > 18) {
     const error: ErrorMessage = { message: "Schedule is too late" };
     res.status(400).json(error);
     return;
