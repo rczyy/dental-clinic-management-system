@@ -1,14 +1,10 @@
 import S3 from "aws-sdk/clients/s3";
 
-export const uploadToS3 = async (
-  key: string,
-  body: S3.Body,
-  contentType: string
-) => {
+export const uploadToS3 = async (key: string, body: S3.Body, contentType: string) => {
   const region = process.env.AWS_REGION;
   const bucket = process.env.AWS_BUCKET;
-  const accessKeyId = process.env.AWS_ACCESS_KEY;
-  const secretAccessKey = process.env.AWS_SECRET_KEY;
+  const accessKeyId = process.env.AWS_ACCESSKEY;
+  const secretAccessKey = process.env.AWS_SECRETKEY;
 
   if (!region) throw new Error("No AWS region provided");
   if (!bucket) throw new Error("No AWS bucket provided");
