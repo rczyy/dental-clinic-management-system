@@ -32,7 +32,7 @@ export const getPatients: RequestHandler = async (req, res) => {
     return;
   }
 
-  const patients = await Patient.find({ isDeleted: false }).populate(
+  const patients = await Patient.find({ isDeleted: false, isBanned: false }).populate(
     "user",
     "-password"
   );
@@ -55,10 +55,27 @@ export const getDeletedPatients: RequestHandler = async (req, res) => {
     return;
   }
 
-  const patients = await Patient.find({ isDeleted: true }).populate(
-    "user",
-    "-password"
-  );
+  const patients = await Patient.find({ isDeleted: true }).populate("user", "-password");
+
+  res.status(200).json(patients);
+};
+
+export const getBannedPatients: RequestHandler = async (req, res) => {
+  const token = verifyToken(req.headers.authorization);
+
+  if ("message" in token) {
+    const error: ErrorMessage = { message: token.message };
+    res.status(401).json(error);
+    return;
+  }
+
+  if (token.role === Roles.Patient) {
+    const error: ErrorMessage = { message: "Unauthorized to do this" };
+    res.status(401).json(error);
+    return;
+  }
+
+  const patients = await Patient.find({ isBanned: true }).populate("user", "-password");
 
   res.status(200).json(patients);
 };
@@ -79,9 +96,9 @@ export const getPatientNames: RequestHandler = async (req, res) => {
   }
 
   const patients = await Patient.find({
-    isDeleted: false
+    isDeleted: false,
   }).populate({
-    path: "user"
+    path: "user",
   });
 
   const response = patients
@@ -96,7 +113,7 @@ export const getPatientNames: RequestHandler = async (req, res) => {
       return {
         _id,
         name,
-        avatar
+        avatar,
       };
     });
 
@@ -191,10 +208,10 @@ export const registerPatient: RequestHandler = async (req, res) => {
         .string({ required_error: "Contact number is required" })
         .min(1, "Contact number cannot be empty")
         .regex(/(^\+639)\d{9}$/, "Invalid contact number"),
-      verified: z.string().optional()
+      verified: z.string().optional(),
     })
     .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords doesn't match"
+      message: "Passwords doesn't match",
     });
 
   type body = z.infer<typeof userSchema>;
@@ -218,14 +235,14 @@ export const registerPatient: RequestHandler = async (req, res) => {
     email,
     contactNo,
     password,
-    verified
+    verified,
   }: body = req.body;
 
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
     const error: FormError = {
-      formErrors: ["User already exists"]
+      formErrors: ["User already exists"],
     };
 
     res.status(400).json(error);
@@ -238,24 +255,24 @@ export const registerPatient: RequestHandler = async (req, res) => {
     name: {
       firstName,
       middleName,
-      lastName
+      lastName,
     },
     address: {
       region,
       province,
       city,
       barangay,
-      street
+      street,
     },
     email,
     password: hashedPassword,
     contactNo,
     role: Roles.Patient,
-    verified: verified === "true" ? true : false
+    verified: verified === "true" ? true : false,
   });
 
   const patient = new Patient({
-    user: user._id
+    user: user._id,
   });
 
   await addLog(user._id, LogModule[0], LogType[0], user, user.role);
@@ -264,27 +281,25 @@ export const registerPatient: RequestHandler = async (req, res) => {
   await patient.save();
 
   if (verified === "true") {
-    const emailVerificationToken = jwt.sign(
-      { _id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "3d" }
-    );
+    const emailVerificationToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "3d",
+    });
 
     await sendEmail({
       Messages: [
         {
           From: {
-            Email: process.env.EMAIL_SENDER
+            Email: process.env.EMAIL_SENDER,
           },
           To: [
             {
-              Email: email
-            }
+              Email: email,
+            },
           ],
           Subject: "Verify your email address",
-          HTMLPart: emailVerification(firstName, emailVerificationToken)
-        }
-      ]
+          HTMLPart: emailVerification(firstName, emailVerificationToken),
+        },
+      ],
     });
   }
 
@@ -318,8 +333,8 @@ export const recoverPatient: RequestHandler = async (req, res) => {
     { user },
     {
       $set: {
-        isDeleted: false
-      }
+        isDeleted: false,
+      },
     }
   );
 
@@ -333,11 +348,11 @@ export const recoverPatient: RequestHandler = async (req, res) => {
     user,
     {
       $set: {
-        isDeleted: false
-      }
+        isDeleted: false,
+      },
     },
     {
-      new: true
+      new: true,
     }
   );
 
@@ -347,13 +362,7 @@ export const recoverPatient: RequestHandler = async (req, res) => {
     return;
   }
 
-  await addLog(
-    req.session.uid!,
-    LogModule[0],
-    LogType[3],
-    recoveredUser,
-    "Patient"
-  );
+  await addLog(req.session.uid!, LogModule[0], LogType[3], recoveredUser, "Patient");
 
   res.status(200).send(recoveredUser);
 };
@@ -384,8 +393,8 @@ export const removePatient: RequestHandler = async (req, res) => {
     { user },
     {
       $set: {
-        isDeleted: true
-      }
+        isDeleted: true,
+      },
     }
   );
 
@@ -397,8 +406,8 @@ export const removePatient: RequestHandler = async (req, res) => {
 
   const deletedUser = await User.findByIdAndUpdate(user, {
     $set: {
-      isDeleted: true
-    }
+      isDeleted: true,
+    },
   });
 
   if (!deletedUser || deletedUser.isDeleted) {
@@ -407,17 +416,9 @@ export const removePatient: RequestHandler = async (req, res) => {
     return;
   }
 
-  await addLog(
-    req.session.uid!,
-    LogModule[0],
-    LogType[2],
-    deletedUser,
-    "Patient"
-  );
+  await addLog(req.session.uid!, LogModule[0], LogType[2], deletedUser, "Patient");
 
-  res
-    .status(200)
-    .json({ _id: deletedUser._id, message: "Succesfully deleted the patient" });
+  res.status(200).json({ _id: deletedUser._id, message: "Succesfully deleted the patient" });
 };
 
 export const banPatient: RequestHandler = async (req, res) => {
@@ -461,8 +462,8 @@ export const banPatient: RequestHandler = async (req, res) => {
     { _id: patient },
     {
       $set: {
-        isBanned: true
-      }
+        isBanned: true,
+      },
     }
   ).populate("user");
 
@@ -472,17 +473,11 @@ export const banPatient: RequestHandler = async (req, res) => {
     return;
   }
 
-  await addLog(
-    req.session.uid!,
-    LogModule[0],
-    LogType[5],
-    bannedPatient.user,
-    "Patient"
-  );
+  await addLog(req.session.uid!, LogModule[0], LogType[5], bannedPatient.user, "Patient");
 
   res.status(200).json({
     _id: bannedPatient._id,
-    message: "Succesfully banned the patient"
+    message: "Succesfully banned the patient",
   });
 };
 
@@ -527,8 +522,8 @@ export const unbanPatient: RequestHandler = async (req, res) => {
     { _id: patient },
     {
       $set: {
-        isBanned: false
-      }
+        isBanned: false,
+      },
     }
   ).populate("user");
 
@@ -538,16 +533,10 @@ export const unbanPatient: RequestHandler = async (req, res) => {
     return;
   }
 
-  await addLog(
-    req.session.uid!,
-    LogModule[0],
-    LogType[6],
-    unbannedPatient.user,
-    "Patient"
-  );
+  await addLog(req.session.uid!, LogModule[0], LogType[6], unbannedPatient.user, "Patient");
 
   res.status(200).json({
     _id: unbannedPatient._id,
-    message: "Succesfully unbanned the patient"
+    message: "Succesfully unbanned the patient",
   });
 };

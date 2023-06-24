@@ -33,9 +33,7 @@ export const AppointmentList = (_: Props): JSX.Element => {
   const filteredAppointments =
     appointments &&
     appointments
-      .sort((a, b) =>
-        dayjs(a.dateTimeScheduled).isBefore(dayjs(b.dateTimeScheduled)) ? -1 : 1
-      )
+      .sort((a, b) => (dayjs(a.dateTimeScheduled).isBefore(dayjs(b.dateTimeScheduled)) ? -1 : 1))
       .filter((appointment) =>
         `${appointment.dentist.staff.user.name.firstName} ${appointment.dentist.staff.user.name.lastName}`
           .toLowerCase()
@@ -119,22 +117,22 @@ export const AppointmentList = (_: Props): JSX.Element => {
       </div>
       <div>
         <div className="tabs">
-        <span
-          className={`${
-            !isPastAppointments ? "font-extrabold" : "tab-active"
-          } tab tab-lg tab-lifted text-primary bg-base-300`}
-          onClick={() => setIsPastAppointments(false)}
-        >
-          Appointments
-        </span>
-        <span
-          className={`${
-            isPastAppointments ? "font-extrabold" : "tab-active"
-          } tab tab-lg tab-lifted text-primary bg-base-300`}
-          onClick={() => setIsPastAppointments(true)}
-        >
-          Past Appointments
-        </span>
+          <span
+            className={`${
+              !isPastAppointments ? "font-extrabold" : "tab-active"
+            } tab tab-lg tab-lifted text-primary bg-base-300`}
+            onClick={() => setIsPastAppointments(false)}
+          >
+            Appointments
+          </span>
+          <span
+            className={`${
+              isPastAppointments ? "font-extrabold" : "tab-active"
+            } tab tab-lg tab-lifted text-primary bg-base-300`}
+            onClick={() => setIsPastAppointments(true)}
+          >
+            Past Appointments
+          </span>
         </div>
         <div className="bg-base-300 rounded-box rounded-tl-none overflow-x-auto">
           <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
@@ -150,19 +148,13 @@ export const AppointmentList = (_: Props): JSX.Element => {
 
                 <th></th>
 
-                <th className="text-primary text-center normal-case">
-                  Dentist
-                </th>
+                <th className="text-primary text-center normal-case">Dentist</th>
 
                 <th></th>
 
-                <th className="text-primary text-center normal-case">
-                  Patient
-                </th>
+                <th className="text-primary text-center normal-case">Patient</th>
 
-                <th className="text-primary text-center normal-case">
-                  Service
-                </th>
+                <th className="text-primary text-center normal-case">Service</th>
               </tr>
             </thead>
             <tbody>
@@ -177,10 +169,7 @@ export const AppointmentList = (_: Props): JSX.Element => {
                   ))
                 ) : (
                   <tr className="[&>*]:bg-transparent">
-                    <td
-                      colSpan={7}
-                      className="py-8 text-2xl text-center font-bold"
-                    >
+                    <td colSpan={7} className="py-8 text-2xl text-center font-bold">
                       No appointments to show
                     </td>
                   </tr>

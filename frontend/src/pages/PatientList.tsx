@@ -1,12 +1,8 @@
 import { useState } from "react";
-import { useGetDeletedPatients, useGetPatients } from "../hooks/patient";
+import { useGetBannedPatients, useGetDeletedPatients, useGetPatients } from "../hooks/patient";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import PatientDataRow from "../components/Table/PatientDataRow";
-import {
-  AiFillCaretDown,
-  AiFillCaretUp,
-  AiOutlineLoading3Quarters,
-} from "react-icons/ai";
+import { AiFillCaretDown, AiFillCaretUp, AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Link, Navigate } from "react-router-dom";
 import { useGetMe } from "../hooks/user";
 import { useAdminStore } from "../store/admin";
@@ -18,9 +14,11 @@ const PatientList = (props: Props) => {
 
   const { data: me } = useGetMe();
   const { data: patients, isLoading: patientsLoading } = useGetPatients();
-  const { data: deletedPatients, isLoading: deletedPatientsLoading } =
-    useGetDeletedPatients();
+  const { data: deletedPatients, isLoading: deletedPatientsLoading } = useGetDeletedPatients();
+  const { data: bannedPatients } = useGetBannedPatients();
 
+  const [includeUnverified, setIncludeUnverified] = useState(false);
+  const [isBannedPatients, setIsBannedPatients] = useState<boolean>(false);
   const [seeDeletedPatients, setSeeDeletedPatients] = useState<boolean>(false);
   const [searchDeletedFilter, setSearchDeletedFilter] = useState<string>("");
   const [nameDeletedSort, setNameDeletedSort] = useState<"asc" | "desc">();
@@ -45,11 +43,12 @@ const PatientList = (props: Props) => {
             : -1
           : 0;
       })
-      .filter(
-        (patient) =>
-          `${patient.user.name.firstName} ${patient.user.name.lastName}`
-            .toLowerCase()
-            .includes(searchFilter.toLowerCase()) && patient.user.verified
+      .filter((patient) =>
+        `${patient.user.name.firstName} ${patient.user.name.lastName}`
+          .toLowerCase()
+          .includes(searchFilter.toLowerCase()) && !includeUnverified
+          ? patient.user.verified
+          : true
       );
 
   const filteredDeletedPatients =
@@ -69,12 +68,35 @@ const PatientList = (props: Props) => {
             : -1
           : 0;
       })
-      .filter(
-        (patient) =>
-          `${patient.user.name.firstName} ${patient.user.name.lastName}`
-            .toLowerCase()
-            .includes(searchDeletedFilter.toLowerCase()) &&
-          patient.user.verified
+      .filter((patient) =>
+        `${patient.user.name.firstName} ${patient.user.name.lastName}`
+          .toLowerCase()
+          .includes(searchDeletedFilter.toLowerCase())
+      );
+
+  const filteredBannedPatients =
+    bannedPatients &&
+    bannedPatients
+      .sort((a, b) => {
+        const nameA = a.user.name.firstName.toUpperCase();
+        const nameB = b.user.name.firstName.toUpperCase();
+
+        return nameSort === "asc"
+          ? nameA < nameB
+            ? -1
+            : 1
+          : nameSort === "desc"
+          ? nameA < nameB
+            ? 1
+            : -1
+          : 0;
+      })
+      .filter((patient) =>
+        `${patient.user.name.firstName} ${patient.user.name.lastName}`
+          .toLowerCase()
+          .includes(searchFilter.toLowerCase()) && !includeUnverified
+          ? patient.user.verified
+          : true
       );
 
   if (!me || me.role === "Patient") return <Navigate to="/" />;
@@ -130,20 +152,15 @@ const PatientList = (props: Props) => {
             <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
               <thead>
                 <tr className="[&>*]:bg-base-300 border-b border-base-200">
-                  {filteredDeletedPatients &&
-                    filteredDeletedPatients.length > 0 && (
-                      <th className="min-w-[2.5rem] w-10"></th>
-                    )}
+                  {filteredDeletedPatients && filteredDeletedPatients.length > 0 && (
+                    <th className="min-w-[2.5rem] w-10"></th>
+                  )}
 
                   <th></th>
 
                   <th
                     className="text-primary normal-case cursor-pointer"
-                    onClick={() =>
-                      setNameDeletedSort((val) =>
-                        val === "asc" ? "desc" : "asc"
-                      )
-                    }
+                    onClick={() => setNameDeletedSort((val) => (val === "asc" ? "desc" : "asc"))}
                   >
                     <div className="flex justify-center items-center gap-1">
                       <span>Name</span>
@@ -155,13 +172,9 @@ const PatientList = (props: Props) => {
                     </div>
                   </th>
 
-                  <th className="text-primary text-center normal-case">
-                    Address
-                  </th>
+                  <th className="text-primary text-center normal-case">Address</th>
 
-                  <th className="text-primary text-center normal-case">
-                    Contact No.
-                  </th>
+                  <th className="text-primary text-center normal-case">Contact No.</th>
                 </tr>
               </thead>
               <tbody>
@@ -172,10 +185,7 @@ const PatientList = (props: Props) => {
                     ))
                   ) : (
                     <tr className="[&>*]:bg-transparent">
-                      <td
-                        colSpan={4}
-                        className="py-8 text-2xl text-center font-bold"
-                      >
+                      <td colSpan={4} className="py-8 text-2xl text-center font-bold">
                         No deleted patients found
                       </td>
                     </tr>
@@ -205,65 +215,106 @@ const PatientList = (props: Props) => {
           />
         </div>
       </div>
-      <div className="bg-base-300 py-4 pr-4 rounded-box overflow-x-auto">
-        <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
-          <thead>
-            <tr className="[&>*]:bg-base-300 border-b border-base-200">
-              {filteredPatients && filteredPatients.length > 0 && (
-                <th className="min-w-[2.5rem] w-10"></th>
-              )}
+      <div>
+        <div className="flex flex-col-reverse sm:flex-row sm:justify-between">
+          <div className="tabs">
+            <span
+              className={`${
+                !isBannedPatients ? "font-extrabold" : "tab-active"
+              } tab tab-lg tab-lifted text-primary bg-base-300`}
+              onClick={() => setIsBannedPatients(false)}
+            >
+              Patients
+            </span>
+            <span
+              className={`${
+                isBannedPatients ? "font-extrabold" : "tab-active"
+              } tab tab-lg tab-lifted text-primary bg-base-300`}
+              onClick={() => setIsBannedPatients(true)}
+            >
+              Banned Patients
+            </span>
+          </div>
+          <div className="form-control">
+            <label className="label justify-start gap-4 cursor-pointer">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-primary"
+                onChange={() => setIncludeUnverified(!includeUnverified)}
+                checked={includeUnverified}
+              />
+              <span className="label-text">Include unverified patients</span>
+            </label>
+          </div>
+        </div>
+        <div className="bg-base-300 py-4 pr-4 rounded-box overflow-x-auto">
+          <table className="table [&>*]:bg-base-300 w-full text-sm sm:text-base">
+            <thead>
+              <tr className="[&>*]:bg-base-300 border-b border-base-200">
+                {isBannedPatients
+                  ? filteredBannedPatients &&
+                    filteredBannedPatients.length > 0 && <th className="min-w-[2.5rem] w-10"></th>
+                  : filteredPatients &&
+                    filteredPatients.length > 0 && <th className="min-w-[2.5rem] w-10"></th>}
 
-              <th></th>
+                <th></th>
 
-              <th
-                className="text-primary normal-case cursor-pointer"
-                onClick={() =>
-                  setNameSort((val) => (val === "asc" ? "desc" : "asc"))
-                }
-              >
-                <div className="flex justify-center items-center gap-1">
-                  <span>Name</span>
-                  {nameSort === "asc" ? (
-                    <AiFillCaretDown className="w-2.5 h-2.5" />
-                  ) : nameSort === "desc" ? (
-                    <AiFillCaretUp className="w-2.5 h-2.5" />
-                  ) : null}
-                </div>
-              </th>
+                <th
+                  className="text-primary normal-case cursor-pointer"
+                  onClick={() => setNameSort((val) => (val === "asc" ? "desc" : "asc"))}
+                >
+                  <div className="flex justify-center items-center gap-1">
+                    <span>Name</span>
+                    {nameSort === "asc" ? (
+                      <AiFillCaretDown className="w-2.5 h-2.5" />
+                    ) : nameSort === "desc" ? (
+                      <AiFillCaretUp className="w-2.5 h-2.5" />
+                    ) : null}
+                  </div>
+                </th>
 
-              <th className="text-primary text-center normal-case">Address</th>
+                <th className="text-primary text-center normal-case">Address</th>
 
-              <th className="text-primary text-center normal-case">
-                Contact No.
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredPatients &&
-              (filteredPatients.length > 0 ? (
-                filteredPatients.map((patient) => (
-                  <PatientDataRow key={patient._id} patient={patient} />
-                ))
-              ) : (
+                <th className="text-primary text-center normal-case">Contact No.</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isBannedPatients
+                ? filteredBannedPatients &&
+                  (filteredBannedPatients.length > 0 ? (
+                    filteredBannedPatients.map((patient) => (
+                      <PatientDataRow key={patient._id} patient={patient} />
+                    ))
+                  ) : (
+                    <tr className="[&>*]:bg-transparent">
+                      <td colSpan={4} className="py-8 text-2xl text-center font-bold">
+                        No banned patients
+                      </td>
+                    </tr>
+                  ))
+                : filteredPatients &&
+                  (filteredPatients.length > 0 ? (
+                    filteredPatients.map((patient) => (
+                      <PatientDataRow key={patient._id} patient={patient} />
+                    ))
+                  ) : (
+                    <tr className="[&>*]:bg-transparent">
+                      <td colSpan={4} className="py-8 text-2xl text-center font-bold">
+                        No patients registered
+                      </td>
+                    </tr>
+                  ))}
+
+              {patientsLoading && (
                 <tr className="[&>*]:bg-transparent">
-                  <td
-                    colSpan={4}
-                    className="py-8 text-2xl text-center font-bold"
-                  >
-                    No patients registered
+                  <td colSpan={8}>
+                    <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
                   </td>
                 </tr>
-              ))}
-
-            {patientsLoading && (
-              <tr className="[&>*]:bg-transparent">
-                <td colSpan={8}>
-                  <AiOutlineLoading3Quarters className="w-16 h-16 mx-auto py-4 text-primary animate-spin" />
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </main>
   );

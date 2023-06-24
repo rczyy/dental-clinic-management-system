@@ -2,6 +2,7 @@ import { Router } from "express";
 import { checkAuth } from "../middlewares/checkAuth";
 import {
   banPatient,
+  getBannedPatients,
   getDeletedPatients,
   getPatient,
   getPatientNames,
@@ -9,7 +10,7 @@ import {
   recoverPatient,
   registerPatient,
   removePatient,
-  unbanPatient
+  unbanPatient,
 } from "../controllers/patient";
 
 const router = Router();
@@ -18,6 +19,7 @@ router
   .get("/", checkAuth, getPatients)
   .get("/names", checkAuth, getPatientNames)
   .get("/deleted", checkAuth, getDeletedPatients)
+  .get("/banned", checkAuth, getBannedPatients)
   .get("/:user", checkAuth, getPatient);
 router.post("/register", registerPatient);
 router

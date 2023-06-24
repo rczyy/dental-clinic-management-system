@@ -1,6 +1,7 @@
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import {
   banPatient,
+  getBannedPatients,
   getDeletedPatients,
   getPatient,
   getPatientNames,
@@ -22,6 +23,13 @@ export const useGetDeletedPatients = () => {
   });
 };
 
+export const useGetBannedPatients = () => {
+  return useQuery({
+    queryKey: ["banned-patients"],
+    queryFn: getBannedPatients,
+  });
+};
+
 export const useGetPatient = (id: string) => {
   return useQuery({
     queryKey: ["patients", id],
@@ -37,11 +45,7 @@ export const useGetPatientNames = () => {
 
 export const useRegisterPatient = () => {
   const queryClient = useQueryClient();
-  return useMutation<
-    UserResponse,
-    FormErrorResponse | ErrorMessageResponse,
-    SignupFormValues
-  >({
+  return useMutation<UserResponse, FormErrorResponse | ErrorMessageResponse, SignupFormValues>({
     mutationFn: registerPatient,
     onSuccess: () => queryClient.invalidateQueries(["patients"]),
   });
@@ -76,6 +80,7 @@ export const useUnbanPatient = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["patients"]);
       queryClient.invalidateQueries(["deleted-patients"]);
+      queryClient.invalidateQueries(["banned-patients"]);
     },
   });
 };
@@ -87,6 +92,7 @@ export const useBanPatient = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(["patients"]);
       queryClient.invalidateQueries(["deleted-patients"]);
+      queryClient.invalidateQueries(["banned-patients"]);
     },
   });
 };

@@ -22,6 +22,16 @@ export const getDeletedPatients = async () => {
   return res.data;
 };
 
+export const getBannedPatients = async () => {
+  const res = await axios.get<PatientResponse[]>(`${URL}/patient/banned`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
+  return res.data;
+};
+
 export const getPatient = async (id: string) => {
   const res = await axios.get<PatientResponse>(`${URL}/patient/${id}`, {
     withCredentials: true,
@@ -47,56 +57,41 @@ export const registerPatient = async (form: SignupFormValues) => {
 };
 
 export const recoverPatient = async (userId: string) => {
-  const res = await axios.put<UserResponse>(
-    `${URL}/patient/recover/${userId}`,
-    null,
-    {
-      withCredentials: true,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
-      },
-    }
-  );
+  const res = await axios.put<UserResponse>(`${URL}/patient/recover/${userId}`, null, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
   return res.data;
 };
 
 export const removePatient = async (id: string) => {
-  const res = await axios.delete<DeleteResponse>(
-    `${URL}/patient/remove/${id}`,
-    {
-      withCredentials: true,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
-      },
-    }
-  );
+  const res = await axios.delete<DeleteResponse>(`${URL}/patient/remove/${id}`, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
   return res.data;
 };
 
 export const unbanPatient = async (patientId: string) => {
-  const res = await axios.put<UserResponse>(
-    `${URL}/patient/unban/${patientId}`,
-    null,
-    {
-      withCredentials: true,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
-      },
-    }
-  );
+  const res = await axios.put<UserResponse>(`${URL}/patient/unban/${patientId}`, null, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
   return res.data;
 };
 
 export const banPatient = async (patientId: string) => {
-  const res = await axios.put<DeleteResponse>(
-    `${URL}/patient/ban/${patientId}`,
-    null,
-    {
-      withCredentials: true,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
-      },
-    }
-  );
+  const res = await axios.put<DeleteResponse>(`${URL}/patient/ban/${patientId}`, null, {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("Bearer token")}`,
+    },
+  });
   return res.data;
 };
