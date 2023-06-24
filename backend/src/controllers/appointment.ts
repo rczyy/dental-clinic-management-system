@@ -213,6 +213,8 @@ export const addAppointment: RequestHandler = async (req, res) => {
       }
     }
 
+  console.log(dayjs(dateTimeScheduled).hour());
+
   if (dayjs(dateTimeScheduled).hour() < 8) {
     const error: ErrorMessage = { message: "Schedule is too early" };
     res.status(400).json(error);
