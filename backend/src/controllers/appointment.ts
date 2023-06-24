@@ -11,9 +11,13 @@ import Service from "../models/service";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import timezone from "dayjs/plugin/timezone";
 import Staff from "../models/staff";
 dayjs.extend(isBetween);
 dayjs.extend(isSameOrBefore);
+dayjs.extend(timezone);
+
+dayjs.tz.setDefault("Asia/Hong_Kong");
 
 export const getAppointments: RequestHandler = async (req, res) => {
   const token = verifyToken(req.headers.authorization);
@@ -118,13 +122,7 @@ export const addAppointment: RequestHandler = async (req, res) => {
     return;
   }
 
-  const {
-    dentist,
-    patient,
-    service,
-    dateTimeScheduled,
-    dateTimeFinished,
-  }: body = req.body;
+  const { dentist, patient, service, dateTimeScheduled, dateTimeFinished }: body = req.body;
 
   if (token.role === Roles.Patient && req.session.uid !== patient) {
     const error: ErrorMessage = { message: "Unauthorized to do this" };
@@ -189,8 +187,7 @@ export const addAppointment: RequestHandler = async (req, res) => {
   const allAppointments = patientAppointmentDates
     .concat(dentistAppointmentDates)
     .filter(
-      (appointment, index, arr) =>
-        index === arr.findIndex((t) => t._id.equals(appointment._id))
+      (appointment, index, arr) => index === arr.findIndex((t) => t._id.equals(appointment._id))
     );
 
   if (allAppointments && allAppointments.length > 0)
@@ -199,24 +196,12 @@ export const addAppointment: RequestHandler = async (req, res) => {
       const timeEnd = dayjs(dateTimeFinished);
 
       const appointment = allAppointments[i];
-      const appointmentTimeStart =
-        appointment && dayjs(appointment.dateTimeScheduled);
-      const appointmentTimeEnd =
-        appointment && dayjs(appointment.dateTimeFinished);
+      const appointmentTimeStart = appointment && dayjs(appointment.dateTimeScheduled);
+      const appointmentTimeEnd = appointment && dayjs(appointment.dateTimeFinished);
 
       if (
-        timeStart.isBetween(
-          appointmentTimeStart,
-          appointmentTimeEnd,
-          "minute",
-          "[)"
-        ) ||
-        timeEnd.isBetween(
-          appointmentTimeStart,
-          appointmentTimeEnd,
-          "minute",
-          "(]"
-        ) ||
+        timeStart.isBetween(appointmentTimeStart, appointmentTimeEnd, "minute", "[)") ||
+        timeEnd.isBetween(appointmentTimeStart, appointmentTimeEnd, "minute", "(]") ||
         (timeStart.isBefore(appointmentTimeStart, "minute") &&
           timeEnd.isAfter(appointmentTimeEnd, "minute"))
       ) {
@@ -443,13 +428,7 @@ export const editAppointment: RequestHandler = async (req, res) => {
     return;
   }
 
-  const {
-    dentist,
-    patient,
-    service,
-    dateTimeScheduled,
-    dateTimeFinished,
-  }: body = req.body;
+  const { dentist, patient, service, dateTimeScheduled, dateTimeFinished }: body = req.body;
 
   const { appointmentId } = req.params;
 
@@ -508,8 +487,7 @@ export const editAppointment: RequestHandler = async (req, res) => {
   const allAppointments = patientAppointmentDates
     .concat(dentistAppointmentDates)
     .filter(
-      (appointment, index, arr) =>
-        index === arr.findIndex((t) => t._id.equals(appointment._id))
+      (appointment, index, arr) => index === arr.findIndex((t) => t._id.equals(appointment._id))
     );
 
   if (allAppointments && allAppointments.length > 0)
@@ -518,24 +496,12 @@ export const editAppointment: RequestHandler = async (req, res) => {
       const timeEnd = dayjs(dateTimeFinished);
 
       const appointment = allAppointments[i];
-      const appointmentTimeStart =
-        appointment && dayjs(appointment.dateTimeScheduled);
-      const appointmentTimeEnd =
-        appointment && dayjs(appointment.dateTimeFinished);
+      const appointmentTimeStart = appointment && dayjs(appointment.dateTimeScheduled);
+      const appointmentTimeEnd = appointment && dayjs(appointment.dateTimeFinished);
 
       if (
-        timeStart.isBetween(
-          appointmentTimeStart,
-          appointmentTimeEnd,
-          "minute",
-          "[)"
-        ) ||
-        timeEnd.isBetween(
-          appointmentTimeStart,
-          appointmentTimeEnd,
-          "minute",
-          "(]"
-        ) ||
+        timeStart.isBetween(appointmentTimeStart, appointmentTimeEnd, "minute", "[)") ||
+        timeEnd.isBetween(appointmentTimeStart, appointmentTimeEnd, "minute", "(]") ||
         (timeStart.isBefore(appointmentTimeStart, "minute") &&
           timeEnd.isAfter(appointmentTimeEnd, "minute"))
       ) {
@@ -596,9 +562,7 @@ export const removeAppointment: RequestHandler = async (req, res) => {
     return;
   }
 
-  const appointmentToDelete = await Appointment.findById(
-    appointmentId
-  ).populate({
+  const appointmentToDelete = await Appointment.findById(appointmentId).populate({
     path: "patient",
     populate: {
       path: "user",
@@ -621,9 +585,8 @@ export const removeAppointment: RequestHandler = async (req, res) => {
 
   if (
     token.role === Roles.Patient &&
-    (
-      appointmentToDelete.patient as unknown as { user: User }
-    ).user._id.toString() !== req.session.uid
+    (appointmentToDelete.patient as unknown as { user: User }).user._id.toString() !==
+      req.session.uid
   ) {
     const error: ErrorMessage = { message: "Unauthorized to do this" };
     res.status(401).json(error);
@@ -632,9 +595,7 @@ export const removeAppointment: RequestHandler = async (req, res) => {
 
   if (
     token.role === Roles.Patient &&
-    !dayjs()
-      .add(2, "day")
-      .isSameOrBefore(dayjs(appointmentToDelete.dateTimeScheduled))
+    !dayjs().add(2, "day").isSameOrBefore(dayjs(appointmentToDelete.dateTimeScheduled))
   ) {
     const error: ErrorMessage = {
       message: "Cancelling should be at least two days in advance.",
