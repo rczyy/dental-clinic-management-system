@@ -125,6 +125,8 @@ export const addAppointment: RequestHandler = async (req, res) => {
   const { dentist, patient, service, dateTimeScheduled, dateTimeFinished }: body = req.body;
 
   console.log(dateTimeScheduled);
+  console.log(dayjs(dateTimeScheduled));
+  console.log(dayjs(dateTimeScheduled).tz("Asia/Taipei"));
 
   if (token.role === Roles.Patient && req.session.uid !== patient) {
     const error: ErrorMessage = { message: "Unauthorized to do this" };
