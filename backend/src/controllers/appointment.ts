@@ -11,10 +11,12 @@ import Service from "../models/service";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import Staff from "../models/staff";
 dayjs.extend(isBetween);
 dayjs.extend(isSameOrBefore);
+dayjs.extend(utc);
 dayjs.extend(timezone);
 
 dayjs.tz.setDefault("Asia/Hong_Kong");
@@ -125,7 +127,7 @@ export const addAppointment: RequestHandler = async (req, res) => {
   const { dentist, patient, service, dateTimeScheduled, dateTimeFinished }: body = req.body;
 
   console.log(dateTimeScheduled);
-  console.log(dayjs(dateTimeScheduled));
+  console.log(dayjs(dateTimeScheduled).format());
   console.log(dayjs(dateTimeScheduled).tz("Asia/Taipei"));
 
   if (token.role === Roles.Patient && req.session.uid !== patient) {
