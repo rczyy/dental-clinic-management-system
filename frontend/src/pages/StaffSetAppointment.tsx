@@ -43,9 +43,7 @@ const schema = z.object({
   date: z.instanceof(dayjs as unknown as typeof Dayjs, {
     message: "Date is required",
   }),
-  time: z
-    .string({ required_error: "Time is required" })
-    .min(1, { message: "Time is required" }),
+  time: z.string({ required_error: "Time is required" }).min(1, { message: "Time is required" }),
 });
 
 const StaffSetAppointment = (props: Props) => {
@@ -106,8 +104,10 @@ const StaffSetAppointment = (props: Props) => {
   const [availableDates, setAvailableDates] = useState<string[]>([]);
   const [step, setStep] = useState<number>(1);
 
-  const { data: dentistSchedule, refetch: fetchDentistSchedule } =
-    useGetDentistSchedule(selectedDentist, !!selectedDentist);
+  const { data: dentistSchedule, refetch: fetchDentistSchedule } = useGetDentistSchedule(
+    selectedDentist,
+    !!selectedDentist
+  );
 
   const {
     control,
@@ -151,8 +151,7 @@ const StaffSetAppointment = (props: Props) => {
   useEffect(() => {
     if (watch("service")) {
       setSelectedService(
-        servicesData &&
-          servicesData.find((service) => service._id === watch("service"))
+        servicesData && servicesData.find((service) => service._id === watch("service"))
       );
     }
   }, [watch("service")]);
@@ -171,9 +170,7 @@ const StaffSetAppointment = (props: Props) => {
   useEffect(() => {
     if (dentistSchedule) {
       setAvailableDates(
-        dentistSchedule.map((schedule) =>
-          dayjs(schedule.date).format("MM/DD/YYYY")
-        )
+        dentistSchedule.map((schedule) => dayjs(schedule.date).format("MM/DD/YYYY"))
       );
     }
   }, [dentistSchedule]);
@@ -208,9 +205,7 @@ const StaffSetAppointment = (props: Props) => {
           let startTime2 = dayjs(appointment.dateTimeScheduled);
 
           while (serviceToAddTime > 30) {
-            unavailableSchedules.push(
-              startTime.subtract(30, "minute").format("h:mm A")
-            );
+            unavailableSchedules.push(startTime.subtract(30, "minute").format("h:mm A"));
 
             serviceToAddTime -= 30;
             startTime = startTime.subtract(30, "minute");
@@ -233,9 +228,7 @@ const StaffSetAppointment = (props: Props) => {
           let startTime2 = dayjs(appointment.dateTimeScheduled);
 
           while (serviceToAddTime > 30) {
-            unavailableSchedules.push(
-              startTime.subtract(30, "minute").format("h:mm A")
-            );
+            unavailableSchedules.push(startTime.subtract(30, "minute").format("h:mm A"));
 
             serviceToAddTime -= 30;
             startTime = startTime.subtract(30, "minute");
@@ -266,9 +259,7 @@ const StaffSetAppointment = (props: Props) => {
 
   const getDentistName = () => {
     if (dentistData) {
-      const dentistName = dentistData.find(
-        (dentist) => dentist._id === watch("dentist")
-      );
+      const dentistName = dentistData.find((dentist) => dentist._id === watch("dentist"));
       return `${dentistName?.name.firstName} ${dentistName?.name.lastName}`;
     }
 
@@ -286,15 +277,12 @@ const StaffSetAppointment = (props: Props) => {
   const onSubmit: SubmitHandler<AppointmentZodFormValues> = (data) => {
     const { date, time, dentist, patient, service } = data;
     const dateTimeCombined = dayjs(`${dayjs(date).format("MM/DD/YY")} ${time}`);
-    const dateTimeScheduled = dateTimeCombined.format("MM/DD/YY h:mm a");
-    const serviceEstimatedTime =
-      selectedService && selectedService.estimatedTime;
+    const dateTimeScheduled = dateTimeCombined.format();
+    const serviceEstimatedTime = selectedService && selectedService.estimatedTime;
 
     let dateTimeFinished = dateTimeScheduled;
     if (serviceEstimatedTime) {
-      dateTimeFinished = dateTimeCombined
-        .add(parseInt(serviceEstimatedTime), "minute")
-        .format("MM/DD/YY h:mm a");
+      dateTimeFinished = dateTimeCombined.add(parseInt(serviceEstimatedTime), "minute").format();
     }
 
     const appointmentData: AppointmentFormValues = {
@@ -323,16 +311,13 @@ const StaffSetAppointment = (props: Props) => {
     });
   };
 
-  if (!userData || !userData.contactNo || userData.role === "Patient")
-    return <Navigate to="/" />;
+  if (!userData || !userData.contactNo || userData.role === "Patient") return <Navigate to="/" />;
 
   return (
     <main className="flex items-center justify-center">
       <div className="flex flex-col gap-8 bg-base-300 max-w-screen-lg w-full min-h-[40rem] rounded-box border border-base-200 shadow">
         <header className="flex justify-center border-b border-neutral shadow-sm">
-          <h1 className="text-xl md:text-2xl font-bold mx-2 py-6">
-            Book an appointment
-          </h1>
+          <h1 className="text-xl md:text-2xl font-bold mx-2 py-6">Book an appointment</h1>
         </header>
         <section className="flex flex-col md:flex-row md:gap-8 md:justify-around md:px-24 md:pb-12">
           <div className="flex justify-center mb-6">
@@ -340,9 +325,7 @@ const StaffSetAppointment = (props: Props) => {
               <li
                 className={
                   "step after:!text-zinc-100 " +
-                  (step >= 1
-                    ? "step-primary"
-                    : "before:!bg-neutral after:!bg-neutral")
+                  (step >= 1 ? "step-primary" : "before:!bg-neutral after:!bg-neutral")
                 }
               >
                 Service
@@ -350,9 +333,7 @@ const StaffSetAppointment = (props: Props) => {
               <li
                 className={
                   "step after:!text-zinc-100 " +
-                  (step >= 2
-                    ? "step-primary"
-                    : "before:!bg-neutral after:!bg-neutral")
+                  (step >= 2 ? "step-primary" : "before:!bg-neutral after:!bg-neutral")
                 }
               >
                 Dentist
@@ -360,9 +341,7 @@ const StaffSetAppointment = (props: Props) => {
               <li
                 className={
                   "step after:!text-zinc-100 " +
-                  (step >= 3
-                    ? "step-primary"
-                    : "before:!bg-neutral after:!bg-neutral")
+                  (step >= 3 ? "step-primary" : "before:!bg-neutral after:!bg-neutral")
                 }
               >
                 Patient
@@ -370,9 +349,7 @@ const StaffSetAppointment = (props: Props) => {
               <li
                 className={
                   "step after:!text-zinc-100 " +
-                  (step >= 4
-                    ? "step-primary"
-                    : "before:!bg-neutral after:!bg-neutral")
+                  (step >= 4 ? "step-primary" : "before:!bg-neutral after:!bg-neutral")
                 }
               >
                 Date
@@ -380,9 +357,7 @@ const StaffSetAppointment = (props: Props) => {
               <li
                 className={
                   "step after:!text-zinc-100 " +
-                  (step >= 5
-                    ? "step-primary"
-                    : "before:!bg-neutral after:!bg-neutral")
+                  (step >= 5 ? "step-primary" : "before:!bg-neutral after:!bg-neutral")
                 }
               >
                 Confirm
@@ -392,9 +367,7 @@ const StaffSetAppointment = (props: Props) => {
           <form onSubmit={handleSubmit(onSubmit)} className="p-2 md:w-2/3">
             {step === 1 && (
               <section className="flex flex-col gap-8">
-                <h1 className="font-bold tracking-wide text-center md:text-lg">
-                  Service
-                </h1>
+                <h1 className="font-bold tracking-wide text-center md:text-lg">Service</h1>
                 <div className="flex flex-col gap-2 p-2">
                   <Controller
                     name="serviceCategory"
@@ -405,15 +378,12 @@ const StaffSetAppointment = (props: Props) => {
                         value={
                           value
                             ? serviceCategories &&
-                              serviceCategories.find(
-                                (category) => category.value === value
-                              )
+                              serviceCategories.find((category) => category.value === value)
                             : null
                         }
                         classNames={{
                           control: ({ hasValue }) =>
-                            "pl-1.5 py-[1px] !bg-base-300 " +
-                            (hasValue && "!border-primary"),
+                            "pl-1.5 py-[1px] !bg-base-300 " + (hasValue && "!border-primary"),
                           placeholder: () => "!text-zinc-400 !text-sm",
                           singleValue: () => "!text-base-content !text-sm",
                           input: () => "!text-base-content",
@@ -422,10 +392,8 @@ const StaffSetAppointment = (props: Props) => {
                             (isSelected ? "!bg-primary !text-zinc-100 " : "") +
                             (isFocused && !isSelected ? "!bg-neutral" : ""),
                           menu: () => "!bg-base-300",
-                          dropdownIndicator: ({ hasValue }) =>
-                            hasValue ? "!text-primary" : "",
-                          indicatorSeparator: ({ hasValue }) =>
-                            hasValue ? "!bg-primary" : "",
+                          dropdownIndicator: ({ hasValue }) => (hasValue ? "!text-primary" : ""),
+                          indicatorSeparator: ({ hasValue }) => (hasValue ? "!bg-primary" : ""),
                         }}
                         placeholder="Category"
                         onChange={(val) => onChange(val?.value)}
@@ -434,9 +402,7 @@ const StaffSetAppointment = (props: Props) => {
                       />
                     )}
                   />
-                  <span className="text-xs text-error pl-1">
-                    {errors.serviceCategory?.message}
-                  </span>
+                  <span className="text-xs text-error pl-1">{errors.serviceCategory?.message}</span>
                   <Controller
                     name="service"
                     control={control}
@@ -445,16 +411,12 @@ const StaffSetAppointment = (props: Props) => {
                         {...field}
                         value={
                           value
-                            ? services &&
-                              services.find(
-                                (service) => service.value === value
-                              )
+                            ? services && services.find((service) => service.value === value)
                             : null
                         }
                         classNames={{
                           control: ({ hasValue }) =>
-                            "pl-1.5 py-[1px] !bg-base-300 " +
-                            (hasValue && "!border-primary"),
+                            "pl-1.5 py-[1px] !bg-base-300 " + (hasValue && "!border-primary"),
                           placeholder: () => "!text-zinc-400 !text-sm",
                           singleValue: () => "!text-base-content !text-sm",
                           input: () => "!text-base-content",
@@ -463,10 +425,8 @@ const StaffSetAppointment = (props: Props) => {
                             (isSelected ? "!bg-primary !text-zinc-100 " : "") +
                             (isFocused && !isSelected ? "!bg-neutral" : ""),
                           menu: () => "!bg-base-300",
-                          dropdownIndicator: ({ hasValue }) =>
-                            hasValue ? "!text-primary" : "",
-                          indicatorSeparator: ({ hasValue }) =>
-                            hasValue ? "!bg-primary" : "",
+                          dropdownIndicator: ({ hasValue }) => (hasValue ? "!text-primary" : ""),
+                          indicatorSeparator: ({ hasValue }) => (hasValue ? "!bg-primary" : ""),
                         }}
                         placeholder="Service"
                         onChange={(val) => {
@@ -478,9 +438,7 @@ const StaffSetAppointment = (props: Props) => {
                       />
                     )}
                   />
-                  <span className="text-xs text-error pl-1">
-                    {errors.service?.message}
-                  </span>
+                  <span className="text-xs text-error pl-1">{errors.service?.message}</span>
                   <button
                     type="button"
                     className="btn btn-primary min-h-[2.5rem] h-10 border-primary text-zinc-50 my-8"
@@ -502,9 +460,7 @@ const StaffSetAppointment = (props: Props) => {
 
             {step === 2 && (
               <section className="flex flex-col gap-8">
-                <h1 className="font-bold tracking-wide text-center md:text-lg">
-                  Dentist
-                </h1>
+                <h1 className="font-bold tracking-wide text-center md:text-lg">Dentist</h1>
                 <div className="flex flex-col gap-2 p-2">
                   {dentistData &&
                     dentistData.map((dentist) => {
@@ -518,9 +474,7 @@ const StaffSetAppointment = (props: Props) => {
                         />
                       );
                     })}
-                  <span className="text-xs text-error pl-1">
-                    {errors.dentist?.message}
-                  </span>
+                  <span className="text-xs text-error pl-1">{errors.dentist?.message}</span>
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -547,9 +501,7 @@ const StaffSetAppointment = (props: Props) => {
 
             {step === 3 && (
               <section className="flex flex-col gap-8">
-                <h1 className="font-bold tracking-wide text-center md:text-lg">
-                  Patient
-                </h1>
+                <h1 className="font-bold tracking-wide text-center md:text-lg">Patient</h1>
                 <div className="flex flex-col gap-2 p-2">
                   {patientData &&
                     patientData.map((patient) => {
@@ -563,9 +515,7 @@ const StaffSetAppointment = (props: Props) => {
                         />
                       );
                     })}
-                  <span className="text-xs text-error pl-1">
-                    {errors.dentist?.message}
-                  </span>
+                  <span className="text-xs text-error pl-1">{errors.dentist?.message}</span>
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -619,16 +569,12 @@ const StaffSetAppointment = (props: Props) => {
                           disablePast
                           shouldDisableDate={(day) =>
                             dayjs(day).date() === dayjs().date() ||
-                            !availableDates.includes(
-                              dayjs(day).format("MM/DD/YYYY")
-                            )
+                            !availableDates.includes(dayjs(day).format("MM/DD/YYYY"))
                           }
                         />
                       )}
                     />
-                    <span className="text-xs text-error pl-1">
-                      {errors.date?.message}
-                    </span>
+                    <span className="text-xs text-error pl-1">{errors.date?.message}</span>
                   </div>
                   <div className="flex flex-col">
                     <Controller
@@ -639,8 +585,7 @@ const StaffSetAppointment = (props: Props) => {
                           {...field}
                           value={
                             value
-                              ? timeOptions &&
-                                timeOptions.find((time) => time.value === value)
+                              ? timeOptions && timeOptions.find((time) => time.value === value)
                               : null
                           }
                           classNames={{
@@ -650,15 +595,11 @@ const StaffSetAppointment = (props: Props) => {
                             input: () => "!text-base-content",
                             option: ({ isSelected, isFocused }) =>
                               "!text-sm " +
-                              (isSelected
-                                ? "!bg-primary !text-zinc-100 "
-                                : "") +
+                              (isSelected ? "!bg-primary !text-zinc-100 " : "") +
                               (isFocused && !isSelected ? "!bg-neutral" : ""),
                             menu: () => "!bg-base-300",
-                            dropdownIndicator: ({ hasValue }) =>
-                              hasValue ? "!text-primary" : "",
-                            indicatorSeparator: ({ hasValue }) =>
-                              hasValue ? "!bg-primary" : "",
+                            dropdownIndicator: ({ hasValue }) => (hasValue ? "!text-primary" : ""),
+                            indicatorSeparator: ({ hasValue }) => (hasValue ? "!bg-primary" : ""),
                           }}
                           placeholder="Time"
                           onChange={(val) => onChange(val?.value)}
@@ -668,20 +609,14 @@ const StaffSetAppointment = (props: Props) => {
                             patientAppointmentsLoading ||
                             dentistAppointmentsLoading
                           }
-                          isOptionDisabled={(option) =>
-                            option ? option.isDisabled : false
-                          }
+                          isOptionDisabled={(option) => (option ? option.isDisabled : false)}
                           isDisabled={
-                            !watch("date") ||
-                            !patientAppointments ||
-                            !dentistAppointments
+                            !watch("date") || !patientAppointments || !dentistAppointments
                           }
                         />
                       )}
                     />
-                    <span className="text-xs text-error pl-1">
-                      {errors.time?.message}
-                    </span>
+                    <span className="text-xs text-error pl-1">{errors.time?.message}</span>
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -739,9 +674,7 @@ const StaffSetAppointment = (props: Props) => {
                           <td className="flex flex-col">
                             <div className="flex items-center gap-4">
                               <IoCalendar />
-                              <span>
-                                {dayjs(watch("date")).format("MMMM DD, YYYY")}
-                              </span>
+                              <span>{dayjs(watch("date")).format("MMMM DD, YYYY")}</span>
                             </div>
                             <div className="flex items-center gap-4">
                               <BsFillClockFill />
