@@ -3,7 +3,9 @@ A Dental Clinic Management System for AT Dental Home made in ExpressJS and React
 
 https://atdentalhome.vercel.app/
 
+
 Admin User:
 
 admin@gmail.com
-123456
+
+@TDentalHomeAdmin
