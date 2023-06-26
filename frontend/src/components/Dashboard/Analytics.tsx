@@ -1,12 +1,4 @@
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useGetBills } from "../../hooks/bill";
@@ -60,9 +52,7 @@ const Analytics = (props: Props) => {
       ? billsData.filter(
           (bill) =>
             bill.appointment.service.category === "First Appointment" &&
-            dayjs(bill.createdAt).isSameOrAfter(
-              dayjs(startDateString || dayjs("1970-00-00").format())
-            ) &&
+            dayjs(bill.createdAt).isSameOrAfter(dayjs(startDateString || dayjs("1970-00-00").format())) &&
             dayjs(bill.createdAt).isSameOrBefore(dayjs(endDateString || dayjs().format()))
         ).length
       : 0;
@@ -71,9 +61,7 @@ const Analytics = (props: Props) => {
       ? billsData.filter(
           (bill) =>
             bill.appointment.service.category === "Restoration" &&
-            dayjs(bill.createdAt).isSameOrAfter(
-              dayjs(startDateString || dayjs("1970-00-00").format())
-            ) &&
+            dayjs(bill.createdAt).isSameOrAfter(dayjs(startDateString || dayjs("1970-00-00").format())) &&
             dayjs(bill.createdAt).isSameOrBefore(dayjs(endDateString || dayjs().format()))
         ).length
       : 0;
@@ -82,9 +70,7 @@ const Analytics = (props: Props) => {
       ? billsData.filter(
           (bill) =>
             bill.appointment.service.category === "Cosmetic" &&
-            dayjs(bill.createdAt).isSameOrAfter(
-              dayjs(startDateString || dayjs("1970-00-00").format())
-            ) &&
+            dayjs(bill.createdAt).isSameOrAfter(dayjs(startDateString || dayjs("1970-00-00").format())) &&
             dayjs(bill.createdAt).isSameOrBefore(dayjs(endDateString || dayjs().format()))
         ).length
       : 0;
@@ -93,9 +79,7 @@ const Analytics = (props: Props) => {
       ? billsData.filter(
           (bill) =>
             bill.appointment.service.category === "Root Canal Treatment" &&
-            dayjs(bill.createdAt).isSameOrAfter(
-              dayjs(startDateString || dayjs("1970-00-00").format())
-            ) &&
+            dayjs(bill.createdAt).isSameOrAfter(dayjs(startDateString || dayjs("1970-00-00").format())) &&
             dayjs(bill.createdAt).isSameOrBefore(dayjs(endDateString || dayjs().format()))
         ).length
       : 0;
@@ -104,9 +88,7 @@ const Analytics = (props: Props) => {
       ? billsData.filter(
           (bill) =>
             bill.appointment.service.category === "Crowns and Bridges" &&
-            dayjs(bill.createdAt).isSameOrAfter(
-              dayjs(startDateString || dayjs("1970-00-00").format())
-            ) &&
+            dayjs(bill.createdAt).isSameOrAfter(dayjs(startDateString || dayjs("1970-00-00").format())) &&
             dayjs(bill.createdAt).isSameOrBefore(dayjs(endDateString || dayjs().format()))
         ).length
       : 0;
@@ -115,9 +97,7 @@ const Analytics = (props: Props) => {
       ? billsData.filter(
           (bill) =>
             bill.appointment.service.category === "Oral Surgery or Extractions" &&
-            dayjs(bill.createdAt).isSameOrAfter(
-              dayjs(startDateString || dayjs("1970-00-00").format())
-            ) &&
+            dayjs(bill.createdAt).isSameOrAfter(dayjs(startDateString || dayjs("1970-00-00").format())) &&
             dayjs(bill.createdAt).isSameOrBefore(dayjs(endDateString || dayjs().format()))
         ).length
       : 0;
@@ -126,9 +106,7 @@ const Analytics = (props: Props) => {
       ? billsData.filter(
           (bill) =>
             bill.appointment.service.category === "Dentures" &&
-            dayjs(bill.createdAt).isSameOrAfter(
-              dayjs(startDateString || dayjs("1970-00-00").format())
-            ) &&
+            dayjs(bill.createdAt).isSameOrAfter(dayjs(startDateString || dayjs("1970-00-00").format())) &&
             dayjs(bill.createdAt).isSameOrBefore(dayjs(endDateString || dayjs().format()))
         ).length
       : 0;
@@ -137,9 +115,7 @@ const Analytics = (props: Props) => {
       ? billsData.filter(
           (bill) =>
             bill.appointment.service.category === "Orthodontics (Braces)" &&
-            dayjs(bill.createdAt).isSameOrAfter(
-              dayjs(startDateString || dayjs("1970-00-00").format())
-            ) &&
+            dayjs(bill.createdAt).isSameOrAfter(dayjs(startDateString || dayjs("1970-00-00").format())) &&
             dayjs(bill.createdAt).isSameOrBefore(dayjs(endDateString || dayjs().format()))
         ).length
       : 0;
@@ -158,16 +134,7 @@ const Analytics = (props: Props) => {
       datasets: [
         {
           label: "Availed Services",
-          data: [
-            faCount,
-            restoCount,
-            cosmeticCount,
-            rctCount,
-            cabCount,
-            oseCount,
-            denturesCount,
-            orthodonticsCount,
-          ],
+          data: [faCount, restoCount, cosmeticCount, rctCount, cabCount, oseCount, denturesCount, orthodonticsCount],
           backgroundColor: [
             "rgba(200,255,150, .80)",
             "rgba(200,180,200, .80)",
@@ -206,6 +173,7 @@ const Analytics = (props: Props) => {
               actions: ["clear"],
             },
           }}
+          disableFuture
         />
         <span>-</span>
         <DatePicker
@@ -217,6 +185,7 @@ const Analytics = (props: Props) => {
               actions: ["clear"],
             },
           }}
+          disableFuture
         />
         <button
           className="btn btn-primary ml-4"
