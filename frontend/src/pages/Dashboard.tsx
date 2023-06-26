@@ -38,11 +38,7 @@ const Dashboard = (props: Props) => {
   const { data: me } = useGetMe();
   return (
     <>
-      <main
-        className={`flex flex-col gap-4 ${
-          sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"
-        } mx-auto`}
-      >
+      <main className={`flex flex-col gap-4 ${sidebar ? "max-w-screen-2xl" : "max-w-screen-xl"} mx-auto`}>
         <header className="flex flex-col w-full justify-between mb-4 gap-8">
           <div className="flex justify-between">
             <h1 className="text-2xl md:text-3xl font-bold">Dashboard</h1>
@@ -52,9 +48,7 @@ const Dashboard = (props: Props) => {
             >
               {me && (me.role === "Admin" || me.role === "Manager") && (
                 <>
-                  <span className="hidden md:block text-sm md:text-md font-medium">
-                    Generate Reports
-                  </span>
+                  <span className="hidden md:block text-sm md:text-md font-medium">Generate Reports</span>
                   <RiFileExcel2Line className="text-lg" />
                 </>
               )}
@@ -63,18 +57,14 @@ const Dashboard = (props: Props) => {
           <div>
             <div className="flex flex-col gap-4 md:flex-row">
               <Stat title="Patients Registered" />
-              {me && (me.role === "Admin" || me.role === "Manager") && (
-                <Stat title="Staffs Registered" />
-              )}
+              {me && (me.role === "Admin" || me.role === "Manager") && <Stat title="Staffs Registered" />}
               <Stat title="Total Services Offered" />
               <Stat title="Appointments for the Week" />
             </div>
           </div>
         </header>
         <div className="flex flex-col text-md gap-4">
-          {me && (me.role === "Admin" || me.role === "Manager") && (
-            <RecentActivity />
-          )}
+          {me && (me.role === "Admin" || me.role === "Manager") && <RecentActivity />}
           <div className="flex flex-col gap-4 md:flex-row">
             <Card title="Available Dentists" />
             <Card title="Appointments Set Today" />
@@ -84,10 +74,7 @@ const Dashboard = (props: Props) => {
           <div>
             <div className="text-zinc-100 flex bg-primary items-center justify-between py-2 px-4 text-center rounded-t text-l font-medium">
               <span>Availed Services</span>
-              <div
-                className="hover:cursor-pointer"
-                onClick={() => setBodyDisplay(!bodyDisplay)}
-              >
+              <div className="hover:cursor-pointer" onClick={() => setBodyDisplay(!bodyDisplay)}>
                 {bodyDisplay ? <BiMinus /> : <BiPlus />}
               </div>
             </div>
@@ -95,14 +82,9 @@ const Dashboard = (props: Props) => {
           </div>
         </div>
       </main>
-      {me &&
-        (me.role === "Admin" || me.role === "Manager") &&
-        isGenerateModalVisible && (
-          <GenerateModal
-            setIsGenerateModalVisible={setIsGenerateModalVisible}
-            generatedBy={me}
-          />
-        )}
+      {me && (me.role === "Admin" || me.role === "Manager") && isGenerateModalVisible && (
+        <GenerateModal setIsGenerateModalVisible={setIsGenerateModalVisible} generatedBy={me} />
+      )}
     </>
   );
 };
@@ -119,10 +101,7 @@ const RecentActivity = () => {
       <div className="shadow-sm">
         <div className="text-zinc-100 flex items-center justify-between bg-primary py-2 px-4 text-center rounded-t text-l font-medium">
           Recent Activity
-          <div
-            className="hover:cursor-pointer"
-            onClick={() => setBodyDisplay(!bodyDisplay)}
-          >
+          <div className="hover:cursor-pointer" onClick={() => setBodyDisplay(!bodyDisplay)}>
             {bodyDisplay ? <BiMinus /> : <BiPlus />}
           </div>
         </div>
@@ -141,9 +120,7 @@ const RecentActivity = () => {
               </thead>
               <tbody>
                 {logData && logData.length > 0 ? (
-                  logData.map((log: LogResponse) => (
-                    <AuditTrailDataRow logData={log} key={log._id} />
-                  ))
+                  logData.map((log: LogResponse) => <AuditTrailDataRow logData={log} key={log._id} />)
                 ) : (
                   <tr className="[&>*]:bg-transparent">
                     {isFetching ? (
@@ -151,10 +128,7 @@ const RecentActivity = () => {
                         <AiOutlineLoading3Quarters className="animate-spin w-full" />
                       </td>
                     ) : (
-                      <td
-                        colSpan={5}
-                        className="py-8 text-2xl text-center font-bold"
-                      >
+                      <td colSpan={5} className="py-8 text-2xl text-center font-bold">
                         No logs to show
                       </td>
                     )}
@@ -170,10 +144,7 @@ const RecentActivity = () => {
   );
 };
 
-const GenerateModal = ({
-  setIsGenerateModalVisible,
-  generatedBy
-}: GenerateProps) => {
+const GenerateModal = ({ setIsGenerateModalVisible, generatedBy }: GenerateProps) => {
   const schema = z
     .object({
       dentist: z.string().min(1, "Dentist cannot be empty").or(z.literal("")),
@@ -181,29 +152,23 @@ const GenerateModal = ({
       dateStart: z
         .string({ required_error: "Start Date is required" })
         .min(1, "Start Date cannot be empty")
-        .regex(
-          /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/,
-          "Invalid Date"
-        ),
+        .regex(/^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/, "Invalid Date"),
       dateEnd: z
         .string({ required_error: "End Date is required" })
         .min(1, "End Date cannot be empty")
-        .regex(
-          /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/,
-          "Invalid Date"
-        )
+        .regex(/^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/, "Invalid Date"),
     })
     .superRefine((values, ctx) => {
       if (!values.dentist && !values.patient) {
         ctx.addIssue({
           message: "Either Dentist or Patient Name is required.",
           code: z.ZodIssueCode.custom,
-          path: ["dentist"]
+          path: ["dentist"],
         });
         ctx.addIssue({
           message: "Either Dentist or Patient Name is required.",
           code: z.ZodIssueCode.custom,
-          path: ["patient"]
+          path: ["patient"],
         });
       }
     });
@@ -214,15 +179,15 @@ const GenerateModal = ({
     watch,
     reset,
     trigger,
-    formState: { errors, isValid }
+    formState: { errors, isValid },
   } = useForm<ReportFormValues>({
     defaultValues: {
       dentist: "",
       patient: "",
       dateStart: dayjs().subtract(7, "day").format("MM/DD/YYYY"),
-      dateEnd: dayjs().format("MM/DD/YYYY")
+      dateEnd: dayjs().format("MM/DD/YYYY"),
     },
-    resolver: zodResolver(schema)
+    resolver: zodResolver(schema),
   });
   const { data: billData } = useGetBills();
   const { data: dentistData, isLoading: isDentistLoading } = useGetDentists();
@@ -235,18 +200,14 @@ const GenerateModal = ({
         service: "",
         serviceCategory: "",
         price: 0,
-        billingDate: ""
-      }
+        billingDate: "",
+      },
     ],
     dateStart: "",
-    dateEnd: ""
+    dateEnd: "",
   });
-  const [dentistOptions, setDentistOptions] = useState<SelectOption[]>([
-    { value: "All", label: "All" }
-  ]);
-  const [patientOptions, setPatientOptions] = useState<SelectOption[]>([
-    { value: "All", label: "All" }
-  ]);
+  const [dentistOptions, setDentistOptions] = useState<SelectOption[]>([{ value: "All", label: "All" }]);
+  const [patientOptions, setPatientOptions] = useState<SelectOption[]>([{ value: "All", label: "All" }]);
   useEffect(() => {
     if (dentistData) {
       setDentistOptions((prev) => [
@@ -254,12 +215,9 @@ const GenerateModal = ({
         ...dentistData.map((dentist) => {
           return {
             value: dentist._id,
-            label:
-              dentist.staff.user.name.firstName +
-              " " +
-              dentist.staff.user.name.lastName
+            label: dentist.staff.user.name.firstName + " " + dentist.staff.user.name.lastName,
           };
-        })
+        }),
       ]);
     }
     if (patientData) {
@@ -268,10 +226,9 @@ const GenerateModal = ({
         ...patientData.map((patient) => {
           return {
             value: patient._id,
-            label:
-              patient.user.name.firstName + " " + patient.user.name.lastName
+            label: patient.user.name.firstName + " " + patient.user.name.lastName,
           };
-        })
+        }),
       ]);
     }
   }, [dentistData, patientData]);
@@ -282,23 +239,16 @@ const GenerateModal = ({
         .filter(
           (bill) =>
             (formData.dentist !== "All" && formData.patient !== "All"
-              ? bill.appointment.dentist._id === formData.dentist &&
-                bill.appointment.patient._id === formData.patient
+              ? bill.appointment.dentist._id === formData.dentist && bill.appointment.patient._id === formData.patient
               : formData.dentist !== "All"
               ? bill.appointment.dentist._id === formData.dentist
               : formData.patient !== "All"
               ? bill.appointment.patient._id === formData.patient
               : formData.dentist && formData.patient) &&
-            dayjs(formData.dateStart).startOf("D") <=
-              dayjs(bill.appointment.dateTimeScheduled) &&
-            dayjs(formData.dateEnd).startOf("D") >=
-              dayjs(bill.appointment.dateTimeScheduled)
+            dayjs(formData.dateStart).startOf("D") <= dayjs(bill.appointment.dateTimeScheduled) &&
+            dayjs(formData.dateEnd).startOf("D") >= dayjs(bill.appointment.dateTimeScheduled)
         )
-        .sort(
-          (a, b) =>
-            +dayjs(a.appointment.dateTimeScheduled) -
-            +dayjs(b.appointment.dateTimeScheduled)
-        );
+        .sort((a, b) => +dayjs(a.appointment.dateTimeScheduled) - +dayjs(b.appointment.dateTimeScheduled));
     if (filteredBills && filteredBills.length > 0) {
       const rows = filteredBills.map((row) => {
         return {
@@ -318,14 +268,10 @@ const GenerateModal = ({
             row.appointment.patient.user.name.lastName,
           service: row.appointment.service.name,
           serviceCategory: row.appointment.service.category,
-          dateTimeScheduled: dayjs(row.appointment.dateTimeScheduled).format(
-            "MM-DD-YYYY"
-          ),
-          dateTimeFinished: dayjs(row.appointment.dateTimeFinished).format(
-            "MM-DD-YYYY"
-          ),
+          dateTimeScheduled: dayjs(row.appointment.dateTimeScheduled).format("MM-DD-YYYY"),
+          dateTimeFinished: dayjs(row.appointment.dateTimeFinished).format("MM-DD-YYYY"),
           price: row.price,
-          billingDate: dayjs(row.createdAt).format("MM-DD-YYYY")
+          billingDate: dayjs(row.createdAt).format("MM-DD-YYYY"),
         };
       });
       const worksheet = XLSX.utils.json_to_sheet(rows);
@@ -343,25 +289,18 @@ const GenerateModal = ({
             "Date Scheduled",
             "Date Finished",
             "Price",
-            "Billing Date"
-          ]
+            "Billing Date",
+          ],
         ],
         {
-          origin: "A1"
+          origin: "A1",
         }
       );
 
-      const max_width = rows.reduce(
-        (w, r) => Math.max(w, r.dentistName.length),
-        10
-      );
+      const max_width = rows.reduce((w, r) => Math.max(w, r.dentistName.length), 10);
       worksheet["!cols"] = [{ wch: max_width }];
 
-      XLSX.writeFile(
-        workbook,
-        `Reports - ${formData.dateStart} - ${formData.dateEnd}).xlsx`,
-        { compression: true }
-      );
+      XLSX.writeFile(workbook, `Reports - ${formData.dateStart} - ${formData.dateEnd}).xlsx`, { compression: true });
       reset();
       setIsGenerateModalVisible(false);
     } else {
@@ -378,58 +317,48 @@ const GenerateModal = ({
         .filter(
           (bill) =>
             (formData.dentist !== "All" && formData.patient !== "All"
-              ? bill.appointment.dentist._id === formData.dentist &&
-                bill.appointment.patient._id === formData.patient
+              ? bill.appointment.dentist._id === formData.dentist && bill.appointment.patient._id === formData.patient
               : formData.dentist !== "All"
               ? bill.appointment.dentist._id === formData.dentist
               : formData.patient !== "All"
               ? bill.appointment.patient._id === formData.patient
               : formData.dentist && formData.patient) &&
-            dayjs(formData.dateStart).startOf("D") <=
-              dayjs(bill.appointment.dateTimeScheduled) &&
-            dayjs(formData.dateEnd).startOf("D") >=
-              dayjs(bill.appointment.dateTimeScheduled)
+            dayjs(formData.dateStart).startOf("D") <= dayjs(bill.appointment.dateTimeScheduled) &&
+            dayjs(formData.dateEnd).startOf("D") >= dayjs(bill.appointment.dateTimeScheduled)
         )
-        .sort(
-          (a, b) =>
-            +dayjs(a.appointment.dateTimeScheduled) -
-            +dayjs(b.appointment.dateTimeScheduled)
-        );
-    if (filteredBills && filteredBills.length > 0) {
-      const rows = filteredBills.map((row) => {
-        return {
-          dentistName:
-            row.appointment.dentist.staff.user.name.firstName +
-            (!row.appointment.dentist.staff.user.name.middleName
-              ? ""
-              : " " + row.appointment.dentist.staff.user.name.middleName) +
-            " " +
-            row.appointment.dentist.staff.user.name.lastName,
-          patientName:
-            row.appointment.patient.user.name.firstName +
-            (!row.appointment.patient.user.name.middleName
-              ? ""
-              : " " + row.appointment.patient.user.name.middleName) +
-            " " +
-            row.appointment.patient.user.name.lastName,
-          service: row.appointment.service.name,
-          serviceCategory: row.appointment.service.category,
-          price: row.price,
-          billingDate: dayjs(row.createdAt).format("MM-DD-YYYY")
-        };
-      });
-      setRowData({
-        rows,
-        dateStart: formData.dateStart,
-        dateEnd: formData.dateEnd
-      });
-    }
-  }, [
-    watch("dateEnd"),
-    watch("dateStart"),
-    watch("patient"),
-    watch("dentist")
-  ]);
+        .sort((a, b) => +dayjs(a.appointment.dateTimeScheduled) - +dayjs(b.appointment.dateTimeScheduled));
+
+    const rows = filteredBills
+      ? filteredBills.map((row) => {
+          return {
+            dentistName:
+              row.appointment.dentist.staff.user.name.firstName +
+              (!row.appointment.dentist.staff.user.name.middleName
+                ? ""
+                : " " + row.appointment.dentist.staff.user.name.middleName) +
+              " " +
+              row.appointment.dentist.staff.user.name.lastName,
+            patientName:
+              row.appointment.patient.user.name.firstName +
+              (!row.appointment.patient.user.name.middleName
+                ? ""
+                : " " + row.appointment.patient.user.name.middleName) +
+              " " +
+              row.appointment.patient.user.name.lastName,
+            service: row.appointment.service.name,
+            serviceCategory: row.appointment.service.category,
+            price: row.price,
+            billingDate: dayjs(row.createdAt).format("MM-DD-YYYY"),
+          };
+        })
+      : [];
+
+    setRowData({
+      rows,
+      dateStart: formData.dateStart,
+      dateEnd: formData.dateEnd,
+    });
+  }, [watch("dateEnd"), watch("dateStart"), watch("patient"), watch("dentist")]);
 
   return (
     <div
@@ -448,10 +377,7 @@ const GenerateModal = ({
             />
           </div>
         </header>
-        <form
-          className="flex flex-col px-2 md:py-8 gap-3"
-          onSubmit={handleSubmit(generateReports)}
-        >
+        <form className="flex flex-col px-2 md:py-8 gap-3" onSubmit={handleSubmit(generateReports)}>
           <div className="flex flex-col md:flex-row mx-2 gap-2">
             <div className="flex-1">
               <Controller
@@ -468,9 +394,7 @@ const GenerateModal = ({
                   />
                 )}
               />
-              <span className="text-xs text-error">
-                {errors.dentist?.message}
-              </span>
+              <span className="text-xs text-error">{errors.dentist?.message}</span>
             </div>
             <div className="flex-1">
               <Controller
@@ -487,9 +411,7 @@ const GenerateModal = ({
                   />
                 )}
               />
-              <span className="text-xs text-error">
-                {errors.patient?.message}
-              </span>
+              <span className="text-xs text-error">{errors.patient?.message}</span>
             </div>
           </div>
           <div className="flex flex-col md:flex-row mx-2 gap-2">
