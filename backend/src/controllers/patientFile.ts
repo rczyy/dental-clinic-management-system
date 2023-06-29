@@ -57,17 +57,26 @@ export const getPatientFiles: RequestHandler = async (req, res) => {
     patient: patient._id,
     ...(bill && { bill }),
   })
-    .populate({ path: "bill", populate: { path: "appointment", populate: { path: "service" } } })
+    .populate({
+      path: "bill",
+      populate: { path: "appointment", populate: { path: "service" } },
+    })
     .populate({
       path: "bill",
       populate: {
         path: "appointment",
-        populate: { path: "dentist", populate: { path: "staff", populate: { path: "user" } } },
+        populate: {
+          path: "dentist",
+          populate: { path: "staff", populate: { path: "user" } },
+        },
       },
     })
     .populate({
       path: "bill",
-      populate: { path: "appointment", populate: { path: "patient", populate: { path: "user" } } },
+      populate: {
+        path: "appointment",
+        populate: { path: "patient", populate: { path: "user" } },
+      },
     });
 
   res.status(200).send(patientFiles);
@@ -130,7 +139,6 @@ export const addPatientFile: RequestHandler = async (req, res) => {
   const { files } = req;
 
   if (!files || files.length === 0) {
-    res.status(400).send({ message: "File is required" });
     return;
   }
 
@@ -154,9 +162,7 @@ export const addPatientFile: RequestHandler = async (req, res) => {
         return patientFile;
       } catch (error) {
         const err = error as Error;
-
-        res.status(400).send({ message: err.message });
-        return;
+        return err.message;
       }
     })
   );
@@ -203,7 +209,8 @@ export const removePatientFile: RequestHandler = async (req, res) => {
     return;
   }
 
-  res
-    .status(200)
-    .send({ message: "Successfully deleted patient file", id: removedPatientFile._id });
+  res.status(200).send({
+    message: "Successfully deleted patient file",
+    id: removedPatientFile._id,
+  });
 };
